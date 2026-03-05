@@ -1,0 +1,789 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+ S ettings.css — Styles de la page de configuration ARIA                                                 *
+ Thème : fond sombre #0A0C10, accent or #C8A44A, police Cinzel + Rajdhani
+ À importer dans Settings.jsx : import './Settings.css';
+ ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ R OOT & LAYOUT                                                                                          *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-root {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    background: #080A0E;
+    color: rgba(200, 210, 230, 0.88);
+    font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+    font-size: 0.88rem;
+    overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ H EADER                                                                                                 *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.8rem;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.18);
+    background: rgba(10, 12, 18, 0.95);
+    flex-shrink: 0;
+}
+
+.settings-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.settings-header-glyph {
+    font-size: 1.4rem;
+    color: #C8A44A;
+    opacity: 0.85;
+}
+
+.settings-header-title {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: #C8A44A;
+}
+
+.settings-header-sub {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: rgba(140, 160, 200, 0.5);
+    margin-top: 1px;
+}
+
+.settings-close-btn {
+    background: none;
+    border: 1px solid rgba(200, 164, 74, 0.2);
+    color: rgba(200, 164, 74, 0.6);
+    width: 30px;
+    height: 30px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+.settings-close-btn:hover {
+    background: rgba(200, 164, 74, 0.08);
+    color: #C8A44A;
+    border-color: rgba(200, 164, 74, 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ L AYOUT — NAV + MAIN                                                                                    *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ N AVIGATION LATÉRALE                                                                                    *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-nav {
+    width: 180px;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(200, 164, 74, 0.1);
+    background: rgba(6, 8, 13, 0.6);
+    padding: 1.2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+}
+
+.settings-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1.1rem;
+    background: none;
+    border: none;
+    color: rgba(160, 180, 220, 0.55);
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    transition: all 0.15s ease;
+    position: relative;
+}
+.settings-nav-item:hover {
+    color: rgba(200, 164, 74, 0.85);
+    background: rgba(200, 164, 74, 0.04);
+}
+.settings-nav-item.active {
+    color: #C8A44A;
+    background: rgba(200, 164, 74, 0.07);
+}
+.settings-nav-cursor {
+    position: absolute;
+    left: 0;
+    top: 20%;
+    width: 2px;
+    height: 60%;
+    background: #C8A44A;
+    border-radius: 1px;
+}
+.settings-nav-icon {
+    font-size: 0.9rem;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.settings-nav-label {
+    flex: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ M AIN CONTENT                                                                                           *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    background: rgba(8, 10, 16, 0.5);
+}
+
+.settings-main::-webkit-scrollbar { width: 4px; }
+.settings-main::-webkit-scrollbar-track { background: transparent; }
+.settings-main::-webkit-scrollbar-thumb { background: rgba(200, 164, 74, 0.2); border-radius: 2px; }
+
+.settings-section-body {
+    padding: 1.8rem 2.2rem;
+    max-width: 820px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ T ITRES DE SECTION                                                                                      *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-section-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.12);
+}
+.settings-section-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    margin-top: 2px;
+}
+.settings-section-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: #C8A44A;
+}
+.settings-section-sub {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: rgba(140, 160, 200, 0.5);
+    margin-top: 3px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ G ROUPES                                                                                                *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-group {
+    margin-bottom: 2rem;
+    border: 1px solid rgba(200, 164, 74, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.settings-group-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: rgba(200, 164, 74, 0.6);
+    padding: 0.55rem 1rem;
+    background: rgba(200, 164, 74, 0.04);
+    border-bottom: 1px solid rgba(200, 164, 74, 0.08);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ C HAMPS                                                                                                 *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-field {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.05);
+}
+.settings-field:last-child { border-bottom: none; }
+
+.settings-field-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: rgba(200, 210, 230, 0.8);
+    margin-bottom: 0.35rem;
+}
+.settings-field-hint {
+    font-size: 0.65rem;
+    color: rgba(120, 140, 180, 0.5);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ I NPUTS                                                                                                 *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-input {
+    width: 100%;
+    background: rgba(10, 14, 22, 0.8);
+    border: 1px solid rgba(200, 164, 74, 0.18);
+    border-radius: 2px;
+    color: rgba(200, 210, 240, 0.9);
+    padding: 0.5rem 0.7rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.82rem;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+.settings-input.mono {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+}
+.settings-input:focus {
+    outline: none;
+    border-color: rgba(200, 164, 74, 0.45);
+    background: rgba(12, 16, 26, 0.9);
+}
+
+.settings-textarea {
+    width: 100%;
+    background: rgba(10, 14, 22, 0.8);
+    border: 1px solid rgba(200, 164, 74, 0.18);
+    border-radius: 2px;
+    color: rgba(200, 210, 240, 0.9);
+    padding: 0.6rem 0.7rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    resize: vertical;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+.settings-textarea.mono {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    line-height: 1.5;
+}
+.settings-textarea:focus {
+    outline: none;
+    border-color: rgba(200, 164, 74, 0.45);
+}
+
+.settings-input-number {
+    background: rgba(10, 14, 22, 0.8);
+    border: 1px solid rgba(200, 164, 74, 0.18);
+    border-radius: 2px;
+    color: rgba(200, 210, 240, 0.9);
+    padding: 0.4rem 0.6rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.82rem;
+    width: 90px;
+    text-align: right;
+}
+.settings-input-number:focus {
+    outline: none;
+    border-color: rgba(200, 164, 74, 0.45);
+}
+
+.settings-select {
+    background: rgba(10, 14, 22, 0.8);
+    border: 1px solid rgba(200, 164, 74, 0.18);
+    border-radius: 2px;
+    color: rgba(200, 210, 240, 0.9);
+    padding: 0.45rem 0.7rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    min-width: 220px;
+}
+.settings-select:focus { outline: none; border-color: rgba(200, 164, 74, 0.45); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ T OGGLE                                                                                                 *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+.settings-toggle-track {
+    width: 34px;
+    height: 18px;
+    background: rgba(200, 164, 74, 0.1);
+    border: 1px solid rgba(200, 164, 74, 0.25);
+    border-radius: 9px;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+}
+.settings-toggle.active .settings-toggle-track {
+    background: rgba(200, 164, 74, 0.22);
+    border-color: rgba(200, 164, 74, 0.55);
+}
+.settings-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background: rgba(200, 164, 74, 0.35);
+    border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
+}
+.settings-toggle.active .settings-toggle-thumb {
+    transform: translateX(16px);
+    background: #C8A44A;
+}
+.settings-toggle-label {
+    font-size: 0.75rem;
+    color: rgba(160, 180, 220, 0.7);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ R ADIO CARDS (Mode IA)                                                                                  *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-radio-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+.settings-radio-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid rgba(200, 164, 74, 0.12);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: rgba(10, 14, 22, 0.5);
+}
+.settings-radio-card:hover {
+    border-color: rgba(200, 164, 74, 0.3);
+    background: rgba(200, 164, 74, 0.04);
+}
+.settings-radio-card.selected {
+    border-color: rgba(200, 164, 74, 0.55);
+    background: rgba(200, 164, 74, 0.07);
+}
+.settings-radio-card input[type="radio"] { display: none; }
+.settings-radio-label {
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: rgba(200, 210, 240, 0.9);
+    letter-spacing: 0.05em;
+}
+.settings-radio-card.selected .settings-radio-label { color: #C8A44A; }
+.settings-radio-desc {
+    font-size: 0.65rem;
+    color: rgba(120, 140, 180, 0.55);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ R OLES CUSTOM                                                                                           *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-custom-roles {
+    padding: 0 1rem 0.5rem;
+    border-top: 1px solid rgba(200, 164, 74, 0.08);
+    margin-top: 0.5rem;
+}
+.settings-role-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.04);
+}
+.settings-role-label {
+    font-size: 0.75rem;
+    color: rgba(160, 180, 220, 0.7);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ S TATUS API                                                                                             *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.settings-btn-test {
+    background: rgba(200, 164, 74, 0.08);
+    border: 1px solid rgba(200, 164, 74, 0.22);
+    color: rgba(200, 164, 74, 0.75);
+    padding: 0.4rem 0.8rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    border-radius: 2px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.15s;
+}
+.settings-btn-test:hover {
+    background: rgba(200, 164, 74, 0.15);
+    color: #C8A44A;
+}
+.settings-status {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.settings-status.ok     { color: #3ABF7A; }
+.settings-status.error  { color: #C04040; }
+.settings-status.testing{ color: #C8A44A; opacity: 0.7; }
+.settings-status.missing{ color: rgba(200, 164, 74, 0.4); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ T ABS (Section Conseil)                                                                                 *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.1);
+}
+.settings-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: rgba(160, 180, 220, 0.5);
+    padding: 0.5rem 1rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: -1px;
+}
+.settings-tab:hover { color: rgba(200, 164, 74, 0.7); }
+.settings-tab.active {
+    color: #C8A44A;
+    border-bottom-color: #C8A44A;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ T ABLE RÉGIMES (Section Simulation)                                                                     *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-regime-hint {
+    padding: 0.5rem 1rem;
+    font-size: 0.65rem;
+    color: rgba(120, 140, 180, 0.5);
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.05);
+}
+.settings-regime-table {
+    overflow-x: auto;
+}
+.settings-regime-header,
+.settings-regime-row {
+    display: grid;
+    grid-template-columns: 200px repeat(4, 90px);
+    align-items: center;
+    padding: 0.45rem 1rem;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.05);
+}
+.settings-regime-header {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: rgba(140, 160, 200, 0.45);
+    font-weight: 600;
+    background: rgba(200, 164, 74, 0.03);
+}
+.settings-regime-name {
+    font-size: 0.75rem;
+    color: rgba(200, 210, 240, 0.75);
+}
+.settings-regime-input {
+    background: rgba(10, 14, 22, 0.8);
+    border: 1px solid rgba(200, 164, 74, 0.15);
+    border-radius: 2px;
+    color: rgba(200, 210, 240, 0.9);
+    padding: 0.3rem 0.4rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    text-align: right;
+    width: 80px;
+}
+.settings-regime-input:focus {
+    outline: none;
+    border-color: rgba(200, 164, 74, 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ T ERRAINS                                                                                               *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-terrain-block {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.06);
+}
+.settings-terrain-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(200, 164, 74, 0.75);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.08em;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ E XPORT / IMPORT                                                                                        *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-export-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding: 1rem;
+}
+.settings-export-btn {
+    background: rgba(74, 126, 200, 0.08);
+    border: 1px solid rgba(74, 126, 200, 0.22);
+    color: rgba(100, 160, 230, 0.8);
+    padding: 0.5rem 1rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.settings-export-btn:hover,
+.settings-export-btn.import:hover {
+    background: rgba(74, 126, 200, 0.15);
+    color: rgba(120, 180, 255, 0.95);
+}
+.settings-export-btn.import {
+    display: inline-block;
+    background: rgba(58, 191, 122, 0.08);
+    border-color: rgba(58, 191, 122, 0.22);
+    color: rgba(58, 191, 122, 0.8);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ Z ONE DANGER                                                                                            *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-danger-zone {
+    padding: 1rem;
+    background: rgba(180, 40, 40, 0.04);
+    border-left: 2px solid rgba(180, 40, 40, 0.3);
+    margin: 0.5rem 0;
+}
+.settings-danger-desc {
+    font-size: 0.72rem;
+    color: rgba(200, 100, 100, 0.7);
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+}
+.settings-danger-btn {
+    background: rgba(180, 40, 40, 0.1);
+    border: 1px solid rgba(180, 40, 40, 0.3);
+    color: rgba(200, 80, 80, 0.8);
+    padding: 0.5rem 1.1rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.settings-danger-btn.armed {
+    background: rgba(180, 40, 40, 0.25);
+    border-color: rgba(200, 60, 60, 0.6);
+    color: #FF6060;
+    animation: dangerPulse 0.6s ease-in-out infinite alternate;
+}
+@keyframes dangerPulse {
+    from { box-shadow: 0 0 0 rgba(200,60,60,0); }
+    to   { box-shadow: 0 0 8px rgba(200,60,60,0.3); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ À PROPOS                                                                                               *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-apropos-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.2rem;
+    border: 1px solid rgba(200, 164, 74, 0.1);
+    border-radius: 3px;
+    margin-bottom: 1.5rem;
+    background: rgba(200, 164, 74, 0.03);
+}
+.settings-version-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+.settings-version-number {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: #C8A44A;
+    font-weight: 700;
+}
+.settings-version-name {
+    font-size: 0.6rem;
+    color: rgba(200, 164, 74, 0.5);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+}
+.settings-apropos-desc {
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: rgba(160, 180, 220, 0.65);
+}
+.settings-apropos-desc em {
+    color: rgba(200, 164, 74, 0.6);
+    font-style: normal;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+}
+
+.settings-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.8rem 1rem;
+}
+.settings-link {
+    color: rgba(100, 160, 230, 0.7);
+    text-decoration: none;
+    font-size: 0.78rem;
+    transition: color 0.15s;
+}
+.settings-link:hover { color: rgba(120, 180, 255, 0.95); }
+
+.settings-tech-stack {
+    padding: 0.5rem 0;
+}
+.settings-tech-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 1rem;
+    border-bottom: 1px solid rgba(200, 164, 74, 0.04);
+    font-size: 0.73rem;
+}
+.settings-tech-row span:first-child {
+    color: rgba(200, 164, 74, 0.6);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+.settings-tech-row span:last-child {
+    color: rgba(160, 180, 220, 0.6);
+    font-family: 'Courier New', monospace;
+    font-size: 0.68rem;
+}
+
+.settings-quote {
+    margin: 0;
+    padding: 1rem 1.2rem;
+    border-left: 2px solid rgba(200, 164, 74, 0.3);
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: rgba(160, 180, 220, 0.6);
+    font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ B OUTONS RESET & SAVE                                                                                   *
+ ───────────────────────────────────────────────────────────────────────────── */
+
+.settings-btn-reset {
+    background: none;
+    border: none;
+    color: rgba(200, 164, 74, 0.35);
+    font-size: 0.65rem;
+    cursor: pointer;
+    padding: 0.2rem 0;
+    margin-top: 0.3rem;
+    transition: color 0.15s;
+    letter-spacing: 0.05em;
+}
+.settings-btn-reset:hover { color: rgba(200, 164, 74, 0.7); }
+
+.settings-footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1rem 0;
+    border-top: 1px solid rgba(200, 164, 74, 0.08);
+    margin-top: 1rem;
+}
+.settings-save-btn {
+    background: rgba(200, 164, 74, 0.1);
+    border: 1px solid rgba(200, 164, 74, 0.3);
+    color: #C8A44A;
+    padding: 0.55rem 1.4rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.settings-save-btn:hover {
+    background: rgba(200, 164, 74, 0.18);
+    border-color: rgba(200, 164, 74, 0.55);
+}
+.settings-save-badge {
+    font-size: 0.7rem;
+    color: #3ABF7A;
+    letter-spacing: 0.08em;
+    animation: fadein 0.3s ease;
+}
+@keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }

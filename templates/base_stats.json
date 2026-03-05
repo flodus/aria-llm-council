@@ -1,0 +1,357 @@
+{
+  "global_start": {
+    "annee": 2026,
+    "popularite": 65,
+    "humeur": "Stable",
+    "humeur_score": 50,
+    "population": 10000000
+  },
+  "regimes": {
+    "democratie_liberale": {
+      "name": "Démocratie Libérale",
+      "emoji": "🗳️",
+      "coeff_satisfaction": 1.2,
+      "coeff_croissance": 1.0,
+      "taux_natalite": 0.013,
+      "taux_mortalite": 0.009,
+      "poids_ministeriel": {
+        "justice": 1.3,
+        "economie": 1.0,
+        "defense": 0.8,
+        "sante": 1.2,
+        "education": 1.2,
+        "ecologie": 1.0
+      }
+    },
+    "republique_federale": {
+      "name": "République Fédérale",
+      "emoji": "🏛️",
+      "coeff_satisfaction": 1.0,
+      "coeff_croissance": 1.1,
+      "taux_natalite": 0.015,
+      "taux_mortalite": 0.01,
+      "poids_ministeriel": {
+        "justice": 1.1,
+        "economie": 1.2,
+        "defense": 1.0,
+        "sante": 1.0,
+        "education": 1.1,
+        "ecologie": 0.9
+      }
+    },
+    "monarchie_constitutionnelle": {
+      "name": "Monarchie Constitutionnelle",
+      "emoji": "👑",
+      "coeff_satisfaction": 0.9,
+      "coeff_croissance": 1.0,
+      "taux_natalite": 0.012,
+      "taux_mortalite": 0.01,
+      "poids_ministeriel": {
+        "justice": 1.0,
+        "economie": 1.1,
+        "defense": 1.2,
+        "sante": 0.9,
+        "education": 1.0,
+        "ecologie": 0.8
+      }
+    },
+    "technocratie_ia": {
+      "name": "Technocratie ARIA",
+      "emoji": "🤖",
+      "coeff_satisfaction": 0.85,
+      "coeff_croissance": 1.4,
+      "taux_natalite": 0.011,
+      "taux_mortalite": 0.008,
+      "poids_ministeriel": {
+        "justice": 0.9,
+        "economie": 1.5,
+        "defense": 1.1,
+        "sante": 1.0,
+        "education": 1.3,
+        "ecologie": 1.2
+      }
+    },
+    "junte_militaire": {
+      "name": "Junte Militaire",
+      "emoji": "🎖️",
+      "coeff_satisfaction": 0.7,
+      "coeff_croissance": 0.9,
+      "taux_natalite": 0.022,
+      "taux_mortalite": 0.014,
+      "poids_ministeriel": {
+        "justice": 0.6,
+        "economie": 0.9,
+        "defense": 1.8,
+        "sante": 0.7,
+        "education": 0.7,
+        "ecologie": 0.5
+      }
+    },
+    "oligarchie": {
+      "name": "Oligarchie",
+      "emoji": "💼",
+      "coeff_satisfaction": 0.75,
+      "coeff_croissance": 1.2,
+      "taux_natalite": 0.014,
+      "taux_mortalite": 0.011,
+      "poids_ministeriel": {
+        "justice": 0.7,
+        "economie": 1.6,
+        "defense": 1.0,
+        "sante": 0.8,
+        "education": 0.8,
+        "ecologie": 0.6
+      }
+    },
+    "theocratie": {
+      "name": "Théocratie",
+      "emoji": "🕌",
+      "coeff_satisfaction": 0.8,
+      "coeff_croissance": 0.85,
+      "taux_natalite": 0.028,
+      "taux_mortalite": 0.013,
+      "poids_ministeriel": {
+        "justice": 1.2,
+        "economie": 0.8,
+        "defense": 1.1,
+        "sante": 1.0,
+        "education": 0.9,
+        "ecologie": 0.7
+      }
+    },
+    "regime_autoritaire": {
+      "name": "Régime Autoritaire",
+      "emoji": "🔒",
+      "coeff_satisfaction": 0.65,
+      "coeff_croissance": 0.95,
+      "taux_natalite": 0.018,
+      "taux_mortalite": 0.012,
+      "poids_ministeriel": {
+        "justice": 0.6,
+        "economie": 1.0,
+        "defense": 1.5,
+        "sante": 0.7,
+        "education": 0.7,
+        "ecologie": 0.5
+      }
+    },
+    "monarchie_absolue": {
+      "name": "Monarchie Absolue",
+      "emoji": "👑",
+      "coeff_satisfaction": 0.72,
+      "coeff_croissance": 1.05,
+      "taux_natalite": 0.02,
+      "taux_mortalite": 0.01,
+      "poids_ministeriel": {
+        "justice": 0.8,
+        "economie": 1.2,
+        "defense": 1.3,
+        "sante": 0.9,
+        "education": 0.7,
+        "ecologie": 0.6
+      }
+    },
+    "communisme": {
+      "name": "Parti Communiste",
+      "emoji": "☭",
+      "coeff_satisfaction": 0.78,
+      "coeff_croissance": 0.9,
+      "taux_natalite": 0.016,
+      "taux_mortalite": 0.011,
+      "poids_ministeriel": {
+        "justice": 0.8,
+        "economie": 1.3,
+        "defense": 1.2,
+        "sante": 1.3,
+        "education": 1.4,
+        "ecologie": 0.7
+      }
+    },
+    "nationalisme_autoritaire": {
+      "name": "Nationalisme Autoritaire",
+      "emoji": "⚡",
+      "coeff_satisfaction": 0.68,
+      "coeff_croissance": 0.92,
+      "taux_natalite": 0.019,
+      "taux_mortalite": 0.013,
+      "poids_ministeriel": {
+        "justice": 0.6,
+        "economie": 1.1,
+        "defense": 1.7,
+        "sante": 0.8,
+        "education": 0.9,
+        "ecologie": 0.5
+      }
+    }
+  },
+  "terrains": {
+    "coastal": {
+      "name": "Côtier",
+      "modificateur_pop": 1.1,
+      "modificateur_eco": 1.2,
+      "ressources_garanties": [
+        "peche"
+      ],
+      "ressources_possibles": [
+        "agriculture",
+        "petrole",
+        "energie",
+        "commerce"
+      ]
+    },
+    "inland": {
+      "name": "Enclavé",
+      "modificateur_pop": 0.95,
+      "modificateur_eco": 1.05,
+      "ressources_garanties": [
+        "mineraux"
+      ],
+      "ressources_possibles": [
+        "agriculture",
+        "bois",
+        "energie",
+        "eau"
+      ]
+    },
+    "island": {
+      "name": "Insulaire",
+      "modificateur_pop": 0.8,
+      "modificateur_eco": 0.95,
+      "ressources_garanties": [
+        "peche"
+      ],
+      "ressources_possibles": [
+        "petrole",
+        "energie",
+        "eau"
+      ]
+    },
+    "archipelago": {
+      "name": "Archipel",
+      "modificateur_pop": 0.75,
+      "modificateur_eco": 0.9,
+      "ressources_garanties": [
+        "peche",
+        "eau"
+      ],
+      "ressources_possibles": [
+        "petrole",
+        "energie"
+      ]
+    },
+    "highland": {
+      "name": "Montagneux",
+      "modificateur_pop": 0.85,
+      "modificateur_eco": 0.9,
+      "ressources_garanties": [
+        "mineraux",
+        "eau"
+      ],
+      "ressources_possibles": [
+        "bois",
+        "energie",
+        "agriculture"
+      ]
+    }
+  },
+  "calculs_cycles": {
+    "derive_satisfaction_base": -2,
+    "impact_ressource_presente": 1.5,
+    "impact_ressource_absente": -3,
+    "impact_alliance": 2,
+    "impact_conflit": -4,
+    "seuil_revolte": 20,
+    "seuil_crise_demo": 200,
+    "taux_natalite_defaut": 0.018,
+    "taux_mortalite_defaut": 0.01,
+    "bruit_max": 3
+  },
+  "humeurs": [
+    {
+      "min": 80,
+      "label": "Euphorique",
+      "color": "#3ABF7A"
+    },
+    {
+      "min": 65,
+      "label": "Prospère",
+      "color": "#5ABF5A"
+    },
+    {
+      "min": 50,
+      "label": "Stable",
+      "color": "#C8A44A"
+    },
+    {
+      "min": 35,
+      "label": "Tendu",
+      "color": "#C07A30"
+    },
+    {
+      "min": 20,
+      "label": "Agitation sociale",
+      "color": "#C05050"
+    },
+    {
+      "min": 0,
+      "label": "Au bord du gouffre",
+      "color": "#8A2020"
+    }
+  ],
+  "pays_locaux": [
+    {
+      "id": "valoria",
+      "nom": "République de Valoria",
+      "emoji": "🏛️",
+      "couleur": "#4A7EC8",
+      "regime": "democratie_liberale",
+      "terrain": "coastal",
+      "description": "Une démocratie maritime fondée sur le commerce et le débat citoyen.",
+      "leader": {
+        "nom": "Sénatrice Aria Voss",
+        "titre": "Présidente du Sénat",
+        "trait": "Pragmatique et visionnaire, elle a réformé la constitution deux fois en dix ans."
+      },
+      "population": 8400000,
+      "tauxNatalite": 13.2,
+      "tauxMortalite": 8.8,
+      "satisfaction": 68
+    },
+    {
+      "id": "eldoria",
+      "nom": "Royaume d'Eldoria",
+      "emoji": "👑",
+      "couleur": "#C8A44A",
+      "regime": "monarchie_constitutionnelle",
+      "terrain": "highland",
+      "description": "Un vieux royaume montagneux dont les traditions millénaires coexistent avec une industrialisation tardive.",
+      "leader": {
+        "nom": "Roi Aldren IV",
+        "titre": "Roi-Chancelier",
+        "trait": "Conservateur mais lucide, il sait que son règne est peut-être le dernier de la lignée."
+      },
+      "population": 5200000,
+      "tauxNatalite": 11.8,
+      "tauxMortalite": 10.2,
+      "satisfaction": 61
+    },
+    {
+      "id": "thalassia",
+      "nom": "Confédération de Thalassia",
+      "emoji": "🌊",
+      "couleur": "#4AA87A",
+      "regime": "republique_federale",
+      "terrain": "archipelago",
+      "description": "Un archipel fédéral dont chaque île s'est dotée d'une autonomie farouche et d'une flotte marchande redoutable.",
+      "leader": {
+        "nom": "Amiral-Consul Mira Ohan",
+        "titre": "Consul Fédéral",
+        "trait": "Née sur un cargo, elle gouverne comme elle navigue : en lisant les courants avant les cartes."
+      },
+      "population": 3100000,
+      "tauxNatalite": 15.5,
+      "tauxMortalite": 9.1,
+      "satisfaction": 72
+    }
+  ]
+}
