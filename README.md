@@ -52,15 +52,12 @@ Interrogation centrale : Que se passe-t-il si la délibération contradictoire d
 🚀 Installation rapide
 Cloner le projet
 
-Bash
+```bash
 git clone https://github.com/votre-compte/aria-llm-council.git
 cd aria-llm-council
-Installer les dépendances
-
-Bash
 npm install
-Lancer le dashboard
-
-Bash
 npm run dev
+```
+
 Projet en cours de développement — Expérimentation sur la gouvernance algorithmique.
+
