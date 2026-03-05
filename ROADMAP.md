@@ -1,3 +1,6 @@
+### 🗺️ ARIA STRATEGIC ROADMAP
+
+```text
 ================================================================================
   ARIA STRATEGIC ROADMAP - [PROJECTED EVOLUTIONS]
 ================================================================================
@@ -26,8 +29,6 @@
  ├─[13] The Great Splitting .... [Secession Logic: Hex Rip] ....... ⬡ 0%
  ├─[14] Border Friction ........ [Conflict at Hex Edges] .......... ⬡ 0%
  └─[15] Resource Depletion ..... [Hex-based industrial yield] ..... ⬡ 0%
-
 ================================================================================
  PROGRESS: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%
- SYSTEM MESSAGE: Shifting geometry to Hex-Grid & Systemic Triggers...
 ================================================================================
