@@ -17,14 +17,19 @@ import { FONT, COLOR }  from './ariaTheme';
 
 const TABS = [
   { id: 'map',      label: 'MAP-GRID'    },
-{ id: 'council',  label: 'LLM COUNCIL' },
-{ id: 'timeline', label: 'CHRONOLOG'   },
+  { id: 'council',  label: 'LLM COUNCIL' },
+  { id: 'timeline', label: 'CHRONOLOG'   },
 ];
 
 export default function App() {
   // ── États globaux ─────────────────────────────────────────────────────
   const [worldGenerated,  setWorldGenerated]  = useState(() => {
-    try { return !!JSON.parse(localStorage.getItem('aria_session_active') || 'false'); }
+    try {
+      const active = localStorage.getItem('aria_session_active');
+      if (!active) return false;
+      const countries = JSON.parse(localStorage.getItem('aria_session_countries') || '[]');
+      return Array.isArray(countries) && countries.length > 0;
+    }
     catch { return false; }
   });
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -93,16 +98,14 @@ export default function App() {
     }
   };
 
-  const handleLaunchLocal = useCallback(() => {
+  const handleLaunchLocal = useCallback((customDefs) => {
     setWorldGenerated(true);
-    try { localStorage.setItem('aria_session_active', 'true'); } catch {}
     startAudio();
-    setTimeout(() => ariaRef.current?.startLocal(1400, 800), 100);
+    setTimeout(() => ariaRef.current?.startLocal(customDefs, 1400, 800), 100);
   }, []);
 
   const handleLaunchAI = useCallback((defs) => {
     setWorldGenerated(true);
-    try { localStorage.setItem('aria_session_active', 'true'); } catch {}
     startAudio();
     setTimeout(() => ariaRef.current?.startWithAI(defs, 1400, 800), 100);
   }, []);
@@ -132,12 +135,18 @@ export default function App() {
     const cs = ariaRef.current?.getCountries?.(); if (cs)              setLiveCountries(cs);
   }, []);
 
-  const handleSecession    = useCallback(() => ariaRef.current?.doSecession?.(selectedCountry?.id, 'Nouvelle entité', 'Neutre'), [selectedCountry]);
+  const handleSecession    = useCallback(() => ariaRef.current?.openSecession?.(), []);
   const handleCrisisToggle = useCallback(() => setIsCrisis(p => !p), []);
 
   const handleReset = useCallback(() => {
+    // Nettoyer toute la session persistée
+    try {
+      localStorage.removeItem('aria_session_active');
+      localStorage.removeItem('aria_session_world');
+      localStorage.removeItem('aria_session_countries');
+      localStorage.removeItem('aria_session_alliances');
+    } catch {}
     setWorldGenerated(false);
-    try { localStorage.removeItem('aria_session_active'); } catch {}
     setSelectedCountry(null);
     setCurrentYear(null);
     setCurrentCycle(0);
@@ -154,109 +163,109 @@ export default function App() {
 
   // ── Année + cycle pour le header ──────────────────────────────────────
   const yearLabel = currentYear
-  ? `AN ${currentYear} · Cycle ${currentCycle}`
-  : null;
+    ? `AN ${currentYear} · Cycle ${currentCycle}`
+    : null;
 
   // ── Rendu ─────────────────────────────────────────────────────────────
   return (
     <div className="app-shell">
 
-    {/* Settings — overlay par-dessus le dashboard (ne démonte pas) */}
-    {page === 'settings' && (
-      <div style={{ position:'fixed', inset:0, zIndex:8000 }}>
-      <Settings onClose={() => setPage('dashboard')} />
-      </div>
-    )}
+      {/* Settings — overlay par-dessus le dashboard (ne démonte pas) */}
+      {page === 'settings' && (
+        <div style={{ position:'fixed', inset:0, zIndex:8000 }}>
+          <Settings onClose={() => setPage('dashboard')} />
+        </div>
+      )}
 
-    {/* Écran init */}
-    {!worldGenerated && page !== 'settings' && (
-      <div className="init-overlay">
-      <InitScreen
-      worldName={worldName} setWorldName={setWorldName}
-      onLaunchLocal={handleLaunchLocal} onLaunchAI={handleLaunchAI}
-      hasApiKeys={hasApiKeys} onRefreshKeys={refreshKeys}
-      />
-      </div>
-    )}
+      {/* Écran init */}
+      {!worldGenerated && page !== 'settings' && (
+        <div className="init-overlay">
+          <InitScreen
+            worldName={worldName} setWorldName={setWorldName}
+            onLaunchLocal={handleLaunchLocal} onLaunchAI={handleLaunchAI}
+            hasApiKeys={hasApiKeys} onRefreshKeys={refreshKeys}
+          />
+        </div>
+      )}
 
-    {/* Rapport légitimité */}
-    {showLegitimite && (
-      <LegitimiteOverlay liveCountries={liveCountries} onClose={() => setShowLegitimite(false)} />
-    )}
+      {/* Rapport légitimité */}
+      {showLegitimite && (
+        <LegitimiteOverlay liveCountries={liveCountries} onClose={() => setShowLegitimite(false)} />
+      )}
 
-    {/* Topbar */}
-    <header className="topbar" style={{ visibility: page === 'settings' ? 'hidden' : 'visible' }}>
-    <div className="topbar-logo"
-    onClick={() => setShowLegitimite(true)}
-    title="Rapport de Légitimité Globale — ARIA"
-    style={{ cursor:'pointer' }}>
-    ARIA<small>DÉMOCRATIE HOLISTIQUE</small>
-    </div>
+      {/* Topbar */}
+      <header className="topbar" style={{ visibility: page === 'settings' ? 'hidden' : 'visible' }}>
+        <div className="topbar-logo"
+          onClick={() => setShowLegitimite(true)}
+          title="Rapport de Légitimité Globale — ARIA"
+          style={{ cursor:'pointer' }}>
+          ARIA<small>DÉMOCRATIE HOLISTIQUE</small>
+        </div>
 
-    <nav className="topbar-tabs">
-    {TABS.map(({ id, label }) => (
-      <button key={id}
-      className={`tab-btn${activeTab === id ? ' active' : ''}`}
-      onClick={() => setActiveTab(id)}>
-      {label}
-      </button>
-    ))}
-    </nav>
+        <nav className="topbar-tabs">
+          {TABS.map(({ id, label }) => (
+            <button key={id}
+              className={`tab-btn${activeTab === id ? ' active' : ''}`}
+              onClick={() => setActiveTab(id)}>
+              {label}
+            </button>
+          ))}
+        </nav>
 
-    {/* Année + cycle — centré, plus visible */}
-    {yearLabel && (
-      <div style={{
-        position:'absolute', left:'50%', transform:'translateX(-50%)',
-                   pointerEvents:'none', userSelect:'none',
-                   fontFamily: FONT.mono, fontSize:'0.62rem', letterSpacing:'0.20em',
-                   color:'rgba(200,164,74,0.75)',
-      }}>
-      {yearLabel}
-      </div>
-    )}
+        {/* Année + cycle — centré, plus visible */}
+        {yearLabel && (
+          <div style={{
+            position:'absolute', left:'50%', transform:'translateX(-50%)',
+            pointerEvents:'none', userSelect:'none',
+            fontFamily: FONT.mono, fontSize:'0.62rem', letterSpacing:'0.20em',
+            color:'rgba(200,164,74,0.75)',
+          }}>
+            {yearLabel}
+          </div>
+        )}
 
-    <div className="topbar-actions">
-    {isCrisis && (
-      <span style={{
-        fontFamily:FONT.mono, fontSize:'0.48rem', letterSpacing:'0.13em',
-        color: COLOR.red, border:'1px solid rgba(255,58,58,0.32)',
-                  padding:'0.22rem 0.55rem', animation:'pulse 1s ease-in-out infinite',
-      }}>
-      ⚠ CRISE
-      </span>
-    )}
-    <button className="btn-icon" onClick={() => setPage('settings')} title="Configuration ARIA">⚙</button>
-    </div>
-    </header>
+        <div className="topbar-actions">
+          {isCrisis && (
+            <span style={{
+              fontFamily:FONT.mono, fontSize:'0.48rem', letterSpacing:'0.13em',
+              color: COLOR.red, border:'1px solid rgba(255,58,58,0.32)',
+              padding:'0.22rem 0.55rem', animation:'pulse 1s ease-in-out infinite',
+            }}>
+              ⚠ CRISE
+            </span>
+          )}
+          <button className="btn-icon" onClick={() => setPage('settings')} title="Configuration ARIA">⚙</button>
+        </div>
+      </header>
 
-    {/* Carte — toujours montée pour préserver l'état */}
-    <main className="map-canvas">
-    <div className="ocean-bg" />
-    <Dashboard
-    selectedCountry={selectedCountry}
-    setSelectedCountry={setSelectedCountry}
-    isCrisis={isCrisis}
-    activeTab={activeTab}
-    onReady={handleAriaReady}
-    onCountriesUpdate={handleCountriesUpdate}
-    onReset={handleReset}
-    />
-    </main>
+      {/* Carte — toujours montée pour préserver l'état */}
+      <main className="map-canvas">
+        <div className="ocean-bg" />
+        <Dashboard
+          selectedCountry={selectedCountry}
+          setSelectedCountry={setSelectedCountry}
+          isCrisis={isCrisis}
+          activeTab={activeTab}
+          onReady={handleAriaReady}
+          onCountriesUpdate={handleCountriesUpdate}
+          onReset={handleReset}
+        />
+      </main>
 
-    {/* Panneau latéral */}
-    <aside className="side-panel">
-    {selectedCountry === null
-      ? <EmptyPanel />
-      : <CountryPanel
-      country={selectedCountry}
-      isCrisis={isCrisis}
-      onClose={() => setSelectedCountry(null)}
-      onSecession={handleSecession}
-      onNextCycle={handleNextCycle}
-      onCrisisToggle={handleCrisisToggle}
-      />
-    }
-    </aside>
+      {/* Panneau latéral */}
+      <aside className="side-panel">
+        {selectedCountry === null
+          ? <EmptyPanel />
+          : <CountryPanel
+              country={selectedCountry}
+              isCrisis={isCrisis}
+              onClose={() => setSelectedCountry(null)}
+              onSecession={handleSecession}
+              onNextCycle={handleNextCycle}
+              onCrisisToggle={handleCrisisToggle}
+            />
+        }
+      </aside>
     </div>
   );
 }
