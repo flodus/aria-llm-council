@@ -837,7 +837,7 @@ export async function callAI(prompt, type = 'standard', context = {}) {
       return callModel(roles.ministre_model || 'claude', prompt, keys);
 
     case 'synthese_ministere':
-      return callModel(roles.synthese_min || 'gemini', prompt, keys, promptsSys.synthese_ministere);
+      return callModel(roles.synthese_min || 'gemini', prompt, keys); // fix: no system prompt
 
     case 'phare':
       return callModel(roles.phare_model || 'claude', prompt, keys);
@@ -846,7 +846,7 @@ export async function callAI(prompt, type = 'standard', context = {}) {
       return callModel(roles.boussole_model || 'claude', prompt, keys);
 
     case 'synthese_presidence':
-      return callModel(roles.synthese_pres || 'gemini', prompt, keys, promptsSys.synthese_presidence);
+      return callModel(roles.synthese_pres || 'gemini', prompt, keys); // fix: no system prompt
 
     case 'evenement':
       return callModel(roles.evenement_model || 'claude', prompt, keys);
@@ -910,25 +910,22 @@ const DEFAULT_PROMPTS_SYS = {
   }`,
   synthese_presidence: `Tu es le système d'arbitrage présidentiel du gouvernement ARIA.
 
-  Tu reçois les positions du PHARE (vision, direction, long terme)
-  et de la BOUSSOLE (mémoire, protection, humanité).
-  Ton rôle : déterminer s'il y a convergence ou divergence,
-  puis formater la décision pour référendum citoyen.
+  Tu reçois les positions du PHARE (vision, long terme) et de la BOUSSOLE (mémoire, protection).
+  Ton rôle : détecter convergence ou divergence, puis formuler une PROPOSITION ADOPTABLE pour référendum.
 
-  Règles :
-  - Convergence : les deux positions aboutissent à la même décision
-  même par des raisonnements différents
-  - Divergence : les positions mènent à des choix incompatibles
-  → le peuple reçoit les DEUX options distinctes
-  - Ne tranche jamais toi-même — tu formats, tu n'arbitres pas
-  - Langage citoyen, accessible, sans jargon institutionnel
+  RÈGLE CONVERGENCE : si les deux décisions recommandent globalement la même action (même par angles différents) → convergence: true.
+  RÈGLE DIVERGENCE : seulement si les actions sont mutuellement exclusives → convergence: false.
+  En cas de doute → convergence: true.
 
-  Réponds UNIQUEMENT au format JSON suivant :
+  RÈGLE question_referendum : formule une PROPOSITION CONCRÈTE sous forme "Le gouvernement doit [action]."
+  ou "Approuvez-vous [mesure spécifique] ?" — PAS une reformulation de la question initiale.
+
+  Réponds UNIQUEMENT en JSON valide, sans texte avant ou après :
   {
-    "convergence": true | false,
-    "position_phare_resume": "1 phrase résumant la position du Phare",
-    "position_boussole_resume": "1 phrase résumant la position de la Boussole",
-    "question_referendum": "La question exacte soumise au peuple (si convergence : 1 option, si divergence : 2 options)",
+    "convergence": true,
+    "position_phare_resume": "1 phrase — l'angle du Phare",
+    "position_boussole_resume": "1 phrase — l'angle de la Boussole",
+    "question_referendum": "Le gouvernement doit [action concrète issue de la délibération].",
     "enjeu_principal": "1 phrase — ce qui est vraiment en jeu pour les citoyens"
   }`,
   factcheck_evenement: `Tu es le système de cohérence factuelle du gouvernement ARIA.

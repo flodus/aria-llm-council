@@ -54,18 +54,18 @@ const MINISTER_KEYS = [
   'arbitre','enqueteur','guide','stratege','inventeur','guerisseur',
 ];
 const MINISTER_LABELS = {
-  initiateur:'L\'Initiateur (Bélier)', gardien:'Le Gardien (Taureau)',
-  communicant:'Le Communicant (Gémeaux)', protecteur:'Le Protecteur (Cancer)',
-  ambassadeur:'L\'Ambassadeur (Lion)', analyste:'L\'Analyste (Vierge)',
-  arbitre:'L\'Arbitre (Balance)', enqueteur:'L\'Enquêteur (Scorpion)',
-  guide:'Le Guide (Sagittaire)', stratege:'Le Stratège (Capricorne)',
-  inventeur:'L\'Inventeur (Verseau)', guerisseur:'Le Guérisseur (Poissons)',
+  initiateur:'♈ L\'Initiateur (Bélier)', gardien:'♉ Le Gardien (Taureau)',
+  communicant:'♊ Le Communicant (Gémeaux)', protecteur:'♋ Le Protecteur (Cancer)',
+  ambassadeur:'♌ L\'Ambassadeur (Lion)', analyste:'♍ L\'Analyste (Vierge)',
+  arbitre:'♎ L\'Arbitre (Balance)', enqueteur:'♏ L\'Enquêteur (Scorpion)',
+  guide:'♐ Le Guide (Sagittaire)', stratege:'♑ Le Stratège (Capricorne)',
+  inventeur:'♒ L\'Inventeur (Verseau)', guerisseur:'♓ Le Guérisseur (Poissons)',
 };
 
 const MINISTRY_LABELS = {
   justice:'⚖️ Justice et Vérité', economie:'💰 Économie et Ressources',
   defense:'⚔️ Défense et Souveraineté', sante:'🏥 Santé et Protection Sociale',
-  education:'🎓 Éducation et Élévation', ecologie:'🌿 Transition Écologique',
+  education:'🎓 Éducation et Élévation', ecologie:'🌿 Transition Écologique', chance:'🎲 Chance et Imprévu',
 };
 
 const REGIME_LABELS = {
@@ -510,10 +510,30 @@ function SectionConstitution() {
   const save = () => { savePrompts(prompts); setSaved(true); };
   const reset = (key) => { update(key, DEFAULT_PROMPTS[key]); };
 
+  // Découpe un prompt en "corps" + "bloc JSON attendu"
+  const parsePromptParts = (text) => {
+    const jsonStart = text.indexOf('Format JSON');
+    if (jsonStart === -1) return { body: text, json: null };
+    return {
+      body: text.slice(0, jsonStart).trim(),
+      json: text.slice(jsonStart).trim(),
+    };
+  };
+
+  const SYNTH_ENTRIES = [
+    { key: 'synthese_ministere',  label: 'Synthèse ministérielle',
+      hint: 'Reçoit les 2 ministres d\'un ministère → produit la position officielle du ministère' },
+    { key: 'synthese_presidence', label: 'Synthèse présidentielle',
+      hint: 'Reçoit Phare + Boussole → détecte convergence/divergence + formate référendum citoyen' },
+    { key: 'factcheck_evenement', label: 'Fact-check événements',
+      hint: 'Vérifie la cohérence des événements narratifs avec les statistiques réelles du pays' },
+  ];
+
   return (
     <div className="settings-section-body">
       <SectionTitle icon="📜" label="CONSTITUTION" sub="Prompts système, ton de synthèse, contexte géopolitique" />
 
+      {/* ── ADN GLOBAL — modifiable ── */}
       <div className="settings-group">
         <div className="settings-group-title">ADN GLOBAL</div>
 
@@ -533,28 +553,98 @@ function SectionConstitution() {
         </Field>
       </div>
 
-      <div className="settings-group">
-        <div className="settings-group-title">PROMPTS ARIA — SYNTHÈSE</div>
-
-        <Field label="Synthèse ministérielle" hint="Reçoit les 2 ministres d'un ministère → produit la position officielle">
-          <TextArea rows={6} mono value={prompts.synthese_ministere} onChange={v => update('synthese_ministere', v)} />
-          <button className="settings-btn-reset" onClick={() => reset('synthese_ministere')}>↺ Réinitialiser</button>
-        </Field>
-
-        <Field label="Synthèse présidentielle" hint="Reçoit Phare + Boussole → détecte convergence/divergence + formate référendum">
-          <TextArea rows={6} mono value={prompts.synthese_presidence} onChange={v => update('synthese_presidence', v)} />
-          <button className="settings-btn-reset" onClick={() => reset('synthese_presidence')}>↺ Réinitialiser</button>
-        </Field>
-
-        <Field label="Fact-check événements" hint="Vérifie la cohérence des événements narratifs avec les stats réelles">
-          <TextArea rows={6} mono value={prompts.factcheck_evenement} onChange={v => update('factcheck_evenement', v)} />
-          <button className="settings-btn-reset" onClick={() => reset('factcheck_evenement')}>↺ Réinitialiser</button>
-        </Field>
+      <div className="settings-footer" style={{ marginBottom: '1.2rem' }}>
+        <button className="settings-save-btn" onClick={save}>Sauvegarder l'ADN</button>
+        <SaveBadge saved={saved} />
       </div>
 
-      <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>Sauvegarder</button>
-        <SaveBadge saved={saved} />
+      {/* ── PROMPTS ARIA — SYNTHÈSE — lecture seule ── */}
+      <div className="settings-group">
+        <div className="settings-group-title" style={{ display:'flex', alignItems:'center', gap:'0.6rem' }}>
+          PROMPTS ARIA — SYNTHÈSE
+          <span style={{
+            fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
+            padding:'0.15rem 0.5rem', borderRadius:'2px',
+            background:'rgba(90,110,160,0.10)', border:'1px solid rgba(90,110,160,0.22)',
+            color:'rgba(140,160,200,0.55)', letterSpacing:'0.10em',
+          }}>LECTURE SEULE</span>
+        </div>
+        <div style={{
+          fontFamily:"'JetBrains Mono',monospace", fontSize:'0.43rem',
+          color:'rgba(140,160,200,0.45)', lineHeight:1.6, marginBottom:'0.8rem',
+        }}>
+          Ces prompts définissent le format de réponse JSON attendu par le moteur ARIA.
+          Leur structure est critique pour le bon fonctionnement du Conseil — toute modification
+          peut casser le parsing. Ils sont affichés ici à titre de référence.
+        </div>
+
+        {SYNTH_ENTRIES.map(({ key, label, hint }) => {
+          const { body, json } = parsePromptParts(DEFAULT_PROMPTS[key]);
+          return (
+            <div key={key} style={{
+              background:'rgba(8,13,22,0.70)',
+              border:'1px solid rgba(90,110,160,0.14)',
+              borderRadius:'2px', marginBottom:'0.9rem', overflow:'hidden',
+            }}>
+              {/* En-tête */}
+              <div style={{
+                padding:'0.5rem 0.8rem',
+                borderBottom:'1px solid rgba(90,110,160,0.10)',
+                background:'rgba(90,110,160,0.05)',
+                display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'0.5rem',
+              }}>
+                <div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.50rem',
+                    letterSpacing:'0.12em', color:'rgba(200,164,74,0.70)', textTransform:'uppercase' }}>
+                    {label}
+                  </div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.41rem',
+                    color:'rgba(140,160,200,0.40)', marginTop:'0.2rem', lineHeight:1.4 }}>
+                    {hint}
+                  </div>
+                </div>
+                <span style={{
+                  fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem', flexShrink:0,
+                  padding:'0.1rem 0.4rem', borderRadius:'2px',
+                  background:'rgba(90,110,160,0.08)', border:'1px solid rgba(90,110,160,0.15)',
+                  color:'rgba(90,110,160,0.50)', letterSpacing:'0.08em',
+                }}>🔒 non-modifiable</span>
+              </div>
+
+              {/* Corps du prompt */}
+              <div style={{ padding:'0.6rem 0.8rem' }}>
+                <pre style={{
+                  fontFamily:"'JetBrains Mono',monospace", fontSize:'0.43rem',
+                  color:'rgba(180,200,230,0.62)', lineHeight:1.65,
+                  whiteSpace:'pre-wrap', wordBreak:'break-word', margin:0,
+                }}>{body}</pre>
+
+                {/* Bloc format JSON */}
+                {json && (
+                  <div style={{
+                    marginTop:'0.6rem',
+                    borderTop:'1px solid rgba(200,164,74,0.10)',
+                    paddingTop:'0.5rem',
+                  }}>
+                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                      letterSpacing:'0.12em', color:'rgba(200,164,74,0.40)', marginBottom:'0.3rem' }}>
+                      ◈ FORMAT DE RÉPONSE ATTENDU
+                    </div>
+                    <pre style={{
+                      fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
+                      color:'rgba(100,200,120,0.65)', lineHeight:1.7,
+                      whiteSpace:'pre-wrap', wordBreak:'break-word', margin:0,
+                      padding:'0.5rem 0.6rem',
+                      background:'rgba(0,255,136,0.03)',
+                      border:'1px solid rgba(0,255,136,0.08)',
+                      borderRadius:'2px',
+                    }}>{json}</pre>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -687,13 +777,13 @@ function SectionConseil() {
 
       {tab === 'presidence' && (
         <div>
-          <Field label="Le Phare — Rôle" hint="Président de la Volonté et de la Direction">
+          <Field label="☉ Le Phare — Rôle" hint="Président de la Volonté et de la Direction">
             <TextArea rows={4}
               value={getVal('presidency.phare.role', PRESIDENCY?.phare?.role_long || '')}
               onChange={v => updateAgent('presidency.phare.role', v)}
             />
           </Field>
-          <Field label="Le Phare — Essence">
+          <Field label="☉ Le Phare — Essence">
             <TextArea rows={3}
               value={getVal('presidency.phare.essence', PRESIDENCY?.phare?.essence || '')}
               onChange={v => updateAgent('presidency.phare.essence', v)}
@@ -702,13 +792,13 @@ function SectionConseil() {
 
           <div style={{ borderTop: '1px solid rgba(200,164,74,0.15)', margin: '1.5rem 0' }} />
 
-          <Field label="La Boussole — Rôle" hint="Présidente de l'Âme et de la Réception">
+          <Field label="☽ La Boussole — Rôle" hint="Présidente de l'Âme et de la Réception">
             <TextArea rows={4}
               value={getVal('presidency.boussole.role', PRESIDENCY?.boussole?.role_long || '')}
               onChange={v => updateAgent('presidency.boussole.role', v)}
             />
           </Field>
-          <Field label="La Boussole — Essence">
+          <Field label="☽ La Boussole — Essence">
             <TextArea rows={3}
               value={getVal('presidency.boussole.essence', PRESIDENCY?.boussole?.essence || '')}
               onChange={v => updateAgent('presidency.boussole.essence', v)}

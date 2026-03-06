@@ -255,14 +255,18 @@ export default function App() {
       {/* Panneau latéral */}
       <aside className="side-panel">
         {selectedCountry === null
-          ? <EmptyPanel />
+          ? <EmptyPanel activeTab={activeTab} />
           : <CountryPanel
               country={selectedCountry}
               isCrisis={isCrisis}
+              activeTab={activeTab}
               onClose={() => setSelectedCountry(null)}
               onSecession={handleSecession}
               onNextCycle={handleNextCycle}
               onCrisisToggle={handleCrisisToggle}
+              onGoToCouncil={() => setActiveTab('council')}
+              onConstitution={() => ariaRef.current?.openConstitution?.()}
+              onSubmitQuestion={(q, ministryId) => ariaRef.current?.submitQuestion?.(q, ministryId)}
             />
         }
       </aside>

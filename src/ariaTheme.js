@@ -104,12 +104,12 @@ export const REGIME_LABELS = {
 
 export const RESOURCE_DEFS = [
     { key: 'agriculture', icon: '🌾', label: 'AGRICULTURE' },
-{ key: 'bois',        icon: '🪵', label: 'BOIS'        },
-{ key: 'eau',         icon: '💧', label: 'EAU DOUCE'   },
-{ key: 'energie',     icon: '⚡', label: 'ÉNERGIE'     },
-{ key: 'mineraux',    icon: '💎', label: 'MINÉRAUX'    },
-{ key: 'peche',       icon: '🐟', label: 'PÊCHE'       },
-{ key: 'petrole',     icon: '🛢️', label: 'PÉTROLE'     },
+    { key: 'bois',        icon: '🪵', label: 'BOIS'        },
+    { key: 'eau',         icon: '💧', label: 'EAU DOUCE'   },
+    { key: 'energie',     icon: '⚡', label: 'ÉNERGIE'     },
+    { key: 'mineraux',    icon: '💎', label: 'MINÉRAUX'    },
+    { key: 'peche',       icon: '🐟', label: 'PÊCHE'       },
+    { key: 'petrole',     icon: '🛢️', label: 'PÉTROLE'     },
 ];
 
 export const MARITIME = new Set(['coastal', 'island', 'archipelago']);

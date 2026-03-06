@@ -11,16 +11,16 @@ import { COLOR, FONT, mono, cinzel } from './ariaTheme';
 // ── Données Think-Tank (fixes) ────────────────────────────────────────────
 const MANIFESTE_PAYS = [
     { flag:'🇨🇳', nom:'Chine',           irl:82, note:"Acceptation naturelle d'une gouvernance technocratique centralisée, déjà intégrée dans le contrat social de stabilité contre performances." },
-{ flag:'🇯🇵', nom:'Japon',            irl:75, note:"Perception de l'IA comme une solution honorable et stable face au déclin démographique et à la fatigue des élites politiques humaines." },
-{ flag:'🇸🇦', nom:'Arabie Saoudite',  irl:65, note:"Adhésion Top-Down. Les élites voient ARIA comme le moteur de la Vision 2030, population habituée à une gouvernance performative." },
-{ flag:'🇮🇳', nom:'Inde',             irl:60, note:"Espoir d'une justice impartiale pour briser la corruption bureaucratique, balancé par d'immenses défis de diversité culturelle." },
-{ flag:'🇩🇪', nom:'Allemagne',        irl:52, note:"Pragmatisme industriel et besoin d'ordre, mais traumatisme historique face à la surveillance de masse qui freine l'adhésion totale." },
-{ flag:'🇺🇸', nom:'États-Unis',       irl:45, note:"Fracture nette : adhésion des pôles technologiques mais rejet viscéral des zones rurales par peur d'un contrôle fédéral algorithmique." },
-{ flag:'🇧🇷', nom:'Brésil',           irl:48, note:"Besoin d'un arbitre neutre face à la corruption, mais la chaleur humaine et le charisme restent des piliers du consentement politique." },
-{ flag:'🇫🇷', nom:'France',           irl:38, note:"Scepticisme élevé dû à la culture de la contestation et à la sacralisation du politique humain. Crise de confiance institutionnelle profonde." },
-{ flag:'🇳🇬', nom:'Nigeria',          irl:40, note:"Jeunesse connectée prête pour le futur, mais forte résistance des structures traditionnelles face à un contrôle algorithmique transparent." },
-{ flag:'🇷🇺', nom:'Russie',           irl:30, note:"Attachement culturel au leadership humain fort. L'IA est perçue comme un outil suspect ou incapable de comprendre l'âme nationale." },
-];
+    { flag:'🇯🇵', nom:'Japon',            irl:75, note:"Perception de l'IA comme une solution honorable et stable face au déclin démographique et à la fatigue des élites politiques humaines." },
+    { flag:'🇸🇦', nom:'Arabie Saoudite',  irl:65, note:"Adhésion Top-Down. Les élites voient ARIA comme le moteur de la Vision 2030, population habituée à une gouvernance performative." },
+    { flag:'🇮🇳', nom:'Inde',             irl:60, note:"Espoir d'une justice impartiale pour briser la corruption bureaucratique, balancé par d'immenses défis de diversité culturelle." },
+    { flag:'🇩🇪', nom:'Allemagne',        irl:52, note:"Pragmatisme industriel et besoin d'ordre, mais traumatisme historique face à la surveillance de masse qui freine l'adhésion totale." },
+    { flag:'🇺🇸', nom:'États-Unis',       irl:45, note:"Fracture nette : adhésion des pôles technologiques mais rejet viscéral des zones rurales par peur d'un contrôle fédéral algorithmique." },
+    { flag:'🇧🇷', nom:'Brésil',           irl:48, note:"Besoin d'un arbitre neutre face à la corruption, mais la chaleur humaine et le charisme restent des piliers du consentement politique." },
+    { flag:'🇫🇷', nom:'France',           irl:38, note:"Scepticisme élevé dû à la culture de la contestation et à la sacralisation du politique humain. Crise de confiance institutionnelle profonde." },
+    { flag:'🇳🇬', nom:'Nigeria',          irl:40, note:"Jeunesse connectée prête pour le futur, mais forte résistance des structures traditionnelles face à un contrôle algorithmique transparent." },
+    { flag:'🇷🇺', nom:'Russie',           irl:30, note:"Attachement culturel au leadership humain fort. L'IA est perçue comme un outil suspect ou incapable de comprendre l'âme nationale." },
+    ];
 const MANIFESTE_GLOBAL = 47;
 
 // ── Barre de légitimité ───────────────────────────────────────────────────

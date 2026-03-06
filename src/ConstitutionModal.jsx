@@ -36,8 +36,8 @@ const MINISTRY_META = {
 const PRESIDENCY_OPTIONS = [
     { value: 'duale',      label: 'Duale',      desc: 'Le Phare + La Boussole (défaut ARIA)' },
     { value: 'solaire',    label: 'Solaire',     desc: 'Le Phare seul — vision et direction'  },
-{ value: 'lunaire',    label: 'Lunaire',     desc: 'La Boussole seule — mémoire et soin'  },
-{ value: 'collegiale', label: 'Collégiale',  desc: 'Vote des 12 ministres sans président' },
+    { value: 'lunaire',    label: 'Lunaire',     desc: 'La Boussole seule — mémoire et soin'  },
+    { value: 'collegiale', label: 'Collégiale',  desc: 'Vote des 12 ministres sans président' },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -108,7 +108,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         {/* ── En-tête ── */}
         <div style={STYLES.header}>
         <span style={STYLES.headerTitle}>
-        ⚖️ Constitution de {country?.nom || 'ce pays'}
+        🏛️ Constitution de {country?.nom || 'ce pays'}
         </span>
         <button style={STYLES.closeBtn} onClick={onClose}>✕</button>
         </div>

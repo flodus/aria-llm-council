@@ -1,0 +1,21 @@
+
+important :
+- Partie en ligne personnalisée : pays réel : quand on saisi un pays il faut vérifié qu'il existe en vrai pas dans nos real_countries (canada existe mais n'est pas dans nos real_countries)
+- Partie en ligne personnalisée : nouveau pays fictif ou liste des fictifs, pays réels dans la liste ou pays réel pas dans la liste ça change rien, l'ia crée que des pays fictifs : j'ai testé en ligne : fictif liste : République de Valoria, fictif pas dans la liste : tutu, réel dans la liste : france, réel pas dans liste : canada >> ça m'a généré 4 pays complétement aléatoire  >> maintenant ça n'affiche plus aucun pays sur la carte
+
+
+on verra plus tard :
+Hors ligne :
+    Par défaut : Nation Fictive : toujours pas possible de créer un nouveau pays
+Partie personnalisée pays fictif (local_countries) je veux les infos dans le topo du pays (habitants pib satisfaction terrain acceptation aria)
+
+En ligne par défaut pays fictif je veux les mêmes infos dans le topo du pays  (habitants pib satisfaction terrain acceptation aria)
+Il faudrait pour les pays réels (real_countries) et pour ceux en ia que les alliances soient renseignés (même si modifiable par la suite in game)
+
+options : interface : Affichage carte ZEE et légende ça change rien qu'on coche ou décoche
+
+#### V2
+Faudrait penser à faire "colonisation ou un truc inverse de sécession"
+
+pas de jauge
+pour les questions à l'ia pour les pays existants il faudrait mettre en contexte le pays lui même : la même question posée en france ou en chine n'aura pas le même impact sur les décisions ministérielles. Par contre ça sera plus objectif pour les questions aux pays fictifs

@@ -21,6 +21,15 @@ import {
 } from './Dashboard_p1';
 import { MapSVG } from './Dashboard_p2';
 import ConstitutionModal from './ConstitutionModal';
+import LLMCouncil from './LLMCouncil';
+import {
+  routeQuestion,
+  runMinisterePhase,
+  runCerclePhase,
+  runPresidencePhase,
+  computeVoteImpact,
+  MINISTRIES_LIST,
+} from './llmCouncilEngine';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTES UI
@@ -61,38 +70,8 @@ function Toast({ notification }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  SOUS-COMPOSANT : VUE COUNCIL (onglet LLM COUNCIL)
+//  NOTE : CouncilView remplacée par LLMCouncil (./LLMCouncil.jsx)
 // ─────────────────────────────────────────────────────────────────────────────
-
-function CouncilView({ events, countries }) {
-  if (events.length === 0) return (
-    <div style={S.emptyView}>
-      <div style={{ fontSize: '2rem', opacity: 0.15 }}>⚖️</div>
-      <div style={S.emptyLabel}>AUCUNE DÉLIBÉRATION</div>
-      <p style={S.emptyHint}>Les délibérations du Conseil apparaîtront ici après chaque cycle.</p>
-    </div>
-  );
-  return (
-    <div style={S.councilList}>
-      {events.map(evt => (
-        <div key={evt.id} style={S.councilCard}>
-          <div style={S.councilCardHeader}>
-            <span style={S.councilPays}>{evt.pays}</span>
-            <span style={{
-              ...S.councilSeverite,
-              color: evt.severite === 'critical' ? '#FF3A3A' :
-                     evt.severite === 'warn'     ? '#C8A44A' : '#3ABF7A',
-            }}>
-              {evt.trigger?.toUpperCase() || 'ÉVÉNEMENT'}
-            </span>
-          </div>
-          {evt.titre && <div style={S.councilTitre}>{evt.titre}</div>}
-          {evt.narration && <p style={S.councilNarration}>{evt.narration}</p>}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  SOUS-COMPOSANT : VUE CHRONOLOG (onglet CHRONOLOG)
@@ -283,9 +262,13 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
 
   // ── Modales ──
-  const [modalSecession,   setModalSecession]   = useState(false);
-  const [modalDiplomacy,   setModalDiplomacy]   = useState(false);
-  const [modalConstitution,setModalConstitution] = useState(false);
+  const [modalSecession,    setModalSecession]    = useState(false);
+  const [modalDiplomacy,    setModalDiplomacy]    = useState(false);
+  const [modalConstitution, setModalConstitution] = useState(false);
+
+  // ── Conseil LLM ──
+  const [councilSession,  setCouncilSession]  = useState(null);
+  const [councilRunning,  setCouncilRunning]  = useState(false);
 
   // ── Handlers modales ──
   const openSecession    = () => setModalSecession(true);
@@ -303,27 +286,98 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     aria.setCountries(prev =>
       prev.map(c => c.id === updatedCountry.id ? updatedCountry : c)
     );
-    // Si le pays modifié est sélectionné, mettre à jour la sélection
     if (selectedCountry?.id === updatedCountry.id) {
       setSelectedCountry(updatedCountry);
     }
   }, [aria, selectedCountry, setSelectedCountry]);
 
+  // ── Délibération Council ──────────────────────────────────────────────────
+  const handleSubmitQuestion = useCallback(async (question, ministryId) => {
+    if (!selectedCountry || councilRunning) return;
+    setCouncilRunning(true);
+
+    // Routing → ministère
+    const resolvedId = await routeQuestion(question, ministryId);
+    const ministry   = resolvedId ? MINISTRIES_LIST.find(m => m.id === resolvedId) : null;
+
+    // Phase 0 : question visible immédiatement
+    setCouncilSession({ question, ministryId: resolvedId });
+
+    try {
+      // Phase 1 : ministère (ou fallback orphelin)
+      const ministereResult = await runMinisterePhase(ministry, question, selectedCountry);
+      setCouncilSession(prev => ({ ...prev, ministere: ministereResult }));
+
+      // Phase 2 : cercle
+      const cercleResult = await runCerclePhase(resolvedId, question, ministereResult.synthese, selectedCountry);
+      setCouncilSession(prev => ({ ...prev, cercle: cercleResult }));
+
+      // Phase 3 : présidence
+      const presidenceResult = await runPresidencePhase(question, ministereResult, cercleResult, selectedCountry);
+      setCouncilSession(prev => ({ ...prev, presidence: presidenceResult, voteReady: true }));
+
+    } catch (e) {
+      console.warn('[ARIA Council]', e);
+    } finally {
+      setCouncilRunning(false);
+    }
+  }, [selectedCountry, councilRunning]);
+
+  // ── Vote du peuple ────────────────────────────────────────────────────────
+  const handleVote = useCallback((vote) => {
+    if (!councilSession?.presidence || !selectedCountry) return;
+    const impact = computeVoteImpact(vote, councilSession.presidence, selectedCountry);
+
+    // Distribution simulée biaisée vers le choix du joueur
+    const total     = Math.max(Math.round(selectedCountry.population / 1_000_000 * 10) * 10_000, 500_000);
+    const bias      = vote === 'oui' ? 0.55 + Math.random() * 0.25 : 0.55 + Math.random() * 0.20;
+    const ouiVotes  = vote === 'oui' ? Math.round(total * bias) : Math.round(total * (1 - bias));
+    const nonVotes  = total - ouiVotes;
+
+    const voteResult = {
+      vote,
+      label:  impact.label,
+      impact: {
+        satisfaction:       impact.satisfaction,
+        aria_current_delta: impact.aria_current - (selectedCountry.aria_current ?? 40),
+      },
+      oui: ouiVotes,
+      non: nonVotes,
+    };
+
+    setCouncilSession(prev => ({ ...prev, voteResult, voteReady: false }));
+
+    aria.setCountries(prev => prev.map(c => c.id !== selectedCountry.id ? c : {
+      ...c,
+      satisfaction: Math.max(5, Math.min(99, c.satisfaction + impact.satisfaction)),
+      aria_current: Math.max(5, Math.min(95, impact.aria_current)),
+    }));
+
+    setSelectedCountry(prev => prev ? {
+      ...prev,
+      satisfaction: Math.max(5, Math.min(99, prev.satisfaction + impact.satisfaction)),
+      aria_current: Math.max(5, Math.min(95, impact.aria_current)),
+    } : prev);
+
+  }, [councilSession, selectedCountry, aria]);
+
   // Expose les fonctions du moteur au parent (App.jsx) dès que le hook est prêt
   useEffect(() => {
     onReady?.({
-      startLocal:    aria.startLocal,
-      startWithAI:   aria.startWithAI,
-      advanceCycle:  aria.advanceCycle,
-      doDeliberate:  aria.doDeliberate,
-      doSecession:   aria.doSecession,
-      openSecession: openSecession,
-      resetWorld:    aria.resetWorld,
-      getYear:       aria.getYear,
-      getCountries:  aria.getCountries,
-      getCycle:      aria.getCycle,
+      startLocal:       aria.startLocal,
+      startWithAI:      aria.startWithAI,
+      advanceCycle:     aria.advanceCycle,
+      doDeliberate:     aria.doDeliberate,
+      doSecession:      aria.doSecession,
+      openSecession:    openSecession,
+      openConstitution: openConstitution,
+      resetWorld:       aria.resetWorld,
+      getYear:          aria.getYear,
+      getCountries:     aria.getCountries,
+      getCycle:         aria.getCycle,
+      submitQuestion:   handleSubmitQuestion,
     });
-  }, [aria.startLocal, aria.advanceCycle, onReady]);
+  }, [aria.startLocal, aria.advanceCycle, onReady, handleSubmitQuestion]);
 
   // Notifie App chaque fois que la liste de pays change (pour date/cycle dans topbar)
   // + synchronise le pays sélectionné avec ses nouvelles valeurs (cycle, sécession…)
@@ -343,7 +397,13 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
 
   const renderMainContent = () => {
     if (activeTab === 'council') {
-      return <CouncilView events={aria.events} countries={aria.countries} />;
+      return (
+        <LLMCouncil
+          session={councilSession}
+          onVote={handleVote}
+          isRunning={councilRunning}
+        />
+      );
     }
     if (activeTab === 'timeline') {
       return <ChronologView countries={aria.countries} />;
