@@ -189,11 +189,13 @@ function MinistereSyntheseBlock({ synthese, ministry }) {
       <div style={sectionTitle(conv ? C.green : C.gold)}>
         <span>{ministry?.emoji}</span>
         SYNTHÈSE DU MINISTÈRE
+        <span style={{ margin: '0 0.5rem', color: 'rgba(150,170,210,0.18)', fontSize:'0.44rem' }}>—</span>
         <span style={{
-          marginLeft: 'auto', padding: '0.1rem 0.4rem',
-          background: `${conv ? C.green : C.gold}18`,
-          border: `1px solid ${conv ? C.green : C.gold}28`,
-          borderRadius: '2px', fontSize: '0.38rem',
+          padding: '0.15rem 0.55rem',
+          background: `${conv ? C.green : C.gold}22`,
+          border: `1px solid ${conv ? C.green : C.gold}55`,
+          borderRadius: '2px', fontSize: '0.44rem',
+          letterSpacing: '0.13em', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '3px',
           color: conv ? C.green : C.gold,
         }}>
           {conv ? 'CONVERGENCE' : 'DIVERGENCE'}
@@ -467,11 +469,13 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
               <div style={bubble(convergence ? C.green : C.gold, { marginTop: '0.6rem' })}>
                 <div style={sectionTitle(convergence ? C.green : C.gold)}>
                   ✦ SYNTHÈSE PRÉSIDENTIELLE
+                  <span style={{ margin: '0 0.5rem', color: 'rgba(150,170,210,0.18)', fontSize:'0.44rem' }}>—</span>
                   <span style={{
-                    marginLeft: 'auto', padding: '0.1rem 0.4rem',
-                    background: `${convergence ? C.green : C.gold}18`,
-                    border: `1px solid ${convergence ? C.green : C.gold}28`,
-                    borderRadius: '2px', fontSize: '0.38rem',
+                    padding: '0.15rem 0.55rem',
+                    background: `${convergence ? C.green : C.gold}22`,
+                    border: `1px solid ${convergence ? C.green : C.gold}55`,
+                    borderRadius: '2px', fontSize: '0.44rem',
+                    letterSpacing: '0.13em', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '3px',
                     color: convergence ? C.green : C.gold,
                   }}>
                     {convergence ? 'CONSENSUS' : 'DIVERGENCE'}

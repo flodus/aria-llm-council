@@ -91,7 +91,9 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
   useEffect(() => {
     const ov = readOv();
     if (ov) { setAgents(ov); return; }
-    setAgents(JSON.parse(JSON.stringify(BASE_AGENTS)));
+    import('../templates/base_agents.json').then(mod =>
+      setAgents(JSON.parse(JSON.stringify(mod.default)))
+    ).catch(() => setAgents({ ministries:[], ministers:{}, presidency:{} }));
   }, []);
 
   useEffect(() => {
@@ -324,8 +326,11 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                         background:isOpen?m.color+'18':on?m.color+'0C':'rgba(255,255,255,0.015)',
                         border:`1px solid ${isOpen?m.color+'66':on?m.color+'33':'rgba(255,255,255,0.07)'}`,
                         opacity:on?1:0.30, filter:on?'none':'grayscale(0.6)', transition:'all 0.12s'}}
-                        onClick={()=>setOpenMinistry(p=>p===m.id?null:m.id)}>
-                        <span style={{fontSize:'0.95rem',lineHeight:1}}>{m.emoji}</span>
+                        onClick={()=>{
+                          if(isOpen){ toggleMin(m.id); setOpenMinistry(null); }
+                          else { if(!on) toggleMin(m.id); setOpenMinistry(m.id); }
+                        }}>
+                        <span style={{fontSize:'0.95rem',lineHeight:1,filter:on?'none':'grayscale(1)',opacity:on?1:0.35,transition:'all 0.12s'}}>{m.emoji}</span>
                         <span style={{fontFamily:FONT,fontSize:'0.42rem',color:isOpen?m.color+'EE':on?'rgba(200,215,235,0.80)':'rgba(140,160,200,0.38)',letterSpacing:'0.04em'}}>
                           {m.name}
                         </span>
@@ -335,6 +340,36 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                     </div>
                   );
                 })}
+              </div>
+
+              {/* ── GESTION DE CRISE ── */}
+              <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',marginTop:'0.4rem',paddingTop:'0.55rem',marginBottom:'0.45rem'}}>
+                <div style={{fontFamily:FONT,fontSize:'0.38rem',letterSpacing:'0.12em',color:'rgba(140,160,200,0.40)',marginBottom:'0.32rem'}}>
+                  GESTION DE CRISE
+                </div>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+                  padding:'0.45rem 0.65rem',borderRadius:'3px',
+                  background: activeMins.includes('chance') ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.02)',
+                  border:`1px solid ${activeMins.includes('chance') ? 'rgba(200,164,74,0.28)' : 'rgba(255,255,255,0.07)'}`,
+                  cursor:'pointer', transition:'all 0.15s'}}
+                  onClick={()=>setActiveMins(p=>p.includes('chance')?p.filter(x=>x!=='chance'):[...p,'chance'])}>
+                  <div>
+                    <div style={{fontFamily:FONT,fontSize:'0.44rem',color:activeMins.includes('chance')?'rgba(200,164,74,0.88)':'rgba(160,175,210,0.50)',letterSpacing:'0.06em'}}>
+                      🎲 Ministère de la Chance &amp; Crises
+                    </div>
+                    <div style={{fontSize:'0.38rem',color:'rgba(120,140,180,0.38)',marginTop:'0.1rem'}}>
+                      Active le 7e ministère pour la gestion des urgences
+                    </div>
+                  </div>
+                  <div style={{width:'2rem',height:'1rem',borderRadius:'10px',position:'relative',flexShrink:0,
+                    background:activeMins.includes('chance')?'rgba(200,164,74,0.55)':'rgba(70,82,105,0.50)',
+                    transition:'all 0.15s',marginLeft:'0.8rem'}}>
+                    <div style={{position:'absolute',top:'0.12rem',
+                      left:activeMins.includes('chance')?'1.0rem':'0.12rem',
+                      width:'0.76rem',height:'0.76rem',borderRadius:'50%',transition:'all 0.15s',
+                      background:activeMins.includes('chance')?'#C8A44A':'rgba(150,165,195,0.55)'}} />
+                  </div>
+                </div>
               </div>
 
               {/* ── Fiche ministère ouverte : style modal création de monde ── */}
@@ -472,7 +507,10 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
               <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',marginBottom:'0.5rem'}}>
                 {Object.entries(agents.ministers).map(([key,min])=>{
                   if (!min) return null;
-                  const on     = activeMinsters===null || activeMinsters.includes(key);
+                  // Grisé si ministre inactif OU si son ministère est inactif
+                  const ministryOfMin = agents.ministries?.find(m=>(m.ministers||[]).includes(key));
+                  const ministryActive = !ministryOfMin || activeMins.includes(ministryOfMin.id);
+                  const on     = ministryActive && (activeMinsters===null || activeMinsters.includes(key));
                   const isOpen = openMin === key;
                   return (
                     <button key={key}
@@ -484,7 +522,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                         filter: on ? 'none' : 'grayscale(0.7)',
                         minWidth:'3.2rem', transition:'all 0.12s'}}
                       onClick={()=>setOpenMin(p=>p===key?null:key)}>
-                      <span style={{fontSize:'1.1rem',lineHeight:1}}>{min.emoji||'👤'}</span>
+                      <span style={{fontSize:'1.1rem',lineHeight:1,filter:on?'none':'grayscale(1)',opacity:on?1:0.35,transition:'all 0.12s'}}>{min.emoji||'👤'}</span>
                       <span style={{fontFamily:FONT,fontSize:'0.36rem',color:isOpen?min.color+'EE':on?min.color+'99':'rgba(140,160,200,0.40)',
                         letterSpacing:'0.04em',textAlign:'center',lineHeight:1.3,maxWidth:'3.8rem',
                         overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
@@ -611,4 +649,3 @@ const STYLES = {
   cancelBtn:{ background:'none',border:'1px solid rgba(255,255,255,0.10)',color:'rgba(200,215,240,0.50)',fontFamily:FONT,fontSize:'0.52rem',letterSpacing:'0.12em',padding:'0.42rem 1rem',borderRadius:'2px',cursor:'pointer' },
   saveBtn:{ background:'rgba(200,164,74,0.10)',border:'1px solid rgba(200,164,74,0.42)',color:'rgba(200,164,74,0.90)',fontFamily:FONT,fontSize:'0.52rem',letterSpacing:'0.12em',padding:'0.42rem 1.2rem',borderRadius:'2px',cursor:'pointer' },
 };
-import BASE_AGENTS from '../templates/base_agents.json';

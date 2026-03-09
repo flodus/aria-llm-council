@@ -5,6 +5,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useCallback, Component } from 'react';
+import { useLocale, t } from './ariaI18n';
 import {
   DEFAULT_OPTIONS, getOptions, saveOptions,
   MINISTERS, MINISTRIES as MINISTRIES_RAW, PRESIDENCY,
@@ -71,6 +72,7 @@ const MINISTRY_LABELS = {
   justice:'⚖️ Justice et Vérité', economie:'💰 Économie et Ressources',
   defense:'⚔️ Défense et Souveraineté', sante:'🏥 Santé et Protection Sociale',
   education:'🎓 Éducation et Élévation', ecologie:'🌿 Transition Écologique',
+  chance:'🎲 Chance, Imprévu & Crises',
 };
 
 const REGIME_LABELS = {
@@ -1252,6 +1254,7 @@ function SectionSimulation() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function SectionInterface({ onHardReset }) {
+  const { lang, setLang } = useLocale();
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
 
@@ -1309,6 +1312,26 @@ function SectionInterface({ onHardReset }) {
   return (
     <div className="settings-section-body">
       <SectionTitle icon="🖥️" label="INTERFACE & MAINTENANCE" sub="Affichage, export/import, réinitialisation" />
+
+      <div className="settings-group">
+        <div className="settings-group-title">LANGUE / LANGUAGE</div>
+        <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', padding:'0.3rem 0' }}>
+          {['fr','en'].map(l => (
+            <button key={l} onClick={() => setLang(l)} style={{
+              background: lang===l ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.03)',
+              border:`1px solid ${lang===l ? 'rgba(200,164,74,0.50)' : 'rgba(255,255,255,0.10)'}`,
+              borderRadius:'2px', padding:'0.30rem 0.9rem',
+              color: lang===l ? 'rgba(200,164,74,0.92)' : 'rgba(150,170,205,0.40)',
+              fontFamily:"'JetBrains Mono', monospace", fontSize:'0.50rem',
+              letterSpacing:'0.16em', cursor:'pointer', transition:'all 0.15s',
+            }}>{l === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN'}</button>
+          ))}
+          <span style={{ fontFamily:"'JetBrains Mono', monospace", fontSize:'0.42rem',
+            color:'rgba(120,140,175,0.40)', marginLeft:'0.5rem' }}>
+            {lang === 'fr' ? 'Interface en français' : 'Interface in English'}
+          </span>
+        </div>
+      </div>
 
       <div className="settings-group">
         <div className="settings-group-title">AFFICHAGE CARTE</div>

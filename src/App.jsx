@@ -41,6 +41,7 @@ export default function App() {
   const [currentYear,     setCurrentYear]     = useState(null);
   const [currentCycle,    setCurrentCycle]    = useState(0);
   const [liveCountries,   setLiveCountries]   = useState([]);
+  const [chronologKey,    setChronologKey]    = useState(0);
   const [hasApiKeys,      setHasApiKeys]      = useState(() => {
     try { const k = JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); return !!(k.claude||k.gemini); }
     catch { return false; }
@@ -144,9 +145,13 @@ export default function App() {
       localStorage.removeItem('aria_session_world');
       localStorage.removeItem('aria_session_countries');
       localStorage.removeItem('aria_session_alliances');
+      localStorage.removeItem('aria_chronolog_cycles');
     } catch {}
+    ariaRef.current?.resetChronolog?.();
     setWorldGenerated(false);
     setSelectedCountry(null);
+    setActiveTab('map');        // démonte ChronologView → reset son state
+    setChronologKey(k => k + 1); // force remount ChronologView
     setCurrentYear(null);
     setCurrentCycle(0);
     setLiveCountries([]);
@@ -233,6 +238,13 @@ export default function App() {
               ⚠ CRISE
             </span>
           )}
+          {worldGenerated && (
+            <button className="btn-icon" onClick={handleReset}
+              title="Nouvelle partie"
+              style={{ fontSize:'0.75rem', opacity:0.55, letterSpacing:'0.05em' }}>
+              ↺
+            </button>
+          )}
           <button className="btn-icon" onClick={() => setPage('settings')} title="Configuration ARIA">⚙</button>
         </div>
       </header>
@@ -249,6 +261,7 @@ export default function App() {
           onReady={handleAriaReady}
           onCountriesUpdate={handleCountriesUpdate}
           onReset={handleReset}
+          chronologKey={chronologKey}
         />
       </main>
 

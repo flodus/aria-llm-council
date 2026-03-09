@@ -619,7 +619,7 @@ function DiplomacyModal({ sourceCountry, allCountries, alliances, onSetRelation,
 //  Dans App.jsx : import Dashboard from './Dashboard_p3'
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate }) {
+export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
 
@@ -784,13 +784,13 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     const synthPres = (() => {
       const s = councilSession.presidence?.synthese;
       if (!s) return '';
-      // Éviter le champ question_referendum qui contient "Option A / Option B"
+      // Priorité : synthèse globale > décision > enjeu principal
+      // On n'affiche JAMAIS les positions individuelles Phare/Boussole (redondant avec LLMCouncil)
       return s.decision_recommandee
         || s.synthese_debat
         || s.analyse
-        || (s.position_phare_resume && s.position_boussole_resume
-            ? `Phare : ${s.position_phare_resume} / Boussole : ${s.position_boussole_resume}`
-            : s.position_phare_resume || s.position_boussole_resume || s.enjeu_principal || '');
+        || s.enjeu_principal
+        || '';
     })();
 
     pushEvent(cycleNumRef.current, selectedCountry.annee || 2026, {
@@ -859,6 +859,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       startLocal:          aria.startLocal,
       startWithAI:         aria.startWithAI,
       advanceCycle:        aria.advanceCycle,
+      doDeliberate:        aria.doDeliberate,
       doSecession:         aria.doSecession,
       addFictionalCountry: aria.addFictionalCountry,
       openSecession:       openSecession,
@@ -867,6 +868,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
         if (aria.countries?.length > 0) setModalCycleConfirm(true);
       },
       resetWorld:       aria.resetWorld,
+      resetChronolog:   resetChronolog,
       getYear:          aria.getYear,
       getCountries:     aria.getCountries,
       getCycle:         aria.getCycle,
@@ -903,6 +905,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     if (activeTab === 'timeline') {
       return (
         <ChronologView
+          key={chronologKey}
           countries={aria.countries}
           currentCycleNum={cycleNumRef.current}
           currentCycleAnnee={aria.countries[0]?.annee ?? 2026}
@@ -912,6 +915,10 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     }
 
     // Onglet MAP (défaut)
+    // DEBUG — retirer après correction du bug carte
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ARIA MAP] worldData:', !!aria.worldData, '| seed:', aria.worldData?.seed, '| countries:', aria.countries?.length, '| aiRunning:', aria.aiRunning);
+    }
     return (
       <MapSVG
         worldData={aria.worldData}
