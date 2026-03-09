@@ -721,16 +721,24 @@ Génère une notification d'analyse en JSON :
 
 // Appelle un modèle spécifique (Claude ou Gemini) via API
 async function callModel(model, prompt, keys, systemPrompt = '') {
-  // Redirect automatique si une seule clé disponible
-  if (model === 'claude' && !keys.claude && keys.gemini) model = 'gemini';
-  if (model === 'gemini' && !keys.gemini && keys.claude) model = 'claude';
+  const opts   = getOptions();
+  const models = opts.ia_models || {};
 
-  // 1. On prépare le contenu fusionné (Rôle + Données)
+  // Redirect automatique si clé manquante pour ce provider
+  const allKeys = { claude: keys.claude, gemini: keys.gemini, grok: keys.grok, openai: keys.openai };
+  if (!allKeys[model]) {
+    const fallback = Object.keys(allKeys).find(k => allKeys[k]);
+    if (!fallback) return { error: true, msg: 'SYSTÈME : Aucune clé API valide détectée.' };
+    model = fallback;
+  }
+
   const fullContent = systemPrompt
-  ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
-  : prompt;
+    ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
+    : prompt;
 
+  // ── Claude (Anthropic) ────────────────────────────────────────────────────
   if (model === 'claude' && keys.claude) {
+    const claudeModel = models.claude || 'claude-sonnet-4-6';
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -740,54 +748,67 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: fullContent }],
-        }),
+        body: JSON.stringify({ model: claudeModel, max_tokens: 1000,
+          messages: [{ role: 'user', content: fullContent }] }),
       });
       const data = await res.json();
       const text = data?.content?.[0]?.text || '';
-      const clean = text.replace(/```json|```/g, '').trim();
-      return JSON.parse(clean);
-    } catch (e) {
-      console.warn('[ARIA] Claude error:', e.message);
-      return { error: true, msg: getRandomFallback() };
-    }
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) { console.warn('[ARIA] Claude error:', e.message); return { error: true, msg: getRandomFallback() }; }
   }
 
+  // ── Gemini (Google) ───────────────────────────────────────────────────────
   if (model === 'gemini' && keys.gemini) {
-    const GEMINI_MODELS = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
-    for (const gModel of GEMINI_MODELS) {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keys.gemini}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: fullContent }] }],
-              generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
-            }),
-          }
-        );
-        if (!res.ok) {
-          // 429 quota — pas de fallback utile, on retourne erreur gracieuse
-          if (res.status === 429) return { error: true, msg: getRandomFallback() };
-          continue; // autre erreur → essayer modèle suivant
-        }
-        const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        const clean = text.replace(/```json|```/g, '').trim();
-        return JSON.parse(clean);
-      } catch (e) {
-        console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
-        // continuer avec le modèle suivant
-      }
-    }
-    return { error: true, msg: getRandomFallback() };
+    const geminiModel = models.gemini || 'gemini-2.0-flash';
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${keys.gemini}`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: fullContent }] }],
+            generationConfig: { temperature: 0.8, maxOutputTokens: 1000 } }) }
+      );
+      if (!res.ok) return { error: true, msg: getRandomFallback() };
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) { console.warn('[ARIA] Gemini error:', e.message); return { error: true, msg: getRandomFallback() }; }
   }
-  return { error: true, msg: "SYSTÈME : Aucune clé API valide détectée." };
+
+  // ── Grok (xAI — compatible OpenAI) ───────────────────────────────────────
+  if (model === 'grok' && keys.grok) {
+    const grokModel = models.grok || 'grok-3-mini';
+    try {
+      const res = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keys.grok}` },
+        body: JSON.stringify({ model: grokModel, max_tokens: 1000,
+          messages: [{ role: 'user', content: fullContent }] }),
+      });
+      if (!res.ok) return { error: true, msg: getRandomFallback() };
+      const data = await res.json();
+      const text = data?.choices?.[0]?.message?.content || '';
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) { console.warn('[ARIA] Grok error:', e.message); return { error: true, msg: getRandomFallback() }; }
+  }
+
+  // ── OpenAI (GPT) ──────────────────────────────────────────────────────────
+  if (model === 'openai' && keys.openai) {
+    const openaiModel = models.openai || 'gpt-4.1-mini';
+    try {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keys.openai}` },
+        body: JSON.stringify({ model: openaiModel, max_tokens: 1000,
+          messages: [{ role: 'user', content: fullContent }] }),
+      });
+      if (!res.ok) return { error: true, msg: getRandomFallback() };
+      const data = await res.json();
+      const text = data?.choices?.[0]?.message?.content || '';
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) { console.warn('[ARIA] OpenAI error:', e.message); return { error: true, msg: getRandomFallback() }; }
+  }
+
+  return { error: true, msg: 'SYSTÈME : Aucune clé API valide détectée.' };
 }
 
 // Pioche une réponse dans tes fichiers locaux (test.js) si pas d'IA
@@ -865,6 +886,12 @@ export const DEFAULT_OPTIONS = {
   api_keys: { claude: '', gemini: '', grok: '', openai: '' },
   ia_mode: 'aria',
   solo_model: 'claude',
+  ia_models: {
+    claude: 'claude-sonnet-4-6',
+    gemini: 'gemini-2.0-flash',
+    grok:   'grok-3-mini',
+    openai: 'gpt-4.1-mini',
+  },
   ia_roles: {
     ministre_model:  'claude',
     synthese_min:    'gemini',
@@ -976,6 +1003,7 @@ export function getOptions() {
       ...DEFAULT_OPTIONS, ...saved,
       api_keys:          { ...DEFAULT_OPTIONS.api_keys, ...apiKeys, ...saved.api_keys },
       ia_roles:          { ...DEFAULT_OPTIONS.ia_roles, ...saved.ia_roles },
+      ia_models:         { ...DEFAULT_OPTIONS.ia_models, ...(saved.ia_models||{}) },
       gameplay:          { ...DEFAULT_OPTIONS.gameplay, ...saved.gameplay },
       world:             { ...DEFAULT_OPTIONS.world,    ...saved.world    },
       solo_model:        saved.solo_model || DEFAULT_OPTIONS.solo_model,
@@ -1415,6 +1443,95 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
     }
   }, [countries, pushNotif]);
 
+  // ── Ajouter un nouveau pays fictif en cours de partie ────────────────────
+  const addFictionalCountry = useCallback((def = null) => {
+    const FICTIONAL_POOL = [
+      { nom: 'Arvalia',   emoji: '🏔️', regime: 'democratie_liberale',        terrain: 'highland',  hue: 210 },
+      { nom: 'Zephoria',  emoji: '🌊', regime: 'republique_federale',         terrain: 'coastal',   hue: 175 },
+      { nom: 'Morvaine',  emoji: '🌲', regime: 'monarchie_constitutionnelle', terrain: 'foret',     hue: 130 },
+      { nom: 'Sundera',   emoji: '☀️', regime: 'democratie_directe',          terrain: 'desert',    hue: 42  },
+      { nom: 'Kelvoria',  emoji: '⚡', regime: 'technocratie',                terrain: 'island',    hue: 260 },
+      { nom: 'Periath',   emoji: '🌿', regime: 'republique_federale',         terrain: 'tropical',  hue: 88  },
+      { nom: 'Drakmoor',  emoji: '🌑', regime: 'oligarchie',                  terrain: 'toundra',   hue: 300 },
+      { nom: 'Caeloria',  emoji: '🕊️', regime: 'democratie_liberale',        terrain: 'coastal',   hue: 195 },
+    ];
+
+    // Si def fourni par le modal : utiliser ses paramètres
+    // Sinon : pioche automatique dans le pool (fallback)
+    let pick;
+    if (def?.nom) {
+      // Trouver un emoji/hue cohérent avec le terrain
+      const TERRAIN_EMOJI = { highland:'🏔️', coastal:'🌊', foret:'🌲', desert:'☀️', island:'🏝️', tropical:'🌿', toundra:'❄️', inland:'🌄', archipelago:'🏝️' };
+      const TERRAIN_HUE   = { highland:210, coastal:175, foret:130, desert:42, island:195, tropical:88, toundra:220, inland:150, archipelago:195 };
+      pick = {
+        nom:    def.nom,
+        emoji:  TERRAIN_EMOJI[def.terrain] || '🌍',
+        regime: def.regime  || 'democratie_liberale',
+        terrain:def.terrain || 'coastal',
+        hue:    TERRAIN_HUE[def.terrain]   || 200,
+      };
+    } else {
+      const usedNames = new Set(countries.map(c => c.nom));
+      const available = FICTIONAL_POOL.filter(p => !usedNames.has(p.nom));
+      const pool      = available.length > 0 ? available : FICTIONAL_POOL;
+      pick            = pool[countries.length % pool.length];
+    }
+
+    const seed    = strToSeed(pick.nom + Date.now());
+    const rand    = seededRand(seed);
+    const regime  = REGIMES[pick.regime]  || REGIMES.republique_federale;
+    const terrain = TERRAINS[pick.terrain] || TERRAINS.coastal;
+    const coastal = ['coastal', 'island', 'archipelago'].includes(pick.terrain);
+
+    const spawn = worldDataRef.current
+      ? findSpawnPoint(worldDataRef.current, countries, coastal ? 'island' : 'continent')
+      : { cx: 200 + rand() * 1000, cy: 150 + rand() * 500 };
+
+    const { cx, cy } = spawn;
+    const size    = 52 + rand() * 18;
+    const couleur = `hsl(${pick.hue}, 55%, 34%)`;
+    const pop     = Math.round((3 + rand() * 12) * 1_000_000);
+    const res     = calcRessources(pick.terrain, seed);
+    const irl     = Math.round(20 + rand() * 50);
+
+    const newCountry = {
+      id:            pick.nom.toLowerCase().replace(/[^a-z0-9]/g,'-') + '-' + Date.now().toString(36),
+      nom:           pick.nom,
+      emoji:         pick.emoji,
+      couleur,
+      regime:        pick.regime,
+      regimeName:    regime.name,
+      regimeEmoji:   regime.emoji,
+      terrain:       pick.terrain,
+      terrainName:   terrain.name,
+      coastal,
+      description:   `Nouvelle nation fondée en An ${countries[0]?.annee || 2026}.`,
+      leader:        null,
+      annee:         countries[0]?.annee || 2026,
+      population:    pop,
+      tauxNatalite:  Math.round(8  + rand() * 10),
+      tauxMortalite: Math.round(6  + rand() * 8),
+      satisfaction:  Math.round(45 + rand() * 30),
+      humeur:        getHumeur(55).label,
+      humeur_color:  getHumeur(55).color,
+      popularite:    50,
+      ressources:    res,
+      coefficients:  regime.poids_ministeriel,
+      cx, cy, size, seed,
+      svgPath:       genOrganicPath(cx, cy, size, seed, 10, 0.28),
+      influenceRadius: calcInfluenceRadius(pop, coastal, res),
+      relations:     {},
+      chronolog:     [],
+      economie:      100,
+      aria_irl:      irl,
+      aria_current:  irl,
+      isLocal:       true,
+    };
+
+    setCountries(prev => [...prev, newCountry]);
+    pushNotif(`🌍 ${pick.nom} rejoint le monde.`, 'ok', 3500);
+  }, [countries, pushNotif]);
+
   // ── Alliance / rupture ────────────────────────────────────────────────────
   const setRelation = useCallback((idA, idB, type) => {
     // Met à jour les relations dans les deux pays concernés
@@ -1485,7 +1602,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
     // Setters directs
     setCountries, setViewport,
     // Actions
-    startLocal, startWithAI, advanceCycle, doSecession, setRelation, resetWorld, pushNotif,
+    startLocal, startWithAI, advanceCycle, doSecession, addFictionalCountry, setRelation, resetWorld, pushNotif,
     // Getters pour App
     getYear, getCycle, getCountries,
   };

@@ -54,18 +54,18 @@ const MINISTER_KEYS = [
   'arbitre','enqueteur','guide','stratege','inventeur','guerisseur',
 ];
 const MINISTER_LABELS = {
-  initiateur:'♈ L\'Initiateur (Bélier)', gardien:'♉ Le Gardien (Taureau)',
-  communicant:'♊ Le Communicant (Gémeaux)', protecteur:'♋ Le Protecteur (Cancer)',
-  ambassadeur:'♌ L\'Ambassadeur (Lion)', analyste:'♍ L\'Analyste (Vierge)',
-  arbitre:'♎ L\'Arbitre (Balance)', enqueteur:'♏ L\'Enquêteur (Scorpion)',
-  guide:'♐ Le Guide (Sagittaire)', stratege:'♑ Le Stratège (Capricorne)',
-  inventeur:'♒ L\'Inventeur (Verseau)', guerisseur:'♓ Le Guérisseur (Poissons)',
+  initiateur:'L\'Initiateur (Bélier)', gardien:'Le Gardien (Taureau)',
+  communicant:'Le Communicant (Gémeaux)', protecteur:'Le Protecteur (Cancer)',
+  ambassadeur:'L\'Ambassadeur (Lion)', analyste:'L\'Analyste (Vierge)',
+  arbitre:'L\'Arbitre (Balance)', enqueteur:'L\'Enquêteur (Scorpion)',
+  guide:'Le Guide (Sagittaire)', stratege:'Le Stratège (Capricorne)',
+  inventeur:'L\'Inventeur (Verseau)', guerisseur:'Le Guérisseur (Poissons)',
 };
 
 const MINISTRY_LABELS = {
   justice:'⚖️ Justice et Vérité', economie:'💰 Économie et Ressources',
   defense:'⚔️ Défense et Souveraineté', sante:'🏥 Santé et Protection Sociale',
-  education:'🎓 Éducation et Élévation', ecologie:'🌿 Transition Écologique', chance:'🎲 Chance et Imprévu',
+  education:'🎓 Éducation et Élévation', ecologie:'🌿 Transition Écologique',
 };
 
 const REGIME_LABELS = {
@@ -229,18 +229,19 @@ function DangerButton({ label, onClick, confirm: confirmMsg }) {
 
 function SectionSysteme() {
   const [opts, setOpts] = useState(() => getOptions());
-  // Statut initial : "Connecté" si la clé a déjà été validée (sauvegardé par InitScreen)
+  const [saved, setSaved] = useState(false);
   const [status, setStatus] = useState(() => {
     try {
       const s = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
-      const keys = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+      const k = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
       return {
-        claude: (s.claude === 'ok' && keys.claude) ? 'ok' : null,
-        gemini: (s.gemini === 'ok' && keys.gemini) ? 'ok' : null,
+        claude: (s.claude==='ok' && k.claude) ? 'ok' : null,
+        gemini: (s.gemini==='ok' && k.gemini) ? 'ok' : null,
+        grok:   (s.grok  ==='ok' && k.grok)   ? 'ok' : null,
+        openai: (s.openai==='ok' && k.openai)  ? 'ok' : null,
       };
-    } catch { return { claude: null, gemini: null }; }
+    } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
   });
-  const [saved, setSaved] = useState(false);
 
   const update = (path, val) => {
     setOpts(prev => {
@@ -256,236 +257,314 @@ function SectionSysteme() {
 
   const save = () => { saveOptions(opts); setSaved(true); };
 
-  const testKey = async (model) => {
-    const key = opts.api_keys[model];
-    if (!key) { setStatus(s => ({ ...s, [model]: 'missing' })); return; }
-    setStatus(s => ({ ...s, [model]: 'testing' }));
+  // ── Test de connexion par provider ────────────────────────────────────────
+  const testKey = async (provider) => {
+    const key = opts.api_keys[provider];
+    if (!key) { setStatus(s => ({ ...s, [provider]: 'missing' })); return; }
+    setStatus(s => ({ ...s, [provider]: 'testing' }));
+
     const saveStatus = (result) => {
       setStatus(s => {
-        const next = { ...s, [model]: result };
+        const next = { ...s, [provider]: result };
         try { localStorage.setItem('aria_api_keys_status', JSON.stringify(next)); } catch {}
         return next;
       });
     };
+
     try {
-      if (model === 'claude') {
+      if (provider === 'claude') {
+        const model = opts.ia_models?.claude || 'claude-sonnet-4-6';
         const r = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-          body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 10, messages: [{ role: 'user', content: 'ping' }] }),
+          method:'POST',
+          headers:{ 'Content-Type':'application/json','x-api-key':key,
+            'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
         });
         saveStatus(r.ok ? 'ok' : 'error');
-      } else {
-        const MODELS = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
-        let result = 'error';
-        for (const m of MODELS) {
-          try {
-            const r = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`,
-              { method:'POST', headers:{ 'Content-Type':'application/json' },
-                body: JSON.stringify({ contents:[{parts:[{text:'ping'}]}] }) }
-            );
-            if (r.ok || r.status === 429) { result = 'ok'; break; }
-          } catch {}
-        }
-        saveStatus(result);
+
+      } else if (provider === 'gemini') {
+        const model = opts.ia_models?.gemini || 'gemini-2.0-flash';
+        const r = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+          { method:'POST', headers:{ 'Content-Type':'application/json' },
+            body: JSON.stringify({ contents:[{ parts:[{ text:'ping' }] }] }) }
+        );
+        saveStatus((r.ok || r.status===429) ? 'ok' : 'error');
+
+      } else if (provider === 'grok') {
+        const model = opts.ia_models?.grok || 'grok-3-mini';
+        const r = await fetch('https://api.x.ai/v1/chat/completions', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${key}` },
+          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
+        });
+        saveStatus(r.ok ? 'ok' : 'error');
+
+      } else if (provider === 'openai') {
+        const model = opts.ia_models?.openai || 'gpt-4.1-mini';
+        const r = await fetch('https://api.openai.com/v1/chat/completions', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${key}` },
+          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
+        });
+        saveStatus(r.ok ? 'ok' : 'error');
       }
     } catch { saveStatus('error'); }
   };
 
-  const statusLabel = (s) => s === 'ok' ? '✅ Connecté' : s === 'error' ? '❌ Invalide' : s === 'testing' ? '⏳ Test...' : s === 'missing' ? '⚠ Vide' : '— Non testé';
+  const statusLabel = (s) =>
+    s==='ok'      ? '✅ Connecté'  :
+    s==='error'   ? '❌ Invalide'  :
+    s==='testing' ? '⏳ Test...'   :
+    s==='missing' ? '⚠ Vide'      : '— Non testé';
 
-  const iaMode = opts.ia_mode;
+  // ── Config providers avec modèles disponibles ─────────────────────────────
+  const PROVIDERS = [
+    {
+      id: 'claude', label: 'Anthropic — Claude', placeholder: 'sk-ant-...',
+      hint: 'Ministres · Phare · Boussole',
+      models: [
+        { value:'claude-opus-4-6',          label:'claude-opus-4-6       — Puissant' },
+        { value:'claude-sonnet-4-6',         label:'claude-sonnet-4-6      — Défaut ARIA' },
+        { value:'claude-haiku-4-5-20251001', label:'claude-haiku-4-5       — Rapide' },
+      ],
+    },
+    {
+      id: 'gemini', label: 'Google — Gemini', placeholder: 'AIza...',
+      hint: 'Synthèse ministérielle · Synthèse présidentielle',
+      models: [
+        { value:'gemini-2.0-flash',   label:'gemini-2.0-flash   — Défaut ARIA' },
+        { value:'gemini-1.5-pro',     label:'gemini-1.5-pro     — Puissant' },
+        { value:'gemini-1.5-flash',   label:'gemini-1.5-flash   — Rapide' },
+      ],
+    },
+    {
+      id: 'grok', label: 'xAI — Grok', placeholder: 'xai-...',
+      hint: 'Provider alternatif compatible OpenAI',
+      models: [
+        { value:'grok-3',      label:'grok-3      — Puissant' },
+        { value:'grok-3-mini', label:'grok-3-mini — Défaut · Rapide' },
+      ],
+    },
+    {
+      id: 'openai', label: 'OpenAI — GPT', placeholder: 'sk-...',
+      hint: 'Provider alternatif',
+      models: [
+        { value:'gpt-4.1',      label:'gpt-4.1      — Puissant' },
+        { value:'gpt-4.1-mini', label:'gpt-4.1-mini — Défaut · Rapide' },
+      ],
+    },
+  ];
+
+  const hasClaude = !!opts.api_keys.claude;
+  const hasGemini = !!opts.api_keys.gemini;
+  const hasGrok   = !!opts.api_keys.grok;
+  const hasOpenai = !!opts.api_keys.openai;
+  const anyKey    = hasClaude || hasGemini || hasGrok || hasOpenai;
+  const iaMode    = opts.ia_mode;
+
+  // Tous les providers disponibles (clé présente)
+  const availableProviders = PROVIDERS.filter(p => !!opts.api_keys[p.id]).map(p => p.id);
 
   return (
     <div className="settings-section-body">
-      <SectionTitle icon="⚙️" label="SYSTÈME" sub="Clés API, moteurs IA, mode de délibération" />
+      <SectionTitle icon="⚙️" label="SYSTÈME" sub="Clés API · Modèles · Architecture de délibération" />
 
+      {/* ── CLÉS API + MODÈLES ── */}
       <div className="settings-group">
-        <div className="settings-group-title">CLÉS API</div>
+        <div className="settings-group-title">CLÉS API &amp; MODÈLES</div>
+        <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem',
+          color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
+          Les clés sont stockées localement (localStorage). Seul votre navigateur y a accès.
+        </p>
 
-        {/* Avertissement clé unique */}
-        {(() => {
-          const hasClaude = !!opts.api_keys.claude;
-          const hasGemini = !!opts.api_keys.gemini;
-          if ((hasClaude && !hasGemini) || (!hasClaude && hasGemini)) {
-            const present = hasClaude ? 'Claude' : 'Gemini';
-            return (
-              <div style={{ padding:'0.55rem 0.8rem', background:'rgba(200,140,60,0.07)', border:'1px solid rgba(200,140,60,0.25)', borderRadius:'2px', fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', color:'rgba(200,140,60,0.80)', lineHeight:1.6, marginBottom:'0.6rem' }}>
-                ⚠ Clé {present} uniquement — tous les rôles IA seront redirigés vers {present}. Pour une délibération optimale, configurez les deux clés.
+        {PROVIDERS.map(prov => {
+          const hasKey = !!opts.api_keys[prov.id];
+          const stat   = status[prov.id];
+          return (
+            <div key={prov.id} style={{
+              marginBottom:'0.9rem', padding:'0.65rem 0.8rem',
+              background: hasKey ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
+              border:`1px solid ${hasKey ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
+              borderRadius:'2px',
+            }}>
+              {/* Header provider */}
+              <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.55rem' }}>
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.50rem',
+                  letterSpacing:'0.12em', color:'rgba(200,215,240,0.80)', flex:1 }}>
+                  {prov.label}
+                </span>
+                {prov.hint && (
+                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                    color:'rgba(100,120,160,0.45)' }}>{prov.hint}</span>
+                )}
               </div>
-            );
-          }
-          return null;
-        })()}
 
-        <Field label="Anthropic — Claude" hint="Nécessaire pour l'incarnation des ministres et de la Présidence">
-          <div className="settings-row">
-            <TextInput password value={opts.api_keys.claude} onChange={v => update('api_keys.claude', v)} placeholder="sk-ant-..." />
-            <button className="settings-btn-test" onClick={() => testKey('claude')}>Tester</button>
-            <span className={`settings-status ${status.claude}`}>{statusLabel(status.claude)}</span>
-            {opts.api_keys.claude && (
-              <button title="Supprimer la clé Claude" onClick={() => { update('api_keys.claude', ''); setStatus(s => ({ ...s, claude: null })); }}
-                style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem', opacity:0.45, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
-            )}
-          </div>
-        </Field>
+              {/* Clé API */}
+              <div className="settings-row" style={{ marginBottom: hasKey ? '0.5rem' : 0 }}>
+                <TextInput password
+                  value={opts.api_keys[prov.id] || ''}
+                  onChange={v => update(`api_keys.${prov.id}`, v)}
+                  placeholder={prov.placeholder}
+                />
+                <button className="settings-btn-test" onClick={() => testKey(prov.id)}>
+                  Tester
+                </button>
+                <span className={`settings-status ${stat}`}>{statusLabel(stat)}</span>
+                {hasKey && (
+                  <button title={`Supprimer la clé ${prov.label}`}
+                    onClick={() => { update(`api_keys.${prov.id}`, ''); setStatus(s => ({ ...s, [prov.id]: null })); }}
+                    style={{ background:'none', border:'none', cursor:'pointer',
+                      fontSize:'0.85rem', opacity:0.40, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
+                )}
+              </div>
 
-        <Field label="Google — Gemini" hint="Nécessaire pour la synthèse ministérielle et présidentielle">
-          <div className="settings-row">
-            <TextInput password value={opts.api_keys.gemini} onChange={v => update('api_keys.gemini', v)} placeholder="AIza..." />
-            <button className="settings-btn-test" onClick={() => testKey('gemini')}>Tester</button>
-            <span className={`settings-status ${status.gemini}`}>{statusLabel(status.gemini)}</span>
-            {opts.api_keys.gemini && (
-              <button title="Supprimer la clé Gemini" onClick={() => { update('api_keys.gemini', ''); setStatus(s => ({ ...s, gemini: null })); }}
-                style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem', opacity:0.45, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
-            )}
-          </div>
-        </Field>
+              {/* Sélecteur modèle — grisé si pas de clé */}
+              <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', opacity: hasKey ? 1 : 0.35 }}>
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
+                  color:'rgba(140,160,200,0.50)', minWidth:'4rem' }}>Modèle</span>
+                <select
+                  disabled={!hasKey}
+                  value={opts.ia_models?.[prov.id] || prov.models[0].value}
+                  onChange={e => update(`ia_models.${prov.id}`, e.target.value)}
+                  className="settings-select"
+                  style={{ cursor: hasKey ? 'pointer' : 'not-allowed', flex:1,
+                    fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem' }}
+                >
+                  {prov.models.map(m => (
+                    <option key={m.value} value={m.value}>{m.value}   ({m.label.split('—')[1]?.trim() || ''})</option>
+                  ))}
+                </select>
+                {!hasKey && (
+                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                    color:'rgba(200,80,80,0.55)' }}>⚠ clé manquante</span>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
+      {/* ── MODE IA ── */}
       <div className="settings-group">
-        <div className="settings-group-title">MODE IA</div>
-        <Field label="Architecture de délibération">
-          {(() => {
-            const hasClaude  = !!opts.api_keys.claude;
-            const hasGemini  = !!opts.api_keys.gemini;
-            const offline    = !hasClaude && !hasGemini;
-            const onlyClaude = hasClaude && !hasGemini;
-            const onlyGemini = !hasClaude && hasGemini;
-            const bothKeys   = hasClaude && hasGemini;
+        <div className="settings-group-title">ARCHITECTURE DE DÉLIBÉRATION</div>
+        <Field label="Mode IA">
+          {!anyKey ? (
+            <div style={{ padding:'0.65rem 0.9rem', background:'rgba(200,164,74,0.04)',
+              border:'1px solid rgba(200,164,74,0.12)', borderRadius:'2px',
+              fontFamily:"'JetBrains Mono',monospace", fontSize:'0.47rem',
+              color:'rgba(200,164,74,0.60)', lineHeight:1.7 }}>
+              <div style={{ fontWeight:700, marginBottom:'0.3rem', letterSpacing:'0.12em' }}>MODE ARIA — HORS LIGNE</div>
+              Aucune clé API configurée. Ajoutez au moins une clé pour activer la délibération en temps réel.
+            </div>
+          ) : (
+            <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
 
-            // ── Hors ligne ─────────────────────────────────────────────
-            if (offline) return (
-              <div style={{ padding:'0.65rem 0.9rem', background:'rgba(200,164,74,0.04)', border:'1px solid rgba(200,164,74,0.12)', borderRadius:'2px', fontFamily:"'JetBrains Mono',monospace", fontSize:'0.47rem', color:'rgba(200,164,74,0.60)', lineHeight:1.7 }}>
-                <div style={{ fontWeight:700, marginBottom:'0.3rem', letterSpacing:'0.12em' }}>MODE ARIA — HORS LIGNE</div>
-                Aucune clé API configurée. La délibération utilise les textes locaux (ariaData.js).<br/>
-                Ajoutez une clé Claude ou Gemini pour activer la délibération en temps réel.
+              {/* Modes */}
+              <div className="settings-radio-group">
+                {[
+                  { value:'aria',   label:'ARIA',         desc:'Architecture multi-providers (défaut)' },
+                  { value:'solo',   label:'Solo',          desc:'Tous les rôles sur un seul provider' },
+                  { value:'custom', label:'Personnalisé',  desc:'Assignation rôle par rôle' },
+                ].map(m => (
+                  <label key={m.value}
+                    className={`settings-radio-card${iaMode===m.value?' selected':''}`}
+                    style={{ cursor:'pointer' }}>
+                    <input type="radio" name="ia_mode" value={m.value}
+                      checked={iaMode===m.value} onChange={() => update('ia_mode', m.value)} />
+                    <span className="settings-radio-label">{m.label}</span>
+                    {m.desc && <span className="settings-radio-desc">{m.desc}</span>}
+                  </label>
+                ))}
               </div>
-            );
 
-            // ── Clé unique → Solo forcé, pas d'ARIA ───────────────────
-            if (onlyClaude || onlyGemini) {
-              const soloName = onlyClaude ? 'Claude' : 'Gemini';
-              return (
-                <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
-                  <div style={{ padding:'0.55rem 0.8rem', background:'rgba(80,160,120,0.06)', border:'1px solid rgba(80,160,120,0.22)', borderRadius:'2px', fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', color:'rgba(100,190,140,0.80)', lineHeight:1.6 }}>
-                    ✓ Mode <strong>Solo — {soloName}</strong> activé automatiquement.<br/>
-                    Le mode ARIA (délibération multi-modèles) nécessite les deux clés.
+              {/* Solo : choisir provider */}
+              {iaMode === 'solo' && (
+                <div style={{ paddingLeft:'0.8rem' }}>
+                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>PROVIDER SOLO</div>
+                  <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
+                    {PROVIDERS.map(p => {
+                      const disabled = !opts.api_keys[p.id];
+                      return (
+                        <label key={p.id}
+                          className={`settings-radio-card${opts.solo_model===p.id?' selected':''}${disabled?' disabled':''}`}
+                          style={{ opacity:disabled?0.30:1, cursor:disabled?'not-allowed':'pointer',
+                            flex:'0 0 auto', padding:'0.3rem 0.8rem' }}>
+                          <input type="radio" name="solo_model" value={p.id} disabled={disabled}
+                            checked={opts.solo_model===p.id}
+                            onChange={() => !disabled && update('solo_model', p.id)} />
+                          <span className="settings-radio-label">{p.label.split('—')[1]?.trim() || p.id}</span>
+                          {disabled && <span style={{ fontSize:'0.36rem', color:'rgba(200,80,80,0.55)', marginLeft:'0.3rem' }}>⚠</span>}
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
-              );
-            }
+              )}
 
-            // ── Deux clés → ARIA + Solo + Personnalisé ─────────────────
-            const ariaRoles    = opts.ia_roles || {};
-            const effectiveMode = iaMode || 'aria';
-            const ariaDesc = `${ariaRoles.ministre_model === 'gemini' ? 'Gemini' : 'Claude'} pense · ${ariaRoles.synthese_min === 'claude' ? 'Claude' : 'Gemini'} synthétise`;
-
-            const modes = [
-              { value: 'aria',   label: 'ARIA',        desc: ariaDesc },
-              { value: 'solo',   label: 'Solo',         desc: opts.solo_model || 'Choisir un modèle' },
-              { value: 'custom', label: 'Personnalisé', desc: 'Choisir rôle par rôle' },
-            ];
-
-            return (
-              <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
-                <div className="settings-radio-group">
-                  {modes.map(m => (
-                    <label key={m.value}
-                      className={`settings-radio-card${effectiveMode === m.value ? ' selected' : ''}`}
-                      style={{ cursor:'pointer' }}>
-                      <input type="radio" name="ia_mode" value={m.value}
-                        checked={effectiveMode === m.value}
-                        onChange={() => update('ia_mode', m.value)} />
-                      <span className="settings-radio-label">{m.label}</span>
-                      {m.desc && <span className="settings-radio-desc">{m.desc}</span>}
-                    </label>
+              {/* ARIA : qui pense, qui synthétise */}
+              {iaMode === 'aria' && (
+                <div style={{ paddingLeft:'0.8rem' }}>
+                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>DÉLIBÉRATION</div>
+                  {[
+                    { key:'ministre_model', label:'Ministres pensent' },
+                    { key:'synthese_min',   label:'Synthèse ministérielle' },
+                  ].map(r => (
+                    <div key={r.key} className="settings-role-row">
+                      <span className="settings-role-label">{r.label}</span>
+                      <Select value={opts.ia_roles[r.key] || 'claude'}
+                        onChange={v => update(`ia_roles.${r.key}`, v)}
+                        options={availableProviders.map(pid => ({
+                          value: pid,
+                          label: PROVIDERS.find(p=>p.id===pid)?.label.split('—')[1]?.trim() || pid,
+                        }))}
+                      />
+                    </div>
                   ))}
                 </div>
+              )}
 
-                {/* Sous-choix Solo : quel modèle */}
-                {effectiveMode === 'solo' && (
-                  <div style={{ paddingLeft:'0.8rem', display:'flex', gap:'0.5rem' }}>
-                    {[
-                      { v:'claude', label:'Claude', disabled:!hasClaude },
-                      { v:'gemini', label:'Gemini', disabled:!hasGemini },
-                    ].map(opt => (
-                      <label key={opt.v}
-                        className={`settings-radio-card${opts.solo_model===opt.v?' selected':''}${opt.disabled?' disabled':''}`}
-                        style={{ opacity:opt.disabled?0.35:1, cursor:opt.disabled?'not-allowed':'pointer', flex:'0 0 auto', padding:'0.3rem 0.8rem' }}>
-                        <input type="radio" name="solo_model" value={opt.v} disabled={opt.disabled}
-                          checked={opts.solo_model===opt.v}
-                          onChange={() => !opt.disabled && update('solo_model', opt.v)} />
-                        <span className="settings-radio-label">{opt.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-
-                {/* Sous-choix ARIA : qui pense, qui synthétise */}
-                {effectiveMode === 'aria' && (
-                  <div style={{ paddingLeft:'0.8rem' }}>
-                    <div className="settings-group-title" style={{ fontSize:'0.44rem', marginBottom:'0.5rem' }}>DÉLIBÉRATION</div>
-                    {[
-                      { key:'ministre_model', label:'Ministres pensent' },
-                      { key:'synthese_min',   label:'Synthèse ministérielle' },
-                    ].map(r => (
-                      <div key={r.key} className="settings-role-row">
-                        <span className="settings-role-label">{r.label}</span>
-                        <Select
-                          value={opts.ia_roles[r.key] || 'claude'}
-                          onChange={v => update(`ia_roles.${r.key}`, v)}
-                          options={[
-                            { value:'claude', label:'Claude', disabled:!hasClaude },
-                            { value:'gemini', label:'Gemini', disabled:!hasGemini },
-                          ].filter(o => !o.disabled)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Sous-choix Personnalisé : tous les rôles */}
-                {effectiveMode === 'custom' && (
-                  <div style={{ paddingLeft:'0.8rem' }}>
-                    <div className="settings-group-title" style={{ fontSize:'0.44rem', marginBottom:'0.5rem' }}>ASSIGNATION DES RÔLES</div>
-                    {[
-                      { key:'ministre_model',  label:'Incarnation des ministres' },
-                      { key:'synthese_min',    label:'Synthèse ministérielle' },
-                      { key:'phare_model',     label:'Le Phare (Président)' },
-                      { key:'boussole_model',  label:'La Boussole (Présidente)' },
-                      { key:'synthese_pres',   label:'Synthèse présidentielle' },
-                      { key:'evenement_model', label:'Événements narratifs' },
-                      { key:'factcheck_model', label:'Fact-check' },
-                    ].map(r => (
-                      <div key={r.key} className="settings-role-row">
-                        <span className="settings-role-label">{r.label}</span>
-                        <Select
-                          value={opts.ia_roles[r.key] || 'claude'}
-                          onChange={v => update(`ia_roles.${r.key}`, v)}
-                          options={[
-                            { value:'claude', label:'Claude', disabled:!hasClaude },
-                            { value:'gemini', label:'Gemini', disabled:!hasGemini },
-                          ].filter(o => !o.disabled)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
+              {/* Custom : tous les rôles */}
+              {iaMode === 'custom' && (
+                <div style={{ paddingLeft:'0.8rem' }}>
+                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>ASSIGNATION DES RÔLES</div>
+                  {[
+                    { key:'ministre_model',  label:'Incarnation des ministres' },
+                    { key:'synthese_min',    label:'Synthèse ministérielle' },
+                    { key:'phare_model',     label:'Le Phare (Président)' },
+                    { key:'boussole_model',  label:'La Boussole (Présidente)' },
+                    { key:'synthese_pres',   label:'Synthèse présidentielle' },
+                    { key:'evenement_model', label:'Événements narratifs' },
+                    { key:'factcheck_model', label:'Fact-check' },
+                  ].map(r => (
+                    <div key={r.key} className="settings-role-row">
+                      <span className="settings-role-label">{r.label}</span>
+                      <Select value={opts.ia_roles[r.key] || 'claude'}
+                        onChange={v => update(`ia_roles.${r.key}`, v)}
+                        options={availableProviders.map(pid => ({
+                          value: pid,
+                          label: PROVIDERS.find(p=>p.id===pid)?.label.split('—')[1]?.trim() || pid,
+                        }))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </Field>
       </div>
 
+      {/* ── MODE BOARD GAME ── */}
       <div className="settings-group">
         <div className="settings-group-title">MODE BOARD GAME</div>
-        <Field label="Forcer les textes locaux" hint="Même avec des clés API valides, utilise les réponses pré-écrites d'ariaData.js">
-          <Toggle value={opts.gameplay.mode_board_game} onChange={v => update('gameplay.mode_board_game', v)} label={opts.gameplay.mode_board_game ? 'Activé' : 'Désactivé'} />
+        <Field label="Forcer les textes locaux"
+          hint="Même avec des clés API valides, utilise les réponses pré-écrites d'ariaData.js">
+          <Toggle value={opts.gameplay.mode_board_game}
+            onChange={v => update('gameplay.mode_board_game', v)}
+            label={opts.gameplay.mode_board_game ? 'Activé' : 'Désactivé'} />
         </Field>
       </div>
-
 
       <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>Sauvegarder</button>
@@ -495,9 +574,6 @@ function SectionSysteme() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  SECTION 2 — CONSTITUTION
-// ─────────────────────────────────────────────────────────────────────────────
 
 function SectionConstitution() {
   const [prompts, setPrompts] = useState(() => getPrompts());
@@ -777,13 +853,13 @@ function SectionConseil() {
 
       {tab === 'presidence' && (
         <div>
-          <Field label="☉ Le Phare — Rôle" hint="Président de la Volonté et de la Direction">
+          <Field label="Le Phare — Rôle" hint="Président de la Volonté et de la Direction">
             <TextArea rows={4}
               value={getVal('presidency.phare.role', PRESIDENCY?.phare?.role_long || '')}
               onChange={v => updateAgent('presidency.phare.role', v)}
             />
           </Field>
-          <Field label="☉ Le Phare — Essence">
+          <Field label="Le Phare — Essence">
             <TextArea rows={3}
               value={getVal('presidency.phare.essence', PRESIDENCY?.phare?.essence || '')}
               onChange={v => updateAgent('presidency.phare.essence', v)}
@@ -792,13 +868,13 @@ function SectionConseil() {
 
           <div style={{ borderTop: '1px solid rgba(200,164,74,0.15)', margin: '1.5rem 0' }} />
 
-          <Field label="☽ La Boussole — Rôle" hint="Présidente de l'Âme et de la Réception">
+          <Field label="La Boussole — Rôle" hint="Présidente de l'Âme et de la Réception">
             <TextArea rows={4}
               value={getVal('presidency.boussole.role', PRESIDENCY?.boussole?.role_long || '')}
               onChange={v => updateAgent('presidency.boussole.role', v)}
             />
           </Field>
-          <Field label="☽ La Boussole — Essence">
+          <Field label="La Boussole — Essence">
             <TextArea rows={3}
               value={getVal('presidency.boussole.essence', PRESIDENCY?.boussole?.essence || '')}
               onChange={v => updateAgent('presidency.boussole.essence', v)}
@@ -1390,8 +1466,8 @@ function SectionAPropos() {
         <div className="settings-tech-stack">
           <div className="settings-tech-row"><span>Frontend</span><span>React 18 · Vite · CSS custom</span></div>
           <div className="settings-tech-row"><span>Carte</span><span>SVG pur · PRNG reproductible</span></div>
-          <div className="settings-tech-row"><span>IA Pensée</span><span>Claude Sonnet (Anthropic)</span></div>
-          <div className="settings-tech-row"><span>IA Synthèse</span><span>Gemini Pro (Google)</span></div>
+          <div className="settings-tech-row"><span>IA Pensée</span><span>Claude · Gemini · Grok · OpenAI (configurable)</span></div>
+          <div className="settings-tech-row"><span>IA Synthèse</span><span>Multi-providers — sélection par rôle</span></div>
           <div className="settings-tech-row"><span>Persistance</span><span>localStorage</span></div>
           <div className="settings-tech-row"><span>Données</span><span>base_agents.json · base_stats.json · ariaData.js</span></div>
         </div>

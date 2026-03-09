@@ -337,8 +337,27 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — mémoire et protect
     ]);
   }
 
-  if (!phare)    phare    = { position: phareData.role_long,    decision: 'Action immédiate recommandée.' };
-  if (!boussole) boussole = { position: boussoleData.role_long, decision: 'Prudence et consultation du peuple.' };
+  if (!phare) {
+    // Fallback contextuel — varie selon la question et l'état du pays
+    const tension = country.satisfaction < 40 ? 'La tension sociale actuelle exige une réponse rapide et visible.' :
+                    country.satisfaction > 70 ? 'La stabilité présente offre une fenêtre favorable à l\'action.' :
+                    'Le contexte est équilibré — une décision mesurée s\'impose.';
+    const angle = ['économique', 'social', 'structurel', 'institutionnel'][Math.floor((question.length + country.satisfaction) % 4)];
+    phare = {
+      position: `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », le Phare identifie un enjeu ${angle} de premier ordre. ${tension} Une vision à long terme impose de tracer une direction claire plutôt que de temporiser.`,
+      decision: `Adopter une position ferme sur cet enjeu pour maintenir la cohérence de la trajectoire ARIA.`,
+    };
+  }
+  if (!boussole) {
+    const memoire = country.aria_current > 50 ? 'L\'adhésion ARIA reste solide — ne pas la fragiliser par une décision précipitée.' :
+                    country.aria_current < 30 ? 'L\'adhésion ARIA est fragile — toute décision doit être prudemment expliquée.' :
+                    'L\'adhésion ARIA est en transition — le moment requiert une écoute attentive.';
+    const pop = country.population > 50_000_000 ? 'Dans un pays de cette taille' : 'Dans ce territoire';
+    boussole = {
+      position: `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » touche à des équilibres établis. ${memoire} La mémoire des cycles précédents invite à la nuance avant tout engagement irréversible.`,
+      decision: `Consulter les parties prenantes et prévoir un mécanisme de révision à court terme.`,
+    };
+  }
 
   // ── Synthèse présidentielle ───────────────────────────────────────────────
   let synthese = null;
@@ -347,15 +366,29 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — mémoire et protect
     synthese = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
   }
   if (!synthese) {
-    const convergence = phare.decision?.slice(0,20) === boussole.decision?.slice(0,20);
+    // Évaluation contextuelle de la convergence
+    const phrA = phare.decision?.toLowerCase()   || '';
+    const phrB = boussole.decision?.toLowerCase() || '';
+    const actionWords = ['adopter','action','immédiat','ferme','décision'];
+    const cautionWords = ['consulter','révision','prudence','attente','nuance'];
+    const phareIsAction  = actionWords.some(w => phrA.includes(w));
+    const boussoleIsAction = actionWords.some(w => phrB.includes(w));
+    const convergence = phareIsAction === boussoleIsAction;
+
+    const qRef = convergence
+      ? `Approuvez-vous la proposition suivante : "${phare.decision}" ?`
+      : `Option A — ${phare.decision}\nOption B — ${boussole.decision}`;
+
+    const enjeu = country.satisfaction < 40
+      ? `Cette décision intervient dans un contexte de tension sociale élevée (satisfaction : ${country.satisfaction}%). Son impact sera immédiatement ressenti par les ${Math.round(country.population/1e6*10)/10} M de citoyens.`
+      : `La décision impactera directement les ${Math.round(country.population/1e6*10)/10} M de citoyens. L'adhésion ARIA actuelle (${country.aria_current ?? '?'}%) conditionnera l'acceptation populaire.`;
+
     synthese = {
       convergence,
       position_phare_resume:    phare.decision    || 'Action prioritaire.',
-      position_boussole_resume: boussole.decision || 'Évaluation nécessaire.',
-      question_referendum:      convergence
-        ? `Approuvez-vous : "${phare.decision}" ?`
-        : `Option A — ${phare.decision}\nOption B — ${boussole.decision}`,
-      enjeu_principal: `La décision impactera directement ${Math.round(country.population / 1e6 * 10) / 10} M de citoyens.`,
+      position_boussole_resume: boussole.decision || 'Consultation et révision.',
+      question_referendum:      qRef,
+      enjeu_principal:          enjeu,
     };
   }
 
@@ -416,12 +449,40 @@ export function computeVoteImpact(vote, presidence, country) {
 
 function buildCountryContext(country) {
   if (!country) return '';
-  return `Contexte du pays "${country.nom}" :
+
+  const pop  = Math.round((country.population || 0) / 1e6 * 10) / 10;
+  const sat  = country.satisfaction ?? 50;
+  const aria = country.aria_current ?? country.aria_irl ?? 40;
+  const year = country.annee || 2026;
+
+  // Contexte de base (stats)
+  let ctx = `Pays : "${country.nom}"
 - Régime : ${country.regimeName || country.regime}
-- Population : ${Math.round((country.population || 0) / 1e6 * 10) / 10} M habitants
-- Satisfaction populaire : ${country.satisfaction ?? 50}%
-- Adhésion ARIA : ${country.aria_current ?? country.aria_irl ?? 40}%
-- Année : ${country.annee || 2026}`;
+- Population : ${pop} M habitants
+- Satisfaction populaire : ${sat}% (${sat < 30 ? 'très instable' : sat < 50 ? 'fragile' : sat < 70 ? 'correct' : 'solide'})
+- Adhésion ARIA : ${aria}%
+- Année : ${year}`;
+
+  // Contexte enrichi pour les pays réels (description IA + leader connu)
+  const leader = country.leader;
+  const leaderName = typeof leader === 'object' ? leader?.nom : leader;
+  const leaderTitre = typeof leader === 'object' ? leader?.titre : null;
+
+  if (country.description) {
+    ctx += `\n- Situation actuelle : ${country.description}`;
+  }
+  if (leaderName) {
+    ctx += `\n- Dirigeant : ${leaderTitre ? `${leaderTitre} ` : ''}${leaderName}`;
+  }
+
+  // Avertissement si pays réel — le conseil doit tenir compte du contexte culturel/politique réel
+  if (country.description || leaderName) {
+    ctx += `\n\nIMPORTANT : Ce pays est ancré dans la réalité. Tes recommandations doivent tenir compte de son histoire, sa culture politique, ses contraintes institutionnelles et son contexte géopolitique réel en ${year}.`;
+  } else {
+    ctx += `\n\nContexte : Pays fictif — approche objective basée uniquement sur les statistiques fournies.`;
+  }
+
+  return ctx;
 }
 
 function buildSyntheseMinisterePrompt(ministry, resA, resB, question, ctx) {

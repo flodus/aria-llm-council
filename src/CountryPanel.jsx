@@ -53,7 +53,7 @@ export default function CountryPanel({
   country, isCrisis, activeTab,
   onClose, onSecession, onNextCycle, onCrisisToggle,
   onGoToCouncil, onConstitution,
-  onSubmitQuestion,
+  onSubmitQuestion, onAddFictionalCountry,
 }) {
   const [openMinistry, setOpenMinistry] = useState(null);
   const [customQ,      setCustomQ]      = useState('');
@@ -224,6 +224,42 @@ export default function CountryPanel({
               }}
             >{submitting ? '⏳ ROUTAGE EN COURS…' : 'SOUMETTRE AU CONSEIL →'}</button>
           </div>
+        </div>
+
+        {/* ── Barre d'actions horizontale — bas du panel Council ── */}
+        <div style={{
+          display: 'flex', gap: '0.4rem', justifyContent: 'flex-end',
+          padding: '0.5rem 0.8rem',
+          borderTop: '1px solid rgba(200,164,74,0.10)',
+          background: 'rgba(6,10,18,0.85)',
+          flexShrink: 0,
+        }}>
+          {[
+            { icon: '⏭', label: 'Cycle +5 ans',  fn: onNextCycle,    color: 'rgba(200,164,74,0.70)' },
+            { icon: '📜', label: 'Constitution',  fn: onConstitution, color: 'rgba(140,100,220,0.70)' },
+            { icon: '✂️', label: 'Sécession',     fn: onSecession,    color: 'rgba(200,80,80,0.70)'  },
+          ].map(({ icon, label, fn, color }) => (
+            <button
+              key={label}
+              title={label}
+              onClick={fn}
+              style={{
+                width: '32px', height: '32px',
+                background: 'rgba(8,14,26,0.85)',
+                border: `1px solid ${color}44`,
+                borderRadius: '2px',
+                fontSize: '0.9rem', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color,
+                transition: 'all 0.15s ease',
+                flexShrink: 0,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = `${color}18`; e.currentTarget.style.borderColor = `${color}88`; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(8,14,26,0.85)'; e.currentTarget.style.borderColor = `${color}44`; }}
+            >
+              {icon}
+            </button>
+          ))}
         </div>
       </div>
     );

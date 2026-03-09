@@ -78,123 +78,119 @@ const KEY_STATUS_STYLE = (s) => ({
 });
 
 function APIKeyInline({ onClose }) {
-  const [claude, setClaude] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}').claude||''; } catch { return ''; }
-  });
-  const [gemini, setGemini] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}').gemini||''; } catch { return ''; }
-  });
-  const [status, setStatus] = useState({ claude: null, gemini: null });
+  const loadKeys = () => {
+    try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; }
+  };
+  const [keys,   setKeys]   = useState(loadKeys);
+  const [status, setStatus] = useState({ claude:null, gemini:null, grok:null, openai:null });
 
-  const testKey = async (model) => {
-    setStatus(s => ({ ...s, [model]: 'testing' }));
-    try {
-      if (model === 'claude') {
+  const PROVIDERS = [
+    { id:'claude', label:'CLAUDE',  sub:'Anthropic',  ph:'sk-ant-…',  testUrl: async (k) => {
         const r = await fetch('https://api.anthropic.com/v1/messages', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json', 'x-api-key':claude,
-            'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+          method:'POST', headers:{ 'Content-Type':'application/json','x-api-key':k,
+            'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
           body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:10, messages:[{role:'user',content:'Hi'}] }),
-        });
-        setStatus(s => ({ ...s, claude: r.ok ? 'ok' : 'error' }));
-      } else {
-        // Tente gemini-2.5-flash en priorité (quota plus large), fallback sur gemini-2.5-pro
-        const MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'];
-        let isKeyValid = false;
-        for (const m of MODELS) {
-          try {
-            const r = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${gemini}`,
-              { method:'POST', headers:{ 'Content-Type':'application/json' },
-              body: JSON.stringify({ contents:[{ parts:[{text:'Hi'}] }], generationConfig:{ maxOutputTokens:10 } }) }
-            );
-            // Si 200 OK ou 429 Quota atteint, la clé est valide
-            if (r.ok || r.status === 429) {
-              isKeyValid = true;
-              break;
-            }
-          } catch (e) {
-            console.warn(`Tentative échouée sur ${m}:`, e);
-          }
-        }
-        setStatus(s => ({ ...s, gemini: isKeyValid ? 'ok' : 'error' }));
-      }
-    } catch { setStatus(s => ({ ...s, [model]: 'error' })); }
+        }); return r.ok;
+    }},
+    { id:'gemini', label:'GEMINI',  sub:'Google',     ph:'AIza…',     testUrl: async (k) => {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ contents:[{parts:[{text:'Hi'}]}], generationConfig:{maxOutputTokens:10} }),
+        }); return r.ok || r.status===429;
+    }},
+    { id:'grok',   label:'GROK',    sub:'xAI',        ph:'xai-…',     testUrl: async (k) => {
+        const r = await fetch('https://api.x.ai/v1/chat/completions', {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${k}`},
+          body: JSON.stringify({ model:'grok-3-mini', max_tokens:10, messages:[{role:'user',content:'Hi'}] }),
+        }); return r.ok;
+    }},
+    { id:'openai', label:'OPENAI',  sub:'OpenAI',     ph:'sk-…',      testUrl: async (k) => {
+        const r = await fetch('https://api.openai.com/v1/chat/completions', {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${k}`},
+          body: JSON.stringify({ model:'gpt-4.1-mini', max_tokens:10, messages:[{role:'user',content:'Hi'}] }),
+        }); return r.ok;
+    }},
+  ];
+
+  const testKey = async (id) => {
+    if (!keys[id]) { setStatus(s=>({...s,[id]:'missing'})); return; }
+    setStatus(s=>({...s,[id]:'testing'}));
+    try {
+      const prov = PROVIDERS.find(p=>p.id===id);
+      const ok = await prov.testUrl(keys[id]);
+      setStatus(s=>({...s,[id]: ok ? 'ok' : 'error'}));
+    } catch { setStatus(s=>({...s,[id]:'error'})); }
   };
 
-  // Sauvegarder actif si au moins une clé est testée et valide
-  const hasClaudeOk = status.claude === 'ok';
-  const hasGeminiOk = status.gemini === 'ok';
-  const canSave = hasClaudeOk || hasGeminiOk;
+  const anyOk = Object.values(status).some(s=>s==='ok');
 
   const save = () => {
     try {
-      const existing = JSON.parse(localStorage.getItem('aria_api_keys')||'{}');
-      localStorage.setItem('aria_api_keys', JSON.stringify({ ...existing, claude, gemini }));
-      const s = { claude: hasClaudeOk ? 'ok' : null, gemini: hasGeminiOk ? 'ok' : null };
-      localStorage.setItem('aria_api_keys_status', JSON.stringify(s));
+      const existing = loadKeys();
+      const merged = { ...existing, ...keys };
+      localStorage.setItem('aria_api_keys', JSON.stringify(merged));
+      const st = {};
+      PROVIDERS.forEach(p => { if (status[p.id]==='ok') st[p.id]='ok'; });
+      localStorage.setItem('aria_api_keys_status', JSON.stringify(st));
     } catch {}
     onClose();
   };
 
-  const statusLabel = (s) => s==='ok' ? '✅ Connecté' : s==='error' ? '❌ Invalide' : s==='testing' ? '⏳ Test…' : '';
+  const stLabel = (s) => s==='ok'?'✅':s==='error'?'❌':s==='testing'?'⏳':s==='missing'?'⚠':'';
 
   return (
-    <div style={{
-      position:'fixed', inset:0, zIndex:9999, background:'rgba(4,8,18,0.92)',
-      backdropFilter:'blur(8px)', display:'flex', alignItems:'center', justifyContent:'center',
-    }}>
-      <div style={{ ...CARD_STYLE, width:440, display:'flex', flexDirection:'column', gap:'1rem' }}>
-        <div style={{ ...labelStyle(), marginBottom:'0.2rem' }}>🔑 CLÉS API</div>
+    <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(4,8,18,0.92)',
+      backdropFilter:'blur(8px)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <div style={{ ...CARD_STYLE, width:480, display:'flex', flexDirection:'column', gap:'0.7rem' }}>
+        <div style={{ ...labelStyle(), marginBottom:'0.1rem' }}>🔑 CLÉS API</div>
+        <p style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.40)',
+          margin:0, lineHeight:1.6 }}>
+          Stockées localement — aucun serveur. Configurez au moins une clé.
+        </p>
 
-        {/* Claude */}
-        <div>
-          <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>CLAUDE (ANTHROPIC)</div>
-          <div style={{ display:'flex', gap:'0.5rem', alignItems:'center' }}>
-            <input style={{ ...INPUT_STYLE, flex:1 }} type="password" value={claude}
-              onChange={e => { setClaude(e.target.value); setStatus(s=>({...s,claude:null})); }}
-              placeholder="sk-ant-…" />
-            <button style={{ ...BTN_SECONDARY, padding:'0.4rem 0.7rem', fontSize:'0.46rem', whiteSpace:'nowrap' }}
-              disabled={!claude} onClick={() => testKey('claude')}>
-              Tester
-            </button>
-          </div>
-          {status.claude && <div style={{ ...KEY_STATUS_STYLE(status.claude), marginTop:'0.3rem' }}>{statusLabel(status.claude)}</div>}
-        </div>
+        {PROVIDERS.map(prov => {
+          const val = keys[prov.id] || '';
+          const s   = status[prov.id];
+          return (
+            <div key={prov.id} style={{ padding:'0.55rem 0.7rem',
+              background: val ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
+              border:`1px solid ${s==='ok' ? 'rgba(58,191,122,0.28)' : val ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
+              borderRadius:'2px' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.4rem' }}>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.14em',
+                  color:'rgba(200,215,240,0.75)', flex:1 }}>{prov.label}</span>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem',
+                  color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
+              </div>
+              <div style={{ display:'flex', gap:'0.4rem', alignItems:'center' }}>
+                <input style={{ ...INPUT_STYLE, flex:1, fontSize:'0.48rem' }} type="password"
+                  value={val}
+                  onChange={e => { setKeys(k=>({...k,[prov.id]:e.target.value})); setStatus(s=>({...s,[prov.id]:null})); }}
+                  placeholder={prov.ph} />
+                <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.55rem', fontSize:'0.44rem', whiteSpace:'nowrap' }}
+                  disabled={!val} onClick={()=>testKey(prov.id)}>Test</button>
+                {s && <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', minWidth:'1rem' }}>{stLabel(s)}</span>}
+              </div>
+            </div>
+          );
+        })}
 
-        {/* Gemini */}
-        <div>
-          <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>GEMINI (GOOGLE)</div>
-          <div style={{ display:'flex', gap:'0.5rem', alignItems:'center' }}>
-            <input style={{ ...INPUT_STYLE, flex:1 }} type="password" value={gemini}
-              onChange={e => { setGemini(e.target.value); setStatus(s=>({...s,gemini:null})); }}
-              placeholder="AIza…" />
-            <button style={{ ...BTN_SECONDARY, padding:'0.4rem 0.7rem', fontSize:'0.46rem', whiteSpace:'nowrap' }}
-              disabled={!gemini} onClick={() => testKey('gemini')}>
-              Tester
-            </button>
-          </div>
-          {status.gemini && <div style={{ ...KEY_STATUS_STYLE(status.gemini), marginTop:'0.3rem' }}>{statusLabel(status.gemini)}</div>}
-        </div>
-
-        {/* Hint si aucune clé validée */}
-        {!canSave && (claude || gemini) && (
-          <div style={{ fontSize:'0.43rem', color:'rgba(200,164,74,0.50)', lineHeight:1.5 }}>
+        {!anyOk && Object.values(keys).some(v=>v) && (
+          <div style={{ fontSize:'0.42rem', color:'rgba(200,164,74,0.45)', lineHeight:1.5 }}>
             ⚠ Testez au moins une clé pour activer la sauvegarde.
           </div>
         )}
 
-        <div style={{ display:'flex', gap:'0.6rem', justifyContent:'flex-end' }}>
+        <div style={{ display:'flex', gap:'0.6rem', justifyContent:'flex-end', marginTop:'0.2rem' }}>
           <button style={BTN_SECONDARY} onClick={onClose}>ANNULER</button>
-          <button style={{ ...BTN_PRIMARY, opacity: canSave ? 1 : 0.35 }}
-            disabled={!canSave} onClick={save}>
-            SAUVEGARDER
-          </button>
+          <button style={{ ...BTN_PRIMARY, opacity: anyOk ? 1 : 0.35 }}
+            disabled={!anyOk} onClick={save}>SAUVEGARDER</button>
         </div>
       </div>
     </div>
   );
 }
+
 
 // ── Sous-composant : Fiche info pays réel ────────────────────────────────
 function CountryInfoCard({ data }) {
@@ -513,10 +509,12 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   const [showKeys,   setShowKeys]  = useState(false);
 
   // Sous-états navigation défaut
-  const [defautType,   setDefautType]   = useState(null);  // 'fictif'|'reel'|'new'
-  const [defautFictif, setDefautFictif] = useState(null);  // id PAYS_LOCAUX ou 'new'
-  const [defautReel,   setDefautReel]   = useState('');    // id REAL_COUNTRIES_DATA
-  const [defautNom,    setDefautNom]    = useState('');    // nom libre (fictif ou réel tapé)
+  const [defautType,        setDefautType]        = useState(null);  // 'fictif'|'reel'|'new'
+  const [defautFictif,      setDefautFictif]      = useState(null);  // id PAYS_LOCAUX ou 'new'
+  const [defautReel,        setDefautReel]        = useState('');    // id REAL_COUNTRIES_DATA ou terrain si isNew
+  const [defautNom,         setDefautNom]         = useState('');    // nom libre
+  const [newFictifTerrain,  setNewFictifTerrain]  = useState('coastal');
+  const [newFictifRegime,   setNewFictifRegime]   = useState('democratie_liberale');
 
   const resetDefaut = () => { setDefautType(null); setDefautFictif(null); setDefautReel(''); setDefautNom(''); };
 
@@ -632,7 +630,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           ].map(m => (
             <div key={m.id}
               style={{ ...S.mCard, opacity: m.disabled ? 0.35 : 1, cursor: m.disabled ? 'not-allowed' : 'pointer' }}
-              onClick={() => !m.disabled && (setMode(m.id), setStep('config'))}>
+              onClick={() => { if (m.disabled) return; setMode(m.id); setStep(m.id === 'ai' ? 'aria_config' : 'config'); }}>
               <div style={{ fontSize:'1.4rem' }}>{m.icon}</div>
               <div style={{ fontFamily:FONT.cinzel, fontSize:'0.58rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.85)' }}>{m.title}</div>
               <div style={{ fontSize:'0.50rem', color:'rgba(140,160,200,0.55)', lineHeight:1.6 }}>{m.desc}</div>
@@ -661,6 +659,137 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
       <button style={BTN_SECONDARY} onClick={() => setStep('name')}>← RETOUR</button>
     </div>
   );
+
+
+  // ── Étape : configuration ARIA (mode IA uniquement) ──────────────────────
+  if (step === 'aria_config') {
+    const availProviders = ['claude','gemini','grok','openai'].filter(id => {
+      try { return !!JSON.parse(localStorage.getItem('aria_api_keys')||'{}')[id]; } catch { return false; }
+    });
+    const PROV_LABELS = { claude:'Claude', gemini:'Gemini', grok:'Grok', openai:'OpenAI' };
+
+    // Lire/écrire config IA en local
+    const [ariaMode,  setAriaMode]  = useState(() => {
+      try { return JSON.parse(localStorage.getItem('aria_options')||'{}').ia_mode || 'aria'; } catch { return 'aria'; }
+    });
+    const [soloModel, setSoloModel] = useState(() => {
+      try { return JSON.parse(localStorage.getItem('aria_options')||'{}').solo_model || availProviders[0] || 'claude'; } catch { return 'claude'; }
+    });
+    const [roles, setRoles] = useState(() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem('aria_options')||'{}').ia_roles || {};
+        return {
+          ministre_model:  saved.ministre_model  || availProviders[0] || 'claude',
+          synthese_min:    saved.synthese_min    || availProviders[1] || availProviders[0] || 'gemini',
+          phare_model:     saved.phare_model     || availProviders[0] || 'claude',
+          boussole_model:  saved.boussole_model  || availProviders[0] || 'claude',
+          synthese_pres:   saved.synthese_pres   || availProviders[1] || availProviders[0] || 'gemini',
+          evenement_model: saved.evenement_model || availProviders[0] || 'claude',
+          factcheck_model: saved.factcheck_model || availProviders[1] || availProviders[0] || 'gemini',
+        };
+      } catch { return {}; }
+    });
+
+    const ProvSelect = ({ roleKey, label }) => (
+      <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', marginBottom:'0.4rem' }}>
+        <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', color:'rgba(140,160,200,0.55)',
+          flex:1, letterSpacing:'0.06em' }}>{label}</span>
+        <select style={{ ...SELECT_STYLE, width:'auto', minWidth:'100px', fontSize:'0.44rem', padding:'0.25rem 0.5rem' }}
+          value={roles[roleKey] || availProviders[0]}
+          onChange={e => setRoles(r=>({...r,[roleKey]:e.target.value}))}>
+          {availProviders.map(pid => <option key={pid} value={pid}>{PROV_LABELS[pid]}</option>)}
+        </select>
+      </div>
+    );
+
+    const saveAndContinue = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem('aria_options')||'{}');
+        const next = { ...saved, ia_mode: ariaMode, solo_model: soloModel, ia_roles: roles };
+        localStorage.setItem('aria_options', JSON.stringify(next));
+      } catch {}
+      setStep('config');
+    };
+
+    const MODE_CARDS = [
+      { id:'aria',   icon:'⚡', title:'ARIA',         desc:'Architecture multi-providers. Choisissez qui pense et qui synthétise.' },
+      { id:'solo',   icon:'◎',  title:'SOLO',          desc:'Un seul provider pour tous les rôles. Simple et cohérent.' },
+      { id:'custom', icon:'🔧', title:'PERSONNALISÉ',  desc:'Assignez chaque rôle du Conseil à un provider différent.' },
+    ];
+
+    return (
+      <div style={S.wrap(false)}>
+        <ARIAHeader showQuote={false} />
+        <div style={{ ...labelStyle(), alignSelf:'flex-start' }}>ARCHITECTURE IA — {worldName}</div>
+
+        {/* Mode cards */}
+        <div style={{ display:'flex', gap:'0.7rem', width:'100%' }}>
+          {MODE_CARDS.map(m => (
+            <div key={m.id}
+              style={{ ...S.mCard, flex:1,
+                borderColor: ariaMode===m.id ? 'rgba(200,164,74,0.45)' : undefined,
+                background:  ariaMode===m.id ? 'rgba(200,164,74,0.06)' : undefined,
+              }}
+              onClick={() => setAriaMode(m.id)}>
+              <div style={{ fontSize:'1.2rem' }}>{m.icon}</div>
+              <div style={{ fontFamily:FONT.cinzel, fontSize:'0.52rem', letterSpacing:'0.14em',
+                color: ariaMode===m.id ? 'rgba(200,164,74,0.92)' : 'rgba(200,164,74,0.60)' }}>{m.title}</div>
+              <div style={{ fontSize:'0.45rem', color:'rgba(140,160,200,0.50)', lineHeight:1.55 }}>{m.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Sous-config ARIA */}
+        {ariaMode === 'aria' && availProviders.length >= 1 && (
+          <div style={{ ...CARD_STYLE, width:'100%' }}>
+            <div style={{ ...labelStyle('0.44rem'), marginBottom:'0.6rem' }}>DÉLIBÉRATION</div>
+            <ProvSelect roleKey="ministre_model" label="Ministres pensent" />
+            <ProvSelect roleKey="synthese_min"   label="Synthèse ministérielle" />
+            <div style={{ borderTop:'1px solid rgba(200,164,74,0.08)', margin:'0.4rem 0' }} />
+            <ProvSelect roleKey="phare_model"    label="Le Phare (vision)" />
+            <ProvSelect roleKey="boussole_model" label="La Boussole (mémoire)" />
+            <ProvSelect roleKey="synthese_pres"  label="Synthèse présidentielle" />
+          </div>
+        )}
+
+        {/* Sous-config SOLO */}
+        {ariaMode === 'solo' && (
+          <div style={{ ...CARD_STYLE, width:'100%' }}>
+            <div style={{ ...labelStyle('0.44rem'), marginBottom:'0.55rem' }}>PROVIDER UNIQUE</div>
+            <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap' }}>
+              {availProviders.map(pid => (
+                <button key={pid}
+                  style={{ ...BTN_SECONDARY, padding:'0.35rem 0.9rem', fontSize:'0.48rem',
+                    ...(soloModel===pid ? { borderColor:'rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : {}) }}
+                  onClick={() => setSoloModel(pid)}>
+                  {PROV_LABELS[pid]}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Sous-config PERSONNALISÉ */}
+        {ariaMode === 'custom' && (
+          <div style={{ ...CARD_STYLE, width:'100%' }}>
+            <div style={{ ...labelStyle('0.44rem'), marginBottom:'0.6rem' }}>ASSIGNATION PAR RÔLE</div>
+            <ProvSelect roleKey="ministre_model"  label="Incarnation des ministres" />
+            <ProvSelect roleKey="synthese_min"    label="Synthèse ministérielle" />
+            <ProvSelect roleKey="phare_model"     label="Le Phare (Président)" />
+            <ProvSelect roleKey="boussole_model"  label="La Boussole (Présidente)" />
+            <ProvSelect roleKey="synthese_pres"   label="Synthèse présidentielle" />
+            <ProvSelect roleKey="evenement_model" label="Événements narratifs" />
+            <ProvSelect roleKey="factcheck_model" label="Fact-check" />
+          </div>
+        )}
+
+        <div style={{ display:'flex', gap:'0.6rem', width:'100%', justifyContent:'space-between' }}>
+          <button style={BTN_SECONDARY} onClick={() => setStep('mode')}>← RETOUR</button>
+          <button style={BTN_PRIMARY} onClick={saveAndContinue}>CONTINUER →</button>
+        </div>
+      </div>
+    );
+  }
 
   // ── Étape : config ────────────────────────────────────────────────────
   // ── Étape : config — helpers ──────────────────────────────────────────
@@ -718,56 +847,133 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
         </div>
       );
 
-      // B — Choisir parmi les 3 fictifs
+      // B — Choisir parmi les 3 fictifs ou en créer un nouveau
       if (defautType === 'fictif') {
-        const chosen = PAYS_LOCAUX.find(p => p.id === defautFictif);
+        const chosen = defautFictif && defautFictif !== 'new'
+          ? PAYS_LOCAUX.find(p => p.id === defautFictif)
+          : null;
+        const isNew = defautFictif === 'new';
+
+        // Estimations pour le formulaire nouveau fictif
+        const ARIA_BASE = { republique_federale:44, democratie_liberale:48, monarchie_constitutionnelle:38, technocratie_ia:72, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocracie:18, communisme:32 };
+        const POP_BASE  = { coastal:8_000_000, inland:5_000_000, highland:3_500_000, island:2_000_000, archipelago:1_500_000 };
+        const SAT_BASE  = { democratie_liberale:62, republique_federale:58, monarchie_constitutionnelle:55, technocratie_ia:60, oligarchie:40, junte_militaire:35, regime_autoritaire:38, theocracie:50, communisme:45 };
+
+        const canPlay = (defautFictif && !isNew) || (isNew && defautNom.trim().length > 0);
+
         return (
-          <div style={S.wrap(false)}>
+          <div style={S.wrap(true)}>
             <ARIAHeader showQuote={false} />
             {H('NATION FICTIVE')}
-            <div style={{ display:'flex', gap:'0.7rem', width:'100%' }}>
+
+            {/* Grille 2×2 : 3 presets + 1 créer */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'0.7rem', width:'100%' }}>
               {PAYS_LOCAUX.map(p => (
                 <MC key={p.id}
-                  style={{ flex:1,
+                  style={{
                     borderColor: defautFictif===p.id ? `${p.couleur}70` : undefined,
-                    background:  defautFictif===p.id ? `${p.couleur}14` : undefined }}
+                    background:  defautFictif===p.id ? `${p.couleur}14` : undefined,
+                    cursor:'pointer',
+                  }}
                   onClick={() => setDefautFictif(p.id)}>
                   <div style={{ fontSize:'1.2rem' }}>{p.emoji}</div>
                   <McTitle t={p.nom} />
                   <McSub t={`${p.terrain} · ${p.regime.replace(/_/g,' ')}`} />
                 </MC>
               ))}
+
+              {/* Carte + Créer */}
+              <MC
+                style={{
+                  borderColor: isNew ? 'rgba(58,191,122,0.55)' : 'rgba(58,191,122,0.18)',
+                  background:  isNew ? 'rgba(58,191,122,0.07)' : undefined,
+                  cursor:'pointer', justifyContent:'center', alignItems:'center',
+                }}
+                onClick={() => setDefautFictif('new')}>
+                <div style={{ fontSize:'1.4rem' }}>🌍</div>
+                <McTitle t="+ CRÉER" />
+                <McSub t="Nation fictive personnalisée" />
+              </MC>
             </div>
+
+            {/* Détail preset choisi */}
             {chosen && (
               <div style={{ ...CARD_STYLE, width:'100%', display:'flex', flexDirection:'column', gap:'0.5rem' }}>
                 <div style={{ fontSize:'0.44rem', color:'rgba(140,160,200,0.65)', lineHeight:1.6 }}>{chosen.description}</div>
                 <div style={{ display:'flex', gap:'1rem', flexWrap:'wrap', alignItems:'center' }}>
-                  {[
-                    `👤 ${chosen.leader}`,
-                    `👥 ${(chosen.population/1e6).toFixed(1)} M hab.`,
-                    `😊 Satisfaction ${chosen.satisfaction}%`,
-                  ].map(t => (
+                  {[`👤 ${chosen.leader}`, `👥 ${(chosen.population/1e6).toFixed(1)} M hab.`, `😊 Satisfaction ${chosen.satisfaction}%`].map(t => (
                     <span key={t} style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.50)' }}>{t}</span>
                   ))}
-                  {/* ARIA IRL estimé (déterministe par régime) */}
                   {(() => {
-                    const ARIA_BASE = { republique_federale:44, democratie_liberale:48, monarchie_constitutionnelle:38, technocratie_ia:72, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocracie:18, communisme:32 };
                     const irl = ARIA_BASE[chosen.regime] ?? 35;
                     const col = irl >= 60 ? 'rgba(140,100,220,0.80)' : irl >= 40 ? 'rgba(100,130,200,0.70)' : 'rgba(90,110,160,0.50)';
-                    return (
-                      <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:col }}>
-                        ◈ ARIA IRL ~{irl}%
-                      </span>
-                    );
+                    return <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:col }}>◈ ARIA IRL ~{irl}%</span>;
                   })()}
                 </div>
               </div>
             )}
+
+            {/* Formulaire nouveau pays fictif */}
+            {isNew && (
+              <div style={{ ...CARD_STYLE, width:'100%', display:'flex', flexDirection:'column', gap:'0.65rem' }}>
+                <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem', letterSpacing:'0.16em', color:'rgba(58,191,122,0.55)' }}>
+                  NOUVELLE NATION FICTIVE
+                </div>
+                <div>
+                  <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NOM</div>
+                  <input
+                    style={{ ...INPUT_STYLE, fontSize:'0.54rem', borderColor:'rgba(58,191,122,0.25)' }}
+                    value={defautNom}
+                    onChange={e => setDefautNom(e.target.value)}
+                    placeholder="Ex : Arvalia, Morvaine, Zephoria…"
+                    autoFocus
+                  />
+                </div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.6rem' }}>
+                  <div>
+                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>TERRAIN</div>
+                    <select style={SELECT_STYLE} value={newFictifTerrain} onChange={e => setNewFictifTerrain(e.target.value)}>
+                      {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>RÉGIME</div>
+                    <select style={SELECT_STYLE} value={newFictifRegime} onChange={e => setNewFictifRegime(e.target.value)}>
+                      {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                    </select>
+                  </div>
+                </div>
+                {/* Estimations */}
+                <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap', padding:'0.35rem 0.5rem', background:'rgba(58,191,122,0.03)', borderLeft:'2px solid rgba(58,191,122,0.15)', borderRadius:'2px' }}>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(140,160,200,0.50)' }}>👥 ~{((POP_BASE[newFictifTerrain]||5e6)/1e6).toFixed(1)} M hab.</span>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(140,160,200,0.50)' }}>😊 ~{SAT_BASE[newFictifRegime]||50}% sat.</span>
+                  {(() => {
+                    const irl = ARIA_BASE[newFictifRegime] ?? 35;
+                    const col = irl >= 60 ? 'rgba(140,100,220,0.80)' : irl >= 40 ? 'rgba(100,130,200,0.70)' : 'rgba(90,110,160,0.50)';
+                    return <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:col }}>◈ ARIA IRL ~{irl}%</span>;
+                  })()}
+                </div>
+              </div>
+            )}
+
             <BtnRow>
-              {BK(() => setDefautType(null))}
-              <button style={{ ...BTN_PRIMARY, opacity: defautFictif ? 1 : 0.35 }}
-                disabled={!defautFictif}
-                onClick={() => launch('defaut_local', [{ type:'imaginaire', realData: chosen }])}>
+              {BK(() => { setDefautType(null); setDefautFictif(null); setDefautNom(''); })}
+              <button
+                style={{ ...BTN_PRIMARY, opacity: canPlay ? 1 : 0.35 }}
+                disabled={!canPlay}
+                onClick={() => {
+                  if (isNew) {
+                    launch('defaut_local', [{
+                      type: 'imaginaire',
+                      nom:     defautNom.trim(),
+                      terrain: newFictifTerrain,
+                      regime:  newFictifRegime,
+                      realData: null,
+                    }]);
+                  } else {
+                    launch('defaut_local', [{ type:'imaginaire', realData: chosen }]);
+                  }
+                }}>
                 JOUER →
               </button>
             </BtnRow>

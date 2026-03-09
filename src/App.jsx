@@ -128,11 +128,10 @@ export default function App() {
     setCurrentCycle(Math.max(0, Math.round((y - base) / 5)));
   }, []);
 
-  const handleNextCycle = useCallback(async () => {
-    await ariaRef.current?.advanceCycle?.();
-    const y  = ariaRef.current?.getYear?.();      if (y)              setCurrentYear(y);
-    const c  = ariaRef.current?.getCycle?.();     if (c !== undefined) setCurrentCycle(c);
-    const cs = ariaRef.current?.getCountries?.(); if (cs)              setLiveCountries(cs);
+  // handleNextCycle → ouvre le popup de confirmation dans Dashboard
+  // (ne plus appeler advanceCycle directement — le popup s'en charge)
+  const handleNextCycle = useCallback(() => {
+    ariaRef.current?.openCyclePopup?.();
   }, []);
 
   const handleSecession    = useCallback(() => ariaRef.current?.openSecession?.(), []);
@@ -246,6 +245,7 @@ export default function App() {
           setSelectedCountry={setSelectedCountry}
           isCrisis={isCrisis}
           activeTab={activeTab}
+          onGoToCouncil={() => setActiveTab('council')}
           onReady={handleAriaReady}
           onCountriesUpdate={handleCountriesUpdate}
           onReset={handleReset}
@@ -255,7 +255,7 @@ export default function App() {
       {/* Panneau latéral */}
       <aside className="side-panel">
         {selectedCountry === null
-          ? <EmptyPanel activeTab={activeTab} />
+          ? <EmptyPanel />
           : <CountryPanel
               country={selectedCountry}
               isCrisis={isCrisis}
@@ -266,7 +266,8 @@ export default function App() {
               onCrisisToggle={handleCrisisToggle}
               onGoToCouncil={() => setActiveTab('council')}
               onConstitution={() => ariaRef.current?.openConstitution?.()}
-              onSubmitQuestion={(q, ministryId) => ariaRef.current?.submitQuestion?.(q, ministryId)}
+              onSubmitQuestion={(q, mid) => ariaRef.current?.submitQuestion?.(q, mid)}
+              onAddFictionalCountry={() => ariaRef.current?.addFictionalCountry?.()}
             />
         }
       </aside>

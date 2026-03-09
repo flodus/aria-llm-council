@@ -17,5 +17,7 @@ options : interface : Affichage carte ZEE et légende ça change rien qu'on coch
 #### V2
 Faudrait penser à faire "colonisation ou un truc inverse de sécession"
 
+rappel de la question juste après vote du peuple et avant les avis des présidents
+cacher les icônes de la fenêtre principale dans la vue llm council (on voit pas les réponses de la synthèse présidentielle)
 pas de jauge
 pour les questions à l'ia pour les pays existants il faudrait mettre en contexte le pays lui même : la même question posée en france ou en chine n'aura pas le même impact sur les décisions ministérielles. Par contre ça sera plus objectif pour les questions aux pays fictifs
