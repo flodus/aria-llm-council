@@ -44,6 +44,33 @@ const DEFAULT_COUNTRY = () => ({
   type: 'imaginaire', nom: '', regime: 'democratie_liberale',
   terrain: 'coastal', realData: null,
 });
+// ── Modèles LLM disponibles (fallback si registry offline) ───────────────────
+const ARIA_REGISTRY_URL = 'https://gist.githubusercontent.com/flodus/REPLACE_WITH_YOUR_GIST_ID/raw/llm-registry.json';
+const ARIA_FALLBACK_MODELS = {
+  openrouter: [
+    { id:'anthropic/claude-sonnet-4-5',     label:'Claude Sonnet 4.5 ★' },
+    { id:'anthropic/claude-haiku-4-5',      label:'Claude Haiku 4.5' },
+    { id:'google/gemini-2.0-flash',         label:'Gemini 2.0 Flash ★' },
+    { id:'google/gemini-2.5-pro-preview',   label:'Gemini 2.5 Pro' },
+    { id:'x-ai/grok-3-mini',               label:'Grok 3 Mini ★' },
+    { id:'openai/gpt-4.1-mini',             label:'GPT-4.1 Mini ★' },
+    { id:'meta-llama/llama-4-scout',        label:'Llama 4 Scout' },
+    { id:'mistralai/mistral-small-3.1',     label:'Mistral Small 3.1' },
+  ],
+  claude: [
+    { id:'claude-sonnet-4-6',              label:'Sonnet 4.6 ★' },
+    { id:'claude-haiku-4-5-20251001',      label:'Haiku 4.5' },
+    { id:'claude-opus-4-6',               label:'Opus 4.6' },
+  ],
+  gemini: [
+    { id:'gemini-2.0-flash',               label:'2.0 Flash ★' },
+    { id:'gemini-2.5-pro-preview-05-06',   label:'2.5 Pro Preview' },
+    { id:'gemini-1.5-pro',                 label:'1.5 Pro' },
+  ],
+  grok:   [{ id:'grok-3-mini', label:'Grok 3 Mini ★' }, { id:'grok-3', label:'Grok 3' }],
+  openai: [{ id:'gpt-4.1-mini', label:'GPT-4.1 Mini ★' }, { id:'gpt-4.1', label:'GPT-4.1' }, { id:'o4-mini', label:'o4-mini' }],
+};
+
 
 // ── Sous-composant : Header ARIA ──────────────────────────────────────────
 function ARIAHeader({ showQuote }) {
@@ -564,7 +591,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const [activePres,   setActivePres]   = useState(['phare','boussole']);
   // New minister/ministry forms
   const [newMinForm,   setNewMinForm]   = useState(false);
-  const [newMinData,   setNewMinData]   = useState({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'' });
+  const [newMinData,   setNewMinData]   = useState({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
   const [newMinistryForm, setNewMinistryForm] = useState(false);
   const [newMinistryData, setNewMinistryData] = useState({ id:'', name:'', emoji:'🏛', color:'#8090C0', mission:'', ministers:[] });
   const [activeMinsters, setActiveMinsters] = useState(null); // null = tous actifs
@@ -573,6 +600,42 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const [plCtxOpen,  setPlCtxOpen]  = useState(null); // index du pays ouvert, ou null
   const [plCtxModes, setPlCtxModes] = useState(() => (pendingDefs||[]).map(d => d.context_mode || ''));
   const [plCtxOvrs,  setPlCtxOvrs]  = useState(() => (pendingDefs||[]).map(d => d.contextOverride || ''));
+  // ── Config IA (onglet CONFIG) ─────────────────────────────────────────
+  const loadOpts = () => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}'); } catch { return {}; } };
+  const loadPreferredModels = () => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); } catch { return {}; } };
+  const loadIARoles = () => { try { const r = (JSON.parse(localStorage.getItem('aria_options')||'{}')).ia_roles || {}; return r; } catch { return {}; } };
+  const loadKeys = () => { try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; } };
+  const PROV_LABELS = { openrouter:'OpenRouter', claude:'Claude', gemini:'Gemini', grok:'Grok', openai:'OpenAI' };
+  const [modelReg,    setModelReg]    = useState(ARIA_FALLBACK_MODELS);
+  const [regStatus,   setRegStatus]   = useState('idle');
+  const [ariaMode,    setAriaMode]    = useState(() => loadOpts().ia_mode || 'aria');
+  const [boardGame,   setBoardGame]   = useState(() => !!(loadOpts().gameplay?.mode_board_game));
+  const apiKeys = loadKeys();
+  const availProviders = ['openrouter','claude','gemini','grok','openai'].filter(id => !!apiKeys[id]);
+  const p0 = availProviders[0] || 'openrouter';
+  const p1 = availProviders[1] || p0;
+  const prefModels = loadPreferredModels();
+  const initRoles = () => {
+    const r = loadIARoles();
+    const modelOf = (prov) => prefModels[prov] || ARIA_FALLBACK_MODELS[prov]?.find(m=>m.label.includes('★'))?.id || ARIA_FALLBACK_MODELS[prov]?.[0]?.id || '';
+    return {
+      ministre_provider:   r.ministre_provider   || p0, ministre_model:     r.ministre_model     || modelOf(r.ministre_provider  || p0),
+      synthese_min_prov:   r.synthese_min_prov   || p1, synthese_min_model: r.synthese_min_model || modelOf(r.synthese_min_prov  || p1),
+      phare_provider:      r.phare_provider      || p0, phare_model:        r.phare_model        || modelOf(r.phare_provider     || p0),
+      boussole_provider:   r.boussole_provider   || p1, boussole_model:     r.boussole_model     || modelOf(r.boussole_provider  || p1),
+      synthese_pres_prov:  r.synthese_pres_prov  || p0, synthese_pres_model:r.synthese_pres_model|| modelOf(r.synthese_pres_prov || p0),
+    };
+  };
+  const [roles, setRoles] = useState(initRoles);
+  // Accordéons CONFIG
+  const [cfgOpen, setCfgOpen] = useState(''); // 'ia'|'constitution'|'boardgame'|''
+  // Registry fetch on mount
+  useEffect(() => {
+    setRegStatus('loading');
+    fetch(ARIA_REGISTRY_URL).then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => { setModelReg({...ARIA_FALLBACK_MODELS, ...data}); setRegStatus('ok'); })
+      .catch(() => setRegStatus('error'));
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -614,6 +677,20 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
         }));
       } catch {}
     }
+    // Save IA config
+    try {
+      const opts = loadOpts();
+      opts.ia_mode = ariaMode;
+      opts.gameplay = { ...(opts.gameplay||{}), mode_board_game: boardGame };
+      opts.ia_roles = roles;
+      localStorage.setItem('aria_options', JSON.stringify(opts));
+      localStorage.setItem('aria_preferred_models', JSON.stringify(
+        Object.fromEntries(Object.entries(roles).filter(([k])=>k.endsWith('_model')).map(([k,v])=>{
+          const prov = roles[k.replace('_model','_provider')] || roles[k.replace('_model','_prov')+'ider'];
+          return prov ? [prov, v] : null;
+        }).filter(Boolean))
+      ));
+    } catch {}
     // Merge ctx overrides back into pendingDefs
     const defs = (pendingDefs || []).map((d, i) => ({
       ...d,
@@ -638,7 +715,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
     const id = newMinData.id.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z_]/g,'');
     if (!id) return;
     setPlAgents(a => ({ ...a, ministers: { ...a.ministers, [id]: { ...newMinData, id, sign:'Custom', weight:1 } } }));
-    setNewMinData({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'' });
+    setNewMinData({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
     setNewMinForm(false);
   };
 
@@ -774,20 +851,6 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
               )}
             </div>
 
-            {/* Contexte délibérations par pays */}
-            {(pendingDefs || []).map((def, i) => (
-              <ContextPanel
-                key={i}
-                countryName={def.nom || def.realData?.nom || `Nation ${i+1}`}
-                open={plCtxOpen === i}
-                onToggle={() => setPlCtxOpen(p => p === i ? null : i)}
-                mode={plCtxModes[i] || ''}
-                setMode={v => setPlCtxModes(p => { const a=[...p]; a[i]=v; return a; })}
-                override={plCtxOvrs[i] || ''}
-                setOverride={v => setPlCtxOvrs(p => { const a=[...p]; a[i]=v; return a; })}
-              />
-            ))}
-
             {/* Ministères + Ministres résumé avec toggles */}
             <div style={{ ...CARD_STYLE }}>
               <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'0.35rem' }}>
@@ -839,6 +902,142 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 })}
               </div>
             </div>
+            {/* Contexte délibérations par pays */}
+            {(pendingDefs || []).map((def, i) => (
+              <ContextPanel
+                key={i}
+                countryName={def.nom || def.realData?.nom || `Nation ${i+1}`}
+                open={plCtxOpen === i}
+                onToggle={() => setPlCtxOpen(p => p === i ? null : i)}
+                mode={plCtxModes[i] || ''}
+                setMode={v => setPlCtxModes(p => { const a=[...p]; a[i]=v; return a; })}
+                override={plCtxOvrs[i] || ''}
+                setOverride={v => setPlCtxOvrs(p => { const a=[...p]; a[i]=v; return a; })}
+              />
+            ))}
+
+            {/* ── CONFIG IA + BOARD GAME (accordéons) ──────────────────── */}
+            {[
+              { id:'boardgame', label:'🎲 MODE BOARD GAME', badge: boardGame ? 'ACTIF' : null,
+                content: (
+                  <div style={{ padding:'0.5rem 0.6rem', display:'flex', alignItems:'flex-start', gap:'0.7rem' }}>
+                    <input type="checkbox" id="bg-chk-resume" checked={boardGame}
+                      onChange={e => setBoardGame(e.target.checked)}
+                      style={{ marginTop:'0.15rem', accentColor:'#C8A44A', cursor:'pointer', flexShrink:0 }} />
+                    <label htmlFor="bg-chk-resume" style={{ cursor:'pointer' }}>
+                      <div style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.10em',
+                        color:'rgba(200,164,74,0.70)' }}>RÉPONSES LOCALES PRÉ-ÉCRITES</div>
+                      <div style={{ fontSize:'0.43rem', color:'rgba(140,160,200,0.40)', marginTop:'0.2rem', lineHeight:1.5 }}>
+                        Utilise les textes pré-écrits même avec une clé API active. Idéal pour tester sans frais.
+                      </div>
+                    </label>
+                  </div>
+                )
+              },
+              { id:'ia', label:'⚡ MODE IA',
+                badge: ariaMode === 'solo' ? 'SOLO' : ariaMode === 'custom' ? 'CUSTOM' : 'ARIA',
+                content: (
+                  <div style={{ padding:'0.5rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem' }}>
+                    {/* Mode selector */}
+                    <div style={{ display:'flex', gap:'0.35rem' }}>
+                      {[
+                        { id:'aria',   label:'ARIA — Multi-agent complet' },
+                        { id:'solo',   label:'SOLO — 1 modèle, rôles tournants' },
+                        { id:'custom', label:'CUSTOM — Rôles libres' },
+                      ].map(m => (
+                        <button key={m.id}
+                          style={{ ...BTN_SECONDARY, flex:1, fontSize:'0.40rem', padding:'0.28rem 0.4rem',
+                            ...(ariaMode===m.id ? { borderColor:'rgba(200,164,74,0.50)',
+                              color:'rgba(200,164,74,0.90)', background:'rgba(200,164,74,0.08)' } : {}) }}
+                          onClick={() => setAriaMode(m.id)}>
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
+                    {/* Role rows for ARIA / CUSTOM */}
+                    {(ariaMode === 'aria' || ariaMode === 'custom') && (
+                      <div style={{ display:'flex', flexDirection:'column', gap:'0.3rem' }}>
+                        {[
+                          { provKey:'ministre_provider',  modelKey:'ministre_model',  label:'Ministre' },
+                          { provKey:'synthese_min_prov',  modelKey:'synthese_min_model', label:'Synthèse min.' },
+                          { provKey:'phare_provider',     modelKey:'phare_model',     label:'Phare ☉' },
+                          { provKey:'boussole_provider',  modelKey:'boussole_model',  label:'Boussole ☽' },
+                          { provKey:'synthese_pres_prov', modelKey:'synthese_pres_model', label:'Synthèse prés.' },
+                        ].map(({ provKey, modelKey, label }) => {
+                          const prov = roles[provKey] || availProviders[0] || 'openrouter';
+                          const models = modelReg[prov] || ARIA_FALLBACK_MODELS[prov] || [];
+                          return (
+                            <div key={provKey} style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr', gap:'0.3rem', alignItems:'center' }}>
+                              <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.50)' }}>{label}</span>
+                              <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                                value={prov}
+                                onChange={e => setRoles(r => ({ ...r, [provKey]: e.target.value,
+                                  [modelKey]: modelReg[e.target.value]?.[0]?.id || '' }))}>
+                                {availProviders.map(p => <option key={p} value={p}>{PROV_LABELS[p]||p}</option>)}
+                              </select>
+                              <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                                value={roles[modelKey] || ''}
+                                onChange={e => setRoles(r => ({ ...r, [modelKey]: e.target.value }))}>
+                                {models.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                              </select>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {ariaMode === 'solo' && (
+                      <div style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr', gap:'0.3rem', alignItems:'center' }}>
+                        <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.50)' }}>Modèle</span>
+                        <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                          value={roles.ministre_provider || availProviders[0] || 'openrouter'}
+                          onChange={e => setRoles(r => ({ ...r,
+                            ministre_provider: e.target.value, synthese_min_prov: e.target.value,
+                            phare_provider: e.target.value, boussole_provider: e.target.value, synthese_pres_prov: e.target.value,
+                            ministre_model: modelReg[e.target.value]?.[0]?.id || '',
+                          }))}>
+                          {availProviders.map(p => <option key={p} value={p}>{PROV_LABELS[p]||p}</option>)}
+                        </select>
+                        <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                          value={roles.ministre_model || ''}
+                          onChange={e => setRoles(r => ({ ...r,
+                            ministre_model: e.target.value, synthese_min_model: e.target.value,
+                            phare_model: e.target.value, boussole_model: e.target.value, synthese_pres_model: e.target.value,
+                          }))}>
+                          {(modelReg[roles.ministre_provider] || []).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )
+              },
+            ].map(acc => (
+              <div key={acc.id} style={{ width:'100%', borderRadius:'2px',
+                border:'1px solid rgba(200,164,74,0.12)', overflow:'hidden' }}>
+                <button
+                  style={{ width:'100%', background: cfgOpen===acc.id ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.015)',
+                    border:'none', padding:'0.45rem 0.7rem', cursor:'pointer', textAlign:'left',
+                    display:'flex', alignItems:'center', justifyContent:'space-between' }}
+                  onClick={() => setCfgOpen(p => p===acc.id ? '' : acc.id)}>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.10em',
+                    color:'rgba(200,164,74,0.75)' }}>{acc.label}</span>
+                  <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                    {acc.badge && (
+                      <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.10em',
+                        color:'rgba(200,164,74,0.55)', border:'1px solid rgba(200,164,74,0.22)',
+                        padding:'0.1rem 0.35rem', borderRadius:'2px' }}>{acc.badge}</span>
+                    )}
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.48rem',
+                      color:'rgba(200,164,74,0.40)' }}>{cfgOpen===acc.id ? '▲' : '▼'}</span>
+                  </div>
+                </button>
+                {cfgOpen===acc.id && (
+                  <div style={{ borderTop:'1px solid rgba(200,164,74,0.08)' }}>
+                    {acc.content}
+                  </div>
+                )}
+              </div>
+            ))}
+
             <div style={{ fontSize:'0.40rem', color:'rgba(140,160,200,0.28)',
               fontFamily:FONT.mono, textAlign:'center' }}>
               Onglets pour modifier · GÉNÉRER pour lancer tel quel
@@ -1154,6 +1353,14 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                   value={newMinData.comm}
                   onChange={e => setNewMinData(d=>({...d,comm:e.target.value}))}
                   placeholder="Style de communication…" />
+                <div style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(90,110,150,0.42)', marginBottom:'0.12rem' }}>
+                  ANGLE D'ANNOTATION <span style={{ fontWeight:'normal', color:'rgba(90,110,150,0.32)' }}>— question posée lors des annotations inter-ministérielles</span>
+                </div>
+                <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'26px', resize:'vertical',
+                  fontSize:'0.41rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.4rem' }}
+                  value={newMinData.annotation}
+                  onChange={e => setNewMinData(d=>({...d,annotation:e.target.value}))}
+                  placeholder="Ex : Quelle est la position du ministre sur l'équilibre entre…" />
                 <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end' }}>
                   <button style={BTN_SECONDARY} onClick={() => setNewMinForm(false)}>Annuler</button>
                   <button style={{ ...BTN_PRIMARY, opacity: newMinData.name&&newMinData.id ? 1 : 0.35 }}
@@ -1285,442 +1492,6 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
   );
 }
 
-// ── AriaConfigScreen — standalone component (fixes conditional hooks crash) ──
-function AriaConfigScreen({ worldName, onBack, onGoConfig }) {
-  // ── Registry LLM dynamique ────────────────────────────────────────────
-  // URL de ton Gist — mets à jour le JSON quand de nouveaux modèles sortent
-  // Format: { claude:[{id,label},...], gemini:[...], grok:[...], openai:[...] }
-  const REGISTRY_URL = 'https://gist.githubusercontent.com/flodus/REPLACE_WITH_YOUR_GIST_ID/raw/llm-registry.json';
-
-  const FALLBACK_MODELS = {
-    claude: [
-      { id:'claude-opus-4-6',         label:'Opus 4.6' },
-      { id:'claude-sonnet-4-6',        label:'Sonnet 4.6 ★' },
-      { id:'claude-haiku-4-5-20251001',label:'Haiku 4.5' },
-    ],
-    gemini: [
-      { id:'gemini-2.0-flash',  label:'2.0 Flash ★' },
-      { id:'gemini-1.5-pro',    label:'1.5 Pro' },
-      { id:'gemini-1.5-flash',  label:'1.5 Flash' },
-    ],
-    grok: [
-      { id:'grok-3',      label:'Grok 3' },
-      { id:'grok-3-mini', label:'Grok 3 Mini ★' },
-    ],
-    openai: [
-      { id:'gpt-4.1',      label:'GPT-4.1' },
-      { id:'gpt-4.1-mini', label:'GPT-4.1 Mini ★' },
-    ],
-  };
-
-  const availProviders = ['claude','gemini','grok','openai'].filter(id => {
-    try { return !!JSON.parse(localStorage.getItem('aria_api_keys')||'{}')[id]; } catch { return false; }
-  });
-  const PROV_LABELS = { claude:'Claude', gemini:'Gemini', grok:'Grok', openai:'OpenAI' };
-
-  const loadOpts = () => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}'); } catch { return {}; } };
-  const saved0 = loadOpts();
-
-  const [tab,       setTab]       = useState('ia');   // 'ia' | 'constitution'
-  const [ariaMode,  setAriaMode]  = useState(saved0.ia_mode || 'aria');
-  const [soloModel, setSoloModel] = useState(saved0.solo_model || availProviders[0] || 'claude');
-  const [modelReg,  setModelReg]  = useState(FALLBACK_MODELS);
-  const [regStatus, setRegStatus] = useState('idle'); // idle|loading|ok|error
-
-  // provider → { minister, synthesis } pour mode ARIA/CUSTOM
-  const initRoles = () => {
-    const r = saved0.ia_roles || {};
-    const p0 = availProviders[0] || 'claude';
-    const p1 = availProviders[1] || p0;
-    return {
-      ministre_provider:  r.ministre_provider  || p0,
-      ministre_model:     r.ministre_model     || FALLBACK_MODELS[p0]?.find(m=>m.label.includes('★'))?.id || FALLBACK_MODELS[p0]?.[0]?.id || '',
-      synthese_min_prov:  r.synthese_min_prov  || p1,
-      synthese_min_model: r.synthese_min_model || FALLBACK_MODELS[p1]?.find(m=>m.label.includes('★'))?.id || FALLBACK_MODELS[p1]?.[0]?.id || '',
-      phare_provider:     r.phare_provider     || p0,
-      phare_model:        r.phare_model        || FALLBACK_MODELS[p0]?.find(m=>m.label.includes('★'))?.id || FALLBACK_MODELS[p0]?.[0]?.id || '',
-      boussole_provider:  r.boussole_provider  || p1,
-      boussole_model:     r.boussole_model     || FALLBACK_MODELS[p1]?.find(m=>m.label.includes('★'))?.id || FALLBACK_MODELS[p1]?.[0]?.id || '',
-      synthese_pres_prov: r.synthese_pres_prov || p0,
-      synthese_pres_model:r.synthese_pres_model|| FALLBACK_MODELS[p0]?.find(m=>m.label.includes('★'))?.id || FALLBACK_MODELS[p0]?.[0]?.id || '',
-    };
-  };
-  const [roles, setRoles] = useState(initRoles);
-
-  // ── Constitution editor state ─────────────────────────────────────────
-  const [agents, setAgents] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('aria_agents_override')||'null') || null; } catch { return null; }
-  });
-  // agents === null = use defaults from base_agents.json
-  // We load defaults lazily when user opens the constitution tab
-  const agentsRef = useRef(null);
-
-  const loadDefaultAgents = async () => {
-    if (agentsRef.current) return agentsRef.current;
-    try {
-      const mod = await import('../templates/base_agents.json');
-      agentsRef.current = JSON.parse(JSON.stringify(mod.default));
-      return agentsRef.current;
-    } catch { return null; }
-  };
-
-  const [constData, setConstData] = useState(null); // loaded when tab='constitution'
-  const [constLoading, setConstLoading] = useState(false);
-
-  // Fetch registry on mount
-  useEffect(() => {
-    setRegStatus('loading');
-    fetch(REGISTRY_URL)
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => { setModelReg({...FALLBACK_MODELS, ...data}); setRegStatus('ok'); })
-      .catch(() => setRegStatus('error'));
-  }, []);
-
-  // Load agents when switching to constitution tab
-  useEffect(() => {
-    if (tab !== 'constitution' || constData) return;
-    setConstLoading(true);
-    loadDefaultAgents().then(def => {
-      const override = agents;
-      // Use JSON defaults if available, otherwise fall back to saved override
-      const base = def || override;
-      if (base) {
-        const merged = JSON.parse(JSON.stringify(base));
-        if (def && override?.ministries) merged.ministries = override.ministries;
-        if (def && override?.ministers)  merged.ministers  = override.ministers;
-        if (def && override?.presidency) merged.presidency = override.presidency;
-        setConstData(merged);
-      } else {
-        // Minimal skeleton so UI doesn't stay blank
-        setConstData({ ministries:[], ministers:{}, presidency:{ phare:{name:'Phare',symbol:'☉',subtitle:'',essence:'',role_long:''}, boussole:{name:'Boussole',symbol:'☽',subtitle:'',essence:'',role_long:''} } });
-      }
-      setConstLoading(false);
-    }).catch(() => {
-      // If import throws entirely, use override or skeleton
-      const fallback = agents || { ministries:[], ministers:{}, presidency:{ phare:{name:'Phare',symbol:'☉',subtitle:'',essence:'',role_long:''}, boussole:{name:'Boussole',symbol:'☽',subtitle:'',essence:'',role_long:''} } };
-      setConstData(JSON.parse(JSON.stringify(fallback)));
-      setConstLoading(false);
-    });
-  }, [tab]);
-
-  // ── Helpers UI ────────────────────────────────────────────────────────
-  const RoleRow = ({ provKey, modelKey, label }) => {
-    const prov = roles[provKey] || availProviders[0];
-    const models = modelReg[prov] || FALLBACK_MODELS[prov] || [];
-    return (
-      <div style={{ display:'grid', gridTemplateColumns:'1fr auto auto', gap:'0.4rem',
-        alignItems:'center', marginBottom:'0.35rem' }}>
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem',
-          color:'rgba(140,160,200,0.60)', letterSpacing:'0.05em' }}>{label}</span>
-        {/* Provider select */}
-        <select style={{ ...SELECT_STYLE, fontSize:'0.43rem', padding:'0.22rem 0.45rem', minWidth:'78px' }}
-          value={prov}
-          onChange={e => {
-            const newProv = e.target.value;
-            const defaultModel = (modelReg[newProv]||FALLBACK_MODELS[newProv]||[]).find(m=>m.label.includes('★'))?.id
-                              || (modelReg[newProv]||FALLBACK_MODELS[newProv]||[])[0]?.id || '';
-            setRoles(r => ({ ...r, [provKey]: newProv, [modelKey]: defaultModel }));
-          }}>
-          {availProviders.map(pid => <option key={pid} value={pid}>{PROV_LABELS[pid]}</option>)}
-        </select>
-        {/* Model select */}
-        <select style={{ ...SELECT_STYLE, fontSize:'0.43rem', padding:'0.22rem 0.45rem', minWidth:'110px' }}
-          value={roles[modelKey] || ''}
-          onChange={e => setRoles(r => ({ ...r, [modelKey]: e.target.value }))}>
-          {models.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-        </select>
-      </div>
-    );
-  };
-
-  const SoloRoleRow = ({ label, provKey, modelKey }) => {
-    // In Solo mode — provider is fixed, only model varies
-    const prov = soloModel;
-    const models = modelReg[prov] || FALLBACK_MODELS[prov] || [];
-    return (
-      <div style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:'0.4rem',
-        alignItems:'center', marginBottom:'0.35rem' }}>
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem',
-          color:'rgba(140,160,200,0.60)', letterSpacing:'0.05em' }}>{label}</span>
-        <select style={{ ...SELECT_STYLE, fontSize:'0.43rem', padding:'0.22rem 0.45rem', minWidth:'120px' }}
-          value={roles[modelKey] || ''}
-          onChange={e => setRoles(r => ({ ...r, [modelKey]: e.target.value }))}>
-          {models.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-        </select>
-      </div>
-    );
-  };
-
-  const saveAndContinue = () => {
-    try {
-      const saved = loadOpts();
-      const next = { ...saved, ia_mode: ariaMode, solo_model: soloModel, ia_roles: roles };
-      localStorage.setItem('aria_options', JSON.stringify(next));
-      if (constData) {
-        // Save constitution override only if user edited it
-        localStorage.setItem('aria_agents_override', JSON.stringify({
-          ministries: constData.ministries,
-          ministers:  constData.ministers,
-          presidency: constData.presidency,
-        }));
-      }
-    } catch {}
-    onGoConfig();
-  };
-
-  const resetConst = () => {
-    localStorage.removeItem('aria_agents_override');
-    setConstData(null);
-    setAgents(null);
-    // reload defaults
-    setConstLoading(true);
-    loadDefaultAgents().then(def => { if (def) setConstData(JSON.parse(JSON.stringify(def))); setConstLoading(false); });
-  };
-
-  const MODE_CARDS = [
-    { id:'aria',   icon:'⚡', title:'ARIA',        desc:'Multi-providers. Choisissez qui pense et qui synthétise.' },
-    { id:'solo',   icon:'◎',  title:'SOLO',         desc:'Un provider unique. Simple et cohérent.' },
-    { id:'custom', icon:'🔧', title:'PERSONNALISÉ', desc:'Chaque rôle assigné individuellement.' },
-  ];
-
-  // TAB STYLES
-  const tabStyle = (active) => ({
-    fontFamily:FONT.mono, fontSize:'0.48rem', letterSpacing:'0.12em',
-    padding:'0.4rem 1rem', cursor:'pointer',
-    background: active ? 'rgba(200,164,74,0.10)' : 'transparent',
-    border:'none', borderBottom: active ? '2px solid rgba(200,164,74,0.70)' : '2px solid transparent',
-    color: active ? 'rgba(200,164,74,0.90)' : 'rgba(140,160,200,0.40)',
-  });
-
-  return (
-    <div style={S.wrap(false)}>
-      <ARIAHeader showQuote={false} />
-      <div style={{ ...labelStyle(), alignSelf:'flex-start' }}>CONFIGURATION — {worldName}</div>
-
-      {/* Tab bar */}
-      <div style={{ display:'flex', gap:0, borderBottom:'1px solid rgba(200,164,74,0.12)', width:'100%' }}>
-        <button style={tabStyle(tab==='ia')} onClick={() => setTab('ia')}>⚡ ARCHITECTURE IA</button>
-        <button style={tabStyle(tab==='constitution')} onClick={() => setTab('constitution')}>📜 CONSTITUTION</button>
-        {regStatus === 'ok'    && <span style={{ marginLeft:'auto', alignSelf:'center', fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(100,200,120,0.50)', paddingRight:'0.3rem' }}>registry ✓</span>}
-        {regStatus === 'error' && <span style={{ marginLeft:'auto', alignSelf:'center', fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(200,100,60,0.45)', paddingRight:'0.3rem' }}>registry local</span>}
-      </div>
-
-      {/* ── TAB : IA ─────────────────────────────────────────────────── */}
-      {tab === 'ia' && (
-        <>
-          {/* Mode cards */}
-          <div style={{ display:'flex', gap:'0.6rem', width:'100%' }}>
-            {MODE_CARDS.map(m => (
-              <div key={m.id} style={{ ...S.mCard, flex:1,
-                borderColor: ariaMode===m.id ? 'rgba(200,164,74,0.45)' : undefined,
-                background:  ariaMode===m.id ? 'rgba(200,164,74,0.06)' : undefined,
-              }} onClick={() => setAriaMode(m.id)}>
-                <div style={{ fontSize:'1.1rem' }}>{m.icon}</div>
-                <div style={{ fontFamily:FONT.cinzel, fontSize:'0.50rem', letterSpacing:'0.13em',
-                  color: ariaMode===m.id ? 'rgba(200,164,74,0.92)' : 'rgba(200,164,74,0.55)' }}>{m.title}</div>
-                <div style={{ fontSize:'0.43rem', color:'rgba(140,160,200,0.50)', lineHeight:1.5 }}>{m.desc}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* ARIA / CUSTOM — provider + model per role */}
-          {(ariaMode === 'aria' || ariaMode === 'custom') && (
-            <div style={{ ...CARD_STYLE, width:'100%' }}>
-              {/* Header row */}
-              <div style={{ display:'grid', gridTemplateColumns:'1fr auto auto', gap:'0.4rem',
-                marginBottom:'0.5rem', paddingBottom:'0.35rem',
-                borderBottom:'1px solid rgba(200,164,74,0.08)' }}>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(90,110,150,0.40)' }}>RÔLE</span>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(90,110,150,0.40)', width:'78px', textAlign:'center' }}>PROVIDER</span>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(90,110,150,0.40)', width:'110px', textAlign:'center' }}>MODÈLE</span>
-              </div>
-              <div style={{ ...labelStyle('0.40rem'), marginBottom:'0.4rem', color:'rgba(140,160,200,0.35)' }}>— DÉLIBÉRATION MINISTÉRIELLE —</div>
-              <RoleRow provKey="ministre_provider"  modelKey="ministre_model"      label="Ministres pensent" />
-              <RoleRow provKey="synthese_min_prov"  modelKey="synthese_min_model"  label="Synthèse ministérielle" />
-              <div style={{ borderTop:'1px solid rgba(200,164,74,0.07)', margin:'0.4rem 0' }} />
-              <div style={{ ...labelStyle('0.40rem'), marginBottom:'0.4rem', color:'rgba(140,160,200,0.35)' }}>— PRÉSIDENCE —</div>
-              <RoleRow provKey="phare_provider"     modelKey="phare_model"         label="Le Phare (vision)" />
-              <RoleRow provKey="boussole_provider"  modelKey="boussole_model"      label="La Boussole (mémoire)" />
-              <RoleRow provKey="synthese_pres_prov" modelKey="synthese_pres_model" label="Synthèse présidentielle" />
-            </div>
-          )}
-
-          {/* SOLO — provider pills + model per role */}
-          {ariaMode === 'solo' && (
-            <div style={{ ...CARD_STYLE, width:'100%' }}>
-              <div style={{ ...labelStyle('0.44rem'), marginBottom:'0.5rem' }}>PROVIDER UNIQUE</div>
-              <div style={{ display:'flex', gap:'0.45rem', flexWrap:'wrap', marginBottom:'0.7rem' }}>
-                {availProviders.map(pid => (
-                  <button key={pid}
-                    style={{ ...BTN_SECONDARY, padding:'0.30rem 0.8rem', fontSize:'0.46rem',
-                      ...(soloModel===pid ? { borderColor:'rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : {}) }}
-                    onClick={() => {
-                      setSoloModel(pid);
-                      // reset all models to default for new provider
-                      const star = (modelReg[pid]||FALLBACK_MODELS[pid]||[]).find(m=>m.label.includes('★'))?.id || '';
-                      setRoles(r => ({...r,
-                        ministre_model: star, synthese_min_model: star,
-                        phare_model: star, boussole_model: star, synthese_pres_model: star,
-                      }));
-                    }}>
-                    {PROV_LABELS[pid]}
-                  </button>
-                ))}
-              </div>
-              <div style={{ borderTop:'1px solid rgba(200,164,74,0.08)', paddingTop:'0.5rem' }}>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:'0.4rem',
-                  marginBottom:'0.3rem', paddingBottom:'0.3rem', borderBottom:'1px solid rgba(200,164,74,0.06)' }}>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(90,110,150,0.40)' }}>ÉTAPE</span>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(90,110,150,0.40)', width:'120px', textAlign:'center' }}>MODÈLE</span>
-                </div>
-                <SoloRoleRow label="Ministres" provKey="ministre_provider" modelKey="ministre_model" />
-                <SoloRoleRow label="Synthèse ministérielle" provKey="synthese_min_prov" modelKey="synthese_min_model" />
-                <SoloRoleRow label="Le Phare" provKey="phare_provider" modelKey="phare_model" />
-                <SoloRoleRow label="La Boussole" provKey="boussole_provider" modelKey="boussole_model" />
-                <SoloRoleRow label="Synthèse présidentielle" provKey="synthese_pres_prov" modelKey="synthese_pres_model" />
-              </div>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ── TAB : CONSTITUTION ───────────────────────────────────────── */}
-      {tab === 'constitution' && (
-        <div style={{ width:'100%', display:'flex', flexDirection:'column', gap:'0.7rem' }}>
-          {constLoading && (
-            <div style={{ fontFamily:FONT.mono, fontSize:'0.48rem', color:GOLD+'66',
-              textAlign:'center', padding:'1.5rem' }}>Chargement des agents…</div>
-          )}
-          {constData && !constLoading && (
-            <>
-              {/* PRÉSIDENCE */}
-              <div style={{ ...CARD_STYLE }}>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.5rem' }}>
-                  <div style={labelStyle('0.44rem')}>PRÉSIDENCE</div>
-                </div>
-                {['phare','boussole'].map(key => {
-                  const p = constData.presidency[key];
-                  return (
-                    <div key={key} style={{ marginBottom:'0.6rem' }}>
-                      <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(200,164,74,0.60)',
-                        marginBottom:'0.25rem', letterSpacing:'0.08em' }}>
-                        {p.symbol} {p.name.toUpperCase()} — {p.subtitle}
-                      </div>
-                      <textarea
-                        style={{ ...INPUT_STYLE, width:'100%', minHeight:'52px', resize:'vertical',
-                          fontSize:'0.43rem', lineHeight:1.55, fontFamily:FONT.mono }}
-                        value={p.essence}
-                        onChange={e => setConstData(d => ({
-                          ...d, presidency: { ...d.presidency,
-                            [key]: { ...d.presidency[key], essence: e.target.value }
-                          }
-                        }))}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* MINISTÈRES */}
-              {constData.ministries.map((ministry, mi) => {
-                const allMinisterKeys = Object.keys(constData.ministers);
-                return (
-                  <div key={ministry.id} style={{ ...CARD_STYLE }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.5rem' }}>
-                      <span style={{ fontSize:'1rem' }}>{ministry.emoji}</span>
-                      <div style={labelStyle('0.44rem')}>{ministry.name}</div>
-                      <div style={{ marginLeft:'auto', fontFamily:FONT.mono, fontSize:'0.40rem',
-                        color:'rgba(90,110,150,0.40)' }}>
-                        {ministry.ministers.length} ministre{ministry.ministers.length>1?'s':''}
-                      </div>
-                    </div>
-
-                    {/* Mission */}
-                    <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem',
-                      color:'rgba(140,160,200,0.40)', marginBottom:'0.25rem' }}>MISSION</div>
-                    <textarea
-                      style={{ ...INPUT_STYLE, width:'100%', minHeight:'40px', resize:'vertical',
-                        fontSize:'0.43rem', lineHeight:1.5, fontFamily:FONT.mono, marginBottom:'0.5rem' }}
-                      value={ministry.mission}
-                      onChange={e => setConstData(d => ({
-                        ...d, ministries: d.ministries.map((m,i) =>
-                          i===mi ? {...m, mission: e.target.value} : m)
-                      }))}
-                    />
-
-                    {/* Ministers in this ministry */}
-                    <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem',
-                      color:'rgba(140,160,200,0.40)', marginBottom:'0.3rem' }}>MINISTRES ASSIGNÉS</div>
-                    <div style={{ display:'flex', flexWrap:'wrap', gap:'0.3rem', marginBottom:'0.5rem' }}>
-                      {allMinisterKeys.map(mkey => {
-                        const min = constData.ministers[mkey];
-                        const isIn = ministry.ministers.includes(mkey);
-                        return (
-                          <button key={mkey}
-                            style={{ ...BTN_SECONDARY, padding:'0.22rem 0.55rem', fontSize:'0.43rem',
-                              ...(isIn ? {
-                                borderColor: min.color+'88',
-                                color: min.color,
-                                background: min.color+'18',
-                              } : {}) }}
-                            onClick={() => setConstData(d => {
-                              const mins = isIn
-                                ? ministry.ministers.filter(k=>k!==mkey)
-                                : [...ministry.ministers, mkey];
-                              return { ...d, ministries: d.ministries.map((m,i) =>
-                                i===mi ? {...m, ministers: mins} : m) };
-                            })}>
-                            {min.emoji} {min.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Per-minister prompts in this ministry */}
-                    {ministry.ministers.map(mkey => {
-                      const min = constData.ministers[mkey];
-                      const prompt = ministry.ministerPrompts?.[mkey] || '';
-                      return (
-                        <div key={mkey} style={{ marginBottom:'0.4rem' }}>
-                          <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem',
-                            color: min.color+'AA', marginBottom:'0.2rem' }}>
-                            {min.emoji} {min.name.toUpperCase()} — PROMPT MINISTÉRIEL
-                          </div>
-                          <textarea
-                            style={{ ...INPUT_STYLE, width:'100%', minHeight:'36px', resize:'vertical',
-                              fontSize:'0.42rem', lineHeight:1.5, fontFamily:FONT.mono }}
-                            value={prompt}
-                            onChange={e => setConstData(d => ({
-                              ...d, ministries: d.ministries.map((m,i) => i===mi
-                                ? {...m, ministerPrompts: {...(m.ministerPrompts||{}), [mkey]: e.target.value}}
-                                : m)
-                            }))}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-
-              <button style={{ ...BTN_SECONDARY, alignSelf:'flex-end', fontSize:'0.44rem',
-                color:'rgba(200,80,80,0.55)', borderColor:'rgba(200,80,80,0.25)' }}
-                onClick={resetConst}>
-                ↺ Rétablir la constitution par défaut
-              </button>
-            </>
-          )}
-        </div>
-      )}
-
-      <div style={{ display:'flex', gap:'0.6rem', width:'100%', justifyContent:'space-between', paddingTop:'0.4rem' }}>
-        <button style={BTN_SECONDARY} onClick={() => onBack()}>← RETOUR</button>
-        <button style={BTN_PRIMARY} onClick={saveAndContinue}>CONTINUER →</button>
-      </div>
-    </div>
-  );
-}
-
 // ── Composant principal ─────────────────────────────────────────────────
 export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onLaunchAI, hasApiKeys, onRefreshKeys }) {
   const [step,       setStep]      = useState('name');
@@ -1729,7 +1500,6 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   const [countries,  setCountries] = useState([DEFAULT_COUNTRY()]);
   const [progress,   setProgress]  = useState(0);
   const [msg,        setMsg]       = useState('INITIALISATION…');
-  const [boardGame,  setBoardGame] = useState(false);
   const [showKeys,   setShowKeys]  = useState(false);
 
   // Sous-états navigation défaut
@@ -1752,11 +1522,6 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   };
 
   const launch = (usePreset, customDefs = null) => {
-    try {
-      const opts = JSON.parse(localStorage.getItem('aria_options')||'{}');
-      opts.gameplay = { ...(opts.gameplay||{}), mode_board_game: boardGame };
-      localStorage.setItem('aria_options', JSON.stringify(opts));
-    } catch {}
     setStep('generating');
     const MSGS = [
       'GÉNÉRATION DE LA TOPOGRAPHIE…','PLACEMENT DES MASSES TERRESTRES…',
@@ -1867,7 +1632,6 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   if (step === 'mode') return (
     <div style={S.wrap(false)}>
       <ARIAHeader showQuote={false} />
-
       <div style={{ width:'100%' }}>
         <div style={{ ...labelStyle(), marginBottom:'0.9rem' }}>MODE DE JEU — {worldName}</div>
         <div style={{ display:'flex', gap:'0.8rem' }}>
@@ -1877,7 +1641,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           ].map(m => (
             <div key={m.id}
               style={{ ...S.mCard, opacity: m.disabled ? 0.35 : 1, cursor: m.disabled ? 'not-allowed' : 'pointer' }}
-              onClick={() => { if (m.disabled) return; setMode(m.id); setStep(m.id === 'ai' ? 'aria_config' : 'config'); }}>
+              onClick={() => { if (m.disabled) return; setMode(m.id); setStep('config'); }}>
               <div style={{ fontSize:'1.4rem' }}>{m.icon}</div>
               <div style={{ fontFamily:FONT.cinzel, fontSize:'0.58rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.85)' }}>{m.title}</div>
               <div style={{ fontSize:'0.50rem', color:'rgba(140,160,200,0.55)', lineHeight:1.6 }}>{m.desc}</div>
@@ -1885,39 +1649,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             </div>
           ))}
         </div>
-
-        {hasApiKeys && (
-          <div style={{ display:'flex', alignItems:'flex-start', gap:'0.7rem', padding:'0.7rem 0.9rem', marginTop:'0.8rem', background:'rgba(200,164,74,0.03)', border:'1px solid rgba(200,164,74,0.10)', borderRadius:'2px' }}>
-            <input type="checkbox" id="bg-toggle" checked={boardGame}
-              onChange={e => setBoardGame(e.target.checked)}
-              style={{ marginTop:'0.15rem', accentColor:'#C8A44A', cursor:'pointer' }} />
-            <label htmlFor="bg-toggle" style={{ cursor:'pointer' }}>
-              <div style={{ fontFamily:FONT.mono, fontSize:'0.50rem', letterSpacing:'0.12em', color:'rgba(200,164,74,0.70)' }}>
-                MODE BOARD GAME — RÉPONSES LOCALES
-              </div>
-              <div style={{ fontSize:'0.46rem', color:'rgba(140,160,200,0.45)', marginTop:'0.2rem', lineHeight:1.5 }}>
-                Utilise les textes pré-écrits même avec une clé API active.
-              </div>
-            </label>
-          </div>
-        )}
       </div>
-
       <button style={BTN_SECONDARY} onClick={() => setStep('name')}>← RETOUR</button>
     </div>
   );
 
 
-  // ── Étape : configuration ARIA (mode IA uniquement) ──────────────────────
-  if (step === 'aria_config') {
-    return (
-      <AriaConfigScreen
-        worldName={worldName}
-        onBack={() => setStep('mode')}
-        onGoConfig={() => setStep('config')}
-      />
-    );
-  }
+
 
   // ── Étape : config ────────────────────────────────────────────────────
   // ── Étape : config — helpers ──────────────────────────────────────────
@@ -2081,27 +1819,31 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                     return <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:col }}>◈ ARIA IRL ~{irl}%</span>;
                   })()}
                 </div>
-                {/* Bouton CONFIRMER dans le formulaire — visible sans scroll */}
-                <button
-                  style={{ ...BTN_PRIMARY, opacity: defautNom.trim() ? 1 : 0.35,
-                    alignSelf:'flex-end', marginTop:'0.3rem' }}
-                  disabled={!defautNom.trim()}
-                  onClick={() => preLaunch('defaut_local', [{
-                    type:'imaginaire', nom:defautNom.trim(),
-                    terrain:newFictifTerrain, regime:newFictifRegime, realData:null,
-                  }])}>
-                  CONFIRMER →
-                </button>
+
               </div>
             )}
 
             <BtnRow>
-              {BK(() => { setDefautType(null); setDefautFictif(null); setDefautNom(''); })}
+              {isNew
+                ? BK(() => { setDefautFictif(null); setDefautNom(''); })
+                : BK(() => { setDefautType(null); setDefautFictif(null); setDefautNom(''); })
+              }
               {!isNew && (
                 <button
                   style={{ ...BTN_PRIMARY, opacity: canPlay ? 1 : 0.35 }}
                   disabled={!canPlay}
                   onClick={() => preLaunch('defaut_local', [{ type:'imaginaire', realData: chosen }])}>
+                  JOUER →
+                </button>
+              )}
+              {isNew && (
+                <button
+                  style={{ ...BTN_PRIMARY, opacity: defautNom.trim() ? 1 : 0.35 }}
+                  disabled={!defautNom.trim()}
+                  onClick={() => preLaunch('defaut_local', [{
+                    type:'imaginaire', nom:defautNom.trim(),
+                    terrain:newFictifTerrain, regime:newFictifRegime, realData:null,
+                  }])}>
                   JOUER →
                 </button>
               )}
@@ -2204,59 +1946,129 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
         );
       }
 
-      // C — Nation fictive en ligne (3 presets + nouveau)
+      // C — Nation fictive en ligne (identique hors-ligne : grille 2×2 + bandeau + créer)
       if (defautType === 'fictif') {
-        const chosenLocal = PAYS_LOCAUX.find(p => p.id === defautFictif && defautFictif !== 'new');
-        const canLaunch   = (defautFictif && defautFictif !== 'new') || defautNom.trim();
+        const chosen = defautFictif && defautFictif !== 'new'
+          ? PAYS_LOCAUX.find(p => p.id === defautFictif)
+          : null;
+        const isNew = defautFictif === 'new';
+        const ARIA_BASE = { republique_federale:44, democratie_liberale:48, monarchie_constitutionnelle:38, technocratie_ia:72, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocracie:18, communisme:32 };
+        const POP_BASE  = { coastal:8_000_000, inland:5_000_000, highland:3_500_000, island:2_000_000, archipelago:1_500_000 };
+        const SAT_BASE  = { democratie_liberale:62, republique_federale:58, monarchie_constitutionnelle:55, technocratie_ia:60, oligarchie:40, junte_militaire:35, regime_autoritaire:38, theocracie:50, communisme:45 };
+
         return (
-          <div style={S.wrap(false)}>
+          <div style={S.wrap(true)}>
             <ARIAHeader showQuote={false} />
             {H('NATION FICTIVE')}
-            <div style={{ display:'flex', gap:'0.6rem', width:'100%', flexWrap:'wrap' }}>
+
+            {/* Grille 2×2 identique hors-ligne */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'0.7rem', width:'100%' }}>
               {PAYS_LOCAUX.map(p => (
                 <MC key={p.id}
-                  style={{ flex:'1 1 110px',
+                  style={{
                     borderColor: defautFictif===p.id ? `${p.couleur}70` : undefined,
-                    background:  defautFictif===p.id ? `${p.couleur}14` : undefined }}
+                    background:  defautFictif===p.id ? `${p.couleur}14` : undefined,
+                    cursor:'pointer',
+                  }}
                   onClick={() => { setDefautFictif(p.id); setDefautNom(''); }}>
-                  <div style={{ fontSize:'1.1rem' }}>{p.emoji}</div>
+                  <div style={{ fontSize:'1.2rem' }}>{p.emoji}</div>
                   <McTitle t={p.nom} />
-                  <McSub t={p.terrain} />
+                  <McSub t={`${p.terrain} · ${p.regime.replace(/_/g,' ')}`} />
                 </MC>
               ))}
               <MC
-                style={{ flex:'1 1 110px',
-                  borderColor: defautFictif==='new' ? 'rgba(200,164,74,0.45)' : undefined,
-                  background:  defautFictif==='new' ? 'rgba(200,164,74,0.06)' : undefined }}
-                onClick={() => setDefautFictif('new')}>
-                <div style={{ fontSize:'1.1rem' }}>✨</div>
-                <McTitle t="NOUVEAU" />
-                <McSub t="L'IA invente" />
+                style={{
+                  borderColor: isNew ? 'rgba(58,191,122,0.55)' : 'rgba(58,191,122,0.18)',
+                  background:  isNew ? 'rgba(58,191,122,0.07)' : undefined,
+                  cursor:'pointer', justifyContent:'center', alignItems:'center',
+                }}
+                onClick={() => { setDefautFictif('new'); setDefautNom(''); }}>
+                <div style={{ fontSize:'1.4rem' }}>🌍</div>
+                <McTitle t="+ CRÉER" />
+                <McSub t="Nation fictive personnalisée" />
               </MC>
             </div>
-            {defautFictif === 'new' && (
-              <input style={{ ...INPUT_STYLE, fontSize:'0.53rem', width:'100%' }}
-                value={defautNom} onChange={e => setDefautNom(e.target.value)}
-                placeholder="Nom de la nation fictive…" autoFocus />
-            )}
-            {chosenLocal && (
-              <div style={{ ...CARD_STYLE, width:'100%', fontSize:'0.44rem', color:'rgba(140,160,200,0.65)', lineHeight:1.6 }}>
-                {chosenLocal.description}
+
+            {/* Bandeau infos preset choisi — identique hors-ligne */}
+            {chosen && (
+              <div style={{ ...CARD_STYLE, width:'100%', display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+                <div style={{ fontSize:'0.44rem', color:'rgba(140,160,200,0.65)', lineHeight:1.6 }}>{chosen.description}</div>
+                <div style={{ display:'flex', gap:'1rem', flexWrap:'wrap', alignItems:'center' }}>
+                  {[`👤 ${chosen.leader}`, `👥 ${(chosen.population/1e6).toFixed(1)} M hab.`, `😊 Satisfaction ${chosen.satisfaction}%`].map(t => (
+                    <span key={t} style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.50)' }}>{t}</span>
+                  ))}
+                  {(() => {
+                    const irl = ARIA_BASE[chosen.regime] ?? 35;
+                    const col = irl >= 60 ? 'rgba(140,100,220,0.80)' : irl >= 40 ? 'rgba(100,130,200,0.70)' : 'rgba(90,110,160,0.50)';
+                    return <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:col }}>◈ ARIA IRL ~{irl}%</span>;
+                  })()}
+                </div>
               </div>
             )}
+
+            {/* Formulaire nouveau pays fictif — identique hors-ligne */}
+            {isNew && (
+              <div style={{ ...CARD_STYLE, width:'100%', display:'flex', flexDirection:'column', gap:'0.65rem' }}>
+                <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem', letterSpacing:'0.16em', color:'rgba(58,191,122,0.55)' }}>
+                  NOUVELLE NATION FICTIVE
+                </div>
+                <div>
+                  <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NOM</div>
+                  <input
+                    style={{ ...INPUT_STYLE, fontSize:'0.54rem', borderColor:'rgba(58,191,122,0.25)' }}
+                    value={defautNom}
+                    onChange={e => setDefautNom(e.target.value)}
+                    placeholder="Ex : Arvalia, Morvaine, Zephoria…"
+                    autoFocus
+                  />
+                </div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.6rem' }}>
+                  <div>
+                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>TERRAIN</div>
+                    <select style={SELECT_STYLE} value={newFictifTerrain} onChange={e => setNewFictifTerrain(e.target.value)}>
+                      {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>RÉGIME</div>
+                    <select style={SELECT_STYLE} value={newFictifRegime} onChange={e => setNewFictifRegime(e.target.value)}>
+                      {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap', padding:'0.35rem 0.5rem', background:'rgba(58,191,122,0.03)', borderLeft:'2px solid rgba(58,191,122,0.15)', borderRadius:'2px' }}>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(140,160,200,0.50)' }}>👥 ~{((POP_BASE[newFictifTerrain]||5e6)/1e6).toFixed(1)} M hab.</span>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(140,160,200,0.50)' }}>😊 ~{SAT_BASE[newFictifRegime]||50}% sat.</span>
+                  {(() => {
+                    const irl = ARIA_BASE[newFictifRegime] ?? 35;
+                    const col = irl >= 60 ? 'rgba(140,100,220,0.80)' : irl >= 40 ? 'rgba(100,130,200,0.70)' : 'rgba(90,110,160,0.50)';
+                    return <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:col }}>◈ ARIA IRL ~{irl}%</span>;
+                  })()}
+                </div>
+              </div>
+            )}
+
             <BtnRow>
-              {BK(() => setDefautType(null))}
-              <button style={{ ...BTN_PRIMARY, opacity: canLaunch ? 1 : 0.35 }}
-                disabled={!canLaunch}
-                onClick={() => {
-                  if (defautFictif === 'new') {
-                    preLaunch('defaut_ai', [{ type:'imaginaire', nom: defautNom }]);
-                  } else {
-                    preLaunch('defaut_ai', [{ type:'imaginaire', nom: chosenLocal.nom, realData: chosenLocal }]);
-                  }
-                }}>
-                GÉNÉRER →
-              </button>
+              {isNew
+                ? BK(() => { setDefautFictif(null); setDefautNom(''); })
+                : BK(() => { setDefautType(null); setDefautFictif(null); setDefautNom(''); })
+              }
+              {!isNew && chosen && (
+                <button style={{ ...BTN_PRIMARY }}
+                  onClick={() => preLaunch('defaut_ai', [{ type:'imaginaire', nom: chosen.nom, realData: chosen }])}>
+                  GÉNÉRER →
+                </button>
+              )}
+              {isNew && (
+                <button style={{ ...BTN_PRIMARY, opacity: defautNom.trim() ? 1 : 0.35 }}
+                  disabled={!defautNom.trim()}
+                  onClick={() => preLaunch('defaut_ai', [{
+                    type:'imaginaire', nom:defautNom.trim(),
+                    terrain:newFictifTerrain, regime:newFictifRegime, realData:null,
+                  }])}>
+                  GÉNÉRER →
+                </button>
+              )}
             </BtnRow>
           </div>
         );
