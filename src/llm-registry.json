@@ -1,0 +1,22 @@
+{
+  "_comment": "ARIA LLM Registry — hébergé sur GitHub Gist. Mettre à jour quand de nouveaux modèles sortent.",
+  "_last_updated": "2026-03",
+  "claude": [
+    { "id": "claude-opus-4-6",          "label": "Opus 4.6" },
+    { "id": "claude-sonnet-4-6",         "label": "Sonnet 4.6 ★" },
+    { "id": "claude-haiku-4-5-20251001", "label": "Haiku 4.5" }
+  ],
+  "gemini": [
+    { "id": "gemini-2.0-flash",   "label": "2.0 Flash ★" },
+    { "id": "gemini-1.5-pro",     "label": "1.5 Pro" },
+    { "id": "gemini-1.5-flash",   "label": "1.5 Flash" }
+  ],
+  "grok": [
+    { "id": "grok-3",      "label": "Grok 3" },
+    { "id": "grok-3-mini", "label": "Grok 3 Mini ★" }
+  ],
+  "openai": [
+    { "id": "gpt-4.1",      "label": "GPT-4.1" },
+    { "id": "gpt-4.1-mini", "label": "GPT-4.1 Mini ★" }
+  ]
+}
