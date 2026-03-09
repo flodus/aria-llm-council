@@ -225,6 +225,11 @@ Voir [ROADMAP.md](ROADMAP.md) pour la feuille de route complète.
 
 ---
 
+## 🌍 État de la localisation
+Le projet est actuellement développé en français. **La transition vers l'anglais (LN18) est prévue dans la roadmap** afin d'accueillir des contributeurs internationaux. Si vous êtes intéressé par le projet mais préférez travailler en anglais, n'hésitez pas à ouvrir une issue, je prioriserai la traduction des composants critiques.
+
+---
+
 ## 🛠️ Appel à l'Architecture (Recherche de Talents)
 
 ARIA n'est pas qu'un projet de code, c'est une exploration visuelle et fonctionnelle. Pour porter l'interface "War Room" à son apogée, je cherche des collaborateurs possédant cette double sensibilité : **l'art du Creative Coding et la rigueur de l'UI stratégique.**

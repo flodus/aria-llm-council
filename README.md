@@ -224,6 +224,11 @@ See [ROADMAP.md](ROADMAP.md) for the full roadmap.
 
 ---
 
+## 🌍 Localization Status
+ARIA is currently developed with a French codebase. **The roadmap includes a full transition to English (LN18)** to welcome global contributors. If you are interested in the project but prefer English, feel free to open an issue—I will prioritize the localization of the core components.
+
+---
+
 ## 🛠️ Call for Architecture (Seeking Talents)
 
 ARIA is not just a code project; it is a visual and functional exploration. To bring the "War Room" interface to its peak, I am looking for collaborators with a dual sensitivity: **the art of Creative Coding and the rigor of strategic UI.**
