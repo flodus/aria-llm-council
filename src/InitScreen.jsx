@@ -1317,6 +1317,16 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                   onChange={e => setPlAgents(a => ({...a,
                     ministers:{...a.ministers,[key]:{...a.ministers[key],comm:e.target.value}}}))}
                 />
+                <div style={{ fontFamily:FONT.mono, fontSize:'0.37rem',
+                  color:'rgba(90,110,150,0.38)', marginBottom:'0.14rem', marginTop:'0.22rem' }}>
+                  ANGLE D'ANNOTATION <span style={{ fontWeight:'normal', opacity:0.55 }}>— question inter-ministérielle</span>
+                </div>
+                <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'26px', resize:'vertical',
+                  fontSize:'0.40rem', fontFamily:FONT.mono, lineHeight:1.5 }}
+                  value={min.annotation||''}
+                  onChange={e => setPlAgents(a => ({...a,
+                    ministers:{...a.ministers,[key]:{...a.ministers[key],annotation:e.target.value}}}))}
+                />
               </div>
             ))}
 
@@ -1889,6 +1899,32 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
         <div style={S.wrap(false)}>
           <ARIAHeader showQuote={false} />
           {H('NATION DE DÉPART')}
+          {/* Toggle Board Game */}
+          <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', padding:'0.5rem 0.8rem',
+            background: boardGame ? 'rgba(200,164,74,0.07)' : 'rgba(255,255,255,0.02)',
+            border: `1px solid ${boardGame ? 'rgba(200,164,74,0.35)' : 'rgba(255,255,255,0.08)'}`,
+            borderRadius:'4px', cursor:'pointer', width:'100%', boxSizing:'border-box',
+            transition:'all 0.15s' }}
+            onClick={() => setBoardGame(v => !v)}>
+            <span style={{ fontSize:'1.1rem' }}>🎲</span>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.12em',
+                color: boardGame ? 'rgba(200,164,74,0.9)' : 'rgba(180,190,210,0.55)' }}>
+                MODE BOARD GAME
+              </div>
+              <div style={{ fontSize:'0.40rem', color:'rgba(140,155,185,0.45)', marginTop:'0.1rem', lineHeight:1.4 }}>
+                Sans IA — annotations manuelles, délibération libre
+              </div>
+            </div>
+            <div style={{ width:'1.8rem', height:'1rem', borderRadius:'0.5rem', transition:'all 0.2s',
+              background: boardGame ? 'rgba(200,164,74,0.7)' : 'rgba(80,90,110,0.4)',
+              position:'relative' }}>
+              <div style={{ position:'absolute', top:'0.1rem', transition:'all 0.2s',
+                left: boardGame ? '0.9rem' : '0.1rem',
+                width:'0.8rem', height:'0.8rem', borderRadius:'50%',
+                background: boardGame ? 'rgba(200,164,74,1)' : 'rgba(160,175,205,0.6)' }} />
+            </div>
+          </div>
           <div style={{ display:'flex', gap:'0.8rem', width:'100%' }}>
             <MC onClick={() => setDefautType('fictif')}>
               <div style={{ fontSize:'1.3rem' }}>🌐</div>

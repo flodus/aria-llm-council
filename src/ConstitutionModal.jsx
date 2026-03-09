@@ -389,6 +389,10 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 <h3 style={S.secTitle}>{Object.keys(agents.ministers).length} MINISTRES</h3>
                 <button style={{...BTN_S,fontSize:'0.40rem',padding:'0.14rem 0.38rem'}} onClick={()=>setActiveMinsters(null)}>Tous actifs</button>
               </div>
+              <div style={{fontFamily:FONT,fontSize:'0.37rem',color:'rgba(140,155,185,0.35)',
+                marginBottom:'0.32rem',letterSpacing:'0.06em'}}>
+                1 clic = ouvrir la fiche · 2e clic = activer / désactiver
+              </div>
               <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',marginBottom:'0.5rem'}}>
                 {Object.entries(agents.ministers).map(([key,min])=>{
                   if (!min) return null;
@@ -400,7 +404,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                         padding:'0.45rem 0.55rem',borderRadius:'4px',cursor:'pointer',
                         background: isOpen ? min.color+'18' : on ? min.color+'0A' : 'rgba(255,255,255,0.015)',
                         border:`1px solid ${isOpen ? min.color+'66' : on ? min.color+'33' : 'rgba(255,255,255,0.07)'}`,
-                        opacity: on ? 1 : 0.42,
+                        opacity: on ? 1 : 0.28,
+                        filter: on ? 'none' : 'grayscale(0.7)',
                         minWidth:'3.2rem', transition:'all 0.12s'}}
                       onClick={()=>setOpenMin(p=>p===key?null:key)}>
                       <span style={{fontSize:'1.1rem',lineHeight:1}}>{min.emoji||'👤'}</span>
@@ -421,9 +426,11 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 const on  = activeMinsters===null || activeMinsters.includes(key);
                 return (
                   <section style={{...S.sec,
-                    border:`1px solid ${min.color+'44'}`,
+                    border:`1px solid ${on ? min.color+'44' : 'rgba(180,180,180,0.12)'}`,
                     borderRadius:'4px', padding:'0.75rem 0.8rem',
-                    background: min.color+'08'}}>
+                    opacity: on ? 1 : 0.38,
+                    filter: on ? 'none' : 'grayscale(0.6)',
+                    background: on ? min.color+'08' : 'rgba(255,255,255,0.012)'}}>
                     {/* Header fiche */}
                     <div style={{display:'flex',alignItems:'center',gap:'0.5rem',marginBottom:'0.45rem'}}>
                       <span style={{fontSize:'1.4rem'}}>{min.emoji||'👤'}</span>
