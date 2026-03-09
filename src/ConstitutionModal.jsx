@@ -384,86 +384,92 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
             {/* ── MINISTRES ──────────────────────────────────────── */}
             {tab==='ministers' && (<>
-              <section style={S.sec}>
+              {/* ── Grille boutons icône ─────────────────────────── */}
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.3rem'}}>
                 <h3 style={S.secTitle}>{Object.keys(agents.ministers).length} MINISTRES</h3>
-                <div style={{display:'flex',justifyContent:'flex-end',marginBottom:'0.2rem'}}>
-                  <button style={{...BTN_S,fontSize:'0.40rem',padding:'0.14rem 0.38rem'}} onClick={()=>setActiveMinsters(null)}>Tous actifs</button>
-                </div>
-                {/* Chips toggle actif/inactif */}
-                <div style={{display:'flex',flexWrap:'wrap',gap:'0.26rem'}}>
-                  {Object.entries(agents.ministers).map(([key,min])=>{
-                    const on = activeMinsters===null || activeMinsters.includes(key);
-                    return (
-                      <div key={key} style={{display:'flex',alignItems:'center',gap:'0.28rem',
-                        padding:'0.22rem 0.48rem',borderRadius:'2px',cursor:'pointer',
-                        background:on?min.color+'12':'rgba(255,255,255,0.02)',
-                        border:`1px solid ${on?min.color+'44':'rgba(255,255,255,0.05)'}`,
-                        opacity:on?1:0.42}}
-                        onClick={()=>toggleMinster(key)}>
-                        <span>{min.emoji}</span>
-                        <span style={{fontFamily:FONT,fontSize:'0.46rem',color:on?min.color+'CC':'rgba(140,160,200,0.38)'}}>{min.name}</span>
-                        {min.sign==='Custom'&&<button style={{background:'none',border:'none',cursor:'pointer',color:'rgba(200,80,80,0.35)',fontSize:'0.64rem',padding:0,lineHeight:1}} onClick={e=>{e.stopPropagation();delMinister(key);}}>✕</button>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
-
-              {/* Accordéons par ministre */}
-              {Object.entries(agents.ministers).map(([key,min])=>{
-                const isOpen = openMin === key;
-                const on = activeMinsters===null || activeMinsters.includes(key);
-                return (
-                  <div key={key} style={{borderRadius:'2px',overflow:'hidden',opacity:on?1:0.52,
-                    border:`1px solid ${isOpen?min.color+'55':'rgba(255,255,255,0.07)'}`}}>
-                    {/* Header cliquable */}
-                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem',
-                      padding:'0.42rem 0.65rem',cursor:'pointer',
-                      background:isOpen?min.color+'12':'rgba(255,255,255,0.018)'}}
+                <button style={{...BTN_S,fontSize:'0.40rem',padding:'0.14rem 0.38rem'}} onClick={()=>setActiveMinsters(null)}>Tous actifs</button>
+              </div>
+              <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',marginBottom:'0.5rem'}}>
+                {Object.entries(agents.ministers).map(([key,min])=>{
+                  if (!min) return null;
+                  const on     = activeMinsters===null || activeMinsters.includes(key);
+                  const isOpen = openMin === key;
+                  return (
+                    <button key={key}
+                      style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.18rem',
+                        padding:'0.45rem 0.55rem',borderRadius:'4px',cursor:'pointer',
+                        background: isOpen ? min.color+'18' : on ? min.color+'0A' : 'rgba(255,255,255,0.015)',
+                        border:`1px solid ${isOpen ? min.color+'66' : on ? min.color+'33' : 'rgba(255,255,255,0.07)'}`,
+                        opacity: on ? 1 : 0.42,
+                        minWidth:'3.2rem', transition:'all 0.12s'}}
                       onClick={()=>setOpenMin(p=>p===key?null:key)}>
-                      <span style={{fontSize:'0.95rem',flexShrink:0}}>{min.emoji}</span>
-                      <span style={{fontFamily:FONT,fontSize:'0.46rem',flex:1,
-                        color:isOpen?min.color+'EE':'rgba(200,215,240,0.70)'}}>{min.name}</span>
+                      <span style={{fontSize:'1.1rem',lineHeight:1}}>{min.emoji||'👤'}</span>
+                      <span style={{fontFamily:FONT,fontSize:'0.36rem',color:isOpen?min.color+'EE':on?min.color+'99':'rgba(140,160,200,0.40)',
+                        letterSpacing:'0.04em',textAlign:'center',lineHeight:1.3,maxWidth:'3.8rem',
+                        overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                        {min.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* ── Fiche ministre ouverte ───────────────────────── */}
+              {openMin && agents.ministers[openMin] && (() => {
+                const key = openMin;
+                const min = agents.ministers[key];
+                const on  = activeMinsters===null || activeMinsters.includes(key);
+                return (
+                  <section style={{...S.sec,
+                    border:`1px solid ${min.color+'44'}`,
+                    borderRadius:'4px', padding:'0.75rem 0.8rem',
+                    background: min.color+'08'}}>
+                    {/* Header fiche */}
+                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem',marginBottom:'0.45rem'}}>
+                      <span style={{fontSize:'1.4rem'}}>{min.emoji||'👤'}</span>
+                      <div style={{flex:1}}>
+                        <div style={{fontFamily:FONT,fontSize:'0.52rem',color:min.color+'EE',letterSpacing:'0.08em'}}>{min.name}</div>
+                        <div style={{fontSize:'0.38rem',color:'rgba(140,160,200,0.45)',marginTop:'0.08rem'}}>{min.sign||''}</div>
+                      </div>
+                      {/* Toggle actif */}
+                      <button style={{...BTN_S,fontSize:'0.38rem',padding:'0.12rem 0.42rem',
+                        ...(on?{borderColor:min.color+'55',color:min.color+'CC',background:min.color+'10'}:{})}}
+                        onClick={e=>{e.stopPropagation();toggleMinster(key);}}>
+                        {on?'● ACTIF':'○ INACTIF'}
+                      </button>
                       {min.sign==='Custom'&&(
                         <button style={{background:'none',border:'none',cursor:'pointer',
-                          color:'rgba(200,80,80,0.45)',fontSize:'0.62rem',padding:'0 0.2rem',lineHeight:1}}
-                          onClick={e=>{e.stopPropagation();delMinister(key);}}>✕</button>
+                          color:'rgba(200,80,80,0.55)',fontSize:'0.70rem',padding:'0 0.2rem',lineHeight:1}}
+                          onClick={()=>{delMinister(key);setOpenMin(null);}}>✕</button>
                       )}
-                      <span style={{fontFamily:FONT,fontSize:'0.44rem',
-                        color:min.color+'66',flexShrink:0}}>{isOpen?'▲':'▼'}</span>
                     </div>
-                    {/* Corps accordéon */}
-                    {isOpen&&(
-                      <div style={{padding:'0.55rem 0.65rem',
-                        borderTop:`1px solid ${min.color+'22'}`,
-                        display:'flex',flexDirection:'column',gap:'0.32rem'}}>
-                        <div style={{display:'flex',alignItems:'center',gap:'0.38rem',marginBottom:'0.1rem'}}>
-                          <input style={{...INPUT,width:'1.95rem',textAlign:'center',fontSize:'1rem',padding:'0.15rem',flexShrink:0}}
-                            value={min.emoji} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],emoji:e.target.value}}}))}/>
-                          <input style={{...INPUT,flex:1,fontSize:'0.50rem'}}
-                            value={min.name} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],name:e.target.value}}}))}/>
-                          <input type="color" value={min.color}
-                            style={{width:'1.9rem',height:'1.8rem',border:'none',background:'none',cursor:'pointer',flexShrink:0}}
-                            onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],color:e.target.value}}}))}/>
-                        </div>
-                        <div style={S.label}>ESSENCE</div>
-                        <textarea style={{...INPUT,minHeight:'34px',resize:'vertical',lineHeight:1.5,fontFamily:FONT}}
-                          value={min.essence||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],essence:e.target.value}}}))}/>
-                        <div style={S.label}>STYLE DE COMMUNICATION</div>
-                        <textarea style={{...INPUT,minHeight:'26px',resize:'vertical',lineHeight:1.5,fontFamily:FONT}}
-                          value={min.comm||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],comm:e.target.value}}}))}/>
-                        <div style={{...S.label,display:'flex',alignItems:'center',gap:'0.4rem',flexWrap:'wrap'}}>
-                          ANGLE D'ANNOTATION
-                          <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0'}}>— question posée lors des annotations inter-ministérielles</span>
-                        </div>
-                        <textarea style={{...INPUT,minHeight:'30px',resize:'vertical',lineHeight:1.5,fontFamily:FONT}}
-                          value={min.annotation||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],annotation:e.target.value}}}))}/>
-                      </div>
-                    )}
-                  </div>
+                    {/* Identity row */}
+                    <div style={{display:'flex',alignItems:'center',gap:'0.38rem',marginBottom:'0.38rem'}}>
+                      <input style={{...INPUT,width:'1.95rem',textAlign:'center',fontSize:'1rem',padding:'0.15rem',flexShrink:0}}
+                        value={min.emoji||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],emoji:e.target.value}}}))}/>
+                      <input style={{...INPUT,flex:1,fontSize:'0.50rem'}}
+                        value={min.name||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],name:e.target.value}}}))}/>
+                      <input type="color" value={min.color||'#8090C0'}
+                        style={{width:'1.9rem',height:'1.8rem',border:'none',background:'none',cursor:'pointer',flexShrink:0}}
+                        onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],color:e.target.value}}}))}/>
+                    </div>
+                    <div style={S.label}>ESSENCE</div>
+                    <textarea style={{...INPUT,minHeight:'44px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.28rem'}}
+                      value={min.essence||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],essence:e.target.value}}}))}/>
+                    <div style={S.label}>STYLE DE COMMUNICATION</div>
+                    <textarea style={{...INPUT,minHeight:'30px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.28rem'}}
+                      value={min.comm||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],comm:e.target.value}}}))}/>
+                    <div style={{...S.label,display:'flex',alignItems:'center',gap:'0.4rem',flexWrap:'wrap'}}>
+                      ANGLE D'ANNOTATION
+                      <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0'}}>— question posée lors des annotations inter-ministérielles</span>
+                    </div>
+                    <textarea style={{...INPUT,minHeight:'30px',resize:'vertical',lineHeight:1.5,fontFamily:FONT}}
+                      value={min.annotation||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],annotation:e.target.value}}}))}/>
+                  </section>
                 );
-              })}
+              })()}
 
+              {/* ── Nouveau ministre ────────────────────────────── */}
               {showNewMin ? (
                 <section style={{...S.sec,border:'1px solid rgba(100,200,120,0.22)',borderRadius:'2px',padding:'0.7rem'}}>
                   <h3 style={{...S.secTitle,color:'rgba(100,200,120,0.65)'}}>+ NOUVEAU MINISTRE</h3>
@@ -474,7 +480,9 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                     <input type="color" value={nMinD.color} style={{width:'1.9rem',height:'1.8rem',border:'none',background:'none',cursor:'pointer'}} onChange={e=>setNMinD(d=>({...d,color:e.target.value}))}/>
                   </div>
                   <textarea style={{...INPUT,minHeight:'34px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.28rem'}} value={nMinD.essence} onChange={e=>setNMinD(d=>({...d,essence:e.target.value}))} placeholder="Essence — rôle et vision…"/>
-                  <textarea style={{...INPUT,minHeight:'26px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.38rem'}} value={nMinD.comm} onChange={e=>setNMinD(d=>({...d,comm:e.target.value}))} placeholder="Style de communication…"/>
+                  <textarea style={{...INPUT,minHeight:'26px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.28rem'}} value={nMinD.comm} onChange={e=>setNMinD(d=>({...d,comm:e.target.value}))} placeholder="Style de communication…"/>
+                  <div style={{...S.label,marginBottom:'0.12rem'}}>ANGLE D'ANNOTATION <span style={{fontWeight:'normal',color:'rgba(90,110,150,0.35)'}}>— question posée lors des annotations inter-ministérielles</span></div>
+                  <textarea style={{...INPUT,minHeight:'26px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.38rem'}} value={nMinD.annotation} onChange={e=>setNMinD(d=>({...d,annotation:e.target.value}))} placeholder="Ex : Quelle est la position du ministre sur…"/>
                   <div style={{display:'flex',gap:'0.38rem',justifyContent:'flex-end'}}>
                     <button style={BTN_S} onClick={()=>setShowNewMin(false)}>Annuler</button>
                     <button style={{...BTN_P,opacity:nMinD.name&&nMinD.id?1:0.35}} disabled={!nMinD.name||!nMinD.id} onClick={addMinister}>Créer →</button>

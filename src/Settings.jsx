@@ -61,6 +61,11 @@ const MINISTER_LABELS = {
   guide:'Le Guide (Sagittaire)', stratege:'Le Stratège (Capricorne)',
   inventeur:'L\'Inventeur (Verseau)', guerisseur:'Le Guérisseur (Poissons)',
 };
+const MINISTER_EMOJIS = {
+  initiateur:'♈', gardien:'♉', communicant:'♊', protecteur:'♋',
+  ambassadeur:'♌', analyste:'♍', arbitre:'♎', enqueteur:'♏',
+  guide:'♐', stratege:'♑', inventeur:'♒', guerisseur:'♓',
+};
 
 const MINISTRY_LABELS = {
   justice:'⚖️ Justice et Vérité', economie:'💰 Économie et Ressources',
@@ -821,13 +826,33 @@ function SectionConseil() {
 
       {tab === 'ministres' && (
         <div>
-          <Field label="Sélectionner un ministre">
-            <Select
-              value={selectedMin}
-              onChange={setSelectedMin}
-              options={MINISTER_KEYS.map(k => ({ value: k, label: MINISTER_LABELS[k] }))}
-            />
-          </Field>
+          {/* Grille icônes ministres */}
+          <div style={{marginBottom:'1.2rem'}}>
+            <div style={{fontSize:'0.75rem',color:'rgba(200,164,74,0.7)',letterSpacing:'0.10em',marginBottom:'0.6rem',textTransform:'uppercase'}}>
+              Sélectionner un ministre
+            </div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
+              {MINISTER_KEYS.map(k => {
+                const isSelected = selectedMin === k;
+                return (
+                  <button key={k}
+                    onClick={() => setSelectedMin(k)}
+                    style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem',
+                      padding:'0.6rem 0.7rem',borderRadius:'6px',cursor:'pointer',minWidth:'3.5rem',
+                      background: isSelected ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
+                      border: `1px solid ${isSelected ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                      transition:'all 0.12s'}}>
+                    <span style={{fontSize:'1.2rem',lineHeight:1}}>{MINISTER_EMOJIS[k]}</span>
+                    <span style={{fontSize:'0.52rem',color:isSelected?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
+                      letterSpacing:'0.03em',textAlign:'center',maxWidth:'4rem',
+                      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3}}>
+                      {MINISTER_LABELS[k].split(' (')[0]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <Field label="Essence" hint="Philosophie profonde — ce qui motive ses positions">
             <TextArea rows={4}
