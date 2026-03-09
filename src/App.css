@@ -1009,19 +1009,16 @@ html, body, #root {
   z-index: 9999;
   display: flex !important;
   flex-direction: column;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   align-items: center !important;
+  overflow-y: auto;
   background: radial-gradient(circle at center, rgba(10, 18, 24, 0.98) 0%, rgba(3, 6, 8, 1) 100%);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   animation: fadeIn 0.5s var(--ease-out);
 }
 
-.init-overlay > * {
-  max-width: 90%;
-  margin: 0 auto;
-  text-align: center;
-}
+/* init-overlay children — no forced centering */
 
 
 /* ═══════════════════════════════════════════════════════════════════════════

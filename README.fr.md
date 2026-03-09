@@ -44,13 +44,13 @@ C'est un **bac à sable politique** et une expérience de pensée interactive su
 ---
 
 ## 🏛️ Méthodologie & Architecture
-> | ARIA est un projet architectural hybride. En tant qu'architecte système, j'ai conçu 
-> | la vision, la logique constitutionnelle et l'expérience utilisateur. Le code source 
-> | est le résultat d'une synergie entre mon intention humaine et l'assistance technique 
-> | d'agents IA spécialisés (Gemini pour le raisonnement stratégique, Claude pour 
-> | l'implémentation et le développement). Cette collaboration illustre une nouvelle 
-> | manière de concevoir des systèmes complexes, où l'intention humaine devient le 
-> | moteur principal de l'exécution algorithmique.
+> ARIA est un projet architectural hybride. En tant qu'architecte système, j'ai conçu 
+> la vision, la logique constitutionnelle et l'expérience utilisateur. Le code source 
+> est le résultat d'une synergie entre mon intention humaine et l'assistance technique 
+> d'agents IA spécialisés (Gemini pour le raisonnement stratégique, Claude pour 
+> l'implémentation et le développement). Cette collaboration illustre une nouvelle 
+> manière de concevoir des systèmes complexes, où l'intention humaine devient le 
+> moteur principal de l'exécution algorithmique.
 
 ---
 

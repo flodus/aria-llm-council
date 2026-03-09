@@ -454,7 +454,11 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
     terrainName:  TERRAINS[terrain]?.name || terrain,
     coastal,
     description:  aiData.description || '',
-    leader:       aiData.leader || null,
+    leader:       aiData.leader
+                  ? (typeof aiData.leader === 'string'
+                      ? aiData.leader
+                      : [aiData.leader.titre, aiData.leader.nom].filter(Boolean).join(' '))
+                  : null,
     annee:        STATS.global_start.annee,
     population:   aiData.population || 5_000_000,
     tauxNatalite: aiData.tauxNatalite || regime.taux_natalite * 1000,
@@ -1255,7 +1259,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
           const irlAI = aiData.aria_acceptance && Number.isFinite(+aiData.aria_acceptance)
             ? Math.round(Math.max(5, Math.min(95, +aiData.aria_acceptance))) : null;
           const irl = irlAI ?? calcAriaIRL(c);
-          built.push({ ...c, aria_irl: irl, aria_current: irl });
+          built.push({ ...c, aria_irl: irl, aria_current: irl, ...(def.context_mode ? { context_mode: def.context_mode } : {}) });
         } else {
           // Fallback : si le pays a un realData → construction locale fidèle
           // sinon → pays local générique
@@ -1269,7 +1273,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
             );
           }
           const irl = calcAriaIRL(fallback);
-          built.push({ ...fallback, aria_irl: irl, aria_current: irl });
+          built.push({ ...fallback, aria_irl: irl, aria_current: irl, ...(def.context_mode ? { context_mode: def.context_mode } : {}) });
           pushNotif(`IA indisponible pour "${def.nom || 'ce pays'}" — mode local appliqué.`, 'warn');
         }
       } catch (e) {

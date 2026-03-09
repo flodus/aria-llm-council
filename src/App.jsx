@@ -23,6 +23,8 @@ const TABS = [
 
 export default function App() {
   // ── États globaux ─────────────────────────────────────────────────────
+
+
   const [worldGenerated,  setWorldGenerated]  = useState(() => {
     try {
       const active = localStorage.getItem('aria_session_active');
@@ -56,8 +58,9 @@ export default function App() {
 
   // ── Audio ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    const ambient = new Audio('/assets/audio/ambient_flow.mp3');
-    const crisis  = new Audio('/assets/audio/emergency_protocol.mp3');
+    const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+    const ambient = new Audio(`${base}/assets/audio/ambient_flow.mp3`);
+    const crisis  = new Audio(`${base}/assets/audio/emergency_protocol.mp3`);
     ambient.loop = crisis.loop = true;
     ambient.volume = crisis.volume = 0;
     ambientRef.current = ambient;

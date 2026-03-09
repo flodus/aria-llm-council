@@ -49,12 +49,12 @@ It is a **political sandbox** and an interactive thought experiment on algorithm
 ---
 
 ## 🏛️ Methodology & Architecture
-> | ARIA is a hybrid architectural project. As the system architect, I have defined the 
-> | core vision, constitutional logic, and user experience. The source code is the 
-> | product of a synergy between human intention and specialized AI agents (Gemini for 
-> | strategic reasoning and structural design, Claude for code implementation and 
-> | development). This collaboration explores a new paradigm in building complex systems, 
-> | where human intent drives algorithmic execution.
+> ARIA is a hybrid architectural project. As the system architect, I have defined the 
+> core vision, constitutional logic, and user experience. The source code is the 
+> product of a synergy between human intention and specialized AI agents (Gemini for 
+> strategic reasoning and structural design, Claude for code implementation and 
+> development). This collaboration explores a new paradigm in building complex systems, 
+> where human intent drives algorithmic execution.
 
 ---
 

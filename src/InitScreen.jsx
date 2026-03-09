@@ -253,7 +253,7 @@ function APIKeyInline({ onClose }) {
                   return (
                     <button key={v.id}
                       style={{ ...BTN_SECONDARY, padding:'0.18rem 0.45rem', fontSize:'0.40rem',
-                        ...(chosen ? { borderColor:'rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : { opacity:0.55 }) }}
+                        ...(chosen ? { border:'1px solid rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : { opacity:0.55 }) }}
                       onClick={() => setModels(m => ({...m, [prov.id]: v.id}))}>
                       {v.label}
                     </button>
@@ -335,8 +335,76 @@ function CountryInfoCard({ data }) {
 }
 
 // ── Sous-composant : Config d'un pays (mode personnalisé) ─────────────────
+// Match exact (insensible casse/accents) entre saisie et nom pays
+const isExactMatch = (query, resultName) => {
+  const normalize = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const q = normalize(query);
+  const r = normalize(resultName);
+  return q === r || r.startsWith(q) || q.startsWith(r.slice(0, Math.max(4, r.length)));
+};
 function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
+  const { lang } = useLocale();
   const setField = (k, v) => onChange({ ...c, [k]: v });
+
+  // ── Validation pays réel en ligne (RestCountries) ──────────────────────
+  const [rcSearch, setRcSearch] = useState(c.nom || '');
+  const [rcStatus,     setRcStatus]     = useState(null); // null|'searching'|'found'|'notfound'|'suggestion'|'error'
+  const [rcSuggestion, setRcSuggestion] = useState(null);
+  const rcTimer = useRef(null);
+
+
+
+  const searchRestCountries = (query) => {
+    if (!query || query.length < 3) { setRcStatus(null); return; }
+    // Check local list first
+    const local = REAL_COUNTRIES_DATA.find(r =>
+      r.nom.toLowerCase() === query.toLowerCase() ||
+      r.id === query.toLowerCase().replace(/[^a-z]/g,'')
+    );
+    if (local) {
+      onChange({ ...c, nom: local.nom, regime: local.regime, terrain: local.terrain, realData: local });
+      onChange({ ...c, nom: local.nom, regime: local.regime, terrain: local.terrain, realData: local, _rcStatus: 'found' });
+      setRcStatus('found'); return;
+    }
+    setRcStatus('searching');
+    fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(query)}?fields=name,flags,capital,population,region,subregion`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        if (!data || !data.length) { setRcStatus('notfound'); onChange({ ...c, _rcStatus: 'notfound', _rcSuggestion: null }); return; }
+        const rc = data[0];
+        const nom = rc.name?.common || query;
+        if (!isExactMatch(query, nom) && !isExactMatch(query, rc.name?.official||'')) {
+          setRcStatus('suggestion'); setRcSuggestion(nom);
+          onChange({ ...c, _rcStatus: 'suggestion', _rcSuggestion: nom });
+          return;
+        }
+        const flag = rc.flags?.emoji || '🌐';
+        // Map to a minimal realData compatible avec REAL_COUNTRIES_DATA
+        const synth = {
+          id: nom.toLowerCase().replace(/[^a-z0-9]/g,'-'),
+          nom, flag,
+          regime: 'democratie_liberale',
+          terrain: 'coastal',
+          population: rc.population || 5_000_000,
+          region: rc.region || '',
+          _fromApi: true,
+        };
+        onChange({ ...c, nom, realData: synth, _rcStatus: 'found' });
+        setRcStatus('found');
+      })
+      .catch(() => setRcStatus('error'));
+  };
+
+  // Debounce auto-validation — mode AI uniquement
+  useEffect(() => {
+    if (c.type !== 'reel' || mode !== 'ai') return;
+    if (rcStatus === 'found' && rcSearch === c.nom) return;
+    if (rcStatus === 'found') setRcStatus(null);
+    if (!rcSearch || rcSearch.length < 3) return;
+    clearTimeout(rcTimer.current);
+    rcTimer.current = setTimeout(() => searchRestCountries(rcSearch), 700);
+    return () => clearTimeout(rcTimer.current);
+  }, [rcSearch, c.type, mode]);
 
   return (
     <div style={{ ...CARD_STYLE, padding:'0.9rem 1rem' }}>
@@ -358,7 +426,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
         ].map(t => (
           <button key={t.v}
             style={{ ...BTN_SECONDARY, flex:1, padding:'0.3rem', fontSize:'0.48rem',
-              ...(c.type === t.v ? { borderColor:'rgba(200,164,74,0.40)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : {}) }}
+              ...(c.type === t.v ? { border:'1px solid rgba(200,164,74,0.40)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : {}) }}
             onClick={() => onChange({ ...c, type:t.v, realData:null, nom:'', terrain:'coastal', regime:'democratie_liberale' })}>
             {t.l}
           </button>
@@ -406,9 +474,26 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
                 {REAL_COUNTRIES_DATA.map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
               </select>
               {(!knownMatch) && (
-                <input style={{ ...INPUT_STYLE, fontSize:'0.54rem', marginTop:'0.4rem' }} value={c.nom}
-                  onChange={e => setField('nom', e.target.value)}
-                  placeholder="Ex : Canada, Maroc, Singapour…" />
+                <div style={{ marginTop:'0.4rem' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', marginBottom:'0.2rem' }}>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(100,120,160,0.45)' }}>VÉRIFICATION</span>
+                    {rcStatus === 'searching'  && <span style={{ color:'rgba(200,164,74,0.55)', fontSize:'0.38rem' }}>⟳ vérification…</span>}
+                    {rcStatus === 'found'      && <span style={{ color:'rgba(58,191,122,0.80)',  fontSize:'0.38rem' }}>✓ pays reconnu</span>}
+                    {rcStatus === 'notfound'   && <span style={{ color:'rgba(200,80,80,0.70)',   fontSize:'0.38rem' }}>✗ pays inconnu</span>}
+                    {rcStatus === 'error'      && <span style={{ color:'rgba(200,164,74,0.50)',  fontSize:'0.38rem' }}>⚠ hors ligne</span>}
+                    {rcStatus === 'suggestion' && rcSuggestion && (
+                      <button onClick={() => { setField('nom', rcSuggestion); setRcSearch(rcSuggestion); setRcStatus(null); setRcSuggestion(null); }}
+                        style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(200,164,74,0.90)',
+                          background:'rgba(200,164,74,0.10)', border:'1px solid rgba(200,164,74,0.30)',
+                          borderRadius:'2px', padding:'0.10rem 0.40rem', cursor:'pointer' }}>
+                        → {rcSuggestion} ?
+                      </button>
+                    )}
+                  </div>
+                  <input style={{ ...INPUT_STYLE, fontSize:'0.54rem', width:'100%' }} value={c.nom}
+                    onChange={e => { setField('nom', e.target.value); setRcSearch(e.target.value); }}
+                    placeholder="Ex : Canada, Maroc, Singapour…" />
+                </div>
               )}
             </div>
             {/* Suggestion si faute de frappe probable */}
@@ -443,7 +528,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
         );
       })()}
 
-      {/* ── PAYS RÉEL HORS LIGNE : dropdown + terrain/régime éditables ── */}
+      {/* ── PAYS RÉEL HORS LIGNE : dropdown uniquement (stats hardcodées) ── */}
       {c.type === 'reel' && mode === 'local' && (
         <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
           <div>
@@ -650,6 +735,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const [cfgOpen, setCfgOpen] = useState(''); // 'ia'|'constitution'|'boardgame'|''
   // Registry fetch on mount
   useEffect(() => {
+    if (ARIA_REGISTRY_URL.includes('REPLACE_WITH')) { setRegStatus('error'); return; }
     setRegStatus('loading');
     fetch(ARIA_REGISTRY_URL).then(r => r.ok ? r.json() : Promise.reject())
       .then(data => { setModelReg({...ARIA_FALLBACK_MODELS, ...data}); setRegStatus('ok'); })
@@ -758,7 +844,8 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
   return (
     <div style={{ display:'flex', flexDirection:'column', alignItems:'center',
-      gap:'1.2rem', width:'100%', maxWidth:680, padding:'2rem' }}>
+      gap:'1.2rem', width:'100%', maxWidth:680, padding:'2rem',
+      overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box' }}>
       <ARIAHeader showQuote={false} />
 
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%' }}>
@@ -768,7 +855,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
             {countries.map((c, i) => (
               <button key={i}
                 style={{ ...BTN_SECONDARY, padding:'0.22rem 0.50rem', fontSize:'0.42rem',
-                  ...(plCountry===i ? { borderColor:'rgba(200,164,74,0.50)',
+                  ...(plCountry===i ? { border:'1px solid rgba(200,164,74,0.50)',
                     color:'rgba(200,164,74,0.90)', background:'rgba(200,164,74,0.08)' } : {}) }}
                 onClick={() => setPlCountry(i)}>
                 {c.realData?.flag||'🌐'} {c.nom||c.realData?.nom||`Nation ${i+1}`}
@@ -967,7 +1054,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                       ].map(m => (
                         <button key={m.id}
                           style={{ ...BTN_SECONDARY, flex:1, fontSize:'0.40rem', padding:'0.28rem 0.4rem',
-                            ...(ariaMode===m.id ? { borderColor:'rgba(200,164,74,0.50)',
+                            ...(ariaMode===m.id ? { border:'1px solid rgba(200,164,74,0.50)',
                               color:'rgba(200,164,74,0.90)', background:'rgba(200,164,74,0.08)' } : {}) }}
                           onClick={() => setAriaMode(m.id)}>
                           {m.label}
@@ -1479,13 +1566,14 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
             ].map(([val, lbl, hint]) => {
               const on = mode === val;
               return (
-                <label key={val} style={{ display:'flex', alignItems:'flex-start', gap:'0.4rem',
-                  cursor:'pointer', padding:'0.25rem 0.4rem', borderRadius:'2px',
+                <label key={val} style={{ display:'flex', alignItems:'center', gap:'0.5rem',
+                  cursor:'pointer', padding:'0.30rem 0.5rem', borderRadius:'2px',
                   background: on ? 'rgba(200,164,74,0.07)' : 'transparent',
-                  border:`1px solid ${on ? 'rgba(200,164,74,0.25)' : 'transparent'}` }}>
-                  <input type="radio" name="ctx_mode_init" value={val} checked={on}
+                  border:`1px solid ${on ? 'rgba(200,164,74,0.25)' : 'transparent'}`,
+                  width:'100%', boxSizing:'border-box' }}>
+                  <input type="radio" name={`ctx_mode_${(countryName||'x').replace(/\s+/g,'_')}`} value={val} checked={on}
                     onChange={() => setMode(val)}
-                    style={{ marginTop:'0.06rem', accentColor:'#C8A44A' }} />
+                    style={{ accentColor:'#C8A44A', flexShrink:0 }} />
                   <div>
                     <div style={{ fontFamily:FONT.mono, fontSize:'0.46rem',
                       color: on ? GOLD : 'rgba(200,215,240,0.78)' }}>{lbl}</div>
@@ -1539,6 +1627,28 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   const [defautFictif,      setDefautFictif]      = useState(null);  // id PAYS_LOCAUX ou 'new'
   const [defautReel,        setDefautReel]        = useState('');    // id REAL_COUNTRIES_DATA ou terrain si isNew
   const [defautNom,         setDefautNom]         = useState('');    // nom libre
+  const [rcDefautStatus,    setRcDefautStatus]    = useState(null);  // null|'searching'|'found'|'notfound'|'suggestion'|'error'
+  const [rcDefautSuggestion,setRcDefautSuggestion]= useState(null);  // nom suggéré si pas match exact
+  const rcDefautTimer = useRef(null);
+  const searchDefautCountry = (query) => {
+    if (!query || query.length < 3) { setRcDefautStatus(null); return; }
+    const local = REAL_COUNTRIES_DATA.find(r => r.nom.toLowerCase() === query.toLowerCase());
+    if (local) { setRcDefautStatus('found'); return; }
+    setRcDefautStatus('searching');
+    fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(query)}?fields=name,flags,population`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        if (!data?.length) { setRcDefautStatus('notfound'); setRcDefautSuggestion(null); return; }
+        const nom = data[0].name?.common || query;
+        const official = data[0].name?.official || '';
+        if (isExactMatch(query, nom) || isExactMatch(query, official)) {
+          setRcDefautStatus('found'); setRcDefautSuggestion(null);
+        } else {
+          setRcDefautStatus('suggestion'); setRcDefautSuggestion(nom);
+        }
+      })
+      .catch(() => setRcDefautStatus('error'));
+  };
   const [newFictifTerrain,  setNewFictifTerrain]  = useState('coastal');
   const [newFictifRegime,   setNewFictifRegime]   = useState('democratie_liberale');
   const [boardGame,         setBoardGame]         = useState(() => {
@@ -1990,7 +2100,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
       // B — Pays réel en ligne
       if (defautType === 'reel') {
         const knownReel = REAL_COUNTRIES_DATA.find(r => r.id === defautReel);
-        const canLaunch = defautReel || defautNom.trim();
+        const canLaunch = defautReel || (defautNom.trim() && rcDefautStatus === 'found');
         return (
           <div style={S.wrap(false)}>
             <ARIAHeader showQuote={false} />
@@ -2002,9 +2112,33 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 {REAL_COUNTRIES_DATA.map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
               </select>
               <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(140,160,200,0.35)', textAlign:'center' }}>— OU —</div>
-              <input style={{ ...INPUT_STYLE, fontSize:'0.53rem' }}
-                value={defautNom} onChange={e => { setDefautNom(e.target.value); setDefautReel(''); }}
-                {...{placeholder:t('COUNTRY_NAME_PH',lang)}} />
+              <div>
+                <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.25rem' }}>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(100,120,160,0.45)' }}>SAISIE LIBRE</span>
+                  {rcDefautStatus === 'searching'  && <span style={{ color:'rgba(200,164,74,0.55)', fontSize:'0.38rem' }}>⟳ vérification…</span>}
+                  {rcDefautStatus === 'found'      && <span style={{ color:'rgba(58,191,122,0.80)',  fontSize:'0.38rem' }}>✓ pays reconnu</span>}
+                  {rcDefautStatus === 'notfound'   && <span style={{ color:'rgba(200,80,80,0.70)',   fontSize:'0.38rem' }}>✗ pays inconnu</span>}
+                  {rcDefautStatus === 'error'      && <span style={{ color:'rgba(200,164,74,0.50)',  fontSize:'0.38rem' }}>⚠ hors ligne</span>}
+                  {rcDefautStatus === 'suggestion' && rcDefautSuggestion && (
+                    <button onClick={() => { setDefautNom(rcDefautSuggestion); setRcDefautStatus(null); setRcDefautSuggestion(null); clearTimeout(rcDefautTimer.current); setTimeout(() => searchDefautCountry(rcDefautSuggestion), 50); }}
+                      style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(200,164,74,0.90)',
+                        background:'rgba(200,164,74,0.10)', border:'1px solid rgba(200,164,74,0.30)',
+                        borderRadius:'2px', padding:'0.10rem 0.40rem', cursor:'pointer' }}>
+                      → {rcDefautSuggestion} ?
+                    </button>
+                  )}
+                </div>
+                <input style={{ ...INPUT_STYLE, fontSize:'0.53rem', width:'100%' }}
+                  value={defautNom}
+                  onChange={e => {
+                    setDefautNom(e.target.value);
+                    setDefautReel('');
+                    setRcDefautStatus(null);
+                    clearTimeout(rcDefautTimer.current);
+                    rcDefautTimer.current = setTimeout(() => searchDefautCountry(e.target.value), 700);
+                  }}
+                  placeholder={t('COUNTRY_NAME_PH',lang)} />
+              </div>
               {knownReel
                 ? <CountryInfoCard data={knownReel} />
                 : defautNom && (
@@ -2185,15 +2319,32 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           ))}
         </div>
         <div style={{ display:'flex', justifyContent:'flex-end', width:'100%' }}>
-          <button style={BTN_PRIMARY} onClick={() => {
-            // Auto-nommer les pays fictifs sans nom
-            const filled = countries.map((c, i) => ({
-              ...c,
-              nom: c.nom.trim() || (c.realData?.nom) || `Nation ${i + 1}`,
-            }));
-            setCountries(filled);
-            preLaunch('custom', filled);
-          }}>GÉNÉRER LE MONDE →</button>
+          {(() => {
+            const unvalidated = countries.filter(c =>
+              c.type === 'reel' && mode === 'ai' && !c.realData?.id && !c.nom.trim()
+            );
+            const hasNotFound = countries.some(c =>
+              c.type === 'reel' && mode === 'ai' && !c.realData?.id &&
+              (c._rcStatus === 'notfound' || c._rcStatus === 'suggestion' || !c._rcStatus)
+            );
+            const canGen = unvalidated.length === 0 && !hasNotFound;
+            return (
+              <button style={{ ...BTN_PRIMARY, opacity: canGen ? 1 : 0.40, cursor: canGen ? 'pointer' : 'not-allowed' }}
+                disabled={!canGen}
+                title={canGen ? '' : `Vérifiez : ${unvalidated.map(c=>c.nom||'?').join(', ')}`}
+                onClick={() => {
+                  if (!canGen) return;
+                  const filled = countries.map((c, i) => ({
+                    ...c,
+                    nom: c.nom.trim() || (c.realData?.nom) || `Nation ${i + 1}`,
+                  }));
+                  setCountries(filled);
+                  preLaunch('custom', filled);
+                }}>
+                {canGen ? 'GÉNÉRER LE MONDE →' : hasNotFound ? 'PAYS INTROUVABLES — CORRIGEZ' : `COMPLÉTER LES PAYS (${unvalidated.length})`}
+              </button>
+            );
+          })()}
         </div>
       </div>
     );
