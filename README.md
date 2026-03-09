@@ -36,7 +36,7 @@ It is a **political sandbox** and an interactive thought experiment on algorithm
 
 | Constitutional Setup | Council Deliberation | Geopolitical Map |
 | :---: | :---: | :---: |
-| ![Setup](doc/images/aria_constitution-ministries-setup.png) | ![Council](doc/images/aria_llm-answer-council.jpg) | ![Map](doc/images/aria_map-grid.jpg) |
+| ![Setup](doc/images/aria_constitution-ministries-setup.png) | ![Council](doc/images/aria_llm-answer-council.png) | ![Map](doc/images/aria_map-grid.png) |
 
 *[View full screenshot gallery →](doc/screenshots/)*
 

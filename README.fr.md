@@ -36,7 +36,7 @@ C'est un **bac à sable politique** et une expérience de pensée interactive su
 
 | Conf Constitution | Délibération du Conseil | Carte Géopolitique |
 | :---: | :---: | :---: |
-| ![Setup](doc/images/aria_constitution-ministries-setup.png) | ![Council](doc/images/aria_llm-answer-council.jpg) | ![Map](doc/images/aria_map-grid.jpg) |
+| ![Setup](doc/images/aria_constitution-ministries-setup.png) | ![Council](doc/images/aria_llm-answer-council.png) | ![Map](doc/images/aria_map-grid.png) |
 
 *[Voir toute la gallery →](doc/screenshots/)*
 
