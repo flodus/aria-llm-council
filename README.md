@@ -31,7 +31,14 @@ ARIA is a **systemic governance simulation**. You play as the sovereign people, 
 
 It is a **political sandbox** and an interactive thought experiment on algorithmic governance and human-AI co-decision making.
 
-![Deliberation Flow](doc/flow.png)
+![Deliberation Flow](doc/images/flow.png)
+
+
+| Constitutional Setup | Council Deliberation | Geopolitical Map |
+| :---: | :---: | :---: |
+| ![Setup](doc/images/aria_constitution-ministries-setup.png) | ![Council](doc/images/aria_llm-answer-council.jpg) | ![Map](doc/images/aria_map-grid.jpg) |
+
+*[View full screenshot gallery →](doc/screenshots/)*
 
 ---
 
@@ -43,7 +50,7 @@ It is a **political sandbox** and an interactive thought experiment on algorithm
 
 ## How It Works
 
-![Feature Overview](doc/features.png)
+![Feature Overview](doc/images/features.png)
 
 Each governance cycle follows a fixed deliberative pipeline:
 
@@ -60,7 +67,7 @@ Each governance cycle follows a fixed deliberative pipeline:
 
 ## Multi-Provider Architecture
 
-![Architecture](doc/architecture.png)
+![Architecture](doc/images/architecture.png)
 
 ARIA ships with **three AI operating modes**, configurable at startup:
 
@@ -142,7 +149,7 @@ Open `http://localhost:5173` — the init screen will guide you through world se
 
 ### First Session
 
-![Init Screen](doc/initscreen.png)
+![Init Screen](doc/images/initscreen.png)
 
 1. **Name your world** — this is the simulation container
 2. **Enter your API keys** — test them inline, only validated keys are saved

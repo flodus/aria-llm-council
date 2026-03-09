@@ -31,7 +31,15 @@ ARIA est une **simulation de gouvernance systémique**. Le joueur incarne le peu
 
 C'est un **bac à sable politique** et une expérience de pensée interactive sur la gouvernance algorithmique et la co-décision humain-IA.
 
-![Flux de délibération](doc/flow.png)
+![Flux de délibération](doc/images/flow.png)
+
+
+| Conf Constitution | Délibération du Conseil | Carte Géopolitique |
+| :---: | :---: | :---: |
+| ![Setup](doc/images/aria_constitution-ministries-setup.png) | ![Council](doc/images/aria_llm-answer-council.jpg) | ![Map](doc/images/aria_map-grid.jpg) |
+
+*[Voir toute la gallery →](doc/screenshots/)*
+
 
 ---
 
@@ -43,7 +51,7 @@ C'est un **bac à sable politique** et une expérience de pensée interactive su
 
 ## Comment ça fonctionne
 
-![Fonctionnalités](doc/features.png)
+![Fonctionnalités](doc/images/features.png)
 
 Chaque cycle de gouvernance suit un pipeline délibératif fixe :
 
@@ -60,7 +68,7 @@ Chaque cycle de gouvernance suit un pipeline délibératif fixe :
 
 ## Architecture multi-providers
 
-![Architecture](doc/architecture.png)
+![Architecture](doc/images/architecture.png)
 
 ARIA propose **trois modes de fonctionnement IA**, configurables au démarrage :
 
@@ -142,7 +150,7 @@ Ouvrez `http://localhost:5173` — l'écran d'initialisation vous guide à trave
 
 ### Première session
 
-![Écran d'initialisation](doc/initscreen.png)
+![Écran d'initialisation](doc/images/initscreen.png)
 
 1. **Nommez votre monde** — c'est le conteneur de la simulation
 2. **Saisissez vos clés API** — testez-les en ligne, seules les clés validées sont sauvegardées
