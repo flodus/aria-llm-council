@@ -187,6 +187,13 @@ aria-llm-council/
 
 ---
 
+### 📚 Documentation & Vision
+For an in-depth analysis of the deliberation pipeline, ministerial archetypes, and the philosophy behind "Holistic Democracy," you can consult our technical whitepaper:
+
+📄 [**ARIA — Vision & System Architecture (PDF)**](doc/ARIA_Document_EN.pdf)
+
+---
+
 ## Roadmap
 
 See [ROADMAP.md](ROADMAP.md) for the full roadmap.

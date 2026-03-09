@@ -566,6 +566,38 @@ function SectionSysteme() {
         </Field>
       </div>
 
+      {/* ── CONTEXTE PAYS ── */}
+      <div className="settings-group">
+        <div className="settings-group-title">CONTEXTE PAYS DANS LES DÉLIBÉRATIONS</div>
+        <Field label="Mode de contexte global"
+          hint="Contrôle quelles infos sur le pays sont injectées dans chaque prompt de délibération. Surchargeable par pays dans la Constitution.">
+          <div style={{ display:'flex', flexDirection:'column', gap:'0.4rem' }}>
+            {[
+              ['auto',       '🤖 Auto',       'Stats toujours + description si disponible (défaut)'],
+              ['rich',       '📖 Enrichi',    'Contexte complet même pour pays fictifs — incite l\'IA à inventer un historique cohérent'],
+              ['stats_only', '📊 Stats seules','Uniquement les chiffres — délibération plus neutre, moins d\'hallucinations'],
+              ['off',        '🚫 Désactivé',  'Aucun contexte injecté — délibération aveugle, universelle'],
+            ].map(([val, lbl, hint]) => (
+              <label key={val} style={{ display:'flex', alignItems:'flex-start', gap:'0.5rem',
+                cursor:'pointer', padding:'0.35rem 0.5rem', borderRadius:'2px',
+                background: opts.gameplay.context_mode === val ? 'rgba(200,164,74,0.08)' : 'transparent',
+                border: `1px solid ${opts.gameplay.context_mode === val ? 'rgba(200,164,74,0.30)' : 'transparent'}` }}>
+                <input type="radio" name="context_mode" value={val}
+                  checked={opts.gameplay.context_mode === val}
+                  onChange={() => update('gameplay.context_mode', val)}
+                  style={{ marginTop:'0.1rem', accentColor:'#C8A44A' }} />
+                <div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
+                    color:'rgba(220,228,240,0.85)' }}>{lbl}</div>
+                  <div style={{ fontSize:'0.46rem', color:'rgba(140,160,200,0.50)',
+                    marginTop:'0.1rem', lineHeight:1.45 }}>{hint}</div>
+                </div>
+              </label>
+            ))}
+          </div>
+        </Field>
+      </div>
+
       <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>Sauvegarder</button>
         <SaveBadge saved={saved} />

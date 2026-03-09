@@ -23,9 +23,57 @@ import { callAI, getApiKeys } from './Dashboard_p1';
 import AGENTS_RAW from '../templates/base_agents.json';
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  DONNÉES LOCALES
+//  DONNÉES AGENTS — runtime override via localStorage
+//  aria_agents_override = { ministries, ministers, presidency, active_ministries, active_presidency, active_ministers }
+//  active_ministries   = string[]  — ids des ministères actifs (undefined = tous)
+//  active_presidency   = string[]  — ['phare','boussole'] subset (undefined = les deux)
+//  active_ministers    = string[]  — ids des ministres actifs (undefined = tous)
 // ─────────────────────────────────────────────────────────────────────────────
 
+function getAgents() {
+  try {
+    const ov = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
+    if (!ov) return AGENTS_RAW;
+    return {
+      ministries: ov.ministries || AGENTS_RAW.ministries,
+      ministers:  ov.ministers  || AGENTS_RAW.ministers,
+      presidency: ov.presidency || AGENTS_RAW.presidency,
+      _active_ministries: ov.active_ministries || null,
+      _active_presidency: ov.active_presidency || null,
+      _active_ministers:  ov.active_ministers  || null,
+    };
+  } catch { return AGENTS_RAW; }
+}
+
+/** Retourne la liste des ministères actifs (filtrée si constitution le précise) */
+export function getMinistriesList() {
+  const agents = getAgents();
+  const all = agents.ministries || [];
+  const active = agents._active_ministries;
+  if (!active) return all;
+  return all.filter(m => active.includes(m.id));
+}
+
+/** Retourne la map des ministres (incluant custom, filtrée si active_ministers défini) */
+export function getMinistersMap() {
+  const agents = getAgents();
+  const all    = agents.ministers || {};
+  const active = agents._active_ministers;
+  if (!active) return all;
+  return Object.fromEntries(Object.entries(all).filter(([k]) => active.includes(k)));
+}
+
+/** Retourne la présidence active */
+export function getPresidency() {
+  const agents = getAgents();
+  const full = agents.presidency || {};
+  const active = agents._active_presidency;
+  if (!active) return full;
+  // Filtre les figures inactives
+  return Object.fromEntries(Object.entries(full).filter(([k]) => active.includes(k)));
+}
+
+// Aliases pour compatibilité (valeurs au moment de l'import — utilisées dans les fallbacks statiques)
 export const MINISTRIES_LIST = AGENTS_RAW.ministries || [];
 export const MINISTERS_MAP   = AGENTS_RAW.ministers  || {};
 export const PRESIDENCY      = AGENTS_RAW.presidency  || {};
@@ -76,7 +124,7 @@ export const FALLBACK_RESPONSES = {
 /** Retourne vrai si la question est orpheline (aucun keyword matche) */
 export function isOrphanQuestion(question) {
   const q = question.toLowerCase();
-  for (const m of MINISTRIES_LIST) {
+  for (const m of getMinistriesList()) {
     const kws = m.keywords || [];
     if (kws.some(kw => q.includes(kw.toLowerCase()))) return false;
   }
@@ -108,7 +156,7 @@ export async function routeQuestion(question, forceMinistryId = null) {
   }
 
   // ── Mode IA ──────────────────────────────────────────────────────────────
-  const ministryList = MINISTRIES_LIST.map(m => `${m.id} (${m.name})`).join(', ');
+  const ministryList = getMinistriesList().map(m => `${m.id} (${m.name})`).join(', ');
   const prompt = `Tu es le système de routage du gouvernement ARIA.
 Question soumise par un citoyen : "${question}"
 Ministères disponibles : ${ministryList}
@@ -117,7 +165,7 @@ Réponds UNIQUEMENT en JSON : { "ministry_id": "l'id le plus pertinent parmi les
 
   try {
     const result = await callAI(prompt, 'council_routing');
-    if (result?.ministry_id && MINISTRIES_LIST.find(m => m.id === result.ministry_id)) {
+    if (result?.ministry_id && getMinistriesList().find(m => m.id === result.ministry_id)) {
       return result.ministry_id;
     }
   } catch {}
@@ -129,7 +177,7 @@ Réponds UNIQUEMENT en JSON : { "ministry_id": "l'id le plus pertinent parmi les
 /** Score local sur keywords — retourne null si aucun match (question orpheline) */
 function localKeywordRoute(questionLow) {
   let best = null, bestScore = 0;
-  for (const m of MINISTRIES_LIST) {
+  for (const m of getMinistriesList()) {
     const kws = m.keywords || [];
     const score = kws.filter(kw => questionLow.includes(kw.toLowerCase())).length;
     if (score > bestScore) { bestScore = score; best = m.id; }
@@ -170,8 +218,9 @@ export async function runMinisterePhase(ministry, question, country) {
   }
 
   const [idA, idB]  = ministry.ministers || [];
-  const minA        = MINISTERS_MAP[idA] || {};
-  const minB        = MINISTERS_MAP[idB] || {};
+  const _minMap = getMinistersMap();
+  const minA        = _minMap[idA] || {};
+  const minB        = _minMap[idB] || {};
   const promptA     = ministry.ministerPrompts?.[idA] || minA.essence || '';
   const promptB     = ministry.ministerPrompts?.[idB] || minB.essence || '';
   const ctx         = buildCountryContext(country);
@@ -236,7 +285,7 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases argumentées", "mot_cle
 export async function runCerclePhase(targetMinistryId, question, synthese, country) {
   // ── Question orpheline : annotations bureaucratiques pour tous les ministères ──
   if (targetMinistryId === 'orphan') {
-    return MINISTRIES_LIST.map(m => ({
+    return getMinistriesList().map(m => ({
       ministryId:    m.id,
       ministryName:  m.name,
       ministryEmoji: m.emoji,
@@ -245,14 +294,14 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
     }));
   }
 
-  const others = MINISTRIES_LIST.filter(m => m.id !== targetMinistryId);
+  const others = getMinistriesList().filter(m => m.id !== targetMinistryId);
   const keys = getApiKeys();
   const ctx = buildCountryContext(country);
   const syntheseText = synthese?.synthese || 'Délibération en cours.';
 
   const annotations = await Promise.all(
     others.map(async (m) => {
-      const minister1 = MINISTERS_MAP[m.ministers?.[0]];
+      const minister1 = getMinistersMap()[m.ministers?.[0]];
       const annotation = minister1?.annotation || `Analyse la question du point de vue de ${m.name}.`;
 
       let result = null;
@@ -288,8 +337,9 @@ Réponds UNIQUEMENT en JSON : { "annotation": "1-2 phrases, ton sobre, angle sp�
  * @returns {Promise<{ phare, boussole, synthese }>}
  */
 export async function runPresidencePhase(question, ministereResult, cercleAnnotations, country) {
-  const phareData    = PRESIDENCY.phare    || {};
-  const boussoleData = PRESIDENCY.boussole || {};
+  const _pres = getPresidency();
+  const phareData    = _pres.phare    || {};
+  const boussoleData = _pres.boussole || {};
 
   // ── Question orpheline : présidence bureaucratique ────────────────────────
   if (ministereResult?.isOrphan) {
@@ -447,15 +497,51 @@ export function computeVoteImpact(vote, presidence, country) {
 //  4. HELPERS INTERNES
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Construit le bloc contexte pays injecté dans les prompts de délibération.
+ *
+ * Modes (aria_options.gameplay.context_mode, surchargeable par pays) :
+ *   'auto'       — stats + description si disponible (comportement historique)
+ *   'rich'       — force contexte complet même pour fictifs
+ *   'stats_only' — uniquement les stats numériques, sans prose
+ *   'off'        — aucun contexte (délibération aveugle)
+ *
+ * country.contextOverride : string libre — remplace tout le bloc si défini
+ * country.context_mode    : surcharge le mode global pour ce pays
+ */
 function buildCountryContext(country) {
   if (!country) return '';
+
+  // 1. Override libre par pays
+  if (country.contextOverride && country.contextOverride.trim()) {
+    return `[Contexte — ${country.nom}]\n${country.contextOverride.trim()}`;
+  }
+
+  // 2. Mode effectif (pays > global)
+  let mode = 'auto';
+  try {
+    const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+    mode = opts.gameplay?.context_mode || 'auto';
+  } catch {}
+  if (country.context_mode) mode = country.context_mode;
+
+  if (mode === 'off') return '';
 
   const pop  = Math.round((country.population || 0) / 1e6 * 10) / 10;
   const sat  = country.satisfaction ?? 50;
   const aria = country.aria_current ?? country.aria_irl ?? 40;
   const year = country.annee || 2026;
 
-  // Contexte de base (stats)
+  // 3. Stats only
+  if (mode === 'stats_only') {
+    return `Pays : "${country.nom}" | Régime : ${country.regimeName || country.regime} | ${pop} M hab. | Satisfaction : ${sat}% | ARIA : ${aria}% | Année : ${year}`;
+  }
+
+  // 4. Modes auto / rich
+  const leader      = country.leader;
+  const leaderName  = typeof leader === 'object' ? leader?.nom  : leader;
+  const leaderTitre = typeof leader === 'object' ? leader?.titre : null;
+
   let ctx = `Pays : "${country.nom}"
 - Régime : ${country.regimeName || country.regime}
 - Population : ${pop} M habitants
@@ -463,23 +549,23 @@ function buildCountryContext(country) {
 - Adhésion ARIA : ${aria}%
 - Année : ${year}`;
 
-  // Contexte enrichi pour les pays réels (description IA + leader connu)
-  const leader = country.leader;
-  const leaderName = typeof leader === 'object' ? leader?.nom : leader;
-  const leaderTitre = typeof leader === 'object' ? leader?.titre : null;
-
-  if (country.description) {
-    ctx += `\n- Situation actuelle : ${country.description}`;
-  }
   if (leaderName) {
     ctx += `\n- Dirigeant : ${leaderTitre ? `${leaderTitre} ` : ''}${leaderName}`;
   }
 
-  // Avertissement si pays réel — le conseil doit tenir compte du contexte culturel/politique réel
-  if (country.description || leaderName) {
-    ctx += `\n\nIMPORTANT : Ce pays est ancré dans la réalité. Tes recommandations doivent tenir compte de son histoire, sa culture politique, ses contraintes institutionnelles et son contexte géopolitique réel en ${year}.`;
+  const hasDesc = country.description && country.description.trim();
+  if (hasDesc) {
+    ctx += `\n- Situation actuelle : ${country.description}`;
+  }
+
+  const isReal = hasDesc || leaderName;
+  if (mode === 'rich' || isReal) {
+    ctx += `\n\nIMPORTANT : ${isReal
+      ? `Ce pays est ancré dans la réalité. Tes recommandations doivent tenir compte de son histoire, sa culture politique, ses contraintes institutionnelles et son contexte géopolitique réel en ${year}.`
+      : `Pays fictif en mode enrichi — raisonne à partir des stats et de la logique interne du régime "${country.regimeName || country.regime}".`
+    }`;
   } else {
-    ctx += `\n\nContexte : Pays fictif — approche objective basée uniquement sur les statistiques fournies.`;
+    ctx += `\n\nContexte : Pays fictif — approche objective basée sur les statistiques fournies.`;
   }
 
   return ctx;

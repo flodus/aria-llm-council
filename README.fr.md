@@ -187,6 +187,13 @@ aria-llm-council/
 
 ---
 
+### 📚 Documentation & Vision
+Pour une analyse approfondie du pipeline de délibération, des archétypes ministériels et de la philosophie derrière la "Démocratie Holistique", tu peux consulter notre document technique :
+
+📄 [**ARIA — Vision & System Architecture (PDF)**](doc/ARIA_Document_FR.pdf)
+
+---
+
 ## Feuille de route
 
 Voir [ROADMAP.md](ROADMAP.md) pour la feuille de route complète.
