@@ -42,7 +42,7 @@ It is a **political sandbox** and an interactive thought experiment on algorithm
 ---
 
 ## 🌐 Live Demo
-**[Click here to launch the simulation](https://ton-pseudo-github.github.io/aria)**
+**[Click here to launch the simulation](https://flodus.github.io/aria-llm-council)**
 
 ---
 
