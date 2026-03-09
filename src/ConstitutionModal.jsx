@@ -81,7 +81,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     return ov?.active_ministers || null; // null = tous actifs
   });
   const scrollRef = useRef(null);
-  const [openMin,         setOpenMin]         = useState(null); // set to first key once agents load
+  const [openMin,         setOpenMin]         = useState(null); // set to first key once agents load (ministers)
+  const [openMinistry,    setOpenMinistry]    = useState(null); // ministry accordion
   const [showNewMin,      setShowNewMin]      = useState(false);
   const [showNewMinistry, setShowNewMinistry] = useState(false);
   const [nMinD,  setNMinD]  = useState({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
@@ -308,57 +309,134 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
             {/* ── MINISTÈRES ─────────────────────────────────────── */}
             {tab==='ministries' && (<>
-              <section style={S.sec}>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                  <h3 style={S.secTitle}>
-                    ACTIFS <span style={S.badge}>{activeMins.length}/{agents.ministries.length}</span>
-                  </h3>
-                  <button style={{...BTN_S,fontSize:'0.44rem',padding:'0.16rem 0.4rem'}}
-                    onClick={()=>setActiveMins(agents.ministries.map(m=>m.id))}>Tous</button>
-                </div>
-                <div style={{display:'flex',flexDirection:'column',gap:'0.26rem'}}>
-                  {agents.ministries.map(m=>{
-                    const on=activeMins.includes(m.id);
-                    const isBase=BASE_IDS.includes(m.id);
-                    return (
-                      <div key={m.id} style={{display:'flex',alignItems:'center',gap:'0.35rem'}}>
-                        <button style={{...S.minCard,flex:1,...(on?{background:`${m.color}12`,border:`1px solid ${m.color}44`}:S.minOff)}}
-                          onClick={()=>toggleMin(m.id)}>
-                          <span style={{fontSize:'0.88rem',minWidth:'1.2rem'}}>{m.emoji}</span>
-                          <span style={{flex:1,fontSize:'0.52rem',letterSpacing:'0.06em',color:on?'rgba(220,228,240,0.90)':'rgba(160,180,210,0.42)'}}>{m.name}</span>
-                          <span style={{fontSize:'0.54rem',color:on?(m.color||GOLD):'rgba(140,160,200,0.18)'}}>{on?'●':'○'}</span>
-                        </button>
-                        {!isBase && <button style={{background:'none',border:'none',cursor:'pointer',color:'rgba(200,80,80,0.35)',fontSize:'0.72rem',lineHeight:1,padding:0}} onClick={()=>delMinistry(m.id)}>✕</button>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
-
-              {agents.ministries.map((m,mi)=>(
-                <section key={m.id} style={{...S.sec,opacity:activeMins.includes(m.id)?1:0.38}}>
-                  <h3 style={{...S.secTitle,color:m.color+'AA'}}>{m.emoji} {m.name.toUpperCase()}</h3>
-                  <div style={S.label}>MISSION</div>
-                  <textarea style={{...INPUT,minHeight:'34px',resize:'vertical',lineHeight:1.5,fontFamily:FONT}}
-                    value={m.mission||''}
-                    onChange={e=>setAgents(a=>({...a,ministries:a.ministries.map((x,i)=>i===mi?{...x,mission:e.target.value}:x)}))} />
-                  <div style={{...S.label,marginTop:'0.3rem'}}>MINISTRES ASSIGNÉS</div>
-                  <div style={{display:'flex',flexWrap:'wrap',gap:'0.22rem'}}>
-                    {(m.ministers||[]).map(mk => {
-                      const min = agents.ministers[mk];
-                      if (!min) return null;
-                      return (
-                        <span key={mk} style={{fontFamily:FONT,fontSize:'0.43rem',padding:'0.12rem 0.38rem',
-                          borderRadius:'2px',border:`1px solid ${min.color+'44'}`,
-                          color:min.color+'CC',background:min.color+'10'}}>
-                          {min.emoji} {min.name}
+              {/* ── Header + chips toggle actif/inactif ── */}
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.3rem'}}>
+                <h3 style={S.secTitle}>MINISTÈRES <span style={S.badge}>{activeMins.length}/{agents.ministries.length}</span></h3>
+                <button style={{...BTN_S,fontSize:'0.40rem',padding:'0.14rem 0.38rem'}} onClick={()=>setActiveMins(agents.ministries.map(m=>m.id))}>Tous actifs</button>
+              </div>
+              <div style={{display:'flex',flexWrap:'wrap',gap:'0.32rem',marginBottom:'0.55rem'}}>
+                {agents.ministries.map(m=>{
+                  const on=activeMins.includes(m.id);
+                  const isBase=BASE_IDS.includes(m.id);
+                  const isOpen=openMinistry===m.id;
+                  return (
+                    <div key={m.id} style={{display:'flex',alignItems:'center',gap:'0.12rem'}}>
+                      <button style={{display:'flex',alignItems:'center',gap:'0.32rem',
+                        padding:'0.28rem 0.52rem',borderRadius:'3px',cursor:'pointer',
+                        background:isOpen?m.color+'18':on?m.color+'0C':'rgba(255,255,255,0.015)',
+                        border:`1px solid ${isOpen?m.color+'66':on?m.color+'33':'rgba(255,255,255,0.07)'}`,
+                        opacity:on?1:0.30, filter:on?'none':'grayscale(0.6)', transition:'all 0.12s'}}
+                        onClick={()=>setOpenMinistry(p=>p===m.id?null:m.id)}>
+                        <span style={{fontSize:'0.95rem',lineHeight:1}}>{m.emoji}</span>
+                        <span style={{fontFamily:FONT,fontSize:'0.42rem',color:isOpen?m.color+'EE':on?'rgba(200,215,235,0.80)':'rgba(140,160,200,0.38)',letterSpacing:'0.04em'}}>
+                          {m.name}
                         </span>
-                      );
-                    })}
-                  </div>
-                </section>
-              ))}
+                        <span style={{fontSize:'0.42rem',color:on?(m.color||GOLD):'rgba(100,120,160,0.25)'}}>{on?'●':'○'}</span>
+                      </button>
+                      {!isBase&&<button style={{background:'none',border:'none',cursor:'pointer',color:'rgba(200,80,80,0.35)',fontSize:'0.65rem',padding:'0 0.15rem',lineHeight:1}} onClick={()=>delMinistry(m.id)}>✕</button>}
+                    </div>
+                  );
+                })}
+              </div>
 
+              {/* ── Fiche ministère ouverte : style modal création de monde ── */}
+              {openMinistry && (() => {
+                const m  = agents.ministries.find(x=>x.id===openMinistry);
+                const mi = agents.ministries.findIndex(x=>x.id===openMinistry);
+                if (!m) return null;
+                const on = activeMins.includes(m.id);
+                const assignedKeys = m.ministers || [];
+                return (
+                  <section style={{...S.sec,
+                    border:`1px solid ${on?m.color+'44':'rgba(180,180,180,0.10)'}`,
+                    borderRadius:'4px',padding:'0.8rem',
+                    opacity:on?1:0.32, filter:on?'none':'grayscale(0.5)',
+                    background:on?m.color+'06':'rgba(255,255,255,0.01)'}}>
+
+                    {/* Header */}
+                    <div style={{display:'flex',alignItems:'center',gap:'0.55rem',marginBottom:'0.5rem'}}>
+                      <span style={{fontSize:'1.3rem'}}>{m.emoji}</span>
+                      <div style={{flex:1}}>
+                        <div style={{fontFamily:FONT,fontSize:'0.52rem',color:m.color+'DD',letterSpacing:'0.08em',textTransform:'uppercase'}}>{m.name}</div>
+                      </div>
+                      <button style={{...BTN_S,fontSize:'0.38rem',padding:'0.12rem 0.42rem',
+                        ...(on?{borderColor:m.color+'55',color:m.color+'CC',background:m.color+'10'}:{})}}
+                        onClick={()=>toggleMin(m.id)}>
+                        {on?'● ACTIF':'○ INACTIF'}
+                      </button>
+                    </div>
+
+                    {/* Mission */}
+                    <div style={S.label}>MISSION</div>
+                    <textarea style={{...INPUT,minHeight:'38px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.55rem'}}
+                      value={m.mission||''}
+                      onChange={e=>setAgents(a=>({...a,ministries:a.ministries.map((x,i)=>i===mi?{...x,mission:e.target.value}:x)}))} />
+
+                    {/* Sélection ministres assignés */}
+                    <div style={{...S.label,marginBottom:'0.28rem'}}>
+                      MINISTRES ASSIGNÉS
+                      <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0',marginLeft:'0.5rem'}}>— cliquez pour assigner / retirer</span>
+                    </div>
+                    <div style={{display:'flex',flexWrap:'wrap',gap:'0.3rem',marginBottom:'0.55rem'}}>
+                      {Object.entries(agents.ministers).map(([mk,min])=>{
+                        if (!min) return null;
+                        const assigned = assignedKeys.includes(mk);
+                        return (
+                          <button key={mk}
+                            style={{display:'flex',alignItems:'center',gap:'0.28rem',
+                              padding:'0.22rem 0.44rem',borderRadius:'3px',cursor:'pointer',
+                              background:assigned?min.color+'15':'rgba(255,255,255,0.02)',
+                              border:`1px solid ${assigned?min.color+'55':'rgba(255,255,255,0.06)'}`,
+                              transition:'all 0.12s', opacity: assigned?1:0.45}}
+                            onClick={()=>{
+                              const next = assigned
+                                ? assignedKeys.filter(k=>k!==mk)
+                                : [...assignedKeys, mk];
+                              setAgents(a=>({...a,ministries:a.ministries.map((x,i)=>i===mi?{...x,ministers:next}:x)}));
+                            }}>
+                            <span style={{fontSize:'0.85rem',lineHeight:1}}>{min.emoji||'👤'}</span>
+                            <span style={{fontFamily:FONT,fontSize:'0.40rem',color:assigned?min.color+'EE':'rgba(140,160,200,0.45)',letterSpacing:'0.04em'}}>
+                              {min.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Prompts ministériels par ministre assigné */}
+                    {assignedKeys.length > 0 && (
+                      <>
+                        <div style={{...S.label,marginBottom:'0.28rem'}}>
+                          PROMPTS MINISTÉRIELS
+                          <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0',marginLeft:'0.5rem'}}>— rôle spécifique de chaque ministre dans ce ministère</span>
+                        </div>
+                        {assignedKeys.map(mk=>{
+                          const min = agents.ministers[mk];
+                          if (!min) return null;
+                          const promptVal = (m.minister_prompts||{})[mk] || '';
+                          return (
+                            <div key={mk} style={{marginBottom:'0.35rem'}}>
+                              <div style={{display:'flex',alignItems:'center',gap:'0.3rem',marginBottom:'0.14rem'}}>
+                                <span style={{fontSize:'0.82rem'}}>{min.emoji||'👤'}</span>
+                                <span style={{fontFamily:FONT,fontSize:'0.40rem',color:min.color+'BB',letterSpacing:'0.05em'}}>{min.name}</span>
+                              </div>
+                              <textarea style={{...INPUT,minHeight:'30px',resize:'vertical',lineHeight:1.5,fontFamily:FONT}}
+                                value={promptVal}
+                                placeholder={`Rôle de ${min.name} dans ${m.name}…`}
+                                onChange={e=>{
+                                  const prompts = {...(m.minister_prompts||{}), [mk]:e.target.value};
+                                  setAgents(a=>({...a,ministries:a.ministries.map((x,i)=>i===mi?{...x,minister_prompts:prompts}:x)}));
+                                }}/>
+                            </div>
+                          );
+                        })}
+                      </>
+                    )}
+                  </section>
+                );
+              })()}
+
+              {/* ── Nouveau ministère ── */}
               {showNewMinistry ? (
                 <section style={{...S.sec,border:'1px solid rgba(100,160,255,0.22)',borderRadius:'2px',padding:'0.7rem'}}>
                   <h3 style={{...S.secTitle,color:'rgba(100,160,255,0.65)'}}>+ NOUVEAU MINISTÈRE</h3>

@@ -50,14 +50,22 @@ function useWorldGeneration(seed) {
 // ── Placement pays asynchrone ─────────────────────────────────────────────
 function usePlacedWorld(baseWorld, countries) {
     const [placed, setPlaced] = useState(null);
-    const prevCountryIds = useRef('');
+    const prevCountryIds   = useRef('');
+    const prevBaseWorldKey = useRef(null);  // track which world we last placed on
 
     useEffect(() => {
         if (!baseWorld || !countries?.length) { setPlaced(null); return; }
 
-        const idStr = countries.map(c => c.id).join(',');
-        if (idStr === prevCountryIds.current && placed) return;
-        prevCountryIds.current = idStr;
+        const idStr    = countries.map(c => c.id).join(',');
+        const worldKey = baseWorld.seed ?? 0;
+
+        // Re-place if countries changed OR if baseWorld changed (new world generated)
+        const sameCountries = idStr === prevCountryIds.current;
+        const sameWorld     = worldKey === prevBaseWorldKey.current;
+        if (sameCountries && sameWorld && placed) return;
+
+        prevCountryIds.current   = idStr;
+        prevBaseWorldKey.current = worldKey;
 
         const id = setTimeout(() => {
             try {

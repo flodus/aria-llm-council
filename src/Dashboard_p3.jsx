@@ -772,12 +772,26 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     const ministry = councilSession.ministryId ? MINISTRIES_LIST.find(m => m.id === councilSession.ministryId) : null;
 
     // Extraire les synthèses textuelles (tronquées à 250 cars dans useChronolog)
-    const synthMin = councilSession.ministere?.synthese
-      ? (councilSession.ministere.synthese.synthese_debat || councilSession.ministere.synthese.recommandation || JSON.stringify(councilSession.ministere.synthese))
-      : '';
-    const synthPres = councilSession.presidence?.synthese
-      ? (councilSession.presidence.synthese.decision_recommandee || councilSession.presidence.synthese.synthese_debat || JSON.stringify(councilSession.presidence.synthese))
-      : '';
+    // Question : toujours la vraie question du joueur, pas question_referendum
+    const originalQuestion = councilSession.question || '';
+
+    const synthMin = (() => {
+      const s = councilSession.ministere?.synthese;
+      if (!s) return '';
+      return s.synthese_debat || s.recommandation || s.analyse || s.position || '';
+    })();
+
+    const synthPres = (() => {
+      const s = councilSession.presidence?.synthese;
+      if (!s) return '';
+      // Éviter le champ question_referendum qui contient "Option A / Option B"
+      return s.decision_recommandee
+        || s.synthese_debat
+        || s.analyse
+        || (s.position_phare_resume && s.position_boussole_resume
+            ? `Phare : ${s.position_phare_resume} / Boussole : ${s.position_boussole_resume}`
+            : s.position_phare_resume || s.position_boussole_resume || s.enjeu_principal || '');
+    })();
 
     pushEvent(cycleNumRef.current, selectedCountry.annee || 2026, {
       type:         'vote',
@@ -786,7 +800,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       countryEmoji: selectedCountry.emoji,
       ministereId:  councilSession.ministryId || '',
       ministereNom: ministry?.name || '',
-      question:     resolvedQuestion,
+      question:     originalQuestion,
       syntheseMinistere:  synthMin,
       synthesePresidence: synthPres,
       vote,
@@ -806,7 +820,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       countryEmoji: selectedCountry.emoji,
       ministereId:  councilSession.ministryId || '',
       ministereNom: ministry?.name || '',
-      question:     resolvedQuestion,
+      question:     originalQuestion,
       syntheseMinistere:  synthMin,
       synthesePresidence: synthPres,
       vote,
@@ -845,7 +859,6 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       startLocal:          aria.startLocal,
       startWithAI:         aria.startWithAI,
       advanceCycle:        aria.advanceCycle,
-      doDeliberate:        aria.doDeliberate,
       doSecession:         aria.doSecession,
       addFictionalCountry: aria.addFictionalCountry,
       openSecession:       openSecession,
@@ -914,6 +927,45 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+
+      {/* ── Écran chargement IA (génération monde en ligne) ── */}
+      {aria.aiRunning && !aria.countries?.length && (
+        <div style={{
+          position:'absolute', inset:0, zIndex:999,
+          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+          gap:'1.4rem', background:'#0B0E14',
+        }}>
+          <div style={{
+            fontFamily:"'JetBrains Mono', monospace",
+            fontSize:'1.8rem', letterSpacing:'0.25em', color:'rgba(200,164,74,0.85)',
+          }}>ARIA</div>
+          <div style={{
+            fontFamily:"'JetBrains Mono', monospace",
+            fontSize:'0.58rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.65)',
+            animation:'pulse 1.2s ease-in-out infinite',
+          }}>GÉNÉRATION DU MONDE EN COURS…</div>
+          <div style={{
+            width:'260px', height:'2px', background:'rgba(255,255,255,0.06)',
+            borderRadius:'1px', overflow:'hidden',
+          }}>
+            <div style={{
+              height:'100%', background:'rgba(200,164,74,0.5)',
+              animation:'loading-slide 1.6s ease-in-out infinite',
+              width:'60%',
+            }} />
+          </div>
+          <div style={{
+            fontFamily:"'JetBrains Mono', monospace",
+            fontSize:'0.43rem', color:'rgba(120,140,175,0.50)', letterSpacing:'0.12em',
+          }}>CONSULTATION DES ARCHIVES MONDIALES…</div>
+          <style>{`
+            @keyframes loading-slide {
+              0%   { transform: translateX(-100%); }
+              100% { transform: translateX(250%); }
+            }
+          `}</style>
+        </div>
+      )}
 
       {/* ── Contenu principal (carte ou vues) ── */}
       {renderMainContent()}

@@ -43,12 +43,22 @@ C'est un **bac à sable politique** et une expérience de pensée interactive su
 
 ---
 
+## 🏛️ Méthodologie & Architecture
+> | ARIA est un projet architectural hybride. En tant qu'architecte système, j'ai conçu 
+> | la vision, la logique constitutionnelle et l'expérience utilisateur. Le code source 
+> | est le résultat d'une synergie entre mon intention humaine et l'assistance technique 
+> | d'agents IA spécialisés (Gemini pour le raisonnement stratégique, Claude pour 
+> | l'implémentation et le développement). Cette collaboration illustre une nouvelle 
+> | manière de concevoir des systèmes complexes, où l'intention humaine devient le 
+> | moteur principal de l'exécution algorithmique.
+
+---
+
 ## Inspiration
 
 > L'orchestration d'agents d'ARIA est une extension géopolitique et interactive du projet **[llm-council d'Andrej Karpathy](https://github.com/karpathy/llm-council)**. Là où le projet original explore la délibération multi-agents pour la résolution de problèmes logiques, ARIA applique cette architecture à la simulation à l'échelle d'une nation et à la gestion de crises politiques — transformant la salle du conseil en monde jouable.
 
 ---
-
 ## Comment ça fonctionne
 
 ![Fonctionnalités](doc/images/features.png)
@@ -212,6 +222,25 @@ Voir [ROADMAP.md](ROADMAP.md) pour la feuille de route complète.
 - [ ] Mode multijoueur (monde partagé, chaque joueur gouverne une nation)
 - [ ] Export / import des sauvegardes
 - [ ] Registre de modèles dynamique (modèles disponibles via JSON distant)
+
+---
+
+## 🛠️ Appel à l'Architecture (Recherche de Talents)
+
+ARIA n'est pas qu'un projet de code, c'est une exploration visuelle et fonctionnelle. Pour porter l'interface "War Room" à son apogée, je cherche des collaborateurs possédant cette double sensibilité : **l'art du Creative Coding et la rigueur de l'UI stratégique.**
+
+**Vous êtes le profil idéal si :**
+- Vous maîtrisez **Three.js / React-Three-Fiber** et vous ne voyez pas les shaders comme des maths, mais comme des pinceaux.
+- Vous comprenez l'équilibre entre le **"low-poly tactile"** et la **lisibilité des données critiques**.
+- Vous êtes capable de transformer une simple "carte" en une **interface de commandement vivante**, où chaque flux lumineux raconte l'état d'une nation.
+
+**Missions prioritaires :**
+- 🌐 **Déploiement du Globe procédural** : Donner vie à la sphère ARIA en respectant le style néon-minimaliste.
+- 📐 **Interface Isométrique (Mercator)** : Optimiser la projection de la "War Room" pour une lecture fluide des indicateurs ministériels.
+- 📸 **Module Screenshot** : *facultatif* Implémenter l'archivage instantané des états de la simulation pour les rapports de mandat.
+- ✨ **Feedback visuel & Navigation** : Concevoir le système de bascule fluide entre les modes **Globe**, **Mercator** et **Screenshot**, tout en créant des transitions (pliages, pulses) qui donnent une "âme" mécanique à l'interface.
+
+*Si vous souhaitez participer à la construction de cette démocratie holistique, ouvrez une issue ou proposez votre vision par une PR. Rejoignez le Conseil.*
 
 ---
 

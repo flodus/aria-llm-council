@@ -48,6 +48,16 @@ It is a **political sandbox** and an interactive thought experiment on algorithm
 
 ---
 
+## 🏛️ Methodology & Architecture
+> | ARIA is a hybrid architectural project. As the system architect, I have defined the 
+> | core vision, constitutional logic, and user experience. The source code is the 
+> | product of a synergy between human intention and specialized AI agents (Gemini for 
+> | strategic reasoning and structural design, Claude for code implementation and 
+> | development). This collaboration explores a new paradigm in building complex systems, 
+> | where human intent drives algorithmic execution.
+
+---
+
 ## How It Works
 
 ![Feature Overview](doc/images/features.png)
@@ -211,6 +221,25 @@ See [ROADMAP.md](ROADMAP.md) for the full roadmap.
 - [ ] Multiplayer mode (shared world, each player governs one nation)
 - [ ] Export / import world saves
 - [ ] Dynamic model registry (fetch available models from remote JSON)
+
+---
+
+## 🛠️ Call for Architecture (Seeking Talents)
+
+ARIA is not just a code project; it is a visual and functional exploration. To bring the "War Room" interface to its peak, I am looking for collaborators with a dual sensitivity: **the art of Creative Coding and the rigor of strategic UI.**
+
+**You are the ideal profile if:**
+- You master **Three.js / React-Three-Fiber** and view shaders not as math, but as brushes.
+- You understand the balance between **"tactile low-poly"** and the **readability of critical data**.
+- You are capable of transforming a simple "map" into a **living command interface**, where every light stream tells the story of a nation.
+
+**Priority Missions:**
+- 🌐 **Procedural Globe Deployment**: Bringing the ARIA sphere to life while respecting the neon-minimalist style.
+- 📐 **Isometric Interface (Mercator)**: Optimizing the "War Room" projection for fluid reading of ministerial indicators.
+- 📸 **Screenshot Module**: *(optional)* Implementing instant archiving of simulation states for mandate reports.
+- ✨ **Visual Feedback & Navigation**: Designing fluid transitions between **Globe**, **Mercator**, and **Screenshot** modes, creating the mechanical "soul" of the interface.
+
+*If you want to participate in building this holistic democracy, open an issue or propose your vision via a PR. Join the Council.*
 
 ---
 
