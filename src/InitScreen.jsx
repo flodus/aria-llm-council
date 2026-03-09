@@ -14,6 +14,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useLocale, t } from './ariaI18n';
+import BASE_AGENTS from '../templates/base_agents.json';
 import { REAL_COUNTRIES_DATA } from './ariaData';
 import { PAYS_LOCAUX } from './Dashboard_p1';
 import {
@@ -666,8 +667,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
           if (ov.active_ministers)  setActiveMinsters(ov.active_ministers);
           setPlLoading(false); return;
         }
-        const mod = await import('../templates/base_agents.json');
-        setPlAgents(JSON.parse(JSON.stringify(mod.default)));
+        setPlAgents(JSON.parse(JSON.stringify(BASE_AGENTS)));
       } catch { setPlAgents(null); }
       setPlLoading(false);
     };
@@ -722,10 +722,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
     localStorage.removeItem('aria_agents_override');
     setActiveMins(null); setActivePres(['phare','boussole']);
     setPlAgents(null); setPlLoading(true);
-    import('../templates/base_agents.json').then(mod => {
-      setPlAgents(JSON.parse(JSON.stringify(mod.default)));
-      setPlLoading(false);
-    }).catch(() => setPlLoading(false));
+    try { setPlAgents(JSON.parse(JSON.stringify(BASE_AGENTS))); } catch {} setPlLoading(false);
   };
 
   const addMinister = () => {

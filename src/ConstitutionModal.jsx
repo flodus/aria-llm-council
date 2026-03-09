@@ -91,9 +91,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
   useEffect(() => {
     const ov = readOv();
     if (ov) { setAgents(ov); return; }
-    import('../templates/base_agents.json').then(mod =>
-      setAgents(JSON.parse(JSON.stringify(mod.default)))
-    ).catch(() => setAgents({ ministries:[], ministers:{}, presidency:{} }));
+    setAgents(JSON.parse(JSON.stringify(BASE_AGENTS)));
   }, []);
 
   useEffect(() => {
@@ -613,3 +611,4 @@ const STYLES = {
   cancelBtn:{ background:'none',border:'1px solid rgba(255,255,255,0.10)',color:'rgba(200,215,240,0.50)',fontFamily:FONT,fontSize:'0.52rem',letterSpacing:'0.12em',padding:'0.42rem 1rem',borderRadius:'2px',cursor:'pointer' },
   saveBtn:{ background:'rgba(200,164,74,0.10)',border:'1px solid rgba(200,164,74,0.42)',color:'rgba(200,164,74,0.90)',fontFamily:FONT,fontSize:'0.52rem',letterSpacing:'0.12em',padding:'0.42rem 1.2rem',borderRadius:'2px',cursor:'pointer' },
 };
+import BASE_AGENTS from '../templates/base_agents.json';
