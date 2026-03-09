@@ -754,7 +754,13 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
       const data = await res.json();
       const text = data?.content?.[0]?.text || '';
       return JSON.parse(text.replace(/```json|```/g, '').trim());
-    } catch (e) { console.warn('[ARIA] Claude error:', e.message); return { error: true, msg: getRandomFallback() }; }
+    } catch (e) {
+      if (e?.status === 429 || String(e?.message).includes('429')) {
+        console.warn('[ARIA] Claude rate-limited — switching to local fallback');
+        return getLocalResponse(type, context);
+      }
+      console.warn('[ARIA] Claude error:', e.message); return { error: true, msg: getRandomFallback() };
+    }
   }
 
   // ── Gemini (Google) ───────────────────────────────────────────────────────
@@ -767,6 +773,10 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
           body: JSON.stringify({ contents: [{ parts: [{ text: fullContent }] }],
             generationConfig: { temperature: 0.8, maxOutputTokens: 1000 } }) }
       );
+      if (res.status === 429) {
+        console.warn('[ARIA] Gemini rate-limited (429) — switching to local fallback');
+        return getLocalResponse(type, context);
+      }
       if (!res.ok) return { error: true, msg: getRandomFallback() };
       const data = await res.json();
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
@@ -845,7 +855,7 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   const promptsSys = getPromptsSys(); // On récupère les prompts personnalisables
   const keys = opts.api_keys;
   const roles = opts.ia_roles;
-  const hasKeys = !!(keys.claude || keys.gemini);
+  const hasKeys = !!(keys.claude || keys.gemini || keys.grok || keys.openai);
 
   // 1. Priorité au mode Board Game ou absence de clés
   if (!hasKeys || (opts.gameplay && opts.gameplay.mode_board_game)) {

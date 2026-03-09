@@ -13,6 +13,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef } from 'react';
+import { useLocale, t } from './ariaI18n';
 import { REAL_COUNTRIES_DATA } from './ariaData';
 import { PAYS_LOCAUX } from './Dashboard_p1';
 import {
@@ -75,6 +76,7 @@ const ARIA_FALLBACK_MODELS = {
 
 // ── Sous-composant : Header ARIA ──────────────────────────────────────────
 function ARIAHeader({ showQuote }) {
+  const { lang } = useLocale();
   return (
     <div style={{ textAlign:'center' }}>
       <div style={{
@@ -106,6 +108,7 @@ const KEY_STATUS_STYLE = (s) => ({
 });
 
 function APIKeyInline({ onClose }) {
+  const { lang } = useLocale();
   const loadKeys = () => {
     try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; }
   };
@@ -113,6 +116,7 @@ function APIKeyInline({ onClose }) {
   const [keys,   setKeys]   = useState(loadKeys);
   const [models, setModels] = useState(loadModels);
   const [status, setStatus] = useState({ claude:null, gemini:null, grok:null, openai:null });
+  const [showPass, setShowPass] = useState({ claude:false, gemini:false, grok:false, openai:false });
 
   const PROVIDERS = [
     { id:'claude', label:'CLAUDE',  sub:'Anthropic',  ph:'sk-ant-…',
@@ -221,10 +225,22 @@ function APIKeyInline({ onClose }) {
                   color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
               </div>
               <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', marginBottom:'0.3rem' }}>
-                <input style={{ ...INPUT_STYLE, flex:1, fontSize:'0.48rem' }} type="password"
-                  value={val}
-                  onChange={e => { setKeys(k=>({...k,[prov.id]:e.target.value})); setStatus(s=>({...s,[prov.id]:null})); }}
-                  placeholder={prov.ph} />
+                <div style={{ position:'relative', flex:1 }}>
+                  <input style={{ ...INPUT_STYLE, fontSize:'0.48rem', paddingRight:'2rem' }}
+                    type={showPass[prov.id] ? 'text' : 'password'}
+                    value={val}
+                    onChange={e => { setKeys(k=>({...k,[prov.id]:e.target.value})); setStatus(s=>({...s,[prov.id]:null})); }}
+                    placeholder={prov.ph} />
+                  <button
+                    onClick={() => setShowPass(p=>({...p,[prov.id]:!p[prov.id]}))}
+                    style={{ position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
+                      background:'none', border:'none', cursor:'pointer', padding:'0.1rem',
+                      color: showPass[prov.id] ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)',
+                      fontSize:'0.75rem', lineHeight:1 }}
+                    title={showPass[prov.id] ? 'Masquer' : 'Afficher'}>
+                    {showPass[prov.id] ? '🙈' : '👁'}
+                  </button>
+                </div>
                 <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.55rem', fontSize:'0.44rem', whiteSpace:'nowrap' }}
                   disabled={!val} onClick={()=>testKey(prov.id)}>Test</button>
                 {s && <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', minWidth:'1rem' }}>{stLabel(s)}</span>}
@@ -376,7 +392,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
         return (
           <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
             <div>
-              <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NOM DU PAYS</div>
+              <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('COUNTRY_NAME',lang)}</div>
               <select style={SELECT_STYLE} value={knownMatch?.id||'_free'}
                 onChange={e => {
                   if (e.target.value === '_free') { setField('nom', ''); }
@@ -430,7 +446,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
       {c.type === 'reel' && mode === 'local' && (
         <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
           <div>
-            <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>SÉLECTIONNER</div>
+            <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('SELECT',lang)}</div>
             <select style={SELECT_STYLE} value={c.realData?.id||''}
               onChange={e => {
                 const rc = REAL_COUNTRIES_DATA.find(r => r.id === e.target.value);
@@ -444,13 +460,13 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
             <>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.5rem' }}>
                 <div>
-                  <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.25rem' }}>TERRAIN</div>
+                  <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.25rem' }}>{t('TERRAIN',lang)}</div>
                   <select style={SELECT_STYLE} value={c.terrain} onChange={e => setField('terrain', e.target.value)}>
                     {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
                 <div>
-                  <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.25rem' }}>RÉGIME</div>
+                  <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.25rem' }}>{t('REGIME',lang)}</div>
                   <select style={SELECT_STYLE} value={c.regime} onChange={e => setField('regime', e.target.value)}>
                     {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
@@ -518,13 +534,13 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
                     onChange={e => setField('nom', e.target.value)} placeholder={`Nation ${idx+1}…`} />
                 </div>
                 <div>
-                  <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>TERRAIN</div>
+                  <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('TERRAIN',lang)}</div>
                   <select style={SELECT_STYLE} value={c.terrain} onChange={e => setField('terrain', e.target.value)}>
                     {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
                 <div>
-                  <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>RÉGIME</div>
+                  <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('REGIME',lang)}</div>
                   <select style={SELECT_STYLE} value={c.regime} onChange={e => setField('regime', e.target.value)}>
                     {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
@@ -583,6 +599,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
 // ── Composant principal ───────────────────────────────────────────────────
 // ── PreLaunchScreen — constitution editor before world generation ────────────
 function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaunch }) {
+  const { lang } = useLocale();
   const [plAgents,     setPlAgents]     = useState(null);
   const [plLoading,    setPlLoading]    = useState(true);
   const [plTab,        setPlTab]        = useState('resume');
@@ -766,10 +783,15 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
       {/* Tabs */}
       <div style={{ display:'flex', gap:0, borderBottom:'1px solid rgba(200,164,74,0.10)', width:'100%' }}>
-        {['resume','presidency','ministries','ministers'].map(t => (
-          <button key={t} style={tabStyle(plTab===t)}
-            onClick={() => { setPlTab(t); if(scrollRef.current) scrollRef.current.scrollTop=0; }}>
-            {t==='resume'?'RÉSUMÉ':t==='presidency'?'PRÉSIDENCE':t==='ministries'?'MINISTÈRES':'MINISTRES'}
+        {[
+          {id:'resume',     fr:'RÉSUMÉ',     en:'SUMMARY'   },
+          {id:'presidency', fr:'PRÉSIDENCE', en:'PRESIDENCY'},
+          {id:'ministries', fr:'MINISTÈRES', en:'MINISTRIES'},
+          {id:'ministers',  fr:'MINISTRES',  en:'MINISTERS' },
+        ].map(tab => (
+          <button key={tab.id} style={tabStyle(plTab===tab.id)}
+            onClick={() => { setPlTab(tab.id); if(scrollRef.current) scrollRef.current.scrollTop=0; }}>
+            {tab[lang] || tab.fr}
           </button>
         ))}
       </div>
@@ -785,7 +807,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
           {plTab === 'resume' && (<>
             {/* Présidence active */}
             <div style={{ ...CARD_STYLE }}>
-              <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.5rem' }}>PRÉSIDENCE ACTIVE</div>
+              <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.5rem' }}>{t('ACTIVE_PRESIDENCY',lang)}</div>
               <div style={{ display:'flex', gap:'0.5rem', marginBottom:'0.5rem' }}>
                 {['phare','boussole'].map(key => {
                   const p = plAgents.presidency?.[key]; if (!p) return null;
@@ -820,7 +842,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
             {/* Ministères actifs */}
             <div style={{ ...CARD_STYLE }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.5rem' }}>
-                <div style={labelStyle('0.42rem')}>MINISTÈRES ACTIFS</div>
+                <div style={labelStyle('0.42rem')}>{t('ACTIVE_MINISTRIES',lang)}</div>
                 <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.18rem 0.5rem' }}
                   onClick={() => setActiveMins(null)}>
                   Tous
@@ -919,7 +941,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
             {/* ── CONFIG IA + BOARD GAME (accordéons) ──────────────────── */}
             {[
-              { id:'boardgame', label:'🎲 MODE BOARD GAME', badge: boardGame ? 'ACTIF' : null,
+              { id:'boardgame', label:`🎲 ${t('BOARD_GAME',lang)}`, badge: boardGame ? 'ACTIF' : null,
                 content: (
                   <div style={{ padding:'0.5rem 0.6rem', display:'flex', alignItems:'flex-start', gap:'0.7rem' }}>
                     <input type="checkbox" id="bg-chk-resume" checked={boardGame}
@@ -1041,7 +1063,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
             <div style={{ fontSize:'0.40rem', color:'rgba(140,160,200,0.28)',
               fontFamily:FONT.mono, textAlign:'center' }}>
-              Onglets pour modifier · GÉNÉRER pour lancer tel quel
+              {t('HINT_TABS',lang)}
             </div>
           </>)}
 
@@ -1398,13 +1420,13 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       )}
 
       <div style={{ display:'flex', gap:'0.6rem', width:'100%', justifyContent:'space-between' }}>
-        <button style={BTN_SECONDARY} onClick={onBack}>← RETOUR</button>
+        <button style={BTN_SECONDARY} onClick={onBack}>{t('BACK',lang)}</button>
         <div style={{ display:'flex', gap:'0.5rem' }}>
           <button style={{ ...BTN_SECONDARY, fontSize:'0.44rem',
             color:'rgba(200,80,80,0.50)', borderColor:'rgba(200,80,80,0.20)' }}
             onClick={resetAgents}>↺ Défaut</button>
           <button style={BTN_PRIMARY} onClick={saveAndLaunch}>
-            GÉNÉRER LE MONDE →
+            {t('GENERATE',lang)}
           </button>
         </div>
       </div>
@@ -1415,6 +1437,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
 // ── ContextPanel — accordéon contexte délibérations (réutilisé dans Init) ────
 function ContextPanel({ countryName, open, onToggle, mode, setMode, override, setOverride }) {
+  const { lang } = useLocale();
   const GOLD = 'rgba(200,164,74,0.88)';
   const DIM  = 'rgba(140,160,200,0.46)';
   return (
@@ -1430,7 +1453,7 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
         <span style={{ fontSize:'0.75rem' }}>{open ? '▾' : '▸'}</span>
         <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
           color: open ? GOLD : 'rgba(140,160,200,0.55)' }}>
-          CONTEXTE DÉLIBÉRATIONS
+          {t('CONTEXT',lang)}
         </span>
         {(mode || override) && (
           <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', marginLeft:'auto',
@@ -1480,7 +1503,7 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
           <div>
             <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:DIM,
               marginBottom:'0.22rem' }}>
-              CONTEXTE PERSONNALISÉ — remplace tout si renseigné
+              {t('CUSTOM_CONTEXT',lang)}
             </div>
             <textarea
               style={{ ...INPUT_STYLE, width:'100%', minHeight:'64px', resize:'vertical',
@@ -1505,6 +1528,7 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
 
 // ── Composant principal ─────────────────────────────────────────────────
 export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onLaunchAI, hasApiKeys, onRefreshKeys }) {
+  const { lang, setLang } = useLocale();
   const [step,       setStep]      = useState('name');
   const [mode,       setMode]      = useState(null);
   const [preset,     setPreset]    = useState(null);
@@ -1537,7 +1561,6 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   };
 
   const launch = (usePreset, customDefs = null) => {
-    // Persist boardGame option before launching
     try {
       const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
       opts.gameplay = { ...(opts.gameplay || {}), mode_board_game: boardGame };
@@ -1545,15 +1568,15 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
     } catch {}
     setStep('generating');
     const MSGS = [
-      'GÉNÉRATION DE LA TOPOGRAPHIE…','PLACEMENT DES MASSES TERRESTRES…',
-      'CALCUL DES RESSOURCES…','INITIALISATION DU CONSEIL…','DÉMARRAGE DE LA SIMULATION…',
+      t('GEN_TOPO',lang),t('GEN_MASSES',lang),
+      t('GEN_RESOURCES',lang),t('GEN_COUNCIL',lang),t('GEN_SIM',lang),
     ];
-    let t = 0;
+    let step = 0;
     const timer = setInterval(() => {
-      t++;
-      setProgress(Math.round((t / 30) * 100));
-      setMsg(MSGS[Math.floor(t / 6)] || MSGS[MSGS.length - 1]);
-      if (t >= 30) {
+      step++;
+      setProgress(Math.round((step / 30) * 100));
+      setMsg(MSGS[Math.floor(step / 6)] || MSGS[MSGS.length - 1]);
+      if (step >= 30) {
         clearInterval(timer);
         if (usePreset === 'defaut_local') {
           onLaunchLocal(customDefs);
@@ -1607,16 +1630,29 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
 
   // ── Étape : nom ───────────────────────────────────────────────────────
   if (step === 'name') return (
-    <div style={S.wrap(false)}>
+    <div style={{ ...S.wrap(false), position:'relative' }}>
+      {/* Lang switcher */}
+      <div style={{ position:'absolute', top:'0.8rem', right:'0.8rem', display:'flex', gap:'0.3rem', zIndex:10 }}>
+        {['fr','en'].map(l => (
+          <button key={l} onClick={() => setLang(l)} style={{
+            background: lang===l ? 'rgba(200,164,74,0.15)' : 'transparent',
+            border:`1px solid ${lang===l ? 'rgba(200,164,74,0.45)' : 'rgba(255,255,255,0.10)'}`,
+            borderRadius:'2px', padding:'0.22rem 0.55rem',
+            color: lang===l ? 'rgba(200,164,74,0.90)' : 'rgba(150,170,205,0.35)',
+            fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem',
+            letterSpacing:'0.14em', cursor:'pointer', transition:'all 0.15s',
+          }}>{l.toUpperCase()}</button>
+        ))}
+      </div>
       {showKeys && <APIKeyInline onClose={() => { setShowKeys(false); onRefreshKeys?.(); }} />}
       <ARIAHeader showQuote={true} />
 
       <div style={CARD_STYLE}>
-        <div style={labelStyle()}>NOM DU MONDE</div>
+        <div style={labelStyle()}>{t('WORLD_NAME',lang)}</div>
         <input style={INPUT_STYLE} value={worldName}
           onChange={e => setWorldName(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && worldName.trim() && setStep('mode')}
-          placeholder="Ex : Pangée Altérée, Archipel de la Paix…" autoFocus />
+          {...{placeholder:t("WORLD_NAME_PH",lang)}} autoFocus />
       </div>
 
       <div style={{ display:'flex', gap:'0.8rem', width:'100%', justifyContent:'space-between', alignItems:'center' }}>
@@ -1642,7 +1678,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           )}
           <button style={{ ...BTN_PRIMARY, opacity: worldName.trim() ? 1 : 0.35 }}
             disabled={!worldName.trim()} onClick={() => setStep('mode')}>
-            CONTINUER →
+            {t('CONTINUE',lang)}
           </button>
         </div>
       </div>
@@ -1654,11 +1690,11 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
     <div style={S.wrap(false)}>
       <ARIAHeader showQuote={false} />
       <div style={{ width:'100%' }}>
-        <div style={{ ...labelStyle(), marginBottom:'0.9rem' }}>MODE DE JEU — {worldName}</div>
+        <div style={{ ...labelStyle(), marginBottom:'0.9rem' }}>{t('MODE_LABEL',lang)} — {worldName}</div>
         <div style={{ display:'flex', gap:'0.8rem' }}>
           {[
-            { id:'local', icon:'🗺', title:'HORS LIGNE', desc:'1 nation prédéfinie. Délibérations locales. Aucune clé API.' },
-            { id:'ai',    icon:'⚡', title:'EN LIGNE — IA', desc:'Pays réel ou fictif au choix. Délibérations temps réel. Clé API requise.', disabled:!hasApiKeys },
+            { id:'local', icon:'🗺', title:t('MODE_LOCAL',lang), desc:t('MODE_LOCAL_DESC',lang) },
+            { id:'ai',    icon:'⚡', title:t('MODE_AI',lang), desc:t('MODE_AI_DESC',lang), disabled:!hasApiKeys },
           ].map(m => (
             <div key={m.id}
               style={{ ...S.mCard, opacity: m.disabled ? 0.35 : 1, cursor: m.disabled ? 'not-allowed' : 'pointer' }}
@@ -1666,12 +1702,12 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <div style={{ fontSize:'1.4rem' }}>{m.icon}</div>
               <div style={{ fontFamily:FONT.cinzel, fontSize:'0.58rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.85)' }}>{m.title}</div>
               <div style={{ fontSize:'0.50rem', color:'rgba(140,160,200,0.55)', lineHeight:1.6 }}>{m.desc}</div>
-              {m.disabled && <span style={{ ...S.tag, color:'rgba(200,80,80,0.55)', borderColor:'rgba(200,80,80,0.20)' }}>CLÉ MANQUANTE</span>}
+              {m.disabled && <span style={{ ...S.tag, color:'rgba(200,80,80,0.55)', borderColor:'rgba(200,80,80,0.20)' }}>{t('KEY_MISSING',lang)}</span>}
             </div>
           ))}
         </div>
       </div>
-      <button style={BTN_SECONDARY} onClick={() => setStep('name')}>← RETOUR</button>
+      <button style={BTN_SECONDARY} onClick={() => setStep('name')}>{t('BACK',lang)}</button>
     </div>
   );
 
@@ -1680,7 +1716,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
 
   // ── Étape : config ────────────────────────────────────────────────────
   // ── Étape : config — helpers ──────────────────────────────────────────
-  const BK = (fn) => <button style={BTN_SECONDARY} onClick={fn}>← RETOUR</button>;
+  const BK = (fn) => <button style={BTN_SECONDARY} onClick={fn}>{t('BACK',lang)}</button>;
   const H  = (txt) => <div style={{ ...labelStyle(), alignSelf:'flex-start' }}>{txt} — {worldName}</div>;
   const MC = (props) => <div style={{ ...S.mCard, ...props.style }} onClick={props.onClick}>{props.children}</div>;
   const McTitle = ({ t }) => <div style={{ fontFamily:FONT.cinzel, fontSize:'0.54rem', letterSpacing:'0.14em', color:'rgba(200,164,74,0.88)' }}>{t}</div>;
@@ -1692,20 +1728,21 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
     if (!preset) return (
       <div style={S.wrap(false)}>
         <ARIAHeader showQuote={false} />
-        {H('CONFIGURATION')}
+        {H(t('CONFIG',lang))}
         <div style={{ display:'flex', gap:'0.8rem', width:'100%' }}>
           <MC onClick={() => { setPreset('defaut'); resetDefaut(); }}>
             <div style={{ fontSize:'1.3rem' }}>⚡</div>
-            <McTitle t="PAR DÉFAUT" />
-            <McSub t={mode === 'local' ? 'Un pays local au choix — réel, fictif ou nouveau. Avec historique local' : 'Un pays au choix — réel, fictif ou nouveau. Augmenté par IA.'} />
+            <McTitle t={t('PRESET_DEFAULT',lang)} />
+            <McSub t={mode==='local' ? t('PRESET_DEFAULT_LOCAL',lang) : t('PRESET_DEFAULT_AI',lang)} />
           </MC>
           <MC onClick={() => setPreset('custom')}>
             <div style={{ fontSize:'1.3rem' }}>🛠</div>
-            <McTitle t="PERSONNALISÉ" />
-            <McSub t="1 à 6 nations. Terrain, régime, nom libres." />
+            <McTitle t={t('PRESET_CUSTOM',lang)} />
+            <McSub t={t('PRESET_CUSTOM_DESC',lang)} />
           </MC>
         </div>
-        {/* Toggle Board Game — pleine largeur */}
+        {mode === 'ai' && (
+        /* Toggle Board Game — pleine largeur */
         <div style={{ display:'flex', alignItems:'center', gap:'0.7rem', padding:'0.55rem 0.9rem',
           background: boardGame ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.02)',
           border: `1px solid ${boardGame ? 'rgba(200,164,74,0.30)' : 'rgba(255,255,255,0.07)'}`,
@@ -1719,7 +1756,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               MODE BOARD GAME
             </div>
             <div style={{ fontSize:'0.40rem', color:'rgba(130,150,185,0.38)', marginTop:'0.08rem', lineHeight:1.4 }}>
-              Annotations manuelles — délibération libre sans IA
+              {t('BOARD_GAME_DESC',lang)}
             </div>
           </div>
           <div style={{ width:'2rem', height:'1.1rem', borderRadius:'0.55rem', transition:'all 0.2s', flexShrink:0,
@@ -1731,6 +1768,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               background: boardGame ? '#C8A44A' : 'rgba(150,165,195,0.55)' }} />
           </div>
         </div>
+        )}
         {BK(() => setStep('mode'))}
       </div>
     );
@@ -1747,13 +1785,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           <div style={{ display:'flex', gap:'0.8rem', width:'100%' }}>
             <MC onClick={() => setDefautType('fictif')}>
               <div style={{ fontSize:'1.3rem' }}>🌐</div>
-              <McTitle t="NATION FICTIVE" />
-              <McSub t="1 des 3 nations prédéfinies avec historique." />
+              <McTitle t={t('FICTIONAL_NATION',lang)} />
+              <McSub t={t('PRESET_NATION_DESC',lang)} />
             </MC>
             <MC onClick={() => setDefautType('reel')}>
               <div style={{ fontSize:'1.3rem' }}>🗺</div>
-              <McTitle t="PAYS RÉEL" />
-              <McSub t="Simuler un pays réel avec ses données 2025-2026." />
+              <McTitle t={t('REAL_COUNTRY',lang)} />
+              <McSub t={t('REAL_COUNTRY_DESC',lang)} />
             </MC>
           </div>
           {BK(() => setPreset(null))}
@@ -1804,7 +1842,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 }}
                 onClick={() => setDefautFictif('new')}>
                 <div style={{ fontSize:'1.4rem' }}>🌍</div>
-                <McTitle t="+ CRÉER" />
+                <McTitle t={t('CREATE',lang)} />
                 <McSub t="Nation fictive personnalisée" />
               </MC>
             </div>
@@ -1830,7 +1868,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             {isNew && (
               <div style={{ ...CARD_STYLE, width:'100%', display:'flex', flexDirection:'column', gap:'0.65rem' }}>
                 <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem', letterSpacing:'0.16em', color:'rgba(58,191,122,0.55)' }}>
-                  NOUVELLE NATION FICTIVE
+                  {t('NEW_NATION',lang)}
                 </div>
                 <div>
                   <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NOM</div>
@@ -1844,13 +1882,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 </div>
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.6rem' }}>
                   <div>
-                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>TERRAIN</div>
+                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('TERRAIN',lang)}</div>
                     <select style={SELECT_STYLE} value={newFictifTerrain} onChange={e => setNewFictifTerrain(e.target.value)}>
                       {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                   </div>
                   <div>
-                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>RÉGIME</div>
+                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('REGIME',lang)}</div>
                     <select style={SELECT_STYLE} value={newFictifRegime} onChange={e => setNewFictifRegime(e.target.value)}>
                       {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
@@ -1939,12 +1977,12 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           <div style={{ display:'flex', gap:'0.8rem', width:'100%' }}>
             <MC onClick={() => setDefautType('fictif')}>
               <div style={{ fontSize:'1.3rem' }}>🌐</div>
-              <McTitle t="NATION FICTIVE" />
+              <McTitle t={t('FICTIONAL_NATION',lang)} />
               <McSub t="1 des 3 nations prédéfinies ou 1 nouvelle — l'IA l'enrichit." />
             </MC>
             <MC onClick={() => setDefautType('reel')}>
               <div style={{ fontSize:'1.3rem' }}>🗺</div>
-              <McTitle t="PAYS RÉEL" />
+              <McTitle t={t('REAL_COUNTRY',lang)} />
               <McSub t="L'IA génère le portrait depuis sa situation actuelle." />
             </MC>
           </div>
@@ -1969,7 +2007,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(140,160,200,0.35)', textAlign:'center' }}>— OU —</div>
               <input style={{ ...INPUT_STYLE, fontSize:'0.53rem' }}
                 value={defautNom} onChange={e => { setDefautNom(e.target.value); setDefautReel(''); }}
-                placeholder="Tout pays : Islande, Pérou, Thaïlande…" />
+                {...{placeholder:t('COUNTRY_NAME_PH',lang)}} />
               {knownReel
                 ? <CountryInfoCard data={knownReel} />
                 : defautNom && (
@@ -1986,7 +2024,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                   const nom = knownReel?.nom || defautNom;
                   preLaunch('defaut_ai', [{ type:'reel', nom, realData: knownReel || null }]);
                 }}>
-                GÉNÉRER →
+                {t('GENERATE_SHORT',lang)}
               </button>
             </BtnRow>
           </div>
@@ -2031,7 +2069,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 }}
                 onClick={() => { setDefautFictif('new'); setDefautNom(''); }}>
                 <div style={{ fontSize:'1.4rem' }}>🌍</div>
-                <McTitle t="+ CRÉER" />
+                <McTitle t={t('CREATE',lang)} />
                 <McSub t="Nation fictive personnalisée" />
               </MC>
             </div>
@@ -2057,7 +2095,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             {isNew && (
               <div style={{ ...CARD_STYLE, width:'100%', display:'flex', flexDirection:'column', gap:'0.65rem' }}>
                 <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem', letterSpacing:'0.16em', color:'rgba(58,191,122,0.55)' }}>
-                  NOUVELLE NATION FICTIVE
+                  {t('NEW_NATION',lang)}
                 </div>
                 <div>
                   <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NOM</div>
@@ -2071,13 +2109,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 </div>
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.6rem' }}>
                   <div>
-                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>TERRAIN</div>
+                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('TERRAIN',lang)}</div>
                     <select style={SELECT_STYLE} value={newFictifTerrain} onChange={e => setNewFictifTerrain(e.target.value)}>
                       {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                   </div>
                   <div>
-                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>RÉGIME</div>
+                    <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('REGIME',lang)}</div>
                     <select style={SELECT_STYLE} value={newFictifRegime} onChange={e => setNewFictifRegime(e.target.value)}>
                       {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
@@ -2103,7 +2141,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               {!isNew && chosen && (
                 <button style={{ ...BTN_PRIMARY }}
                   onClick={() => preLaunch('defaut_ai', [{ type:'imaginaire', nom: chosen.nom, realData: chosen }])}>
-                  GÉNÉRER →
+                  {t('GENERATE_SHORT',lang)}
                 </button>
               )}
               {isNew && (
@@ -2113,7 +2151,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                     type:'imaginaire', nom:defautNom.trim(),
                     terrain:newFictifTerrain, regime:newFictifRegime, realData:null,
                   }])}>
-                  GÉNÉRER →
+                  {t('GENERATE_SHORT',lang)}
                 </button>
               )}
             </BtnRow>
