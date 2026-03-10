@@ -261,6 +261,8 @@ export default function App() {
           isCrisis={isCrisis}
           activeTab={activeTab}
           onGoToCouncil={() => setActiveTab('council')}
+          onGoToSettings={() => setPage('settings')}
+          onWorldStarted={() => setWorldGenerated(true)}
           onReady={handleAriaReady}
           onCountriesUpdate={handleCountriesUpdate}
           onReset={handleReset}

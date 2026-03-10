@@ -619,7 +619,105 @@ function DiplomacyModal({ sourceCountry, allCountries, alliances, onSetRelation,
 //  Dans App.jsx : import Dashboard from './Dashboard_p3'
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey }) {
+
+// ── Modal erreur IA ───────────────────────────────────────────────────────────
+function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) {
+  if (!error) return null;
+  const isQuota = error.type === 'quota';
+  const isNoKey = error.type === 'nokey';
+  const FONT_MONO = "'JetBrains Mono', monospace";
+  return (
+    <div style={{
+      position:'fixed', inset:0, zIndex:9000,
+      background:'rgba(3,6,12,0.92)',
+      display:'flex', alignItems:'center', justifyContent:'center',
+    }}>
+      <div style={{
+        background:'#0B0F1A',
+        border:`1px solid ${isQuota ? 'rgba(200,80,80,0.50)' : 'rgba(200,164,74,0.35)'}`,
+        borderRadius:'3px',
+        padding:'2rem 2.5rem',
+        maxWidth:'480px', width:'90%',
+        display:'flex', flexDirection:'column', gap:'1.2rem',
+        boxShadow:`0 0 60px ${isQuota ? 'rgba(200,80,80,0.12)' : 'rgba(200,164,74,0.08)'}`,
+      }}>
+        {/* Titre */}
+        <div style={{ display:'flex', alignItems:'center', gap:'0.8rem' }}>
+          <span style={{ fontSize:'1.4rem' }}>{isQuota ? '⚠' : '🔑'}</span>
+          <div>
+            <div style={{ fontFamily:FONT_MONO, fontSize:'0.72rem', letterSpacing:'0.18em',
+              color: isQuota ? 'rgba(220,80,80,0.90)' : 'rgba(200,164,74,0.90)' }}>
+              {isQuota ? 'QUOTA API DÉPASSÉ' : 'GÉNÉRATION IA ÉCHOUÉE'}
+            </div>
+            <div style={{ fontFamily:FONT_MONO, fontSize:'0.38rem', color:'rgba(100,120,160,0.55)',
+              letterSpacing:'0.12em', marginTop:'0.2rem' }}>
+              {isQuota ? 'TROP DE REQUÊTES — 429 TOO MANY REQUESTS' : "AUCUN PAYS GÉNÉRÉ PAR L'IA"}
+            </div>
+          </div>
+        </div>
+
+        {/* Détails */}
+        <div style={{ fontFamily:FONT_MONO, fontSize:'0.46rem', color:'rgba(160,180,210,0.70)',
+          lineHeight:1.7, letterSpacing:'0.05em',
+          background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)',
+          borderRadius:'2px', padding:'0.7rem 0.9rem' }}>
+          {error.details}
+        </div>
+
+        {/* Monde généré en mode local quand même */}
+        <div style={{ fontFamily:FONT_MONO, fontSize:'0.42rem', color:'rgba(100,120,160,0.50)',
+          letterSpacing:'0.05em', lineHeight:1.6 }}>
+          {error.countryDefs?.length > 0
+            ? <>Cliquez sur <strong style={{color:'rgba(140,180,240,0.80)'}}>CRÉER EN HORS-LIGNE</strong> pour générer {error.countryDefs.map(d => d.nom || 'un pays').join(', ')} avec des données locales.</>
+            : <>Aucun pays disponible. Réinitialisez ou corrigez votre clé API.</>
+          }
+        </div>
+
+        {/* Boutons */}
+        <div style={{ display:'flex', gap:'0.7rem', flexWrap:'wrap', justifyContent:'flex-end' }}>
+          <button onClick={onOffline} style={{
+            fontFamily:FONT_MONO, fontSize:'0.46rem', letterSpacing:'0.10em',
+            background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.12)',
+            color:'rgba(140,160,200,0.70)', borderRadius:'2px',
+            padding:'0.45rem 1rem', cursor:'pointer',
+          }}>
+            ↺ RÉINITIALISER
+          </button>
+          <button onClick={onSettings} style={{
+            fontFamily:FONT_MONO, fontSize:'0.46rem', letterSpacing:'0.10em',
+            background:'rgba(200,164,74,0.08)', border:'1px solid rgba(200,164,74,0.35)',
+            color:'rgba(200,164,74,0.85)', borderRadius:'2px',
+            padding:'0.45rem 1rem', cursor:'pointer',
+          }}>
+            ⚙ CHANGER D'API
+          </button>
+          {error.countryDefs?.length > 0 && (
+            <button onClick={onCreateLocal} style={{
+              fontFamily:FONT_MONO, fontSize:'0.46rem', letterSpacing:'0.10em',
+              background:'rgba(74,126,200,0.12)', border:'1px solid rgba(74,126,200,0.40)',
+              color:'rgba(140,180,240,0.90)', borderRadius:'2px',
+              padding:'0.45rem 1rem', cursor:'pointer',
+            }}>
+              🌍 CRÉER EN HORS-LIGNE
+            </button>
+          )}
+          {error.type !== 'generic' && (
+            <button onClick={onClose} style={{
+              fontFamily:FONT_MONO, fontSize:'0.46rem', letterSpacing:'0.10em',
+              background:'rgba(58,191,122,0.06)', border:'1px solid rgba(58,191,122,0.20)',
+              color:'rgba(58,191,122,0.55)', borderRadius:'2px',
+              padding:'0.45rem 1rem', cursor:'pointer',
+            }}>
+              CONTINUER QUAND MÊME →
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
 
@@ -979,6 +1077,22 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
 
       {/* ── Toast notifications ── */}
       <Toast notification={aria.notification} />
+
+      {/* ── Modal erreur IA ── */}
+      <AIErrorModal
+        error={aria.aiError}
+        onClose={() => aria.clearAiError?.()}
+        onSettings={() => { aria.clearAiError?.(); onGoToSettings?.(); }}
+        onOffline={() => { aria.clearAiError?.(); onReset(); }}
+        onCreateLocal={() => {
+          const { countryDefs, W, H } = aria.aiError || {};
+          aria.clearAiError?.();
+          if (countryDefs?.length) {
+            onWorldStarted?.();
+            aria.startLocal(countryDefs, W || 1400, H || 800);
+          }
+        }}
+      />
 
       {/* ── Indicateur chargement IA ── */}
       {aria.aiRunning && (

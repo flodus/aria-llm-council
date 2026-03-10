@@ -1,0 +1,41 @@
+nouveau pays réel check validité
+
+
+je voudrais 1 à 3 (ou 5) présidents. Donc possibilité d'ajouter des présidents avec leurs nom et leurs propres prompts (comme le phare et la boussole) dans init conf et popup consitution
+>> pour le llm council faire des onglets par président si + de 2
+
+Réflexion // todolist
+est ce que tout ça c'est déjà prévu ? quelle est la priorité ?
+
+est-ce que les choix précédents sont pris dans les contextes des nouvelles délibération à venir ?
+
+faire des randon crise // chance globale au niveau du monde (pays) tous les random cycles
+
+tous les 10 ans (2 cycles) demander si on change la constitution // gouvernement (ministres ministères présidence)
+
+
+mise en place de la politique de crise et permettre les choix des ministres et critères :
+6.2 Crisis mode — The twelve voices
+A situation is declared an emergency when at least two of the following four criteria are met,
+including necessarily the irreversible risk or critical collapse criterion:
+• Immediate systemic impact: more than 20% of the population directly affected
+• Irreversible risk: the situation cannot be corrected after the action deadline
+• Critical action deadline of less than 30 days
+• Collapse of a vital function: water, energy, health or security
+Three ministers are designated by the constitution to validate the triggering of an emergency —
+chosen for their most analytical and structured characters: the Analyst, the Strategist and the
+Arbiter.
+Three ministers are designated to propose the end of the crisis: the Guardian (resources
+restored?), the Protector (return of sense of security?), the Guide (clear and shared exit vision?).
+
+mise en place des règles de sécession
+sécesion :
+7.2 The assisted secession protocol
+CONDITION 1 — THE NEGOTIATION PERIOD
+Before any formal secession, a mandatory negotiation period is opened (typically between three
+and twelve months depending on the size of the group). This period allows for an attempt to revise
+the founding prompts that might make the secession unnecessary.
+CONDITION 2 — THE NON-AGGRESSION TREATY
+Before receiving departure assistance, the secessionist group signs a non-aggression treaty with
+the original entity. This treaty defines borders, shared resources, rules of coexistence and
+mechanisms for resolving future conflicts

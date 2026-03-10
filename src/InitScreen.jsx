@@ -335,13 +335,121 @@ function CountryInfoCard({ data }) {
 }
 
 // ── Sous-composant : Config d'un pays (mode personnalisé) ─────────────────
-// Match exact (insensible casse/accents) entre saisie et nom pays
-const isExactMatch = (query, resultName) => {
-  const normalize = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-  const q = normalize(query);
-  const r = normalize(resultName);
-  return q === r || r.startsWith(q) || q.startsWith(r.slice(0, Math.max(4, r.length)));
+// ── Exonymes FR ↔ EN ─────────────────────────────────────────────────────────
+// { fr: nom affiché en FR, en: nom affiché en EN, api: ce que RestCountries retourne }
+// ── Validation pays réel via IA (Claude) ─────────────────────────────────────
+// Envoie la saisie + lang à Claude qui vérifie l'existence et retourne le nom localisé
+// Retourne Promise<{ status: 'found'|'suggestion'|'notfound', canonicalName: string|null, suggestion: string|null }>
+// ── Validation pays réel via RestCountries ───────────────────────────────────
+// Stratégie : RestCountries retourne jusqu'à 10 résultats pour une saisie.
+// On teste chaque résultat avec rcMatch() pour décider found/suggestion/notfound.
+
+// ── Validation pays via RestCountries (2 passes) ────────────────────────────
+// Pass 1: recherche directe (fonctionne pour noms exacts, accents, traductions)
+// Pass 2: si rien trouvé, fetch /all et fuzzy-match local (couvre les fautes)
+
+const _norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
+const _lev  = (a, b) => {
+  if (Math.abs(a.length-b.length) > 4) return 99;
+  const dp = Array.from({length:a.length+1},(_,i)=>Array.from({length:b.length+1},(_,j)=>i||j));
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++)
+    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[a.length][b.length];
 };
+const _mapV = s => s.replace(/ou$/,'u').replace(/eau/g,'o').replace(/ai|ei/g,'e')
+                    .replace(/ie$/,'i').replace(/ique$/,'ic').replace(/que$/,'c');
+
+// Retourne 'found'|'suggestion'|null pour une paire (query, nom)
+const rcMatch = (q, name) => {
+  const nq = _norm(q), nr = _norm(name);
+  const parts = [nr, ...nr.split(/[\s-]+/)];
+  for (const r of parts) {
+    if (!r || r.length < 2) continue;
+    const ratio = Math.min(nq.length,r.length)/Math.max(nq.length,r.length);
+    if (nq === r) return 'found';
+    if (r.startsWith(nq) && nq.length >= r.length*0.85) return 'found';
+    if (_mapV(nq) === _mapV(r) && nq.length >= 3) return 'found';
+    if (_lev(nq,r) <= 2 && ratio >= 0.70 && nq.length >= 3) return 'suggestion';
+    const ph = s => s.replace(/ph/g,'f').replace(/qu/g,'k').replace(/w/g,'v')
+                     .replace(/[aeiou]/g,'').replace(/[^a-z]/g,'');
+    if (ph(nq)===ph(r) && ph(nq).length>=3 && ratio>=0.70) return 'suggestion';
+  }
+  return null;
+};
+
+const rcDisplayName = (rc, lang) =>
+  lang==='fr' ? (rc.translations?.fra?.common||rc.name?.common||'') : (rc.name?.common||'');
+
+// Cache pour /all (évite les refetch)
+let _allCountriesCache = null;
+const getAllCountries = async () => {
+  if (_allCountriesCache) return _allCountriesCache;
+  try {
+    const r = await fetch(
+      'https://restcountries.com/v3.1/all?fields=name,flags,population,translations',
+      { signal: AbortSignal.timeout(6000) }
+    );
+    if (r.ok) _allCountriesCache = await r.json();
+  } catch(_) {}
+  return _allCountriesCache || [];
+};
+
+const validateCountryWithAI = async (query, lang) => {
+  if (!query || query.length < 2) return { status:'notfound', displayName:null, canonicalName:null };
+
+  // Normalise avant envoi API (pérou → perou)
+  const apiQuery = _norm(query);
+
+  // ── PASS 1 : recherche directe RestCountries ──────────────────────────────
+  let data = [];
+  try {
+    const r = await fetch(
+      `https://restcountries.com/v3.1/name/${encodeURIComponent(apiQuery)}?fields=name,flags,population,translations`,
+      { signal: AbortSignal.timeout(4000) }
+    );
+    if (r.ok) data = await r.json();
+  } catch(_) { return { status:'error', displayName:null, canonicalName:null }; }
+
+  let bestStatus = null, bestRc = null;
+  for (const rc of (Array.isArray(data)?data:[]).slice(0,8)) {
+    const names = [rc.name?.common,rc.name?.official,rc.translations?.fra?.common].filter(Boolean);
+    for (const name of names) {
+      const m = rcMatch(query, name);
+      if (m==='found') { bestStatus='found'; bestRc=rc; break; }
+      if (m==='suggestion' && bestStatus!=='found') { bestStatus='suggestion'; bestRc=rc; }
+    }
+    if (bestStatus==='found') break;
+  }
+  if (bestStatus && bestRc) {
+    return { status:bestStatus, displayName:rcDisplayName(bestRc,lang), canonicalName:bestRc.name?.common||query };
+  }
+
+  // ── PASS 2 : fuzzy local sur /all (couvre les fautes non trouvées par l'API) ──
+  const all = await getAllCountries();
+  let bestScore = 99, best2Rc = null;
+  for (const rc of all) {
+    const names = [rc.name?.common,rc.name?.official,rc.translations?.fra?.common].filter(Boolean);
+    for (const name of names) {
+      const nq = _norm(query), nr = _norm(name);
+      const d  = _lev(nq, nr.slice(0, nq.length+3));
+      const ratio = Math.min(nq.length,nr.length)/Math.max(nq.length,nr.length);
+      if (d < bestScore && d <= 3 && ratio >= 0.60 && nq.length >= 3) {
+        bestScore = d; best2Rc = rc;
+      }
+    }
+  }
+  if (best2Rc && bestScore <= 3) {
+    const names2 = [best2Rc.name?.common,best2Rc.name?.official,best2Rc.translations?.fra?.common].filter(Boolean);
+    let st2 = null;
+    for (const name of names2) { const m=rcMatch(query,name); if(m&&!st2) st2=m; }
+    const status = st2 || (bestScore<=1?'found':'suggestion');
+    return { status, displayName:rcDisplayName(best2Rc,lang), canonicalName:best2Rc.name?.common||query };
+  }
+
+  return { status:'notfound', displayName:null, canonicalName:null };
+};
+
+
 function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
   const { lang } = useLocale();
   const setField = (k, v) => onChange({ ...c, [k]: v });
@@ -351,57 +459,62 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
   const [rcStatus,     setRcStatus]     = useState(null); // null|'searching'|'found'|'notfound'|'suggestion'|'error'
   const [rcSuggestion, setRcSuggestion] = useState(null);
   const rcTimer = useRef(null);
+  const rcQueryRef = useRef('');
 
 
 
-  const searchRestCountries = (query) => {
+  const searchRestCountries = async (query) => {
+    rcQueryRef.current = query;
     if (!query || query.length < 3) { setRcStatus(null); return; }
-    // Check local list first
+    // 1. Check local hardcoded list
     const local = REAL_COUNTRIES_DATA.find(r =>
       r.nom.toLowerCase() === query.toLowerCase() ||
       r.id === query.toLowerCase().replace(/[^a-z]/g,'')
     );
     if (local) {
-      onChange({ ...c, nom: local.nom, regime: local.regime, terrain: local.terrain, realData: local });
       onChange({ ...c, nom: local.nom, regime: local.regime, terrain: local.terrain, realData: local, _rcStatus: 'found' });
       setRcStatus('found'); return;
     }
     setRcStatus('searching');
-    fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(query)}?fields=name,flags,capital,population,region,subregion`)
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => {
-        if (!data || !data.length) { setRcStatus('notfound'); onChange({ ...c, _rcStatus: 'notfound', _rcSuggestion: null }); return; }
-        const rc = data[0];
-        const nom = rc.name?.common || query;
-        if (!isExactMatch(query, nom) && !isExactMatch(query, rc.name?.official||'')) {
-          setRcStatus('suggestion'); setRcSuggestion(nom);
-          onChange({ ...c, _rcStatus: 'suggestion', _rcSuggestion: nom });
-          return;
-        }
-        const flag = rc.flags?.emoji || '🌐';
-        // Map to a minimal realData compatible avec REAL_COUNTRIES_DATA
-        const synth = {
-          id: nom.toLowerCase().replace(/[^a-z0-9]/g,'-'),
-          nom, flag,
-          regime: 'democratie_liberale',
-          terrain: 'coastal',
-          population: rc.population || 5_000_000,
-          region: rc.region || '',
-          _fromApi: true,
-        };
-        onChange({ ...c, nom, realData: synth, _rcStatus: 'found' });
-        setRcStatus('found');
-      })
-      .catch(() => setRcStatus('error'));
+    try {
+      // 2. Ask Claude to validate + localize
+      const ai = await validateCountryWithAI(query, lang);
+      if (rcQueryRef.current !== query) return;
+      if (ai.status === 'notfound' || !ai.displayName) {
+        setRcStatus('notfound'); onChange({ ...c, _rcStatus: 'notfound', _rcSuggestion: null }); return;
+      }
+      if (ai.status === 'suggestion') {
+        setRcStatus('suggestion'); setRcSuggestion(ai.displayName);
+        onChange({ ...c, _rcStatus: 'suggestion', _rcSuggestion: ai.displayName }); return;
+      }
+      // found — fetch RestCountries for flag/population using canonical name
+      const nom = ai.displayName;
+      let flag = '🌐', population = 5_000_000, region = '';
+      try {
+        const rc = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(ai.canonicalName||nom)}?fields=name,flags,population,region`)
+          .then(r => r.ok ? r.json() : []);
+        if (rc[0]) { flag = rc[0].flags?.emoji || '🌐'; population = rc[0].population || 5_000_000; region = rc[0].region || ''; }
+      } catch(_) {}
+      const synth = {
+        id: nom.toLowerCase().replace(/[^a-z0-9]/g,'-'),
+        nom, flag, regime: 'democratie_liberale', terrain: 'coastal', population, region, _fromApi: true,
+      };
+      onChange({ ...c, nom, realData: synth, _rcStatus: 'found' });
+      setRcStatus('found');
+    } catch(_) {
+      setRcStatus('error');
+    }
   };
 
   // Debounce auto-validation — mode AI uniquement
   useEffect(() => {
     if (c.type !== 'reel' || mode !== 'ai') return;
-    if (rcStatus === 'found' && rcSearch === c.nom) return;
-    if (rcStatus === 'found') setRcStatus(null);
-    if (!rcSearch || rcSearch.length < 3) return;
+    // Réinitialise le statut dès que la saisie change
+    rcQueryRef.current = '';
+    setRcStatus(null);
+    setRcSuggestion(null);
     clearTimeout(rcTimer.current);
+    if (!rcSearch || rcSearch.length < 3) return;
     rcTimer.current = setTimeout(() => searchRestCountries(rcSearch), 700);
     return () => clearTimeout(rcTimer.current);
   }, [rcSearch, c.type, mode]);
@@ -442,21 +555,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
         );
 
         // Fuzzy match : trouve le pays le plus proche si saisie libre non reconnue
-        const fuzzyMatch = !knownMatch && c.nom.length >= 3 ? (() => {
-          const needle = c.nom.toLowerCase();
-          let best = null, bestScore = 0;
-          for (const r of REAL_COUNTRIES_DATA) {
-            const hay = r.nom.toLowerCase();
-            // Score : inclusion + longueur commune
-            let score = 0;
-            if (hay.includes(needle) || needle.includes(hay.slice(0,4))) score += 2;
-            // Levenshtein simplifié : nb de lettres en commun
-            const common = [...needle].filter(ch => hay.includes(ch)).length;
-            score += common / Math.max(needle.length, hay.length);
-            if (score > bestScore && score > 0.6) { bestScore = score; best = r; }
-          }
-          return best;
-        })() : null;
+
 
         return (
           <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
@@ -496,29 +595,9 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
                 </div>
               )}
             </div>
-            {/* Suggestion si faute de frappe probable */}
-            {fuzzyMatch && (
-              <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', padding:'0.35rem 0.5rem',
-                background:'rgba(200,164,74,0.05)', border:'1px solid rgba(200,164,74,0.18)',
-                borderRadius:'2px', flexWrap:'wrap' }}>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(200,164,74,0.55)' }}>
-                  ❓ Vouliez-vous dire
-                </span>
-                <button
-                  style={{ fontFamily:FONT.mono, fontSize:'0.46rem', color:'rgba(200,164,74,0.90)',
-                    background:'rgba(200,164,74,0.10)', border:'1px solid rgba(200,164,74,0.30)',
-                    borderRadius:'2px', padding:'0.15rem 0.5rem', cursor:'pointer' }}
-                  onClick={() => setField('nom', fuzzyMatch.nom)}>
-                  {fuzzyMatch.flag} {fuzzyMatch.nom} →
-                </button>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.35)' }}>
-                  (ou continuer avec "{c.nom}" si intentionnel)
-                </span>
-              </div>
-            )}
             {knownMatch
               ? <CountryInfoCard data={knownMatch} />
-              : c.nom && !fuzzyMatch && (
+              : c.nom && (
                 <div style={{ fontSize:'0.43rem', color:'rgba(100,120,160,0.50)', fontStyle:'italic', lineHeight:1.5 }}>
                   ⚡ L'IA génèrera <strong style={{ color:'rgba(200,164,74,0.60)' }}>{c.nom}</strong> basé sur sa situation politique actuelle.
                 </div>
@@ -1627,27 +1706,38 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   const [defautFictif,      setDefautFictif]      = useState(null);  // id PAYS_LOCAUX ou 'new'
   const [defautReel,        setDefautReel]        = useState('');    // id REAL_COUNTRIES_DATA ou terrain si isNew
   const [defautNom,         setDefautNom]         = useState('');    // nom libre
-  const [rcDefautStatus,    setRcDefautStatus]    = useState(null);  // null|'searching'|'found'|'notfound'|'suggestion'|'error'
-  const [rcDefautSuggestion,setRcDefautSuggestion]= useState(null);  // nom suggéré si pas match exact
+  // Validation pays réel défaut — état unique pour éviter les race conditions
+  const [rcDefaut, setRcDefaut] = useState({ status: null, suggestion: null, canonical: '' });
   const rcDefautTimer = useRef(null);
-  const searchDefautCountry = (query) => {
-    if (!query || query.length < 3) { setRcDefautStatus(null); return; }
-    const local = REAL_COUNTRIES_DATA.find(r => r.nom.toLowerCase() === query.toLowerCase());
-    if (local) { setRcDefautStatus('found'); return; }
-    setRcDefautStatus('searching');
-    fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(query)}?fields=name,flags,population`)
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => {
-        if (!data?.length) { setRcDefautStatus('notfound'); setRcDefautSuggestion(null); return; }
-        const nom = data[0].name?.common || query;
-        const official = data[0].name?.official || '';
-        if (isExactMatch(query, nom) || isExactMatch(query, official)) {
-          setRcDefautStatus('found'); setRcDefautSuggestion(null);
-        } else {
-          setRcDefautStatus('suggestion'); setRcDefautSuggestion(nom);
-        }
-      })
-      .catch(() => setRcDefautStatus('error'));
+  const rcDefautQueryRef = useRef(''); // query en cours — pour ignorer les réponses obsolètes
+  const searchDefautCountry = async (query) => {
+    if (!query || query.length < 3) { setRcDefaut({ status: null, suggestion: null, canonical: '' }); return; }
+    // Marque cette query comme courante — les réponses d'une ancienne query seront ignorées
+    rcDefautQueryRef.current = query;
+    const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+    const local = REAL_COUNTRIES_DATA.find(r => norm(r.nom) === norm(query));
+    if (local) {
+      if (rcDefautQueryRef.current !== query) return; // réponse obsolète
+      setRcDefaut({ status: 'found', suggestion: null, canonical: local.nom });
+      return;
+    }
+    setRcDefaut({ status: 'searching', suggestion: null, canonical: '' });
+    try {
+      const ai = await validateCountryWithAI(query, lang);
+      if (rcDefautQueryRef.current !== query) return;
+      if (ai.status === 'notfound' || !ai.displayName) {
+        setRcDefaut({ status: 'notfound', suggestion: null, canonical: '' });
+      } else if (ai.status === 'suggestion') {
+        setRcDefaut({ status: 'suggestion', suggestion: ai.displayName, canonical: '' });
+      } else {
+        const canonical = ai.displayName || query;
+        setRcDefaut({ status: 'found', suggestion: null, canonical });
+        setDefautNom(canonical);
+      }
+    } catch(_) {
+      if (rcDefautQueryRef.current === query)
+        setRcDefaut({ status: 'error', suggestion: null, canonical: '' });
+    }
   };
   const [newFictifTerrain,  setNewFictifTerrain]  = useState('coastal');
   const [newFictifRegime,   setNewFictifRegime]   = useState('democratie_liberale');
@@ -2100,7 +2190,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
       // B — Pays réel en ligne
       if (defautType === 'reel') {
         const knownReel = REAL_COUNTRIES_DATA.find(r => r.id === defautReel);
-        const canLaunch = defautReel || (defautNom.trim() && rcDefautStatus === 'found');
+        const canLaunch = defautReel || (defautNom.trim() && rcDefaut.status === 'found');
         return (
           <div style={S.wrap(false)}>
             <ARIAHeader showQuote={false} />
@@ -2115,16 +2205,16 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <div>
                 <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.25rem' }}>
                   <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(100,120,160,0.45)' }}>SAISIE LIBRE</span>
-                  {rcDefautStatus === 'searching'  && <span style={{ color:'rgba(200,164,74,0.55)', fontSize:'0.38rem' }}>⟳ vérification…</span>}
-                  {rcDefautStatus === 'found'      && <span style={{ color:'rgba(58,191,122,0.80)',  fontSize:'0.38rem' }}>✓ pays reconnu</span>}
-                  {rcDefautStatus === 'notfound'   && <span style={{ color:'rgba(200,80,80,0.70)',   fontSize:'0.38rem' }}>✗ pays inconnu</span>}
-                  {rcDefautStatus === 'error'      && <span style={{ color:'rgba(200,164,74,0.50)',  fontSize:'0.38rem' }}>⚠ hors ligne</span>}
-                  {rcDefautStatus === 'suggestion' && rcDefautSuggestion && (
-                    <button onClick={() => { setDefautNom(rcDefautSuggestion); setRcDefautStatus(null); setRcDefautSuggestion(null); clearTimeout(rcDefautTimer.current); setTimeout(() => searchDefautCountry(rcDefautSuggestion), 50); }}
+                  {rcDefaut.status === 'searching'  && <span style={{ color:'rgba(200,164,74,0.55)', fontSize:'0.38rem' }}>⟳ vérification…</span>}
+                  {rcDefaut.status === 'found'      && <span style={{ color:'rgba(58,191,122,0.80)',  fontSize:'0.38rem' }}>✓ pays reconnu</span>}
+                  {rcDefaut.status === 'notfound'   && <span style={{ color:'rgba(200,80,80,0.70)',   fontSize:'0.38rem' }}>✗ pays inconnu</span>}
+                  {rcDefaut.status === 'error'      && <span style={{ color:'rgba(200,164,74,0.50)',  fontSize:'0.38rem' }}>⚠ hors ligne</span>}
+                  {rcDefaut.status === 'suggestion' && rcDefaut.suggestion && (
+                    <button onClick={() => { const sug = rcDefaut.suggestion; setDefautNom(sug); setRcDefaut({ status: null, suggestion: null, canonical: '' }); clearTimeout(rcDefautTimer.current); setTimeout(() => searchDefautCountry(sug), 50); }}
                       style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(200,164,74,0.90)',
                         background:'rgba(200,164,74,0.10)', border:'1px solid rgba(200,164,74,0.30)',
                         borderRadius:'2px', padding:'0.10rem 0.40rem', cursor:'pointer' }}>
-                      → {rcDefautSuggestion} ?
+                      → {rcDefaut.suggestion} ?
                     </button>
                   )}
                 </div>
@@ -2133,7 +2223,8 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                   onChange={e => {
                     setDefautNom(e.target.value);
                     setDefautReel('');
-                    setRcDefautStatus(null);
+                    rcDefautQueryRef.current = ''; // invalide les réponses en vol
+                    setRcDefaut({ status: null, suggestion: null, canonical: '' });
                     clearTimeout(rcDefautTimer.current);
                     rcDefautTimer.current = setTimeout(() => searchDefautCountry(e.target.value), 700);
                   }}
@@ -2152,7 +2243,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <button style={{ ...BTN_PRIMARY, opacity: canLaunch ? 1 : 0.35 }}
                 disabled={!canLaunch}
                 onClick={() => {
-                  const nom = knownReel?.nom || defautNom;
+                  const nom = knownReel?.nom || rcDefaut.canonical || defautNom;
                   preLaunch('defaut_ai', [{ type:'reel', nom, realData: knownReel || null }]);
                 }}>
                 {t('GENERATE_SHORT',lang)}
@@ -2325,7 +2416,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             );
             const hasNotFound = countries.some(c =>
               c.type === 'reel' && mode === 'ai' && !c.realData?.id &&
-              (c._rcStatus === 'notfound' || c._rcStatus === 'suggestion' || !c._rcStatus)
+              (c._rcStatus === 'notfound' || c._rcStatus === 'suggestion')
             );
             const canGen = unvalidated.length === 0 && !hasNotFound;
             return (

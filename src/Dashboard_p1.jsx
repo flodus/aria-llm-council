@@ -455,10 +455,10 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
     coastal,
     description:  aiData.description || '',
     leader:       aiData.leader
-                  ? (typeof aiData.leader === 'string'
-                      ? aiData.leader
-                      : [aiData.leader.titre, aiData.leader.nom].filter(Boolean).join(' '))
-                  : null,
+                    ? (typeof aiData.leader === 'string'
+                        ? aiData.leader
+                        : [aiData.leader.titre, aiData.leader.nom].filter(Boolean).join(' '))
+                    : null,
     annee:        STATS.global_start.annee,
     population:   aiData.population || 5_000_000,
     tauxNatalite: aiData.tauxNatalite || regime.taux_natalite * 1000,
@@ -725,24 +725,19 @@ Génère une notification d'analyse en JSON :
 
 // Appelle un modèle spécifique (Claude ou Gemini) via API
 async function callModel(model, prompt, keys, systemPrompt = '') {
-  const opts   = getOptions();
-  const models = opts.ia_models || {};
-
-  // Redirect automatique si clé manquante pour ce provider
-  const allKeys = { claude: keys.claude, gemini: keys.gemini, grok: keys.grok, openai: keys.openai };
-  if (!allKeys[model]) {
-    const fallback = Object.keys(allKeys).find(k => allKeys[k]);
-    if (!fallback) return { error: true, msg: 'SYSTÈME : Aucune clé API valide détectée.' };
-    model = fallback;
+  // Priorité Gemini (gratuit) si les deux clés existent
+  // Si le modèle demandé n'a pas de clé → fallback dans l'ordre : gemini → claude → grok → openai
+  const KEY_PRIORITY = ['gemini','claude','grok','openai'];
+  if (!keys[model]) {
+    model = KEY_PRIORITY.find(p => keys[p]) || model;
   }
 
+  // 1. On prépare le contenu fusionné (Rôle + Données)
   const fullContent = systemPrompt
-    ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
-    : prompt;
+  ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
+  : prompt;
 
-  // ── Claude (Anthropic) ────────────────────────────────────────────────────
   if (model === 'claude' && keys.claude) {
-    const claudeModel = models.claude || 'claude-sonnet-4-6';
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -752,77 +747,55 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
-        body: JSON.stringify({ model: claudeModel, max_tokens: 1000,
-          messages: [{ role: 'user', content: fullContent }] }),
+        body: JSON.stringify({
+          model: (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').claude || 'claude-sonnet-4-6'; } catch { return 'claude-sonnet-4-6'; } })(),
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: fullContent }],
+        }),
       });
       const data = await res.json();
       const text = data?.content?.[0]?.text || '';
-      return JSON.parse(text.replace(/```json|```/g, '').trim());
+      const clean = text.replace(/```json|```/g, '').trim();
+      return JSON.parse(clean);
     } catch (e) {
-      if (e?.status === 429 || String(e?.message).includes('429')) {
-        console.warn('[ARIA] Claude rate-limited — switching to local fallback');
-        return getLocalResponse(type, context);
-      }
-      console.warn('[ARIA] Claude error:', e.message); return { error: true, msg: getRandomFallback() };
+      console.warn('[ARIA] Claude error:', e.message);
+      return { error: true, msg: getRandomFallback() };
     }
   }
 
-  // ── Gemini (Google) ───────────────────────────────────────────────────────
   if (model === 'gemini' && keys.gemini) {
-    const geminiModel = models.gemini || 'gemini-2.0-flash';
-    try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${keys.gemini}`,
-        { method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: fullContent }] }],
-            generationConfig: { temperature: 0.8, maxOutputTokens: 1000 } }) }
-      );
-      if (res.status === 429) {
-        console.warn('[ARIA] Gemini rate-limited (429) — switching to local fallback');
-        return getLocalResponse(type, context);
+    const preferredGemini = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').gemini; } catch { return null; } })();
+    const GEMINI_MODELS = [preferredGemini, 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
+    for (const gModel of GEMINI_MODELS) {
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keys.gemini}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: fullContent }] }],
+              generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
+            }),
+          }
+        );
+        if (!res.ok) {
+          // 429 quota — pas de fallback utile, on retourne erreur gracieuse
+          if (res.status === 429) return { error: true, msg: getRandomFallback() };
+          continue; // autre erreur → essayer modèle suivant
+        }
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const clean = text.replace(/```json|```/g, '').trim();
+        return JSON.parse(clean);
+      } catch (e) {
+        console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
+        // continuer avec le modèle suivant
       }
-      if (!res.ok) return { error: true, msg: getRandomFallback() };
-      const data = await res.json();
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      return JSON.parse(text.replace(/```json|```/g, '').trim());
-    } catch (e) { console.warn('[ARIA] Gemini error:', e.message); return { error: true, msg: getRandomFallback() }; }
+    }
+    return { error: true, msg: getRandomFallback() };
   }
-
-  // ── Grok (xAI — compatible OpenAI) ───────────────────────────────────────
-  if (model === 'grok' && keys.grok) {
-    const grokModel = models.grok || 'grok-3-mini';
-    try {
-      const res = await fetch('https://api.x.ai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keys.grok}` },
-        body: JSON.stringify({ model: grokModel, max_tokens: 1000,
-          messages: [{ role: 'user', content: fullContent }] }),
-      });
-      if (!res.ok) return { error: true, msg: getRandomFallback() };
-      const data = await res.json();
-      const text = data?.choices?.[0]?.message?.content || '';
-      return JSON.parse(text.replace(/```json|```/g, '').trim());
-    } catch (e) { console.warn('[ARIA] Grok error:', e.message); return { error: true, msg: getRandomFallback() }; }
-  }
-
-  // ── OpenAI (GPT) ──────────────────────────────────────────────────────────
-  if (model === 'openai' && keys.openai) {
-    const openaiModel = models.openai || 'gpt-4.1-mini';
-    try {
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keys.openai}` },
-        body: JSON.stringify({ model: openaiModel, max_tokens: 1000,
-          messages: [{ role: 'user', content: fullContent }] }),
-      });
-      if (!res.ok) return { error: true, msg: getRandomFallback() };
-      const data = await res.json();
-      const text = data?.choices?.[0]?.message?.content || '';
-      return JSON.parse(text.replace(/```json|```/g, '').trim());
-    } catch (e) { console.warn('[ARIA] OpenAI error:', e.message); return { error: true, msg: getRandomFallback() }; }
-  }
-
-  return { error: true, msg: 'SYSTÈME : Aucune clé API valide détectée.' };
+  return { error: true, msg: "SYSTÈME : Aucune clé API valide détectée." };
 }
 
 // Pioche une réponse dans tes fichiers locaux (test.js) si pas d'IA
@@ -859,7 +832,7 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   const promptsSys = getPromptsSys(); // On récupère les prompts personnalisables
   const keys = opts.api_keys;
   const roles = opts.ia_roles;
-  const hasKeys = !!(keys.claude || keys.gemini || keys.grok || keys.openai);
+  const hasKeys = !!(keys.claude || keys.gemini);
 
   // 1. Priorité au mode Board Game ou absence de clés
   if (!hasKeys || (opts.gameplay && opts.gameplay.mode_board_game)) {
@@ -867,45 +840,62 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   }
 
   // 2. Dispatcher intelligent (on passe le modèle de Settings + le prompt système)
+  // Helper : appelle callModel et bascule sur fallback si { error: true }
+  // Pour les types council_* : pas de fallback ariaData → retourne null
+  //   (llmCouncilEngine gère ses propres fallbacks locaux)
+  const isCouncilType = type.startsWith('council_');
+  const callWithFallback = async (model, sysprompt = '') => {
+    const result = await callModel(model, prompt, keys, sysprompt);
+    if (result?.error) {
+      console.warn(`[ARIA] callAI fallback (type=${type}, error=${result.msg})`);
+      return isCouncilType ? null : getLocalResponse(type, context);
+    }
+    return result;
+  };
+
   switch (type) {
+    // ── Types historiques (ariaData.js) ──────────────────────────────────
     case 'ministre':
-      return callModel(roles.ministre_model || 'claude', prompt, keys);
-
+      return callWithFallback(roles.ministre_model || 'claude');
     case 'synthese_ministere':
-      return callModel(roles.synthese_min || 'gemini', prompt, keys); // fix: no system prompt
-
+      return callWithFallback(roles.synthese_min || 'gemini', promptsSys.synthese_ministere);
     case 'phare':
-      return callModel(roles.phare_model || 'claude', prompt, keys);
-
+      return callWithFallback(roles.phare_model || 'claude');
     case 'boussole':
-      return callModel(roles.boussole_model || 'claude', prompt, keys);
-
+      return callWithFallback(roles.boussole_model || 'claude');
     case 'synthese_presidence':
-      return callModel(roles.synthese_pres || 'gemini', prompt, keys); // fix: no system prompt
-
+      return callWithFallback(roles.synthese_pres || 'gemini', promptsSys.synthese_presidence);
     case 'evenement':
-      return callModel(roles.evenement_model || 'claude', prompt, keys);
-
+      return callWithFallback(roles.evenement_model || 'claude');
     case 'factcheck':
-      return callModel(roles.factcheck_model || 'gemini', prompt, keys, promptsSys.factcheck_evenement);
-
+      return callWithFallback(roles.factcheck_model || 'gemini', promptsSys.factcheck_evenement);
     case 'pays':
-      // Génération de pays — utilise le modèle solo configuré (ou claude par défaut)
-      return callModel(opts.solo_model || 'claude', prompt, keys);
+      return callWithFallback(opts.solo_model || 'claude');
+
+    // ── Types Council (llmCouncilEngine.js) ──────────────────────────────
+    // Retournent null en cas d'erreur → llmCouncilEngine déclenche ses fallbacks locaux
+    case 'council_routing':
+    case 'council_ministre':
+      return callWithFallback(roles.ministre_model || 'claude');
+    case 'council_synthese_min':
+      return callWithFallback(roles.synthese_min || 'gemini', promptsSys.synthese_ministere);
+    case 'council_phare':
+      return callWithFallback(roles.phare_model || 'claude');
+    case 'council_boussole':
+      return callWithFallback(roles.boussole_model || 'claude');
+    case 'council_annotation':
+      return callWithFallback(roles.ministre_model || 'claude');
+    case 'council_synthese_pres':
+      return callWithFallback(roles.synthese_pres || 'gemini', promptsSys.synthese_presidence);
+
     default:
-      return callModel(opts.solo_model || 'claude', prompt, keys);
+      return callWithFallback(opts.solo_model || 'claude');
   }
 }
 export const DEFAULT_OPTIONS = {
   api_keys: { claude: '', gemini: '', grok: '', openai: '' },
   ia_mode: 'aria',
   solo_model: 'claude',
-  ia_models: {
-    claude: 'claude-sonnet-4-6',
-    gemini: 'gemini-2.0-flash',
-    grok:   'grok-3-mini',
-    openai: 'gpt-4.1-mini',
-  },
   ia_roles: {
     ministre_model:  'claude',
     synthese_min:    'gemini',
@@ -951,22 +941,25 @@ const DEFAULT_PROMPTS_SYS = {
   }`,
   synthese_presidence: `Tu es le système d'arbitrage présidentiel du gouvernement ARIA.
 
-  Tu reçois les positions du PHARE (vision, long terme) et de la BOUSSOLE (mémoire, protection).
-  Ton rôle : détecter convergence ou divergence, puis formuler une PROPOSITION ADOPTABLE pour référendum.
+  Tu reçois les positions du PHARE (vision, direction, long terme)
+  et de la BOUSSOLE (mémoire, protection, humanité).
+  Ton rôle : déterminer s'il y a convergence ou divergence,
+  puis formater la décision pour référendum citoyen.
 
-  RÈGLE CONVERGENCE : si les deux décisions recommandent globalement la même action (même par angles différents) → convergence: true.
-  RÈGLE DIVERGENCE : seulement si les actions sont mutuellement exclusives → convergence: false.
-  En cas de doute → convergence: true.
+  Règles :
+  - Convergence : les deux positions aboutissent à la même décision
+  même par des raisonnements différents
+  - Divergence : les positions mènent à des choix incompatibles
+  → le peuple reçoit les DEUX options distinctes
+  - Ne tranche jamais toi-même — tu formats, tu n'arbitres pas
+  - Langage citoyen, accessible, sans jargon institutionnel
 
-  RÈGLE question_referendum : formule une PROPOSITION CONCRÈTE sous forme "Le gouvernement doit [action]."
-  ou "Approuvez-vous [mesure spécifique] ?" — PAS une reformulation de la question initiale.
-
-  Réponds UNIQUEMENT en JSON valide, sans texte avant ou après :
+  Réponds UNIQUEMENT au format JSON suivant :
   {
-    "convergence": true,
-    "position_phare_resume": "1 phrase — l'angle du Phare",
-    "position_boussole_resume": "1 phrase — l'angle de la Boussole",
-    "question_referendum": "Le gouvernement doit [action concrète issue de la délibération].",
+    "convergence": true | false,
+    "position_phare_resume": "1 phrase résumant la position du Phare",
+    "position_boussole_resume": "1 phrase résumant la position de la Boussole",
+    "question_referendum": "La question exacte soumise au peuple (si convergence : 1 option, si divergence : 2 options)",
     "enjeu_principal": "1 phrase — ce qui est vraiment en jeu pour les citoyens"
   }`,
   factcheck_evenement: `Tu es le système de cohérence factuelle du gouvernement ARIA.
@@ -1017,7 +1010,6 @@ export function getOptions() {
       ...DEFAULT_OPTIONS, ...saved,
       api_keys:          { ...DEFAULT_OPTIONS.api_keys, ...apiKeys, ...saved.api_keys },
       ia_roles:          { ...DEFAULT_OPTIONS.ia_roles, ...saved.ia_roles },
-      ia_models:         { ...DEFAULT_OPTIONS.ia_models, ...(saved.ia_models||{}) },
       gameplay:          { ...DEFAULT_OPTIONS.gameplay, ...saved.gameplay },
       world:             { ...DEFAULT_OPTIONS.world,    ...saved.world    },
       solo_model:        saved.solo_model || DEFAULT_OPTIONS.solo_model,
@@ -1149,6 +1141,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
   const [alliances,  setAlliances]  = useState(savedSession?.alliances || []);
   const [events,     setEvents]     = useState([]);
   const [aiRunning,  setAiRunning]  = useState(false);
+  const [aiError,    setAiError]    = useState(null); // null | { type:'quota'|'nokey'|'generic', details:string }
   const [notification, setNotif]   = useState(null);
   const [viewport,   setViewport]   = useState({
     W: savedSession?.W || 1400,
@@ -1160,7 +1153,8 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
   // ── Notification toast ─────────────────────────────────────────────────────
   const pushNotif = useCallback((msg, type = 'info', duration = 4000) => {
     if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
-    setNotif({ msg, type });
+    const t = type === 'error' ? 'err' : type;
+    setNotif({ message: msg, type: t });
     notifTimerRef.current = setTimeout(() => setNotif(null), duration);
   }, []);
 
@@ -1259,7 +1253,9 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
           const irlAI = aiData.aria_acceptance && Number.isFinite(+aiData.aria_acceptance)
             ? Math.round(Math.max(5, Math.min(95, +aiData.aria_acceptance))) : null;
           const irl = irlAI ?? calcAriaIRL(c);
-          built.push({ ...c, aria_irl: irl, aria_current: irl, ...(def.context_mode ? { context_mode: def.context_mode } : {}) });
+          // Le nom validé par l'utilisateur est prioritaire sur le nom généré par l'IA
+          const finalNom = def.nom || c.nom;
+          built.push({ ...c, nom: finalNom, aria_irl: irl, aria_current: irl, _fallback: false, ...(def.context_mode ? { context_mode: def.context_mode } : {}) });
         } else {
           // Fallback : si le pays a un realData → construction locale fidèle
           // sinon → pays local générique
@@ -1273,12 +1269,33 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
             );
           }
           const irl = calcAriaIRL(fallback);
-          built.push({ ...fallback, aria_irl: irl, aria_current: irl, ...(def.context_mode ? { context_mode: def.context_mode } : {}) });
-          pushNotif(`IA indisponible pour "${def.nom || 'ce pays'}" — mode local appliqué.`, 'warn');
+          built.push({ ...fallback, aria_irl: irl, aria_current: irl, _fallback: true, _errorCode: aiData?.code, ...(def.context_mode ? { context_mode: def.context_mode } : {}) });
         }
       } catch (e) {
         console.warn('[ARIA] startWithAI error:', e);
       }
+    }
+
+    // Détecte si TOUS les pays ont échoué (0 généré par l'IA)
+    const aiSuccessCount = built.filter(b => b._fromAI !== false).length;
+    if (built.length === 0) {
+      setAiRunning(false);
+      setAiError({ type: 'generic', details: 'Aucun pays n\'a pu être généré. Vérifiez votre clé API.',
+        countryDefs, W, H });
+      return;
+    }
+
+    const allFallback = built.every(b => b._fallback === true);
+    if (allFallback) {
+      // Tous en mode local — probablement quota ou clé invalide
+      const quotaHit = built.some(b => b._errorCode === 429);
+      setAiError({
+        type: quotaHit ? 'quota' : 'nokey',
+        details: quotaHit
+          ? 'Quota API dépassé (429 Too Many Requests). Patientez avant de relancer, ou passez en mode hors-ligne.'
+          : 'L\'IA n\'a pu générer aucun pays. Vérifiez votre clé API dans les paramètres, ou passez en mode hors-ligne.',
+        countryDefs, W, H
+      });
     }
 
     setCountries(built);
@@ -1288,7 +1305,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
     setPhase('game');
     setAiRunning(false);
     saveSession(world.seed, W, H, built, defaultAlliances);
-    pushNotif(`${built.length} pays générés. La simulation commence.`, 'ok');
+    if (!allFallback) pushNotif(`${built.length} pays générés. La simulation commence.`, 'ok');
   }, [initWorld, pushNotif]);
 
   // ── Cycle +5 ans ──────────────────────────────────────────────────────────
@@ -1457,95 +1474,6 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
     }
   }, [countries, pushNotif]);
 
-  // ── Ajouter un nouveau pays fictif en cours de partie ────────────────────
-  const addFictionalCountry = useCallback((def = null) => {
-    const FICTIONAL_POOL = [
-      { nom: 'Arvalia',   emoji: '🏔️', regime: 'democratie_liberale',        terrain: 'highland',  hue: 210 },
-      { nom: 'Zephoria',  emoji: '🌊', regime: 'republique_federale',         terrain: 'coastal',   hue: 175 },
-      { nom: 'Morvaine',  emoji: '🌲', regime: 'monarchie_constitutionnelle', terrain: 'foret',     hue: 130 },
-      { nom: 'Sundera',   emoji: '☀️', regime: 'democratie_directe',          terrain: 'desert',    hue: 42  },
-      { nom: 'Kelvoria',  emoji: '⚡', regime: 'technocratie',                terrain: 'island',    hue: 260 },
-      { nom: 'Periath',   emoji: '🌿', regime: 'republique_federale',         terrain: 'tropical',  hue: 88  },
-      { nom: 'Drakmoor',  emoji: '🌑', regime: 'oligarchie',                  terrain: 'toundra',   hue: 300 },
-      { nom: 'Caeloria',  emoji: '🕊️', regime: 'democratie_liberale',        terrain: 'coastal',   hue: 195 },
-    ];
-
-    // Si def fourni par le modal : utiliser ses paramètres
-    // Sinon : pioche automatique dans le pool (fallback)
-    let pick;
-    if (def?.nom) {
-      // Trouver un emoji/hue cohérent avec le terrain
-      const TERRAIN_EMOJI = { highland:'🏔️', coastal:'🌊', foret:'🌲', desert:'☀️', island:'🏝️', tropical:'🌿', toundra:'❄️', inland:'🌄', archipelago:'🏝️' };
-      const TERRAIN_HUE   = { highland:210, coastal:175, foret:130, desert:42, island:195, tropical:88, toundra:220, inland:150, archipelago:195 };
-      pick = {
-        nom:    def.nom,
-        emoji:  TERRAIN_EMOJI[def.terrain] || '🌍',
-        regime: def.regime  || 'democratie_liberale',
-        terrain:def.terrain || 'coastal',
-        hue:    TERRAIN_HUE[def.terrain]   || 200,
-      };
-    } else {
-      const usedNames = new Set(countries.map(c => c.nom));
-      const available = FICTIONAL_POOL.filter(p => !usedNames.has(p.nom));
-      const pool      = available.length > 0 ? available : FICTIONAL_POOL;
-      pick            = pool[countries.length % pool.length];
-    }
-
-    const seed    = strToSeed(pick.nom + Date.now());
-    const rand    = seededRand(seed);
-    const regime  = REGIMES[pick.regime]  || REGIMES.republique_federale;
-    const terrain = TERRAINS[pick.terrain] || TERRAINS.coastal;
-    const coastal = ['coastal', 'island', 'archipelago'].includes(pick.terrain);
-
-    const spawn = worldDataRef.current
-      ? findSpawnPoint(worldDataRef.current, countries, coastal ? 'island' : 'continent')
-      : { cx: 200 + rand() * 1000, cy: 150 + rand() * 500 };
-
-    const { cx, cy } = spawn;
-    const size    = 52 + rand() * 18;
-    const couleur = `hsl(${pick.hue}, 55%, 34%)`;
-    const pop     = Math.round((3 + rand() * 12) * 1_000_000);
-    const res     = calcRessources(pick.terrain, seed);
-    const irl     = Math.round(20 + rand() * 50);
-
-    const newCountry = {
-      id:            pick.nom.toLowerCase().replace(/[^a-z0-9]/g,'-') + '-' + Date.now().toString(36),
-      nom:           pick.nom,
-      emoji:         pick.emoji,
-      couleur,
-      regime:        pick.regime,
-      regimeName:    regime.name,
-      regimeEmoji:   regime.emoji,
-      terrain:       pick.terrain,
-      terrainName:   terrain.name,
-      coastal,
-      description:   `Nouvelle nation fondée en An ${countries[0]?.annee || 2026}.`,
-      leader:        null,
-      annee:         countries[0]?.annee || 2026,
-      population:    pop,
-      tauxNatalite:  Math.round(8  + rand() * 10),
-      tauxMortalite: Math.round(6  + rand() * 8),
-      satisfaction:  Math.round(45 + rand() * 30),
-      humeur:        getHumeur(55).label,
-      humeur_color:  getHumeur(55).color,
-      popularite:    50,
-      ressources:    res,
-      coefficients:  regime.poids_ministeriel,
-      cx, cy, size, seed,
-      svgPath:       genOrganicPath(cx, cy, size, seed, 10, 0.28),
-      influenceRadius: calcInfluenceRadius(pop, coastal, res),
-      relations:     {},
-      chronolog:     [],
-      economie:      100,
-      aria_irl:      irl,
-      aria_current:  irl,
-      isLocal:       true,
-    };
-
-    setCountries(prev => [...prev, newCountry]);
-    pushNotif(`🌍 ${pick.nom} rejoint le monde.`, 'ok', 3500);
-  }, [countries, pushNotif]);
-
   // ── Alliance / rupture ────────────────────────────────────────────────────
   const setRelation = useCallback((idA, idB, type) => {
     // Met à jour les relations dans les deux pays concernés
@@ -1612,11 +1540,11 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
 
   return {
     // State
-    phase, worldData, countries, alliances, events, aiRunning, notification, viewport,
+    phase, worldData, countries, alliances, events, aiRunning, aiError, clearAiError: () => setAiError(null), notification, viewport,
     // Setters directs
     setCountries, setViewport,
     // Actions
-    startLocal, startWithAI, advanceCycle, doSecession, addFictionalCountry, setRelation, resetWorld, pushNotif,
+    startLocal, startWithAI, advanceCycle, doSecession, setRelation, resetWorld, pushNotif,
     // Getters pour App
     getYear, getCycle, getCountries,
   };

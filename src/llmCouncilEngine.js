@@ -242,15 +242,19 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases argumentées", "mot_cle
   // ── Synthèse ministère ───────────────────────────────────────────────────
   const keys = getApiKeys();
 
+  const validAI = r => r && !r.error; // filtre les { error: true } retournés par callAI
+
   let resA = null, resB = null;
   if (keys.claude || keys.gemini) {
-    [resA, resB] = await Promise.all([
+    const [rA, rB] = await Promise.all([
       callAI(pA, 'council_ministre').catch(() => null),
       callAI(pB, 'council_ministre').catch(() => null),
     ]);
+    resA = validAI(rA) ? rA : null;
+    resB = validAI(rB) ? rB : null;
   }
 
-  // Fallback local si IA indisponible
+  // Fallback local si IA indisponible ou erreur
   if (!resA) resA = localMinisterFallback(idA, question);
   if (!resB) resB = localMinisterFallback(idB, question);
 
@@ -258,7 +262,8 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases argumentées", "mot_cle
   let synthese = null;
   if (keys.claude || keys.gemini) {
     const pSynth = buildSyntheseMinisterePrompt(ministry, resA, resB, question, ctx);
-    synthese = await callAI(pSynth, 'council_synthese_min').catch(() => null);
+    const rSynth = await callAI(pSynth, 'council_synthese_min').catch(() => null);
+    synthese = validAI(rSynth) ? rSynth : null;
   }
   if (!synthese) synthese = localSyntheseFallback(ministry, resA, resB);
 
@@ -312,7 +317,8 @@ Question traitée : "${question}"
 Synthèse du ministère principal : "${syntheseText}"
 ${annotation}
 Réponds UNIQUEMENT en JSON : { "annotation": "1-2 phrases, ton sobre, angle spécifique à ton ministère" }`;
-        result = await callAI(p, 'council_annotation').catch(() => null);
+        const raw = await callAI(p, 'council_annotation').catch(() => null);
+        result = (raw && !raw.error) ? raw : null;
       }
 
       return {
@@ -379,12 +385,16 @@ ${boussoleData.essence}
 ${context}
 Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — mémoire et protection, nuancé", "decision": "1 phrase — quelle décision tu recommandes" }`;
 
+  const validAI = r => r && !r.error;
+
   let phare = null, boussole = null;
   if (keys.claude || keys.gemini) {
-    [phare, boussole] = await Promise.all([
+    const [rPh, rBo] = await Promise.all([
       callAI(pPhare, 'council_phare').catch(() => null),
       callAI(pBoussole, 'council_boussole').catch(() => null),
     ]);
+    phare    = validAI(rPh) ? rPh : null;
+    boussole = validAI(rBo) ? rBo : null;
   }
 
   if (!phare) {
@@ -413,7 +423,8 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — mémoire et protect
   let synthese = null;
   if (keys.claude || keys.gemini) {
     const pSynth = buildSynthesePresidencePrompt(phare, boussole, question, country);
-    synthese = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
+    const rSynth = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
+    synthese = validAI(rSynth) ? rSynth : null;
   }
   if (!synthese) {
     // Évaluation contextuelle de la convergence
@@ -442,6 +453,9 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — mémoire et protect
     };
   }
 
+  console.log('[ARIA PRES] phare:', JSON.stringify(phare));
+  console.log('[ARIA PRES] phareData:', JSON.stringify(phareData));
+  console.log('[ARIA PRES] synthese:', JSON.stringify(synthese));
   return {
     phare:    { ...phareData,    ...phare },
     boussole: { ...boussoleData, ...boussole },
