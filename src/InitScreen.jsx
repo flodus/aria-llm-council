@@ -909,8 +909,20 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const [ariaMode,    setAriaMode]    = useState(() => loadOpts().ia_mode || 'aria');
   const [boardGame,   setBoardGame]   = useState(() => !!(loadOpts().gameplay?.mode_board_game));
   const apiKeys = loadKeys();
-  // Supporter les clés en tableau (multi-clés) ou string (legacy)
-  const hasProviderKey = (id) => { const v = apiKeys[id]; return Array.isArray(v) ? v.some(k=>k?.trim()) : !!v; };
+  const hasProviderKey = (id) => {
+    const v = apiKeys[id];
+
+    // DEBUG : Pour voir exactement ce qui arrive et d'où vient l'erreur
+    console.log(`Vérification provider [${id}]:`, v, "Type:", typeof v);
+
+    if (Array.isArray(v)) {
+      // On sécurise le parcours du tableau
+      return v.some(k => typeof k === 'string' && k.trim().length > 0);
+    }
+
+    // On sécurise la valeur unique
+    return typeof v === 'string' && v.trim().length > 0;
+  };
   const availProviders = ['openrouter','claude','gemini','grok','openai'].filter(id => hasProviderKey(id));
   const p0 = availProviders[0] || 'openrouter';
   const p1 = availProviders[1] || p0;
