@@ -17,3 +17,7 @@ ARIA n'est pas qu'un projet de code, c'est une exploration visuelle et fonctionn
 - ✨ **Feedback visuel & Navigation** : Concevoir le système de bascule fluide entre les modes **Globe**, **Mercator** et **Screenshot**, tout en créant des transitions (pliages, pulses) qui donnent une "âme" mécanique à l'interface.
 
 *Si vous souhaitez participer à la construction de cette démocratie holistique, ouvrez une issue ou proposez votre vision par une PR. Rejoignez le Conseil.*
+
+---
+
+*Voir [README.md](README.md) pour l'installation · [README.fr.md](README.fr.md) pour la doc française*

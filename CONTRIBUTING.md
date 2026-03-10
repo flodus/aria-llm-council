@@ -17,3 +17,6 @@ ARIA is not just a code project; it is a visual and functional exploration. To b
 
 *If you want to participate in building this holistic democracy, open an issue or propose your vision via a PR. Join the Council.*
 
+---
+
+*See [README.md](README.md) for setup · [README.fr.md](README.fr.md) for French docs*
