@@ -229,22 +229,11 @@ ARIA is currently developed with a French codebase. **The roadmap includes a ful
 
 ---
 
-## 🛠️ Call for Architecture (Seeking Talents)
+## 🛠️ Join the Council
+We are actively looking for contributors to help refine the ARIA simulation engine and its visual interface. 
 
-ARIA is not just a code project; it is a visual and functional exploration. To bring the "War Room" interface to its peak, I am looking for collaborators with a dual sensitivity: **the art of Creative Coding and the rigor of strategic UI.**
-
-**You are the ideal profile if:**
-- You master **Three.js / React-Three-Fiber** and view shaders not as math, but as brushes.
-- You understand the balance between **"tactile low-poly"** and the **readability of critical data**.
-- You are capable of transforming a simple "map" into a **living command interface**, where every light stream tells the story of a nation.
-
-**Priority Missions:**
-- 🌐 **Procedural Globe Deployment**: Bringing the ARIA sphere to life while respecting the neon-minimalist style.
-- 📐 **Isometric Interface (Mercator)**: Optimizing the "War Room" projection for fluid reading of ministerial indicators.
-- 📸 **Screenshot Module**: *(optional)* Implementing instant archiving of simulation states for mandate reports.
-- ✨ **Visual Feedback & Navigation**: Designing fluid transitions between **Globe**, **Mercator**, and **Screenshot** modes, creating the mechanical "soul" of the interface.
-
-*If you want to participate in building this holistic democracy, open an issue or propose your vision via a PR. Join the Council.*
+**Interested in building this holistic democracy?**
+Check out our [CONTRIBUTING.md](CONTRIBUTING.md) to see current priority missions (Globe deployment, Mercator UI, and more).
 
 ---
 

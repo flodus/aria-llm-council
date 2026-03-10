@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from 'fs';
 
 // Liste des paires de fichiers à comparer
 const filesToValidate = [
