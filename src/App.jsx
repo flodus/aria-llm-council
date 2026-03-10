@@ -5,6 +5,8 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import BASE_AGENTS    from '../templates/base_agents.json';
+import BASE_AGENTS_EN from '../templates/base_agents_en.json';
 import './App.css';
 
 import Dashboard        from './Dashboard_p3';
@@ -14,6 +16,7 @@ import CountryPanel     from './CountryPanel';
 import LegitimiteOverlay from './LegitimiteOverlay';
 import { EmptyPanel }   from './CountryPanel';
 import { FONT, COLOR }  from './ariaTheme';
+import { loadLang } from './ariaI18n';
 
 const TABS = [
   { id: 'map',      label: 'MAP-GRID'    },
@@ -44,6 +47,7 @@ export default function App() {
   const [currentCycle,    setCurrentCycle]    = useState(0);
   const [liveCountries,   setLiveCountries]   = useState([]);
   const [chronologKey,    setChronologKey]    = useState(0);
+  const [resetKey,        setResetKey]        = useState(0);
   const [hasApiKeys,      setHasApiKeys]      = useState(() => {
     try { const k = JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); return !!(k.claude||k.gemini); }
     catch { return false; }
@@ -150,6 +154,18 @@ export default function App() {
       localStorage.removeItem('aria_session_alliances');
       localStorage.removeItem('aria_chronolog_cycles');
     } catch {}
+    // Réécrire aria_agents_override avec la langue courante
+    try {
+      const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
+      const cur = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
+      const merged = JSON.parse(JSON.stringify(BASE));
+      if (cur) {
+        merged.active_ministries = cur.active_ministries;
+        merged.active_presidency = cur.active_presidency;
+        merged.active_ministers  = cur.active_ministers;
+      }
+      localStorage.setItem('aria_agents_override', JSON.stringify(merged));
+    } catch {}
     ariaRef.current?.resetChronolog?.();
     setWorldGenerated(false);
     setSelectedCountry(null);
@@ -160,13 +176,28 @@ export default function App() {
     setLiveCountries([]);
     audioStarted.current = false;
     ambientRef.current?.pause();
+    setResetKey(k => k + 1);
   }, []);
 
   // ── Rafraîchir hasApiKeys après saisie dans InitScreen ────────────────
   const refreshKeys = useCallback(() => {
-    try { const k = JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); setHasApiKeys(!!(k.claude||k.gemini)); }
+    try {
+      const k = JSON.parse(localStorage.getItem('aria_api_keys')||'{}');
+      const nowHasKeys = !!(k.claude||k.gemini||k.grok||k.openai);
+      const hadKeys = hasApiKeys;
+      setHasApiKeys(nowHasKeys);
+      // Informe si le changement affecte une partie en cours
+      if (worldGenerated && nowHasKeys !== hadKeys) {
+        ariaRef.current?.pushNotif?.(
+          nowHasKeys
+            ? '🔑 Clé API ajoutée — redémarrez une partie pour activer le mode IA.'
+            : "🔑 Clé API supprimée — les délibérations restent actives jusqu'à la fin de la partie.",
+          'info', 6000
+        );
+      }
+    }
     catch { setHasApiKeys(false); }
-  }, []);
+  }, [hasApiKeys, worldGenerated]);
 
   // ── Année + cycle pour le header ──────────────────────────────────────
   const yearLabel = currentYear
@@ -188,6 +219,7 @@ export default function App() {
       {!worldGenerated && page !== 'settings' && (
         <div className="init-overlay">
           <InitScreen
+            key={resetKey}
             worldName={worldName} setWorldName={setWorldName}
             onLaunchLocal={handleLaunchLocal} onLaunchAI={handleLaunchAI}
             hasApiKeys={hasApiKeys} onRefreshKeys={refreshKeys}
@@ -267,7 +299,6 @@ export default function App() {
           onCountriesUpdate={handleCountriesUpdate}
           onReset={handleReset}
           chronologKey={chronologKey}
-          isSettingsOpen={page === 'settings'}
         />
       </main>
 

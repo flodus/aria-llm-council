@@ -5,7 +5,11 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef } from 'react';
-import { REGIMES, getOptions, DEFAULT_OPTIONS } from './Dashboard_p1';
+import { REGIMES, getStats, getOptions, DEFAULT_OPTIONS } from './Dashboard_p1';
+import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './ariaData';
+import BASE_AGENTS    from '../templates/base_agents.json';
+import BASE_AGENTS_EN from '../templates/base_agents_en.json';
+import { loadLang, useLocale } from './ariaI18n';
 
 // ─── Primitives UI ───────────────────────────────────────────────────────────
 const FONT  = "'JetBrains Mono', monospace";
@@ -28,18 +32,18 @@ const BTN_P = {
   letterSpacing:'0.10em', padding:'0.32rem 0.9rem', borderRadius:'2px', cursor:'pointer',
 };
 
-const REGIME_LIST = [
-  ['democratie_liberale','Démocratie libérale 🗳️'],
-  ['republique_federale','République fédérale 🏛️'],
-  ['monarchie_constitutionnelle','Monarchie constitutionnelle 👑'],
-  ['democratie_directe','Démocratie directe 🤝'],
-  ['technocratie','Technocratie ⚙️'],
-  ['oligarchie','Oligarchie 💼'],
-  ['junte_militaire','Junte militaire ⚔️'],
-  ['regime_autoritaire','Régime autoritaire 🔒'],
-  ['monarchie_absolue','Monarchie absolue 👸'],
-  ['theocracie','Théocratie ✝️'],
-];
+function getLocalizedNom(country) {
+  if (!country) return '';
+  if (!country.id) return country.nom || '';
+  if (loadLang() !== 'en') return country.nom || '';
+  const enData = REAL_COUNTRIES_DATA_EN.find(r => r.id === country.id);
+  return enData?.nom || country.nom || '';
+}
+
+function getRegimeList() {
+  const regimes = getStats().regimes || {};
+  return Object.entries(regimes).map(([k, v]) => [k, `${v.name} ${v.emoji || ''}`]);
+}
 const BASE_IDS = ['justice','economie','defense','sante','education','ecologie','chance'];
 
 function readOv()   { try { return JSON.parse(localStorage.getItem('aria_agents_override')||'null'); } catch { return null; } }
@@ -47,13 +51,51 @@ function writeOv(d) { try { localStorage.setItem('aria_agents_override', JSON.st
 
 // ─── Composant ───────────────────────────────────────────────────────────────
 export default function ConstitutionModal({ country, onSave, onClose }) {
+  const { lang } = useLocale();
+  // ── Traductions UI inline ──────────────────────────────────────────────
+  const isEn = lang === 'en';
+  const tr = {
+    title:        isEn ? '🏛️ Government'           : '🏛️ Gouvernement',
+    tabRegime:    isEn ? 'REGIME'                   : 'RÉGIME',
+    tabPres:      isEn ? 'PRESIDENCY'               : 'PRÉSIDENCE',
+    tabMins:      isEn ? 'MINISTRIES'               : 'MINISTÈRES',
+    tabMinisters: isEn ? 'MINISTERS'                : 'MINISTRES',
+    secRegime:    isEn ? 'POLITICAL REGIME'         : 'RÉGIME POLITIQUE',
+    secLeader:    isEn ? 'HEAD OF STATE'            : 'CHEF D\'ÉTAT',
+    secContext:   isEn ? 'CONTEXT IN DELIBERATIONS' : 'CONTEXTE DANS LES DÉLIBÉRATIONS',
+    contextHint:  isEn ? 'Leave on "Inherit" to follow the global setting (Settings).'
+                       : '{tr.contextHint}',
+    ctxInherit:   isEn ? '⚙️ Inherit global'        : '⚙️ Hérite du global',
+    ctxInheritH:  isEn ? 'Follows the Settings rule': 'Suit le réglage de Settings',
+    ctxAuto:      isEn ? '🤖 Auto'                  : '🤖 Auto',
+    ctxRich:      isEn ? '📖 Enriched'              : '📖 Enrichi',
+    ctxRichH:     isEn ? 'Full context — prompts AI to reason historically'
+                       : 'Contexte complet — incite l\'IA à raisonner historiquement',
+    ctxStats:     isEn ? '📊 Stats only'            : '📊 Stats seules',
+    ctxStatsH:    isEn ? 'Numbers only — neutral, fewer hallucinations'
+                       : 'Chiffres uniquement — neutre, moins d\'hallucinations',
+    ctxOff:       isEn ? '🚫 Disabled'              : '🚫 Désactivé',
+    ctxOffH:      isEn ? 'No context — blind deliberation for this country'
+                       : 'Aucun contexte — délibération aveugle pour ce pays',
+    secCustomCtx: isEn ? 'CUSTOM CONTEXT'           : 'CONTEXTE PERSONNALISÉ',
+    secPres:      isEn ? 'PRESIDENCY'               : 'PRÉSIDENCE',
+    secMins:      isEn ? 'MINISTRIES'               : 'MINISTÈRES',
+    crisisTitle:  isEn ? 'CRISIS MANAGEMENT'        : 'GESTION DE CRISE',
+    crisisLabel:  isEn ? '🎲 Ministry of Chance & Crises' : '🎲 Ministère de la Chance & Crises',
+    crisisDesc:   isEn ? 'Activates the 7th ministry for emergency management.'
+                       : '{tr.crisisDesc}',
+    assignedMins: isEn ? 'ASSIGNED MINISTERS'       : 'MINISTRES ASSIGNÉS',
+    secMinisters: isEn ? 'MINISTERS'                : 'MINISTRES',
+    cancel:       isEn ? 'Cancel'                   : 'Annuler',
+    apply:        isEn ? '✓ Apply Configuration'    : '{tr.apply}',
+  };
   const globalGov = getOptions().defaultGovernance || DEFAULT_OPTIONS.defaultGovernance;
   const current   = { ...globalGov, ...(country?.governanceOverride || {}) };
 
   const [agents, setAgents] = useState(null);
   const [tab,    setTab]    = useState('regime');
   const [regime, setRegime] = useState(country?.regime || 'democratie_liberale');
-  const [leader, setLeader] = useState(country?.leader || '');
+  const [leader, setLeader] = useState(typeof country?.leader === 'string' ? country.leader : (country?.leader?.name || ''));
   const [contextMode,     setContextMode]     = useState(country?.context_mode     || '');      // '' = hérite global
   const [contextOverride, setContextOverride] = useState(country?.contextOverride  || '');
 
@@ -91,7 +133,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
   useEffect(() => {
     const ov = readOv();
     if (ov) { setAgents(ov); return; }
-    setAgents(JSON.parse(JSON.stringify(BASE_AGENTS)));
+    const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
+    setAgents(JSON.parse(JSON.stringify(BASE)));
   }, []);
 
   useEffect(() => {
@@ -176,13 +219,13 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
         {/* Header */}
         <div style={S.header}>
-          <span style={S.headerTitle}>⚖️ Constitution — {country?.nom||'ce pays'}</span>
+          <span style={S.headerTitle}>{tr.title} — {getLocalizedNom(country)||(isEn?'this country':'ce pays')}</span>
           <button style={S.closeBtn} onClick={onClose}>✕</button>
         </div>
 
         {/* Tabs */}
         <div style={{ display:'flex', borderBottom:'1px solid rgba(200,164,74,0.12)' }}>
-          {[['regime','RÉGIME'],['presidency','PRÉSIDENCE'],['ministries','MINISTÈRES'],['ministers','MINISTRES']].map(([t,lbl])=>(
+          {[["regime",tr.tabRegime],["presidency",tr.tabPres],["ministries",tr.tabMins],["ministers",tr.tabMinisters]].map(([t,lbl])=>(
             <button key={t} style={tabSt(t)}
               onClick={()=>{ setTab(t); if(scrollRef.current) scrollRef.current.scrollTop=0; }}>
               {lbl}
@@ -199,30 +242,30 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             {/* ── RÉGIME ─────────────────────────────────────────── */}
             {tab==='regime' && (<>
               <section style={S.sec}>
-                <h3 style={S.secTitle}>RÉGIME POLITIQUE</h3>
+                <h3 style={S.secTitle}>{tr.secRegime}</h3>
                 <select style={{...INPUT,cursor:'pointer'}} value={regime} onChange={e=>setRegime(e.target.value)}>
-                  {REGIME_LIST.map(([k,v])=><option key={k} value={k}>{v}</option>)}
+                  {getRegimeList().map(([k,v])=><option key={k} value={k}>{v}</option>)}
                 </select>
               </section>
               <section style={S.sec}>
-                <h3 style={S.secTitle}>CHEF D'ÉTAT</h3>
+                <h3 style={S.secTitle}>{tr.secLeader}</h3>
                 <input style={INPUT} value={leader} onChange={e=>setLeader(e.target.value)} placeholder="Nom du dirigeant…"/>
               </section>
 
               {/* ── CONTEXTE PAYS ─────────────────────────────────── */}
               <section style={S.sec}>
-                <h3 style={S.secTitle}>CONTEXTE DANS LES DÉLIBÉRATIONS</h3>
+                <h3 style={S.secTitle}>{tr.secContext}</h3>
                 <p style={S.hint}>
                   Contrôle quelles infos sur ce pays sont injectées dans les prompts IA.
-                  Laissez sur "Hérite" pour suivre le réglage global (Settings).
+                  {tr.contextHint}
                 </p>
                 <div style={{display:'flex',flexDirection:'column',gap:'0.32rem'}}>
                   {[
-                    ['',           '⚙️ Hérite du global',    'Suit le réglage de Settings'],
+                    ['', tr.ctxInherit, tr.ctxInheritH],
                     ['auto',       '🤖 Auto',                'Stats + description si disponible'],
-                    ['rich',       '📖 Enrichi',             'Contexte complet — incite l\'IA à raisonner historiquement'],
-                    ['stats_only', '📊 Stats seules',        'Chiffres uniquement — neutre, moins d\'hallucinations'],
-                    ['off',        '🚫 Désactivé',           'Aucun contexte — délibération aveugle pour ce pays'],
+                    ['rich', tr.ctxRich, tr.ctxRichH],
+                    ['stats_only', tr.ctxStats, tr.ctxStatsH],
+                    ['off', tr.ctxOff, tr.ctxOffH],
                   ].map(([val,lbl,hint]) => {
                     const on = contextMode === val;
                     return (
@@ -245,7 +288,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
               {/* Contexte custom libre */}
               <section style={S.sec}>
-                <h3 style={S.secTitle}>CONTEXTE PERSONNALISÉ</h3>
+                <h3 style={S.secTitle}>{tr.secCustomCtx}</h3>
                 <p style={S.hint}>
                   Texte libre injecté tel quel dans chaque délibération de ce pays.
                   Si renseigné, remplace <em>entièrement</em> le contexte auto/enrichi.
@@ -309,7 +352,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             {tab==='ministries' && (<>
               {/* ── Header + chips toggle actif/inactif ── */}
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.3rem'}}>
-                <h3 style={S.secTitle}>MINISTÈRES <span style={S.badge}>{activeMins.length}/{agents.ministries.length}</span></h3>
+                <h3 style={S.secTitle}>{tr.secMins} <span style={S.badge}>{activeMins.length}/{agents.ministries.length}</span></h3>
                 <button style={{...BTN_S,fontSize:'0.40rem',padding:'0.14rem 0.38rem'}} onClick={()=>setActiveMins(agents.ministries.map(m=>m.id))}>Tous actifs</button>
               </div>
               <div style={{display:'flex',flexWrap:'wrap',gap:'0.32rem',marginBottom:'0.55rem'}}>
@@ -343,7 +386,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
               {/* ── GESTION DE CRISE ── */}
               <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',marginTop:'0.4rem',paddingTop:'0.55rem',marginBottom:'0.45rem'}}>
                 <div style={{fontFamily:FONT,fontSize:'0.38rem',letterSpacing:'0.12em',color:'rgba(140,160,200,0.40)',marginBottom:'0.32rem'}}>
-                  GESTION DE CRISE
+                  {tr.crisisTitle}
                 </div>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
                   padding:'0.45rem 0.65rem',borderRadius:'3px',
@@ -353,7 +396,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                   onClick={()=>setActiveMins(p=>p.includes('chance')?p.filter(x=>x!=='chance'):[...p,'chance'])}>
                   <div>
                     <div style={{fontFamily:FONT,fontSize:'0.44rem',color:activeMins.includes('chance')?'rgba(200,164,74,0.88)':'rgba(160,175,210,0.50)',letterSpacing:'0.06em'}}>
-                      🎲 Ministère de la Chance &amp; Crises
+                      {tr.crisisLabel}
                     </div>
                     <div style={{fontSize:'0.38rem',color:'rgba(120,140,180,0.38)',marginTop:'0.1rem'}}>
                       Active le 7e ministère pour la gestion des urgences
@@ -405,8 +448,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
                     {/* Sélection ministres assignés */}
                     <div style={{...S.label,marginBottom:'0.28rem'}}>
-                      MINISTRES ASSIGNÉS
-                      <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0',marginLeft:'0.5rem'}}>— cliquez pour assigner / retirer</span>
+                      {tr.assignedMins}
+                      <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0',marginLeft:'0.5rem'}}>{isEn ? '— click to assign / remove' : '— cliquez pour assigner / retirer'}</span>
                     </div>
                     <div style={{display:'flex',flexWrap:'wrap',gap:'0.3rem',marginBottom:'0.55rem'}}>
                       {Object.entries(agents.ministers).map(([mk,min])=>{
@@ -444,7 +487,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                         {assignedKeys.map(mk=>{
                           const min = agents.ministers[mk];
                           if (!min) return null;
-                          const promptVal = (m.minister_prompts||{})[mk] || '';
+                          const promptVal = (m.ministerPrompts || m.minister_prompts || {})[mk] || '';
                           return (
                             <div key={mk} style={{marginBottom:'0.35rem'}}>
                               <div style={{display:'flex',alignItems:'center',gap:'0.3rem',marginBottom:'0.14rem'}}>
@@ -455,8 +498,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                                 value={promptVal}
                                 placeholder={`Rôle de ${min.name} dans ${m.name}…`}
                                 onChange={e=>{
-                                  const prompts = {...(m.minister_prompts||{}), [mk]:e.target.value};
-                                  setAgents(a=>({...a,ministries:a.ministries.map((x,i)=>i===mi?{...x,minister_prompts:prompts}:x)}));
+                                  const prompts = {...(m.ministerPrompts || m.minister_prompts || {}), [mk]:e.target.value};
+                                  setAgents(a=>({...a,ministries:a.ministries.map((x,i)=>i===mi?{...x,ministerPrompts:prompts}:x)}));
                                 }}/>
                             </div>
                           );
@@ -482,7 +525,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                   </div>
                   <textarea style={{...INPUT,minHeight:'34px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.38rem'}} value={nMinistryD.mission} onChange={e=>setNMinistryD(d=>({...d,mission:e.target.value}))} placeholder="Mission du ministère…"/>
                   <div style={{display:'flex',gap:'0.38rem',justifyContent:'flex-end'}}>
-                    <button style={BTN_S} onClick={()=>setShowNewMinistry(false)}>Annuler</button>
+                    <button style={BTN_S} onClick={()=>setShowNewMinistry(false)}>{tr.cancel}</button>
                     <button style={{...BTN_P,opacity:nMinistryD.name&&nMinistryD.id?1:0.35}} disabled={!nMinistryD.name||!nMinistryD.id} onClick={addMinistry}>Créer →</button>
                   </div>
                 </section>
@@ -495,12 +538,12 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             {tab==='ministers' && (<>
               {/* ── Grille boutons icône ─────────────────────────── */}
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.3rem'}}>
-                <h3 style={S.secTitle}>{Object.keys(agents.ministers).length} MINISTRES</h3>
+                <h3 style={S.secTitle}>{Object.keys(agents.ministers).length} {tr.secMinisters}</h3>
                 <button style={{...BTN_S,fontSize:'0.40rem',padding:'0.14rem 0.38rem'}} onClick={()=>setActiveMinsters(null)}>Tous actifs</button>
               </div>
               <div style={{fontFamily:FONT,fontSize:'0.37rem',color:'rgba(140,155,185,0.35)',
                 marginBottom:'0.32rem',letterSpacing:'0.06em'}}>
-                1 clic = ouvrir la fiche · 2e clic = activer / désactiver
+                clic = ouvrir · reclic = désactiver
               </div>
               <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',marginBottom:'0.5rem'}}>
                 {Object.entries(agents.ministers).map(([key,min])=>{
@@ -519,7 +562,19 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                         opacity: on ? 1 : 0.28,
                         filter: on ? 'none' : 'grayscale(0.7)',
                         minWidth:'3.2rem', transition:'all 0.12s'}}
-                      onClick={()=>setOpenMin(p=>p===key?null:key)}>
+                      onClick={()=>{
+                        const isCurrentlyOpen = openMin === key;
+                        if (isCurrentlyOpen) {
+                          // reclic = désactiver + fermer
+                          toggleMinster(key);
+                          setOpenMin(null);
+                        } else {
+                          // 1er clic = activer si inactif + ouvrir fiche
+                          const curActive = activeMinsters === null || activeMinsters.includes(key);
+                          if (!curActive) toggleMinster(key);
+                          setOpenMin(key);
+                        }
+                      }}>
                       <span style={{fontSize:'1.1rem',lineHeight:1,filter:on?'none':'grayscale(1)',opacity:on?1:0.35,transition:'all 0.12s'}}>{min.emoji||'👤'}</span>
                       <span style={{fontFamily:FONT,fontSize:'0.36rem',color:isOpen?min.color+'EE':on?min.color+'99':'rgba(140,160,200,0.40)',
                         letterSpacing:'0.04em',textAlign:'center',lineHeight:1.3,maxWidth:'3.8rem',
@@ -603,7 +658,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                   <div style={{...S.label,marginBottom:'0.12rem'}}>ANGLE D'ANNOTATION <span style={{fontWeight:'normal',color:'rgba(90,110,150,0.35)'}}>— question posée lors des annotations inter-ministérielles</span></div>
                   <textarea style={{...INPUT,minHeight:'26px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.38rem'}} value={nMinD.annotation} onChange={e=>setNMinD(d=>({...d,annotation:e.target.value}))} placeholder="Ex : Quelle est la position du ministre sur…"/>
                   <div style={{display:'flex',gap:'0.38rem',justifyContent:'flex-end'}}>
-                    <button style={BTN_S} onClick={()=>setShowNewMin(false)}>Annuler</button>
+                    <button style={BTN_S} onClick={()=>setShowNewMin(false)}>{tr.cancel}</button>
                     <button style={{...BTN_P,opacity:nMinD.name&&nMinD.id?1:0.35}} disabled={!nMinD.name||!nMinD.id} onClick={addMinister}>Créer →</button>
                   </div>
                 </section>
@@ -617,8 +672,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
         {/* Footer */}
         <div style={STYLES.footer}>
-          <button style={STYLES.cancelBtn} onClick={onClose}>Annuler</button>
-          <button style={STYLES.saveBtn} onClick={handleSave}>✓ Appliquer la Constitution</button>
+          <button style={STYLES.cancelBtn} onClick={onClose}>{tr.cancel}</button>
+          <button style={STYLES.saveBtn} onClick={handleSave}>{tr.apply}</button>
         </div>
 
       </div>
@@ -647,4 +702,3 @@ const STYLES = {
   cancelBtn:{ background:'none',border:'1px solid rgba(255,255,255,0.10)',color:'rgba(200,215,240,0.50)',fontFamily:FONT,fontSize:'0.52rem',letterSpacing:'0.12em',padding:'0.42rem 1rem',borderRadius:'2px',cursor:'pointer' },
   saveBtn:{ background:'rgba(200,164,74,0.10)',border:'1px solid rgba(200,164,74,0.42)',color:'rgba(200,164,74,0.90)',fontFamily:FONT,fontSize:'0.52rem',letterSpacing:'0.12em',padding:'0.42rem 1.2rem',borderRadius:'2px',cursor:'pointer' },
 };
-import BASE_AGENTS from '../templates/base_agents.json';

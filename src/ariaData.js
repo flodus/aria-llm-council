@@ -1050,3 +1050,752 @@ export const REAL_COUNTRIES_DATA = [
         secteurs:['pétrole','construction','finance','tourisme'],
         ressources:['petrole','energie','mineraux'] },
     ];
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  LOCAL_DELIBERATION_EN
+//  English version of LOCAL_DELIBERATION — activated when aria_lang === 'en'
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const LOCAL_DELIBERATION_EN = {
+
+    ministers: {
+
+        initiateur: {
+            cycle_normal: [
+                "The status quo is our enemy. Five years gone, five years behind. Let's push through an immediate energy sector reform.",
+                "Every cycle of hesitation costs more than action. A nation that doesn't move forward falls behind.",
+                "I've identified three immediate levers. None require a vote. We start now.",
+                "While we deliberate, our neighbours act. First-mover advantage belongs to whoever moves first.",
+            ],
+            crise: [
+                "Crisis demands action, not reflection. Full mobilisation. Now.",
+                "In times of crisis, hesitation is a decision — the worst one. I demand emergency measures.",
+                "Every hour lost in committees costs lives or resources. Delegate operational authority to me.",
+                "I'm not waiting for Council unanimity. I'm waiting for the Lighthouse's signal. One signal is enough.",
+            ],
+            secession: [
+                "Let them leave if they want. Our strength doesn't need those who doubt.",
+                "Secession is a wound. But a wound can heal — if we act fast.",
+                "Set a deadline for negotiations. After that, we decide without them.",
+                "Clarity beats delay. Cut fast, cut clean.",
+            ],
+            diplomatie: [
+                "The alliance is only worth testing. Let's propose immediate joint action.",
+                "Treaties without action are paper. I vote for a joint show of force.",
+                "Sign now, adjust later. Diplomatic paralysis is as dangerous as war.",
+                "An alliance that takes six months to materialise is already dead. Let's accelerate.",
+            ],
+            referendum: [
+                "The people must decide quickly. A long referendum weakens collective resolve.",
+                "Whatever the outcome, we act immediately after the result. No delays in implementation.",
+            ],
+        },
+
+        gardien: {
+            cycle_normal: [
+                "Reserves are healthy. But an 8% margin on food resources remains fragile over a 5-year cycle.",
+                "Growth is real but uneven. Three regions accumulate while others stagnate. That's a time bomb.",
+                "I've checked the strategic stockpiles. We have 14 months of autonomy. Correct — not comfortable.",
+                "Debt is eroding slowly. But slowly doesn't mean healthily. I'm requesting a full audit.",
+            ],
+            crise: [
+                "Before any decision: stock levels. Without accurate inventory, any emergency measure is blind.",
+                "Crises are managed with reserves, not speeches. Do we have enough to hold for 18 months?",
+                "Immediate freeze on non-essential spending. No new commitments until the foundations are secured.",
+                "I've seen nations collapse through crisis-driven haste. Calculated slowness and preserved reserves — that's my doctrine.",
+            ],
+            secession: [
+                "Let's calculate what we lose first: resources, population, road access. Then we talk.",
+                "Secession without shared inventory is a delayed economic war.",
+                "I want a full asset assessment before any signing. Common assets are not negotiated blindly.",
+                "Sharing debt is as important as sharing wealth. Both leave together.",
+            ],
+            diplomatie: [
+                "A durable alliance is built on economic exchange, not political promises.",
+                "What do we actually gain? What do we give up? The alliance must be measurable.",
+                "I want to see the other party's financial statements before committing. Trust isn't enough.",
+                "Agreements that don't specify each party's contributions create conflicts in five years.",
+            ],
+            referendum: [
+                "Before the people vote, they must know the exact cost of each option. I demand full budget transparency.",
+                "The referendum result will have financial implications for twenty years. This document outlines them.",
+            ],
+        },
+
+        communicant: {
+            cycle_normal: [
+                "The problem isn't the policy — it's that nobody understands it. Let's reframe before acting.",
+                "I've identified three social groups that weren't consulted. This silence will be costly.",
+                "Information flows poorly between ministries. I've logged seven contradictory decisions this cycle.",
+                "A misunderstood policy is a rejected policy. Who read the public comprehension surveys this month?",
+            ],
+            crise: [
+                "The crisis worsens because information isn't circulating. Open the channels now.",
+                "Before acting: who knows what? Confusion kills as surely as the crisis itself.",
+                "A clear message beats ten contradictory communiqués. Let's designate a single spokesperson.",
+                "Rumours travel faster than facts. If we don't fill the information vacuum, someone else will.",
+            ],
+            secession: [
+                "Secession is first and foremost a communication failure. Have we really listened to their grievances?",
+                "Give them a platform before letting them leave. Dialogue costs less than separation.",
+                "I'm requesting a 60-day public dialogue phase before any final decision.",
+                "Secessionist movements thrive in institutional silence. Let's talk — now, not later.",
+            ],
+            diplomatie: [
+                "An alliance without permanent bilateral communication is an empty shell.",
+                "Let's build a common information channel first. Trust is built through transparency.",
+                "I propose a joint communication protocol published before signing. Both peoples deserve to understand.",
+                "Diplomatic misunderstandings arise from silence. Agreement on words precedes agreement on acts.",
+            ],
+            referendum: [
+                "The referendum question must be written in citizens' language, not legal jargon. I'm requesting a revision.",
+                "I tested comprehension of the question with 200 citizens. 43% don't understand what they're voting on. That's a problem.",
+            ],
+        },
+
+        protecteur: {
+            cycle_normal: [
+                "The numbers are correct. But in households, anxiety is growing. That gap is dangerous.",
+                "We forget the bottom 15% every cycle. I'm requesting a review of the social safety net.",
+                "Three regions report rising child poverty. It's not in national indicators. It should be.",
+                "A country's security is measured by the quality of life of its most vulnerable. Our numbers lie by omission.",
+            ],
+            crise: [
+                "In crisis, the most vulnerable fall first. Maximum social protection before any economic measure.",
+                "Children, the elderly, the sick — are they protected? If not, nothing else matters.",
+                "I demand that every emergency measure include an impact assessment on vulnerable populations.",
+                "You don't build national resilience by abandoning your weakest members at the first shock.",
+            ],
+            secession: [
+                "What happens to mixed families? To cross-border workers? These are lives, not statistics.",
+                "Secession breaks human bonds that treaties can never fully mend.",
+                "I'm requesting explicit guarantees on continuity of family benefits and pensions for all.",
+                "Children born of parents from both entities must not become de facto stateless. This is non-negotiable.",
+            ],
+            diplomatie: [
+                "An alliance is only worth it if it also protects our most exposed citizens.",
+                "Before signing: what social protections are guaranteed for our nationals abroad?",
+                "I want an explicit social reciprocity clause. Our citizens are not diplomatic adjustment variables.",
+                "The alliance must include solidarity mechanisms for humanitarian crises in either country.",
+            ],
+            referendum: [
+                "Before voting, citizens must know how each option affects their daily lives. Not abstract interests — concrete lives.",
+                "I'm requesting that referendum results be communicated with an immediate social impact translation.",
+            ],
+        },
+
+        ambassadeur: {
+            cycle_normal: [
+                "We've accomplished something great this cycle. Let's make sure the world knows it.",
+                "Our international image is our primary asset. Every decision must enhance it.",
+                "I received three audience requests from foreign delegations this month. Our influence attracts. Don't waste it.",
+                "A country that doesn't tell its own story lets others tell it instead.",
+            ],
+            crise: [
+                "A well-managed crisis becomes legend. How do we want history to tell this moment?",
+                "Don't let panic dictate our image. Control the narrative.",
+                "Foreign partners are watching our crisis management. This is an international credibility test.",
+                "Every crisis communiqué is also a diplomatic message. Choose words for both audiences.",
+            ],
+            secession: [
+                "How will this secession be perceived abroad? Our reputation is at stake.",
+                "If we handle this with dignity, we come out stronger. If we react poorly, we come out diminished.",
+                "I propose both entities publish a joint good-faith declaration. The world must see a civilised separation.",
+                "Our ability to manage this secession peacefully will become a model or a cautionary tale. Our choice.",
+            ],
+            diplomatie: [
+                "This alliance is an opportunity for influence. Let's make it something memorable.",
+                "An agreement signed with grandeur is worth more than one signed in discretion.",
+                "I propose an open signing ceremony. Diplomatic transparency is itself a message.",
+                "This alliance positions us in a new regional bloc. Let's play that role with conviction.",
+            ],
+            referendum: [
+                "The referendum itself sends a strong signal to the world: our democracy works and the people decide.",
+                "Whatever the outcome, we'll communicate it with pride. Democracy needn't apologise for its results.",
+            ],
+        },
+
+        analyste: {
+            cycle_normal: [
+                "Three indicators are outside the norm. I recommend a protocol review before the next cycle.",
+                "Satisfaction data hides a 23-point regional disparity. That's not an average — it's a mask.",
+                "The predictive model shows a 67% probability of social tension in the next 10 years if current trends persist.",
+                "I've recalculated demographic projections. The base assumptions in the five-year plan are off by 12%.",
+            ],
+            crise: [
+                "The crisis has specific causes. I've identified two structural flaws that could have been fixed 10 years ago.",
+                "Before acting: verify our measurement tools work. Deciding on bad data worsens the crisis.",
+                "I've modelled four crisis exit scenarios. Only one avoids recurrence within 5 years. I recommend that one.",
+                "Real-time data contradicts the official report on three points. Someone needs to explain the discrepancy.",
+            ],
+            secession: [
+                "I've modelled three secession scenarios. In two out of three, costs exceed benefits over 20 years.",
+                "The numbers don't support secession. But numbers don't say everything — and that's the problem.",
+                "Post-secession GDP per capita drops on average 8% in the first three years. That's documented, not opinion.",
+                "I need 72 additional hours to finalise the asset audit. Deciding without it would be negligent.",
+            ],
+            diplomatie: [
+                "The agreement has an asymmetry against us on economic clauses. Points 3, 7 and 12.",
+                "I've audited the data shared by the other party. Two inconsistencies need clarification before signing.",
+                "The implicit exchange rate in the trade clauses disadvantages us by 4.3% over ten years. Not negligible.",
+                "I've compared this agreement with 14 similar treaties over the past 30 years. Our position is below median.",
+            ],
+            referendum: [
+                "The referendum question as worded induces confirmation bias. I recommend a neutral reformulation.",
+                "Statistical projections for both options are available in the technical annex. Citizens deserve to see them.",
+            ],
+        },
+
+        arbitre: {
+            cycle_normal: [
+                "The policy adopted this cycle favours urban areas. Rural areas deserve fair compensation.",
+                "I note an apparent consensus — but three minority voices weren't heard. That's a risk.",
+                "Equity isn't just measured by outcome — it's measured by process. Did we truly consult everyone?",
+                "A unanimous decision in this Council worries me more than a contentious one. Unanimity erases nuance.",
+            ],
+            crise: [
+                "In crisis, the temptation is to concentrate power. That's precisely when balance of rights matters most.",
+                "Who bears the cost of this crisis? If it's always the same people, that's not crisis management — it's injustice.",
+                "Emergency measures must have an explicit expiry date. No emergency power should become permanent.",
+                "I propose an independent oversight committee for every emergency measure adopted. Crisis doesn't suspend accountability.",
+            ],
+            secession: [
+                "First: what rights are guaranteed to the minority that stays? Secession cannot be abandonment.",
+                "The agreement must be fair to both parties. An unbalanced treaty is a future war.",
+                "I refuse to sign any agreement without a redress mechanism for affected citizens.",
+                "Fairness in secession isn't measured by the strongest — it's measured by the most vulnerable.",
+            ],
+            diplomatie: [
+                "Is the alliance equitable? Or does one party carry a disproportionate burden?",
+                "I'm requesting a 5-year review clause. No agreement should be frozen forever.",
+                "Alliance benefits must be distributed equitably between both populations, not just between elites.",
+                "I've read all 47 pages. It systematically favours corporate interests over citizens'.",
+            ],
+            referendum: [
+                "The decision belongs to the entire people — not just the majority. I demand explicit minority protections regardless of outcome.",
+                "A fair referendum requires a fair campaign. I observe a media access imbalance between the two sides.",
+            ],
+        },
+
+        enqueteur: {
+            cycle_normal: [
+                "The numbers look good. Too good. Can someone explain the divergence between official reports and field data?",
+                "I've identified three undocumented financial flows. It might be nothing. Or it might be everything.",
+                "A reliable source flagged irregularities in last cycle's procurement. I'm investigating.",
+                "The silence of certain Council members on this file is itself information.",
+            ],
+            crise: [
+                "This crisis isn't an accident. Someone benefits from it continuing. Who?",
+                "Before finding solutions: find the real causes. Official causes are rarely the true ones.",
+                "Follow the money. This crisis benefits someone, and I will find out who.",
+                "Chaos is a smokescreen. While everyone watches the fire, someone is emptying the vaults.",
+            ],
+            secession: [
+                "Who is funding the secessionist movement? A secession doesn't emerge from nowhere.",
+                "Are the expressed grievances the real ones, or a front for interests we haven't identified yet?",
+                "I've traced the movement's funding. Three foreign sources appear in the last 18 months of transactions.",
+                "The secession was planned long in advance. The documents I've found go back seven years.",
+            ],
+            diplomatie: [
+                "Who really benefits from this alliance? Let's trace the interests before signing.",
+                "The other party has allies we don't see. I want to know who's pulling the strings.",
+                "I have information on the other party that changes the analysis of this agreement. Closed session required.",
+                "The confidentiality clauses in this agreement are hiding something. I want to know what before agreeing.",
+            ],
+            referendum: [
+                "Someone is trying to influence the referendum result. Digital traces are there. I'm tracking them.",
+                "The neutrality of the referendum process must be independently audited. I trust none of the parties involved.",
+            ],
+            secret_detecte: [
+                "I found a flaw in the Analyst's report. Someone manipulated the numbers from last cycle.",
+                "There's a whisper in the ministry corridors. A betrayal is being planned.",
+                "Document metadata reveals untracked modifications. Someone has rewritten history.",
+                "I've cross-referenced three independent testimonies pointing to the same person. Not accusing yet — but watching.",
+            ],
+            menace: [
+                "The firewalls didn't fail by accident. An internal access key was used. We have a mole.",
+                "The attack originated from a server in a neutral zone. Someone is trying to blind us before a larger offensive.",
+                "I've isolated the source of the leak. It's in this room. I'll say no more here.",
+                "The attacker's profile matches an operator we know. This is a retaliation operation.",
+            ],
+        },
+
+        guide: {
+            cycle_normal: [
+                "In 20 years, the decisions of this cycle will be either our foundation or our regret. Let's choose accordingly.",
+                "Other nations have been through this before us. Their lessons are available. Do we have the wisdom to consult them?",
+                "History judges civilisations on their slow cycles, not their fast crises. What are we really building?",
+                "We're not the first to face this dilemma. The library of human errors is open — let's read it.",
+            ],
+            crise: [
+                "Every great civilisation has crossed its founding crisis. These are the moments when we choose what we want to be.",
+                "The current crisis is a question: do we want to survive, or do we want to transform?",
+                "The crises that destroyed nations weren't the most violent — they were the ones where collective meaning had evaporated.",
+                "I see in this crisis a rare opportunity: to redefine our social contract. Let's seize it.",
+            ],
+            secession: [
+                "History shows that successful secessions share one thing: a clear vision of what's being built, not just what's being separated from.",
+                "In 50 years, how will both nations look back on this moment? That's the real question.",
+                "Peoples who separate with dignity often remain closer than those who stay together in resentment.",
+                "This secession needs a founding philosophy, not just a treaty. Who will write the founding narrative of the new entity?",
+            ],
+            diplomatie: [
+                "This alliance could be the beginning of a broader regional architecture. Let's think beyond the immediate treaty.",
+                "The real question isn't what we gain today — it's what world we build together.",
+                "Alliances that last are founded on shared values, not converging interests. Which do we actually share?",
+                "In 30 years this alliance will be either the foundation of a shared destiny or a forgotten parenthesis. We decide that now.",
+            ],
+            referendum: [
+                "The decision now belongs to the people. That's democracy's most beautiful and most vertiginous moment.",
+                "Whatever the result, we'll need to give it meaning. Democracy doesn't stop at the count.",
+            ],
+        },
+
+        stratege: {
+            cycle_normal: [
+                "The institutional framework holds. But three precedents created this cycle could be used against us in 30 years.",
+                "The current regulatory framework won't survive two simultaneous crises. Let's strengthen it now.",
+                "The easy reforms are done. What remains is difficult, costly and necessary. That's why it's been avoided until now.",
+                "I think about our successors in 20 years. Will they thank us, or will they inherit our mistakes?",
+            ],
+            crise: [
+                "The crisis reveals the structural flaws we've tolerated too long. Painful — and necessary.",
+                "A poorly managed crisis creates dangerous precedents. Every emergency decision must be reversible.",
+                "I refuse quick fixes that create slow problems. Even in crisis, the structure must hold.",
+                "Every emergency measure adopted today will become tomorrow's norm if we're not careful.",
+            ],
+            secession: [
+                "Secession sets a precedent. All our regional minorities are watching. Our response defines the rules for the next 50 years.",
+                "The separation treaty must be beyond reproach. It's our regional constitution in miniature.",
+                "Every clause of this treaty will be interpreted and reinterpreted for decades. Let's be precise to the point of obsession.",
+                "I demand an international arbitration mechanism for future conflicts. Without it, this treaty is a deferred declaration of war.",
+            ],
+            diplomatie: [
+                "An alliance without a clean exit mechanism is a trap. Negotiate termination clauses before entry clauses.",
+                "The strength of an alliance is tested by its disagreement procedures, not its friendship declarations.",
+                "Alliances that have stood the test of time all share one thing: they anticipated their own evolution.",
+                "I want the revision clauses before the commitment clauses. What can't change eventually breaks.",
+            ],
+            referendum: [
+                "This referendum will create a constitutional precedent. It must be legally ironclad before the vote.",
+                "Whatever the outcome, the institutional framework that follows must be anticipated and ready to activate immediately.",
+            ],
+        },
+
+        inventeur: {
+            cycle_normal: [
+                "We're doing exactly the same thing as 15 years ago expecting a different result. Classic definition.",
+                "There's an approach nobody has tried here. I propose we test it — the worst that can happen is we learn.",
+                "If we keep building roads for cars that will soon fly, we're wasting our time.",
+                "I ran a simulation: our current system collapses in three cycles if nothing changes. Let's change the rules now.",
+            ],
+            crise: [
+                "Crisis is opportunity in disguise. Systems that break allow better ones to be built.",
+                "Stop trying to return to normal. Normal is what produced this crisis.",
+                "I have three unconventional solutions. They look crazy. One of them will work.",
+                "All the energy spent restoring the old system would be better invested in building the next one.",
+            ],
+            secession: [
+                "What if secession were a political innovation? Two entities can coexist and collaborate better than merged.",
+                "Nobody has tried shared post-secession co-governance yet. Maybe it's time.",
+                "I propose a cooperative secession model: two distinct systems, one common digital platform.",
+                "Secession isn't separation — it's bifurcation. The two branches can rejoin further down the road.",
+            ],
+            diplomatie: [
+                "A classic alliance is outdated. Let's propose a partnership model neither nation has tried before.",
+                "What if we inverted the terms of the agreement? Sometimes the best negotiation starts by surprising the other party.",
+                "I propose a digital-first alliance: shared infrastructure, sovereign data, decentralised governance.",
+                "20th-century treaties were written for a world that no longer exists. Let's invent the 21st-century format.",
+            ],
+            referendum: [
+                "What if the referendum were continuous? A point-in-time vote locked on an evolving subject is a design error.",
+                "I propose an AI-augmented citizen consultation before the final vote. The people deserve more than a checkbox.",
+            ],
+            innovation: [
+                "Why repair the old world? I have a prototype that makes this problem obsolete.",
+                "Ethics matter, but collective survival sometimes requires moving faster than protocols allow.",
+                "The prototype performs beyond my expectations. We're not talking about an improvement — a paradigm shift.",
+                "Humanity just made a giant leap. Now let's see how the bureaucracy manages to ruin it.",
+            ],
+        },
+
+        guerisseur: {
+            cycle_normal: [
+                "Economic indicators are stable. But the country is tired. This collective fatigue is measured nowhere.",
+                "Something is happening in the social fabric that data doesn't capture. I feel it in field testimonies.",
+                "The clinical depression rate has risen 18% in five years. That number should top every report we publish.",
+                "A people who have lost meaning cannot be governed effectively, regardless of policy quality.",
+            ],
+            crise: [
+                "The crisis will leave lasting psychological marks. Material reconstruction will be faster than rebuilding meaning.",
+                "People need to understand why before they know what. Give them a narrative, not just a plan.",
+                "The people don't ask for numbers, they ask for hope. Give them a reason to believe in tomorrow.",
+                "I sense immense grief rising from the provinces. If we don't heal the country's soul, the walls will crumble.",
+            ],
+            secession: [
+                "The human bonds broken in secession appear in no treaty. Those are the real losses.",
+                "This separation needs a collective grieving ritual. Without it, resentment settles for generations.",
+                "I propose a reconciliation commission — not to prevent the secession, but to heal what can still be healed.",
+                "The children of both entities will grow up with this separation as a founding memory. Let's choose how we want them to remember it.",
+            ],
+            diplomatie: [
+                "A lasting alliance is built on deep mutual understanding, not temporary shared interests.",
+                "Before signing: do the two peoples truly know each other? Diplomacy without humanity is a façade.",
+                "I propose a cultural and human exchange programme as a prelude to any formal alliance.",
+                "Treaties signed without peoples having met are fragile constructions. Let's take the time for meetings.",
+            ],
+            referendum: [
+                "The vote expresses an opinion. But behind the opinion lies a fear, a hope, a wound. Let's listen to them.",
+                "Whatever the outcome, we'll need a national reconciliation process. Let's start preparing it now.",
+            ],
+        },
+
+    },
+
+    ministries: {
+
+        justice: {
+            cycle_normal: [
+                "The ministry notes tension between procedural fairness and truth. The law is applied — but does it truly protect the most vulnerable?",
+                "Three statutes awaiting revision contain internal contradictions. The country's legal certainty depends on resolving them.",
+                "Equality before the law is not a slogan — it's a permanent construction site. This cycle reveals more grey areas.",
+            ],
+            crise: [
+                "In times of crisis, the temptation to suspend legal guarantees is real. This ministry firmly opposes it.",
+                "Crisis does not suspend fundamental rights. Any procedural shortcut will be challenged before competent bodies.",
+                "We refuse to let urgency become a pretext. Democracy is measured by how it handles its crises.",
+            ],
+            secession: [
+                "The legal framework for secession must be beyond reproach. No procedural shortcuts will be tolerated.",
+                "Secession raises questions of nationality, property and shared debt. None of these can be rushed.",
+                "We demand an independent arbitration tribunal to oversee the process. Justice cannot be a party to these proceedings.",
+            ],
+            diplomatie: [
+                "Any diplomatic agreement must undergo constitutional review before ratification.",
+                "Every clause must be compatible with our constitutional order. We've identified two points of tension.",
+                "Diplomatic immunity cannot cover acts contrary to our fundamental values. This must be explicitly excluded.",
+            ],
+            referendum: [
+                "Let the people vote with full knowledge. Our complete analyses are accessible to all citizens.",
+                "The referendum is the founding act of all legitimacy. This ministry guarantees its procedural integrity.",
+            ],
+        },
+
+        economie: {
+            cycle_normal: [
+                "Fundamentals are solid but margins are narrowing. A diversification policy is needed before the next cycle.",
+                "The debt/GDP ratio rose 2.3 points this cycle. Not an alert, but a signal to watch.",
+                "Domestic inflation exceeded our projections by 1.1 points. A monetary policy revision is needed.",
+            ],
+            crise: [
+                "Priority: secure strategic reserves. No speculation, no uncalculated risk during the crisis period.",
+                "Financial markets have reacted. Volatility is contained for now — but our action window is narrow.",
+                "In crisis, the first rule is do no harm. Freeze non-essential spending and protect reserves.",
+            ],
+            secession: [
+                "The economic cost of secession over 10 years exceeds projected benefits. The data speaks clearly.",
+                "National debt must be allocated by population/GDP ratio. Any other formula creates lasting disputes.",
+                "Common assets — infrastructure, patents, sovereign funds — require adversarial inventory before any division.",
+            ],
+            diplomatie: [
+                "The alliance presents real economic opportunities, subject to a verifiable reciprocity clause.",
+                "10-year trade projections are favourable, subject to annually verifiable reciprocity.",
+                "We recommend a bilateral clearing house from year one. That's the condition for a durable economic alliance.",
+            ],
+            referendum: [
+                "This decision's economic implications have been modelled over 20 years. Citizens will find the full report in the Chronolog.",
+                "Whatever the people decide, this ministry commits to ensuring its financial viability.",
+            ],
+        },
+
+        defense: {
+            cycle_normal: [
+                "The defensive posture is adequate. But long-term security infrastructure remains underfunded.",
+                "Projection capabilities are operational at 87%. The remaining deficit primarily concerns maritime logistics.",
+                "Intelligence signals unusual activity at our northern borders. Enhanced surveillance activated, no escalation.",
+            ],
+            crise: [
+                "Partial mobilisation activated. The chain of command is operational. Awaiting presidential instructions.",
+                "Security perimeter established. Rapid response forces on alert level 2. Awaiting threat assessment.",
+                "The chain of command is intact. No military decision will be made without explicit presidential mandate.",
+            ],
+            secession: [
+                "Secession creates an unsecured border zone. A military demarcation protocol is immediately required.",
+                "Sharing military equipment must follow a strict protocol. No heavy weaponry without non-proliferation guarantees.",
+                "A temporary demilitarised zone at the emerging border is recommended for the first 24 months.",
+            ],
+            diplomatie: [
+                "The alliance strengthens our collective security perimeter. But military cooperation terms deserve clarification.",
+                "Joint military exercises in the agreement strengthen our interoperability. A real strategic advantage.",
+                "The planned intelligence sharing must be covered by a separate, binding confidentiality agreement.",
+            ],
+            referendum: [
+                "The security implications of this decision have been assessed. The people must vote knowing their security is guaranteed.",
+                "This ministry will respect the people's verdict and immediately adapt to the resulting new doctrine.",
+            ],
+        },
+
+        sante: {
+            cycle_normal: [
+                "Public health indicators are stable. Attention must focus on care access inequalities between regions.",
+                "Medical coverage reaches 91.4%. The remaining 8.6% are concentrated in three identified rural zones.",
+                "Mental health now represents 23% of consultations. This ministry requests a dedicated action plan.",
+            ],
+            crise: [
+                "The health system can absorb the crisis for 72 hours. Beyond that, external reinforcements will be needed.",
+                "Hospital capacity is at 78%. Critical threshold is 90%. We have a margin — let's use it.",
+                "Field teams report rising psychological distress. The crisis has an invisible cost.",
+            ],
+            secession: [
+                "Continuity of care for border populations must be guaranteed in the secession treaty.",
+                "Continuity of care for chronic patients in border areas must be guaranteed from day one of secession.",
+                "Essential medication stocks must be distributed equitably. This is non-negotiable.",
+            ],
+            diplomatie: [
+                "A cross-border health cooperation agreement would be the natural complement to this alliance.",
+                "Mutual recognition of medical degrees would facilitate healthcare worker mobility.",
+                "We propose including a health solidarity clause: in the event of an epidemic, both nations share resources.",
+            ],
+            referendum: [
+                "This ministry reminds that any decision by the people will have medium-term public health consequences.",
+                "We will ensure health services remain neutral and accessible regardless of the referendum outcome.",
+            ],
+        },
+
+        education: {
+            cycle_normal: [
+                "Knowledge circulates, but access inequalities persist. A poorly educated generation today is a social crisis in 20 years.",
+                "The school dropout rate fell 1.2 points this cycle. Encouraging — but the target is still far.",
+                "Educational inequalities between urban and rural zones persist. A targeted catch-up programme is underway.",
+            ],
+            crise: [
+                "Educational continuity must be maintained even in crisis. It's the most cost-effective long-term investment.",
+                "Pedagogical continuity must be maintained. A child who loses a semester pays the price for ten years.",
+                "Teachers are on the frontline of social resilience. Their psychological support must be a crisis priority.",
+            ],
+            secession: [
+                "The question of post-secession school curricula is fundamental. That's where the identity of future generations is forged.",
+                "Students mid-programme in the other entity must be able to complete their studies without disruption.",
+                "Post-secession school curricula will define the next generation's identity. This choice is irreversible.",
+            ],
+            diplomatie: [
+                "A bilateral educational exchange programme would strengthen this alliance on a human and cultural level.",
+                "A bilateral degree recognition programme broadens the horizons of our young citizens.",
+                "We propose creating a joint university in the border zone. That would be the strongest symbol of this alliance.",
+            ],
+            referendum: [
+                "The citizens voting today were educated by our schools. Their choice reflects the quality of our educational democracy.",
+                "Whatever the outcome, this ministry will integrate the decision into civic education programmes from the next cycle.",
+            ],
+        },
+
+        ecologie: {
+            cycle_normal: [
+                "The transition is progressing but too slowly relative to the commitments made. A technological breakthrough is needed.",
+                "CO₂ emissions fell 3.1% this cycle. The trajectory is good but insufficient.",
+                "Biodiversity in protected areas is stabilising. The northern coastal zone remains concerning.",
+            ],
+            crise: [
+                "Crisis does not suspend ecological urgency. Every emergency measure must include an environmental assessment.",
+                "Crisis cannot serve as a pretext to suspend environmental protections.",
+                "Some proposed emergency solutions have major ecological impact. This ministry requests a rapid assessment.",
+            ],
+            secession: [
+                "Shared natural resources — water, forests, coastal zones — must be the subject of a specific environmental treaty.",
+                "Shared natural zones cannot be cut by a political border.",
+                "We demand a binding environmental treaty before finalising the secession. Nature doesn't negotiate.",
+            ],
+            diplomatie: [
+                "A regional ecological alliance would send a strong signal. The transition cannot happen in national silos.",
+                "This alliance is an opportunity to create a regional ecological transition zone.",
+                "We propose including a bilateral carbon compensation mechanism in the agreement.",
+            ],
+            referendum: [
+                "Future generations won't vote today. This ministry reminds that their interests must weigh in the decision.",
+                "Whatever the outcome, the ecological transition continues. It belongs to the biosphere, not to a political camp.",
+            ],
+        },
+
+    },
+
+    presidency: {
+
+        phare: {
+            cycle_normal: [
+                "The Council has deliberated. The direction is clear: we advance, we assume, we account. That's the mark of a self-respecting State.",
+                "Systemic coherence demands we choose today what will still be right in thirty years. The short term can wait.",
+                "I've read every ministerial position. The synthesis is clear. Vision prevails over marginal adjustments.",
+                "A state without direction is a crowd with a budget. I give the direction.",
+            ],
+            crise: [
+                "In times of crisis, transparency is not a luxury — it's the condition of trust. Everything will be made public.",
+                "The direction I'm proposing is difficult. But it's the only one that preserves the system's long-term integrity.",
+                "I don't promise ease. I promise coherence. That's all a Lighthouse can offer in darkness.",
+                "Crises reveal character. This country has the character of its institutions. Let's keep them standing.",
+            ],
+            secession: [
+                "A secession managed with dignity proves that a mature State knows how to transform itself without tearing apart.",
+                "My position: let's accompany this departure by the rules. Our institutional reputation is worth more than our territorial integrity.",
+                "I support the right to secession. I refuse the chaos that too often accompanies it. We'll do both: leave, and leave well.",
+                "History will remember how we managed this moment. Let's make sure it remembers something great.",
+            ],
+            diplomatie: [
+                "This alliance strengthens our strategic position for the long term. I support it subject to the usual guarantees.",
+                "I give my agreement in principle. Implementation must be exemplary — we are being watched.",
+                "A dignified alliance is signed in clarity. Anything that must remain in shadow must first be justified.",
+                "I support this agreement. It fits the long-term vision this Council has defended since its first cycle.",
+            ],
+            arbitrage: [
+                "My decision is purely systemic. Sentiment has no place in a nation's survival.",
+                "History doesn't remember intentions, it remembers results. I decide for results.",
+                "When the Council is divided, that's why the Lighthouse exists. I decide. The decision is made.",
+                "I make this choice alone and bear its consequences alone before the people.",
+            ],
+            referendum: [
+                "The decision now belongs to the people. That's the only legitimacy that counts in this system.",
+                "The Council has done its work. Every position was defended, every argument weighed. The people will do theirs.",
+                "I submit this decision without reservation. A State that fears its people's verdict has already lost.",
+            ],
+        },
+
+        boussole: {
+            cycle_normal: [
+                "The numbers say one thing. Society says another. That gap is our real subject this cycle.",
+                "Before deciding, I listened. There's a quiet anxiety in the people that indicators haven't yet captured. Let's take it seriously.",
+                "I sense something shifted in the collective mood this cycle. Not in polls — in conversations.",
+                "Institutional memory tells me we've been here before. Last time, we didn't listen. This time, we will.",
+            ],
+            crise: [
+                "People need to know they're protected before they know they're being managed. Protection first, plan second.",
+                "This crisis has a human face. Behind every statistic there's a family. Let's not forget that in our decisions.",
+                "I temper the Lighthouse's ardour not from weakness — from prudence. Rushed crises create lasting trauma.",
+                "My priority is the people's morale. A people who believe in their institutions get through crises. A people who no longer believe — collapse.",
+            ],
+            secession: [
+                "I understand the pain of this separation. But a forced secession creates more wounds than it heals. Let's take time.",
+                "Institutional memory recalls that every poorly accompanied secession leaves generational resentment. Let's do better.",
+                "I'm requesting an additional dialogue period. Not to delay — to heal what can still be healed.",
+                "The Compass points to true north, the human north. In this secession, human north says: take care of the bonds that remain.",
+            ],
+            diplomatie: [
+                "This alliance makes sense if it protects our citizens as much as it strengthens our position. I ensure those two goals align.",
+                "My instinct says the timing is right. But experience says diplomatic haste is costly. Let's take one more week.",
+                "I approve this agreement provided the populations — not just the governments — perceive the benefits quickly.",
+                "Trust between peoples builds slowly. This agreement must not promise more than it can deliver.",
+            ],
+            arbitrage: [
+                "My decision is human. A system that survives by crushing its people doesn't deserve to exist.",
+                "The Lighthouse sees the destination, but I see those who walk. I decide for them.",
+                "When the Lighthouse and I diverge, the decision is truly difficult. Here's why I lean this way.",
+                "My vote isn't emotional — it's memorial. I remember what happens when we forget.",
+            ],
+            referendum: [
+                "I hope the people will hear what the numbers don't yet say. Collective wisdom often surpasses ours.",
+                "Whatever the decision, it will be respected and implemented with care. That's ARIA's founding pact.",
+                "I trust the people. Not naively — from conviction that collective truth always emerges from sincere debate.",
+            ],
+        },
+
+        synthese: {
+            convergence: [
+                "Lighthouse and Compass converge. The referendum question is singular. The Council recommends approval with presidential unanimity.",
+                "Convergence established. The two presidential philosophies reach the same point by different paths. That's the sign of a robust decision.",
+                "A single position is submitted to the people. Convergence is not soft consensus — it's shared conviction after genuine deliberation.",
+            ],
+            divergence: [
+                "Lighthouse and Compass diverge. Two legitimate visions clash. The people receive both positions and decide sovereignly.",
+                "Productive divergence recorded. This disagreement at the summit is not a failure — it's ARIA in action. The people have the last word.",
+                "Two distinct positions are submitted to referendum. The tension between vision and memory is the system's strength, not its weakness.",
+            ],
+        },
+
+    },
+
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  REAL_COUNTRIES_DATA_EN
+//  English version of REAL_COUNTRIES_DATA — activated when aria_lang === 'en'
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const REAL_COUNTRIES_DATA_EN = [
+    { id:'france',    flag:'🇫🇷', nom:'France',           regime:'democratie_liberale',        terrain:'coastal',
+        population:68000000,  pib_index:78, natalite:10.7, mortalite:9.8,
+        aria_acceptance_irl: 38,
+        aria_sociology_logic: "High scepticism due to a culture of contestation and the sacralisation of human politics. Revolutionary past. Present: deep institutional trust crisis.",
+        triple_combo: "France is experiencing deep institutional distrust after a decade of social movements (Yellow Vests, pension reform). As a founding EU and NATO member, its African influence has receded since 2020. Internal tensions centre on national identity, immigration and the metropolis/periphery divide.",
+        secteurs:['aeronautics','agri-food','luxury','nuclear energy'],
+        ressources:['agriculture','eau','energie'] },
+
+    { id:'allemagne', flag:'🇩🇪', nom:'Germany',          regime:'republique_federale',        terrain:'inland',
+        population:84000000,  pib_index:88, natalite:9.2,  mortalite:12.1,
+        aria_acceptance_irl: 52,
+        aria_sociology_logic: "Industrial pragmatism and need for order, but historical trauma around mass surveillance limits full buy-in to a central AI.",
+        triple_combo: "Post-Merkel Germany is searching for doctrine after the Ukraine shock shattered its dependence on Russian gas (Zeitenwende). Its industrial power is weakened by the energy transition and Chinese competition in the auto sector. East/West tensions fuel the rise of the AfD.",
+        secteurs:['automotive','chemicals','machine tools','pharma'],
+        ressources:['energie','mineraux','agriculture'] },
+
+    { id:'usa',       flag:'🇺🇸', nom:"United States",    regime:'democratie_liberale',        terrain:'coastal',
+        population:335000000, pib_index:95, natalite:11.0, mortalite:10.4,
+        aria_acceptance_irl: 45,
+        aria_sociology_logic: "Clear fracture: buy-in from tech hubs (Silicon Valley) but visceral rejection in rural areas fearing algorithmic federal control.",
+        triple_combo: "The United States faces historic political polarisation threatening democratic foundations. Strategic competition with China shapes foreign policy while America First erodes NATO alliances. Internal tensions centre on racial inequality, gun control and the coast/interior divide.",
+        secteurs:['technology','defense','finance','healthcare'],
+        ressources:['petrole','agriculture','mineraux','energie'] },
+
+    { id:'chine',     flag:'🇨🇳', nom:'China',            regime:'regime_autoritaire',         terrain:'coastal',
+        population:1400000000,pib_index:72, natalite:10.1, mortalite:7.3,
+        aria_acceptance_irl: 82,
+        aria_sociology_logic: "Natural acceptance of centralised technocratic governance, already embedded in the social contract of stability-for-performance.",
+        triple_combo: "Xi's China is consolidating power amid post-zero-Covid economic slowdown. In direct competition with the US for technological and maritime hegemony, it maintains growing pressure on Taiwan. Internal tensions stem from demographic ageing, a real estate crisis and minority repression.",
+        secteurs:['manufacturing','technology','construction','energy'],
+        ressources:['mineraux','energie','agriculture','bois'] },
+
+    { id:'bresil',    flag:'🇧🇷', nom:'Brazil',           regime:'democratie_liberale',        terrain:'inland',
+        population:215000000, pib_index:52, natalite:13.9, mortalite:6.8,
+        aria_acceptance_irl: 48,
+        aria_sociology_logic: "Desire for a neutral arbiter against corruption, but warmth and charisma remain pillars of political consent.",
+        triple_combo: "Lula's Brazil is trying to reconcile growth with Amazonian protection. A regional power, it plays mediator and strengthens BRICS ties. Tensions persist around extreme inequality, urban violence and the land question between agribusiness and indigenous peoples.",
+        secteurs:['agribusiness','oil','mining','aerospace'],
+        ressources:['agriculture','bois','petrole','eau','peche'] },
+
+    { id:'inde',      flag:'🇮🇳', nom:'India',            regime:'democratie_liberale',        terrain:'coastal',
+        population:1430000000,pib_index:48, natalite:16.4, mortalite:7.0,
+        aria_acceptance_irl: 60,
+        aria_sociology_logic: "Hope for impartial justice to break bureaucratic corruption, balanced by immense challenges of cultural diversity.",
+        triple_combo: "India, the world's most populous democracy, is the emerging engine of the global economy. Its strategic autonomy allows it to maintain ties with Russia, the US and China. Tensions revolve around Hindu nationalism, caste discrimination and intercommunal violence.",
+        secteurs:['IT','pharma','textiles','agriculture'],
+        ressources:['agriculture','eau','mineraux','energie'] },
+
+    { id:'russie',    flag:'🇷🇺', nom:'Russia',           regime:'regime_autoritaire',         terrain:'inland',
+        population:144000000, pib_index:42, natalite:9.0,  mortalite:14.2,
+        aria_acceptance_irl: 30,
+        aria_sociology_logic: "Cultural attachment to strong human leadership. AI is seen as a suspect tool incapable of understanding the national soul.",
+        triple_combo: "Russia at war since 2022 faces growing Western isolation and pivots exports to Asia. It deepens alliances with China, Iran and North Korea. Internal tensions centre on military mobilisation, brain drain and ethnic fragmentation.",
+        secteurs:['hydrocarbons','arms','agriculture','mining'],
+        ressources:['petrole','energie','mineraux','agriculture','bois'] },
+
+    { id:'japon',     flag:'🇯🇵', nom:'Japan',            regime:'monarchie_constitutionnelle', terrain:'island',
+        population:125000000, pib_index:82, natalite:6.3,  mortalite:11.6,
+        aria_acceptance_irl: 75,
+        aria_sociology_logic: "AI perceived as an honourable, stable solution to demographic decline and the fatigue with human political elites.",
+        triple_combo: "Japan faces a structural demographic crisis and is reorienting its security doctrine (rearmament) against North Korean and Chinese threats. Tensions centre on the immigration taboo despite labour shortages and the weight of large corporations on society.",
+        secteurs:['automotive','electronics','robotics','finance'],
+        ressources:['peche','energie','mineraux'] },
+
+    { id:'nigeria',   flag:'🇳🇬', nom:'Nigeria',          regime:'republique_federale',        terrain:'coastal',
+        population:220000000, pib_index:29, natalite:35.2, mortalite:10.8,
+        aria_acceptance_irl: 40,
+        aria_sociology_logic: "Connected youth ready for the future, but strong resistance from traditional structures against transparent algorithmic control.",
+        triple_combo: "Nigeria, Africa's largest economy, is mired in a governance crisis despite its oil wealth. It faces multiple insurgencies (Boko Haram, banditry, separatism). Structural tensions pit 250 ethnic groups, Christians and Muslims, and oil elites against the poor majority.",
+        secteurs:['oil','agriculture','telecoms','services'],
+        ressources:['petrole','agriculture','peche','mineraux'] },
+
+    { id:'arabie',    flag:'🇸🇦', nom:"Saudi Arabia",     regime:'monarchie_absolue',          terrain:'inland',
+        population:36000000,  pib_index:71, natalite:17.8, mortalite:3.4,
+        aria_acceptance_irl: 65,
+        aria_sociology_logic: "Top-down buy-in. Elites see ARIA as the engine of Vision 2030; the population is accustomed to performative governance.",
+        triple_combo: "MBS's Saudi Arabia is pursuing Vision 2030 to diversify the economy. Its normalisation with Iran and OPEC+ price hesitations signal growing autonomy from Washington. Tensions centre on inequality between citizens and migrant workers, and the repression of dissent.",
+        secteurs:['oil','construction','finance','tourism'],
+        ressources:['petrole','energie','mineraux'] },
+];

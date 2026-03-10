@@ -123,6 +123,55 @@ export const TRANSLATIONS = {
   RESOURCES:           { fr: 'RESSOURCES',             en: 'RESOURCES'          },
   ARIA_ADHESION:       { fr: 'ADHÉSION ARIA',          en: 'ARIA SUPPORT'       },
 
+  // ── APIKeyInline ─────────────────────────────────────────────────────
+  API_KEYS_TITLE:      { fr: '🔑 CLÉS API',             en: '🔑 API KEYS'           },
+  API_KEYS_STORED:     { fr: 'Stockées localement — aucun serveur. Configurez au moins une clé.', en: 'Stored locally — no server. Configure at least one key.' },
+  API_KEYS_TEST_WARN:  { fr: '⚠ Testez au moins une clé pour activer la sauvegarde.', en: '⚠ Test at least one key to enable saving.' },
+  CANCEL:              { fr: 'ANNULER',                  en: 'CANCEL'                },
+  SHOW_KEY:            { fr: 'Afficher',                 en: 'Show'                  },
+  HIDE_KEY:            { fr: 'Masquer',                  en: 'Hide'                  },
+
+  // ── CountryInfoCard ───────────────────────────────────────────────────
+  SHOW_GEO_CONTEXT:    { fr: '▼ Voir le contexte géopolitique',    en: '▼ Show geopolitical context'   },
+  HIDE_GEO_CONTEXT:    { fr: '▲ Masquer le contexte géopolitique', en: '▲ Hide geopolitical context'   },
+  PIB_INDEX:           { fr: 'Indice',                   en: 'Index'                 },
+
+  // ── CountryPanel / Council ────────────────────────────────────────────
+  QUESTION_PEUPLE:     { fr: 'QUESTION DU PEUPLE',       en: 'CITIZEN QUESTION'      },
+  QUESTIONS_FREQ:      { fr: 'QUESTIONS FRÉQUENTES',     en: 'FREQUENT QUESTIONS'    },
+  FREE_QUESTION:       { fr: 'QUESTION LIBRE',           en: 'FREE QUESTION'         },
+  COUNCIL_ROUTE:       { fr: 'Le Conseil déterminera automatiquement le ministère compétent.', en: 'The Council will automatically determine the competent ministry.' },
+  SUBMIT_COUNCIL:      { fr: 'SOUMETTRE AU CONSEIL →',   en: 'SUBMIT TO COUNCIL →'   },
+  ROUTING:             { fr: '⏳ ROUTAGE EN COURS…',     en: '⏳ ROUTING…'            },
+
+  // ── Settings Gouvernement ─────────────────────────────────────────────
+  GOV_MINISTERS:       { fr: 'Ministres',                en: 'Ministers'             },
+  GOV_MINISTRIES:      { fr: 'Ministères',               en: 'Ministries'            },
+  GOV_PRESIDENCY:      { fr: 'Présidence',               en: 'Presidency'            },
+  GOV_GOVERNANCE:      { fr: 'Gouvernance',              en: 'Governance'            },
+  GOV_SEL_MINISTER:    { fr: 'Sélectionner un ministre', en: 'Select a minister'     },
+  GOV_SEL_MINISTRY:    { fr: 'Sélectionner un ministère',en: 'Select a ministry'     },
+  GOV_MISSION:         { fr: 'Mission du ministère',     en: 'Ministry mission'      },
+  GOV_SPECIFIC_ROLE:   { fr: 'Rôle spécifique',          en: 'Specific role'         },
+  GOV_COMM:            { fr: 'Communication',            en: 'Communication'         },
+  GOV_ANNOT:           { fr: 'Angle universel en annotation', en: 'Universal annotation angle' },
+  GOV_PRES_DEFAULT:    { fr: 'PRÉSIDENCE PAR DÉFAUT',    en: 'DEFAULT PRESIDENCY'    },
+  GOV_MINS_DEFAULT:    { fr: 'MINISTÈRES ACTIFS PAR DÉFAUT', en: 'ACTIVE MINISTRIES BY DEFAULT' },
+  GOV_CRISIS:          { fr: 'GESTION DE CRISE',         en: 'CRISIS MANAGEMENT'     },
+  GOV_CHANCE:          { fr: 'Ministère de la Chance & Crises', en: 'Ministry of Chance & Crises' },
+
+  // ── ConstitutionModal ─────────────────────────────────────────────────
+  GOV_TAB_REGIME:      { fr: 'RÉGIME',                   en: 'REGIME'                },
+  GOV_TAB_PRES:        { fr: 'PRÉSIDENCE',               en: 'PRESIDENCY'            },
+  GOV_TAB_MINS:        { fr: 'MINISTÈRES',               en: 'MINISTRIES'            },
+  GOV_TAB_MINISTERS:   { fr: 'MINISTRES',                en: 'MINISTERS'             },
+  GOV_APPLY:           { fr: '✓ Appliquer la Configuration', en: '✓ Apply Configuration' },
+  GOV_ASSIGNED:        { fr: 'MINISTRES ASSIGNÉS',       en: 'ASSIGNED MINISTERS'    },
+  CTX_GLOBAL_MODE:     { fr: '⚙️ Hérite du global',      en: '⚙️ Inherit global'      },
+  CTX_ENRICHED:        { fr: '📖 Enrichi',               en: '📖 Enriched'            },
+  CTX_STATS_ONLY:      { fr: '📊 Stats seules',          en: '📊 Stats only'          },
+  CTX_OFF:             { fr: '🚫 Désactivé',             en: '🚫 Disabled'            },
+
   // ── ChronologView ─────────────────────────────────────────────────────
   NO_EVENTS:           { fr: 'Aucun événement enregistré.',  en: 'No events recorded.' },
   VOTE:                { fr: 'VOTE',                   en: 'VOTE'               },

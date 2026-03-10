@@ -5,13 +5,22 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import AGENTS from '../templates/base_agents.json';
-import STATS  from '../templates/base_stats.json';
-import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_COUNTRIES } from './ariaData';
+import AGENTS    from '../templates/base_agents.json';
+import AGENTS_EN from '../templates/base_agents_en.json';
+import STATS     from '../templates/base_stats.json';
+import STATS_EN  from '../templates/base_stats_en.json';
+import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN, LOCAL_COUNTRIES } from './ariaData';
+import { loadLang } from './ariaI18n';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  1. CONSTANTES DÉRIVÉES DES JSON
+//  Les exports statiques restent pour compatibilité (initialisés en FR).
+//  Utiliser les getters getAgents()/getStats() pour un accès lang-aware.
 // ─────────────────────────────────────────────────────────────────────────────
+
+/** Retourne le bon jeu de templates selon la langue courante */
+export const getAgents = () => loadLang() === 'en' ? AGENTS_EN : AGENTS;
+export const getStats  = () => loadLang() === 'en' ? STATS_EN  : STATS;
 
 export const MINISTERS   = AGENTS.ministers;
 export const MINISTRIES  = AGENTS.ministries;
@@ -347,7 +356,7 @@ export function driftAria(current, irl, satisfaction) {
 }
 
 export function calcRessources(terrain, seed) {
-  const cfg  = TERRAINS[terrain] || TERRAINS.inland;
+  const cfg  = getStats().terrains[terrain] || getStats().terrains.inland;
   const rand = seededRand(seed + 7777);
   const res  = {};
 
@@ -374,8 +383,8 @@ export function calcRessources(terrain, seed) {
  */
 export function buildCountryFromLocal(template, worldData) {
   const seed     = strToSeed(template.id);
-  const regime   = REGIMES[template.regime] || REGIMES.republique_federale;
-  const terrain  = TERRAINS[template.terrain] || TERRAINS.coastal;
+  const regime   = getStats().regimes[template.regime] || getStats().regimes.republique_federale;
+  const terrain  = getStats().terrains[template.terrain] || getStats().terrains.coastal;
   const spawn    = LOCAL_SPAWN[template.id] || { cx: 400, cy: 300 };
 
   // Adaptation au viewport réel
@@ -430,7 +439,7 @@ export function buildCountryFromLocal(template, worldData) {
 export function buildCountryFromAI(aiData, worldData, existingCountries) {
   const seed    = strToSeed(aiData.nom + Date.now());
   const terrain = aiData.terrain || 'coastal';
-  const regime  = REGIMES[aiData.regime] || REGIMES.democratie_liberale;
+  const regime  = getStats().regimes[aiData.regime] || getStats().regimes.democratie_liberale;
   const coastal = ['coastal', 'island', 'archipelago'].includes(terrain);
 
   const preferredType = ['island', 'archipelago'].includes(terrain) ? 'island' : 'continent';
@@ -451,7 +460,7 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
     regimeName:   regime.name,
     regimeEmoji:  regime.emoji,
     terrain,
-    terrainName:  TERRAINS[terrain]?.name || terrain,
+    terrainName:  getStats().terrains[terrain]?.name || terrain,
     coastal,
     description:  aiData.description || '',
     leader:       aiData.leader
@@ -487,10 +496,11 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
 
 /** Mappe un score de satisfaction sur un objet humeur {label, color} */
 export function getHumeur(score) {
-  for (const h of HUMEURS) {
+  const humeurs = getStats().humeurs;
+  for (const h of humeurs) {
     if (score >= h.min) return h;
   }
-  return HUMEURS[HUMEURS.length - 1];
+  return humeurs[humeurs.length - 1];
 }
 
 /** Calcule le rayon d'influence (cercle pointillé au clic) */
@@ -527,8 +537,8 @@ export function applyEventImpact(country, impact) {
  * alliances/conflits, et un bruit aléatoire contrôlé.
  */
 export function calcSatisfactionDelta(country, alliances) {
-  const cfg    = CYCLES_CFG;
-  const regime = REGIMES[country.regime] || REGIMES.republique_federale;
+  const cfg    = getStats().calculs_cycles;
+  const regime = getStats().regimes[country.regime] || getStats().regimes.republique_federale;
   const poids  = regime.poids_ministeriel;
 
   // Dérive de base modulée par le coefficient de satisfaction du régime
@@ -570,8 +580,8 @@ export function calcSatisfactionDelta(country, alliances) {
  * Retourne le nouveau pays (immutable update).
  */
 export function doCycle(country, alliances) {
-  const regime = REGIMES[country.regime] || REGIMES.republique_federale;
-  const terrain= TERRAINS[country.terrain] || TERRAINS.inland;
+  const regime = getStats().regimes[country.regime] || getStats().regimes.republique_federale;
+  const terrain= getStats().terrains[country.terrain] || getStats().terrains.inland;
 
   // Croissance démographique
   const natalite  = (country.tauxNatalite  / 1000) * 5;
@@ -637,36 +647,12 @@ export function checkSeuils(before, after) {
 //  6. MOTEUR IA
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Récupère les clés API depuis localStorage.
- *  Format stocké : { gemini: [{key, model, label}], claude: ["clé"|{key}], ... }
- *  Rétrocompat : string → [{key}], string[] → [{key}]
- */
+/** Récupère les clés API depuis localStorage */
 export function getApiKeys() {
   try {
     return JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
   } catch { return {}; }
 }
-
-/** Normalise un provider en tableau de slots {key, model, label} */
-export function normalizeSlots(raw, defaultModel) {
-  if (!raw) return [];
-  if (typeof raw === 'string') return raw ? [{ key: raw, model: defaultModel, label: '' }] : [];
-  if (Array.isArray(raw)) {
-    return raw
-      .map(item => {
-        if (!item) return null;
-        if (typeof item === 'string') return item ? { key: item, model: defaultModel, label: '' } : null;
-        if (typeof item === 'object' && item.key) return { key: item.key, model: item.model || defaultModel, label: item.label || '' };
-        return null;
-      })
-      .filter(Boolean)
-      .filter(s => s.key?.trim());
-  }
-  return [];
-}
-
-const GEMINI_DEFAULT = 'gemini-2.5-flash';
-const CLAUDE_DEFAULT = 'claude-sonnet-4-6';
 
 /** Construit le prompt IA de création d'un pays */
 export function buildCountryPrompt(type, nomDemande = '') {
@@ -748,28 +734,12 @@ Génère une notification d'analyse en JSON :
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Appelle un modèle spécifique (Claude ou Gemini) via API
-async function callModel(model, prompt, keys, systemPrompt = '') {
+async function callModel(model, prompt, keys, systemPrompt = '', _retryCount = 0) {
   // Priorité Gemini (gratuit) si les deux clés existent
   // Si le modèle demandé n'a pas de clé → fallback dans l'ordre : gemini → claude → grok → openai
-  const rawKeys = keys;
-  const geminiSlots = normalizeSlots(rawKeys.gemini, GEMINI_DEFAULT);
-  const claudeSlots = normalizeSlots(rawKeys.claude, CLAUDE_DEFAULT);
-  const grokKey   = typeof rawKeys.grok   === 'string' ? rawKeys.grok   : rawKeys.grok?.[0]?.key   || rawKeys.grok?.[0]   || '';
-  const openaiKey = typeof rawKeys.openai === 'string' ? rawKeys.openai : rawKeys.openai?.[0]?.key || rawKeys.openai?.[0] || '';
-
-  const hasGemini = geminiSlots.length > 0;
-  const hasClaude = claudeSlots.length > 0;
-  const hasGrok   = !!grokKey;
-  const hasOpenai = !!openaiKey;
-
-  const KEY_PRIORITY = [
-    ...(hasGemini ? ['gemini'] : []),
-    ...(hasClaude ? ['claude'] : []),
-    ...(hasGrok   ? ['grok']   : []),
-    ...(hasOpenai ? ['openai'] : []),
-  ];
-  if (!KEY_PRIORITY.includes(model)) {
-    model = KEY_PRIORITY[0] || model;
+  const KEY_PRIORITY = ['gemini','claude','grok','openai'];
+  if (!keys[model]) {
+    model = KEY_PRIORITY.find(p => keys[p]) || model;
   }
 
   // 1. On prépare le contenu fusionné (Rôle + Données)
@@ -777,20 +747,18 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
   ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
   : prompt;
 
-  if (model === 'claude' && hasClaude) {
-    const claudeKey   = claudeSlots[0].key;
-    const claudeModel = claudeSlots[0].model || CLAUDE_DEFAULT;
+  if (model === 'claude' && keys.claude) {
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': claudeKey,
+          'x-api-key': keys.claude,
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
-          model: claudeModel,
+          model: (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').claude || 'claude-sonnet-4-6'; } catch { return 'claude-sonnet-4-6'; } })(),
           max_tokens: 1000,
           messages: [{ role: 'user', content: fullContent }],
         }),
@@ -805,61 +773,67 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     }
   }
 
-  if (model === 'gemini' && hasGemini) {
-    // Itérer sur chaque slot Gemini (chacun a son propre modèle)
-    for (const slot of geminiSlots) {
-      const slotKey   = slot.key;
-      const slotModel = slot.model || GEMINI_DEFAULT;
-      // Pour chaque slot, on essaie son modèle principal puis un fallback stable
-      const modelsToTry = [slotModel, ...(slotModel !== 'gemini-2.0-flash' ? ['gemini-2.0-flash'] : [])].filter((v,i,a)=>a.indexOf(v)===i);
-      for (const gModel of modelsToTry) {
-        try {
-          const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${slotKey}`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: fullContent }] }],
-                generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
-              }),
-            }
-          );
-          if (!res.ok) {
-            if (res.status === 429) { console.warn(`[ARIA] Gemini ${gModel} slot ${slot.label||slotKey.slice(-6)} — 429`); break; } // quota dépassé pour ce slot → slot suivant
-            continue; // autre erreur → modèle suivant
+  if (model === 'gemini' && keys.gemini) {
+    const preferredGemini = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').gemini; } catch { return null; } })();
+    const GEMINI_MODELS = [preferredGemini, 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
+    for (const gModel of GEMINI_MODELS) {
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keys.gemini}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: fullContent }] }],
+              generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
+            }),
           }
-          const data = await res.json();
-          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          const clean = text.replace(/```json|```/g, '').trim();
-          return JSON.parse(clean);
-        } catch (e) {
-          console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
+        );
+        if (!res.ok) {
+          // 429 quota — pas de fallback utile, on retourne erreur gracieuse
+          if (res.status === 429) {
+            if (_retryCount < 3) {
+              const delay = 1500 * Math.pow(2, _retryCount); // 1.5s → 3s → 6s
+              await new Promise(r => setTimeout(r, delay));
+              return callModel(model, prompt, keys, systemPrompt, _retryCount + 1);
+            }
+            return { error: true, code: 429, msg: '⚠ Quota API dépassé (429) — pause et réessayez.' };
+          }
+          continue; // autre erreur → essayer modèle suivant
         }
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const clean = text.replace(/```json|```/g, '').trim();
+        return JSON.parse(clean);
+      } catch (e) {
+        console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
+        // continuer avec le modèle suivant
       }
-      // Ce slot a échoué → on passe au slot suivant
     }
     return { error: true, msg: getRandomFallback() };
   }
+  return { error: true, msg: "SYSTÈME : Aucune clé API valide détectée." };
 }
 
 // Pioche une réponse dans tes fichiers locaux (test.js) si pas d'IA
 function getLocalResponse(type, context = {}) {
   const { ministerKey, ministryKey, role, situation = 'cycle_normal' } = context;
+  const DELIB = loadLang() === 'en' ? LOCAL_DELIBERATION_EN : LOCAL_DELIBERATION;
+  const silenceMsg = loadLang() === 'en' ? 'ARIA: Council radio silence.' : 'ARIA : Silence radio du Conseil.';
   let pool = [];
 
   if (type === 'ministre' && ministerKey)
-    pool = LOCAL_DELIBERATION.ministers?.[ministerKey]?.[situation] || [];
+    pool = DELIB.ministers?.[ministerKey]?.[situation] || [];
   else if (type === 'synthese_ministere' && ministryKey)
-    pool = LOCAL_DELIBERATION.ministries?.[ministryKey]?.[situation] || [];
+    pool = DELIB.ministries?.[ministryKey]?.[situation] || [];
   else if ((type === 'phare' || type === 'boussole') && role)
-    pool = LOCAL_DELIBERATION.presidency?.[role]?.[situation] || [];
+    pool = DELIB.presidency?.[role]?.[situation] || [];
   else if (type === 'synthese_presidence')
-    pool = LOCAL_DELIBERATION.presidency?.synthese?.[context.convergence ? 'convergence' : 'divergence'] || [];
+    pool = DELIB.presidency?.synthese?.[context.convergence ? 'convergence' : 'divergence'] || [];
   else if (type === 'evenement' && context.trigger)
     pool = LOCAL_EVENTS?.[context.trigger] || [];
 
-  return pool.length ? pool[Math.floor(Math.random() * pool.length)] : "ARIA : Silence radio du Conseil.";
+  return pool.length ? pool[Math.floor(Math.random() * pool.length)] : silenceMsg;
 }
 
 export function getPromptsSys() {
@@ -874,17 +848,13 @@ export function getPromptsSys() {
 // Point d'entrée unique pour tous les appels IA du Dashboard
 export async function callAI(prompt, type = 'standard', context = {}) {
   const opts = getOptions();
-  const promptsSys = getPromptsSys();
+  const promptsSys = getPromptsSys(); // On récupère les prompts personnalisables
   const keys = opts.api_keys;
   const roles = opts.ia_roles;
-  // Détecter la présence de clés (format tableau de slots ou string legacy)
-  const hasKeys = normalizeSlots(keys.claude, CLAUDE_DEFAULT).length > 0
-    || normalizeSlots(keys.gemini, GEMINI_DEFAULT).length > 0
-    || !!(typeof keys.grok === 'string' ? keys.grok : keys.grok?.[0]?.key || keys.grok?.[0])
-    || !!(typeof keys.openai === 'string' ? keys.openai : keys.openai?.[0]?.key || keys.openai?.[0]);
+  const hasKeys = !!(keys.claude || keys.gemini);
 
-  // 1. Priorité au mode Board Game ou absence de clés
-  if (!hasKeys || (opts.gameplay && opts.gameplay.mode_board_game)) {
+  // 1. Priorité au mode hors-ligne forcé, Board Game, ou absence de clés
+  if (!hasKeys || opts.force_local || (opts.gameplay && opts.gameplay.mode_board_game)) {
     return getLocalResponse(type, context);
   }
 
@@ -1206,6 +1176,11 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
 
   // ── Lancement en mode local (sans IA) ─────────────────────────────────────
   const startLocal = useCallback((customDefs = null, W = 1400, H = 800) => {
+    try {
+      const o = JSON.parse(localStorage.getItem('aria_options') || '{}');
+      o.force_local = true;
+      localStorage.setItem('aria_options', JSON.stringify(o));
+    } catch {}
     const seed  = Math.floor(Math.random() * 999999);
     const world = initWorld(seed, W, H);
 
@@ -1262,6 +1237,12 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
 
   // ── Lancement en mode IA ───────────────────────────────────────────────────
   const startWithAI = useCallback(async (countryDefs, W = 1400, H = 800) => {
+    // Session en ligne — désactive le forçage local
+    try {
+      const o = JSON.parse(localStorage.getItem('aria_options') || '{}');
+      o.force_local = false;
+      localStorage.setItem('aria_options', JSON.stringify(o));
+    } catch {}
     const seed  = Math.floor(Math.random() * 999999);
     const world = initWorld(seed, W, H);
     const keys  = getApiKeys();
@@ -1392,7 +1373,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
 
     // Régime enfant (depuis la modale, défaut = héritage parent)
     const regimeKey   = childRegime || parent.regime;
-    const regimeObj   = REGIMES[regimeKey] || REGIMES.republique_federale;
+    const regimeObj   = getStats().regimes[regimeKey] || getStats().regimes.republique_federale;
 
     // Placement anti-overlap : utilise findSpawnPoint si worldData dispo,
     // sinon offset directionnel garanti hors du parent

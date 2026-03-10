@@ -19,8 +19,10 @@
 //  le composant bascule sur le mode local (ariaData.js)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { callAI, getApiKeys } from './Dashboard_p1';
-import AGENTS_RAW from '../templates/base_agents.json';
+import { callAI, getApiKeys, getStats } from './Dashboard_p1';
+import AGENTS_RAW    from '../templates/base_agents.json';
+import AGENTS_RAW_EN from '../templates/base_agents_en.json';
+import { loadLang }  from './ariaI18n';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DONNÉES AGENTS — runtime override via localStorage
@@ -31,18 +33,54 @@ import AGENTS_RAW from '../templates/base_agents.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
 function getAgents() {
+  const BASE = loadLang() === 'en' ? AGENTS_RAW_EN : AGENTS_RAW;
   try {
     const ov = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
-    if (!ov) return AGENTS_RAW;
+    if (!ov) return BASE;
+
+    // Les noms/labels viennent toujours du JSON localisé (BASE).
+    // L'override contribue uniquement : active_*, et les prompts custom
+    // (ministerPrompts, mission, essence) qui sont par nature libres de langue.
+    const mergedMinistries = BASE.ministries.map(bm => {
+      const om = (ov.ministries || []).find(m => m.id === bm.id);
+      if (!om) return bm;
+      return {
+        ...bm,
+        // Prompts custom de l'override (libres) — sinon valeur de BASE
+        ministerPrompts: om.ministerPrompts || om.minister_prompts || bm.ministerPrompts,
+        mission: om.mission || bm.mission,
+      };
+    });
+    const mergedMinisters = { ...BASE.ministers };
+    Object.keys(ov.ministers || {}).forEach(k => {
+      if (mergedMinisters[k]) {
+        mergedMinisters[k] = {
+          ...mergedMinisters[k],
+          essence:    ov.ministers[k].essence    || mergedMinisters[k].essence,
+          comm:       ov.ministers[k].comm       || mergedMinisters[k].comm,
+          annotation: ov.ministers[k].annotation || mergedMinisters[k].annotation,
+        };
+      }
+    });
+    const mergedPresidency = { ...BASE.presidency };
+    Object.keys(ov.presidency || {}).forEach(k => {
+      if (mergedPresidency[k]) {
+        mergedPresidency[k] = {
+          ...mergedPresidency[k],
+          essence: ov.presidency[k].essence || mergedPresidency[k].essence,
+        };
+      }
+    });
+
     return {
-      ministries: ov.ministries || AGENTS_RAW.ministries,
-      ministers:  ov.ministers  || AGENTS_RAW.ministers,
-      presidency: ov.presidency || AGENTS_RAW.presidency,
+      ministries: mergedMinistries,
+      ministers:  mergedMinisters,
+      presidency: mergedPresidency,
       _active_ministries: ov.active_ministries || null,
       _active_presidency: ov.active_presidency || null,
       _active_ministers:  ov.active_ministers  || null,
     };
-  } catch { return AGENTS_RAW; }
+  } catch { return BASE; }
 }
 
 /** Retourne la liste des ministères actifs (filtrée si constitution le précise) */
@@ -77,6 +115,14 @@ export function getPresidency() {
 export const MINISTRIES_LIST = AGENTS_RAW.ministries || [];
 export const MINISTERS_MAP   = AGENTS_RAW.ministers  || {};
 export const PRESIDENCY      = AGENTS_RAW.presidency  || {};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  COUCHE 2 — Injection langue dans les prompts IA
+//  Préfixe injecté en tête de chaque prompt si lang === 'en'.
+// ─────────────────────────────────────────────────────────────────────────────
+function langPrefix() {
+  return loadLang() === 'en' ? 'Respond in English.\n' : '';
+}
 
 /** Ministère par défaut si routing impossible */
 const DEFAULT_MINISTRY_ID = null; // null = question orpheline → FALLBACK_RESPONSES
@@ -157,7 +203,7 @@ export async function routeQuestion(question, forceMinistryId = null) {
 
   // ── Mode IA ──────────────────────────────────────────────────────────────
   const ministryList = getMinistriesList().map(m => `${m.id} (${m.name})`).join(', ');
-  const prompt = `Tu es le système de routage du gouvernement ARIA.
+  const prompt = `${langPrefix()}Tu es le système de routage du gouvernement ARIA.
 Question soumise par un citoyen : "${question}"
 Ministères disponibles : ${ministryList}
 
@@ -226,14 +272,14 @@ export async function runMinisterePhase(ministry, question, country) {
   const ctx         = buildCountryContext(country);
 
   // ── Ministre A ──────────────────────────────────────────────────────────
-  const pA = `${promptA}
+  const pA = `${langPrefix()}${promptA}
 ${ctx}
 Question soumise au ministère : "${question}"
 Tu es ${minA.name || idA}. ${minA.comm || ''}
 Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases argumentées", "mot_cle": "1 mot résumant ton angle" }`;
 
   // ── Ministre B ──────────────────────────────────────────────────────────
-  const pB = `${promptB}
+  const pB = `${langPrefix()}${promptB}
 ${ctx}
 Question soumise au ministère : "${question}"
 Tu es ${minB.name || idB}. ${minB.comm || ''}
@@ -242,19 +288,15 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases argumentées", "mot_cle
   // ── Synthèse ministère ───────────────────────────────────────────────────
   const keys = getApiKeys();
 
-  const validAI = r => r && !r.error; // filtre les { error: true } retournés par callAI
-
   let resA = null, resB = null;
   if (keys.claude || keys.gemini) {
-    const [rA, rB] = await Promise.all([
+    [resA, resB] = await Promise.all([
       callAI(pA, 'council_ministre').catch(() => null),
       callAI(pB, 'council_ministre').catch(() => null),
     ]);
-    resA = validAI(rA) ? rA : null;
-    resB = validAI(rB) ? rB : null;
   }
 
-  // Fallback local si IA indisponible ou erreur
+  // Fallback local si IA indisponible
   if (!resA) resA = localMinisterFallback(idA, question);
   if (!resB) resB = localMinisterFallback(idB, question);
 
@@ -262,8 +304,7 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases argumentées", "mot_cle
   let synthese = null;
   if (keys.claude || keys.gemini) {
     const pSynth = buildSyntheseMinisterePrompt(ministry, resA, resB, question, ctx);
-    const rSynth = await callAI(pSynth, 'council_synthese_min').catch(() => null);
-    synthese = validAI(rSynth) ? rSynth : null;
+    synthese = await callAI(pSynth, 'council_synthese_min').catch(() => null);
   }
   if (!synthese) synthese = localSyntheseFallback(ministry, resA, resB);
 
@@ -311,14 +352,13 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
 
       let result = null;
       if (keys.claude || keys.gemini) {
-        const p = `Tu représentes le ministère "${m.name}" (${m.emoji}) du gouvernement ARIA.
+        const p = `${langPrefix()}Tu représentes le ministère "${m.name}" (${m.emoji}) du gouvernement ARIA.
 ${ctx}
 Question traitée : "${question}"
 Synthèse du ministère principal : "${syntheseText}"
 ${annotation}
 Réponds UNIQUEMENT en JSON : { "annotation": "1-2 phrases, ton sobre, angle spécifique à ton ministère" }`;
-        const raw = await callAI(p, 'council_annotation').catch(() => null);
-        result = (raw && !raw.error) ? raw : null;
+        result = await callAI(p, 'council_annotation').catch(() => null);
       }
 
       return {
@@ -374,27 +414,23 @@ Annotations des autres ministères :
 ${cercleSummary}`;
 
   // ── Phare ────────────────────────────────────────────────────────────────
-  const pPhare = `Tu es ${phareData.name} (${phareData.symbol}) du gouvernement ARIA.
+  const pPhare = `${langPrefix()}Tu es ${phareData.name} (${phareData.symbol}) du gouvernement ARIA.
 ${phareData.essence}
 ${context}
 Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — vision long terme, tranchant et clair", "decision": "1 phrase — quelle décision tu recommandes" }`;
 
   // ── Boussole ─────────────────────────────────────────────────────────────
-  const pBoussole = `Tu es ${boussoleData.name} (${boussoleData.symbol}) du gouvernement ARIA.
+  const pBoussole = `${langPrefix()}Tu es ${boussoleData.name} (${boussoleData.symbol}) du gouvernement ARIA.
 ${boussoleData.essence}
 ${context}
 Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — mémoire et protection, nuancé", "decision": "1 phrase — quelle décision tu recommandes" }`;
 
-  const validAI = r => r && !r.error;
-
   let phare = null, boussole = null;
   if (keys.claude || keys.gemini) {
-    const [rPh, rBo] = await Promise.all([
+    [phare, boussole] = await Promise.all([
       callAI(pPhare, 'council_phare').catch(() => null),
       callAI(pBoussole, 'council_boussole').catch(() => null),
     ]);
-    phare    = validAI(rPh) ? rPh : null;
-    boussole = validAI(rBo) ? rBo : null;
   }
 
   if (!phare) {
@@ -423,8 +459,7 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — mémoire et protect
   let synthese = null;
   if (keys.claude || keys.gemini) {
     const pSynth = buildSynthesePresidencePrompt(phare, boussole, question, country);
-    const rSynth = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
-    synthese = validAI(rSynth) ? rSynth : null;
+    synthese = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
   }
   if (!synthese) {
     // Évaluation contextuelle de la convergence
@@ -525,10 +560,12 @@ export function computeVoteImpact(vote, presidence, country) {
  */
 function buildCountryContext(country) {
   if (!country) return '';
+  const en = loadLang() === 'en';
 
   // 1. Override libre par pays
   if (country.contextOverride && country.contextOverride.trim()) {
-    return `[Contexte — ${country.nom}]\n${country.contextOverride.trim()}`;
+    const lbl = en ? 'Context' : 'Contexte';
+    return `[${lbl} — ${country.nom}]\n${country.contextOverride.trim()}`;
   }
 
   // 2. Mode effectif (pays > global)
@@ -545,10 +582,14 @@ function buildCountryContext(country) {
   const sat  = country.satisfaction ?? 50;
   const aria = country.aria_current ?? country.aria_irl ?? 40;
   const year = country.annee || 2026;
+  // Résoudre le nom du régime depuis les données localisées
+  const regimeNameLocalized = getStats().regimes[country.regime]?.name || country.regimeName || country.regime;
 
   // 3. Stats only
   if (mode === 'stats_only') {
-    return `Pays : "${country.nom}" | Régime : ${country.regimeName || country.regime} | ${pop} M hab. | Satisfaction : ${sat}% | ARIA : ${aria}% | Année : ${year}`;
+    return en
+      ? `Country: "${country.nom}" | Regime: ${regimeNameLocalized} | ${pop}M pop. | Approval: ${sat}% | ARIA: ${aria}% | Year: ${year}`
+      : `Pays : "${country.nom}" | Régime : ${regimeNameLocalized} | ${pop} M hab. | Satisfaction : ${sat}% | ARIA : ${aria}% | Année : ${year}`;
   }
 
   // 4. Modes auto / rich
@@ -556,37 +597,57 @@ function buildCountryContext(country) {
   const leaderName  = typeof leader === 'object' ? leader?.nom  : leader;
   const leaderTitre = typeof leader === 'object' ? leader?.titre : null;
 
-  let ctx = `Pays : "${country.nom}"
-- Régime : ${country.regimeName || country.regime}
+  const stabilityLabel = en
+    ? (sat < 30 ? 'very unstable' : sat < 50 ? 'fragile' : sat < 70 ? 'stable' : 'solid')
+    : (sat < 30 ? 'très instable' : sat < 50 ? 'fragile' : sat < 70 ? 'correct' : 'solide');
+
+  let ctx = en
+    ? `Country: "${country.nom}"
+- Regime: ${regimeNameLocalized}
+- Population: ${pop}M
+- Public approval: ${sat}% (${stabilityLabel})
+- ARIA support: ${aria}%
+- Year: ${year}`
+    : `Pays : "${country.nom}"
+- Régime : ${regimeNameLocalized}
 - Population : ${pop} M habitants
-- Satisfaction populaire : ${sat}% (${sat < 30 ? 'très instable' : sat < 50 ? 'fragile' : sat < 70 ? 'correct' : 'solide'})
+- Satisfaction populaire : ${sat}% (${stabilityLabel})
 - Adhésion ARIA : ${aria}%
 - Année : ${year}`;
 
   if (leaderName) {
-    ctx += `\n- Dirigeant : ${leaderTitre ? `${leaderTitre} ` : ''}${leaderName}`;
+    const leaderLbl = en ? 'Leader' : 'Dirigeant';
+    ctx += `\n- ${leaderLbl} : ${leaderTitre ? `${leaderTitre} ` : ''}${leaderName}`;
   }
 
   const hasDesc = country.description && country.description.trim();
   if (hasDesc) {
-    ctx += `\n- Situation actuelle : ${country.description}`;
+    const sitLbl = en ? 'Current situation' : 'Situation actuelle';
+    ctx += `\n- ${sitLbl} : ${country.description}`;
   }
 
   const isReal = hasDesc || leaderName;
   if (mode === 'rich' || isReal) {
-    ctx += `\n\nIMPORTANT : ${isReal
-      ? `Ce pays est ancré dans la réalité. Tes recommandations doivent tenir compte de son histoire, sa culture politique, ses contraintes institutionnelles et son contexte géopolitique réel en ${year}.`
-      : `Pays fictif en mode enrichi — raisonne à partir des stats et de la logique interne du régime "${country.regimeName || country.regime}".`
-    }`;
+    ctx += en
+      ? `\n\nIMPORTANT: ${isReal
+          ? `This country is real. Your recommendations must account for its history, political culture, institutional constraints and actual geopolitical context in ${year}.`
+          : `Fictional country in rich mode — reason from the stats and the internal logic of the "${regimeNameLocalized}" regime.`
+        }`
+      : `\n\nIMPORTANT : ${isReal
+          ? `Ce pays est ancré dans la réalité. Tes recommandations doivent tenir compte de son histoire, sa culture politique, ses contraintes institutionnelles et son contexte géopolitique réel en ${year}.`
+          : `Pays fictif en mode enrichi — raisonne à partir des stats et de la logique interne du régime "${regimeNameLocalized}".`
+        }`;
   } else {
-    ctx += `\n\nContexte : Pays fictif — approche objective basée sur les statistiques fournies.`;
+    ctx += en
+      ? `\n\nContext: Fictional country — objective analysis based on the provided statistics.`
+      : `\n\nContexte : Pays fictif — approche objective basée sur les statistiques fournies.`;
   }
 
   return ctx;
 }
 
 function buildSyntheseMinisterePrompt(ministry, resA, resB, question, ctx) {
-  return `Tu es le système de synthèse institutionnelle du gouvernement ARIA.
+  return `${langPrefix()}Tu es le système de synthèse institutionnelle du gouvernement ARIA.
 Tu reçois les positions de deux ministres du ministère "${ministry.name}".
 ${ctx}
 Question : "${question}"
@@ -610,7 +671,7 @@ Réponds UNIQUEMENT en JSON valide, sans texte avant ou après :
 
 function buildSynthesePresidencePrompt(phare, boussole, question, country) {
   const ctx = buildCountryContext(country);
-  return `Tu es le système d'arbitrage présidentiel du gouvernement ARIA.
+  return `${langPrefix()}Tu es le système d'arbitrage présidentiel du gouvernement ARIA.
 ${ctx}
 Question débattue : "${question}"
 

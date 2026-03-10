@@ -10,6 +10,17 @@
 //    Dashboard_p2.jsx  → MapSVG
 //    ConstitutionModal → modale gouvernance par pays
 // ═══════════════════════════════════════════════════════════════════════════════
+import { REAL_COUNTRIES_DATA_EN } from './ariaData';
+
+function getLocalizedNom(country) {
+  if (!country?.id) return country?.nom || '';
+  try {
+    const lang = localStorage.getItem('aria_lang') || 'fr';
+    if (lang !== 'en') return country?.nom || '';
+    const enData = REAL_COUNTRIES_DATA_EN.find(r => r.id === country.id);
+    return enData?.nom || country?.nom || '';
+  } catch { return country?.nom || ''; }
+}
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -226,7 +237,7 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
                   display: 'flex', alignItems: 'center', gap: '0.4rem',
                 }}>
                   <span>{c.emoji}</span>
-                  <span style={{ color: 'rgba(200,215,240,0.75)' }}>{c.nom}</span>
+                  <span style={{ color: 'rgba(200,215,240,0.75)' }}>{getLocalizedNom(c)}</span>
                   <span style={{ marginLeft: 'auto', color: 'rgba(140,160,200,0.40)', fontSize: '0.42rem' }}>aucun conseil ce cycle</span>
                 </div>
               ))}
@@ -717,14 +728,12 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
   );
 }
 
-export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted, isSettingsOpen }) {
+export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
 
   // Numéro de cycle courant — incrémenté à chaque confirmation de cycle
   const cycleNumRef = useRef(1);
-  // Sauvegarde des defs pays pour relancer startWithAI après changement de clé dans Settings
-  const pendingRetryRef = useRef(null); // { countryDefs, W, H } | null
 
   // ── Modales ──
   const [modalSecession,    setModalSecession]    = useState(false);
@@ -988,21 +997,9 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     }
   }, [aria.countries]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Retry automatique après changement de clé dans Settings ─────────────
-  // Quand Settings se ferme (isSettingsOpen passe true → false) ET qu'un
-  // pendingRetry existe, on relance startWithAI avec les defs sauvegardées.
-  const prevSettingsOpen = useRef(false);
-  useEffect(() => {
-    const wasOpen = prevSettingsOpen.current;
-    prevSettingsOpen.current = !!isSettingsOpen;
-    if (wasOpen && !isSettingsOpen && pendingRetryRef.current) {
-      const { countryDefs, W, H } = pendingRetryRef.current;
-      pendingRetryRef.current = null;
-      console.log('[ARIA] Retry startWithAI après changement de clé');
-      onWorldStarted?.();
-      aria.startWithAI(countryDefs, W, H);
-    }
-  }, [isSettingsOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  // ─────────────────────────────────────────────────────────────────────────
+  //  Rendu selon onglet actif
+  // ─────────────────────────────────────────────────────────────────────────
 
   const renderMainContent = () => {
     if (activeTab === 'council') {
@@ -1096,13 +1093,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       <AIErrorModal
         error={aria.aiError}
         onClose={() => aria.clearAiError?.()}
-        onSettings={() => {
-          // Sauvegarder les defs pour relancer après Settings
-          const { countryDefs, W, H } = aria.aiError || {};
-          if (countryDefs?.length) pendingRetryRef.current = { countryDefs, W: W || 1400, H: H || 800 };
-          aria.clearAiError?.();
-          onGoToSettings?.();
-        }}
+        onSettings={() => { aria.clearAiError?.(); onGoToSettings?.(); }}
         onOffline={() => { aria.clearAiError?.(); onReset(); }}
         onCreateLocal={() => {
           const { countryDefs, W, H } = aria.aiError || {};
@@ -1155,7 +1146,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
                 ⚖️
               </button>
               <button style={S.fabBtn} title="Diplomatie" onClick={openDiplomacy}>🤝</button>
-              <button style={S.fabBtn} title="Constitution" onClick={openConstitution}>📜</button>
+              <button style={S.fabBtn} title="Gouvernement" onClick={openConstitution}>🏛️</button>
               <button style={{ ...S.fabBtn, ...S.fabBtnDanger }} title="Sécession" onClick={openSecession}>✂️</button>
             </>
           )}

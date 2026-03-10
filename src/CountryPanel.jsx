@@ -19,10 +19,24 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from 'react';
-import { COLOR, FONT, TERRAIN_LABELS, RESOURCE_DEFS, MARITIME, satisfColor, fmtPop } from './ariaTheme';
-import AGENTS_RAW from '../templates/base_agents.json';
+import { COLOR, FONT, RESOURCE_DEFS, MARITIME, satisfColor, fmtPop } from './ariaTheme';
+import { getMinistriesList } from './llmCouncilEngine';
+import { REAL_COUNTRIES_DATA_EN } from './ariaData';
+import { loadLang, useLocale } from './ariaI18n';
+import { getStats } from './Dashboard_p1';
 
-const MINISTRIES_LIST = AGENTS_RAW.ministries || [];
+function getLocalizedNom(country) {
+  if (!country?.id) return country?.nom || '';
+  if (loadLang() !== 'en') return country?.nom || '';
+  const enData = REAL_COUNTRIES_DATA_EN.find(r => r.id === country.id);
+  return enData?.nom || country?.nom || '';
+}
+
+// Labels dynamiques localisés
+function getTerrainLabel(key) {
+  return getStats().terrains?.[key]?.name || key;
+}
+
 
 // ── EmptyPanel ────────────────────────────────────────────────────────────
 export function EmptyPanel({ activeTab }) {
@@ -55,6 +69,8 @@ export default function CountryPanel({
   onGoToCouncil, onConstitution,
   onSubmitQuestion, onAddFictionalCountry,
 }) {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
   const [openMinistry, setOpenMinistry] = useState(null);
   const [customQ,      setCustomQ]      = useState('');
   const [freeQ,        setFreeQ]        = useState('');
@@ -87,7 +103,7 @@ export default function CountryPanel({
         <div className="panel-header">
           <span className="panel-header-emoji">{emoji}</span>
           <div style={{ flex: 1 }}>
-            <div className="panel-header-title">{nom}</div>
+            <div className="panel-header-title">{getLocalizedNom(country) || nom}</div>
             <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.40)', letterSpacing: '0.10em' }}>
               CONSEIL DE DÉLIBÉRATION
             </div>
@@ -102,7 +118,7 @@ export default function CountryPanel({
               MINISTÈRES
             </div>
 
-            {MINISTRIES_LIST.map(m => {
+            {getMinistriesList().map(m => {
               const isOpen = openMinistry === m.id;
               return (
                 <div key={m.id} style={{
@@ -137,7 +153,7 @@ export default function CountryPanel({
                   {isOpen && (
                     <div style={{ padding: '0 0.6rem 0.6rem' }}>
                       <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.12em', color: 'rgba(140,160,200,0.40)', marginBottom: '0.35rem' }}>
-                        QUESTIONS FRÉQUENTES
+                        {isEn ? 'FREQUENT QUESTIONS' : 'QUESTIONS FRÉQUENTES'}
                       </div>
                       {(m.questions || []).map((q, i) => (
                         <button key={i} onClick={() => handleSubmit(q, m.id)} disabled={submitting}
@@ -156,10 +172,10 @@ export default function CountryPanel({
 
                       <div style={{ marginTop: '0.4rem' }}>
                         <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.12em', color: 'rgba(140,160,200,0.40)', marginBottom: '0.28rem' }}>
-                          QUESTION DU PEUPLE
+                          {isEn ? 'CITIZEN QUESTION' : 'QUESTION DU PEUPLE'}
                         </div>
                         <textarea value={customQ} onChange={e => setCustomQ(e.target.value)}
-                          placeholder={`Question pour ${m.name}…`} rows={2}
+                          placeholder={`${isEn ? 'Question for' : 'Question pour'} ${m.name}…`} rows={2}
                           style={{
                             width: '100%', background: 'rgba(8,14,26,0.7)',
                             border: `1px solid ${m.color}28`, borderRadius: '2px',
@@ -182,7 +198,7 @@ export default function CountryPanel({
                             color: customQ.trim() ? m.color : 'rgba(90,110,160,0.30)',
                             transition: 'all 0.15s ease',
                           }}
-                        >SOUMETTRE AU CONSEIL →</button>
+                        >{isEn ? 'SUBMIT TO COUNCIL →' : 'SOUMETTRE AU CONSEIL →'}</button>
                       </div>
                     </div>
                   )}
@@ -193,13 +209,13 @@ export default function CountryPanel({
             <div style={{ height: '1px', background: 'rgba(90,110,160,0.10)', margin: '0.7rem 0' }} />
 
             <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.16em', color: 'rgba(140,160,200,0.40)', marginBottom: '0.4rem' }}>
-              QUESTION LIBRE
+              {isEn ? 'FREE QUESTION' : 'QUESTION LIBRE'}
             </div>
             <div style={{ fontFamily: FONT.mono, fontSize: '0.41rem', color: 'rgba(100,120,160,0.45)', lineHeight: 1.5, marginBottom: '0.45rem', fontStyle: 'italic' }}>
-              Le Conseil déterminera automatiquement le ministère compétent.
+              {isEn ? 'The Council will automatically determine the competent ministry.' : 'Le Conseil déterminera automatiquement le ministère compétent.'}
             </div>
             <textarea value={freeQ} onChange={e => setFreeQ(e.target.value)}
-              placeholder="Posez n'importe quelle question…" rows={3}
+              placeholder={isEn ? 'Ask any question…' : "Posez n'importe quelle question…"} rows={3}
               style={{
                 width: '100%', background: 'rgba(8,14,26,0.7)',
                 border: '1px solid rgba(90,110,160,0.16)', borderRadius: '2px',
@@ -222,7 +238,7 @@ export default function CountryPanel({
                 color: freeQ.trim() ? 'rgba(200,164,74,0.85)' : 'rgba(90,110,160,0.30)',
                 transition: 'all 0.15s ease',
               }}
-            >{submitting ? '⏳ ROUTAGE EN COURS…' : 'SOUMETTRE AU CONSEIL →'}</button>
+            >{submitting ? (isEn ? '⏳ ROUTING…' : '⏳ ROUTAGE EN COURS…') : (isEn ? 'SUBMIT TO COUNCIL →' : 'SOUMETTRE AU CONSEIL →')}</button>
           </div>
         </div>
 
@@ -236,7 +252,7 @@ export default function CountryPanel({
         }}>
           {[
             { icon: '⏭', label: 'Cycle +5 ans',  fn: onNextCycle,    color: 'rgba(200,164,74,0.70)' },
-            { icon: '📜', label: 'Constitution',  fn: onConstitution, color: 'rgba(140,100,220,0.70)' },
+            { icon: '🏛️', label: 'Gouvernement', fn: onConstitution, color: 'rgba(140,100,220,0.70)' },
             { icon: '✂️', label: 'Sécession',     fn: onSecession,    color: 'rgba(200,80,80,0.70)'  },
           ].map(({ icon, label, fn, color }) => (
             <button
@@ -273,8 +289,8 @@ export default function CountryPanel({
       <div className="panel-header">
         <span className="panel-header-emoji">{emoji}</span>
         <div style={{ flex: 1 }}>
-          <div className="panel-header-title">{nom}</div>
-          <div className="panel-header-regime">{TERRAIN_LABELS[terrain] ?? terrain}</div>
+          <div className="panel-header-title">{getLocalizedNom(country) || nom}</div>
+          <div className="panel-header-regime">{getTerrainLabel(terrain)}</div>
         </div>
         <button className="btn-icon" onClick={onClose} style={{ flexShrink: 0 }}>✕</button>
       </div>
@@ -394,9 +410,9 @@ export default function CountryPanel({
 
         <button className="cp-act-btn btn-full" onClick={onConstitution}
           style={{ borderColor: 'rgba(140,100,220,0.25)', color: 'rgba(140,100,220,0.70)', marginBottom: '0.3rem' }}
-          title="Modifier la constitution"
+          title="Configuration du gouvernement"
         >
-          📜 CONSTITUTION
+          🏛️ GOUVERNEMENT
         </button>
 
         <button className="cp-act-btn purple btn-full" onClick={onSecession}>✂️ SÉCESSION</button>

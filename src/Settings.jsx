@@ -1,15 +1,18 @@
 // ═══════════════════════════════════════════════════════════════════════════
 //  Settings.jsx — Page de configuration complète ARIA
-//  6 sections : SYSTÈME · CONSTITUTION · CONSEIL · SIMULATION · INTERFACE · À PROPOS
+//  6 sections : SYSTÈME · CONSTITUTION · GOUVERNEMENT · SIMULATION · INTERFACE · À PROPOS
 //  Usage : <Settings onClose={() => setPage('dashboard')} />
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useCallback, Component } from 'react';
-import { useLocale, t } from './ariaI18n';
+import { useLocale, t, loadLang } from './ariaI18n';
+import BASE_AGENTS    from '../templates/base_agents.json';
+import BASE_AGENTS_EN from '../templates/base_agents_en.json';
 import {
   DEFAULT_OPTIONS, getOptions, saveOptions,
   MINISTERS, MINISTRIES as MINISTRIES_RAW, PRESIDENCY,
   REGIMES, TERRAINS, CYCLES_CFG, RESOURCE_KEYS,
+  getAgents, getStats,
 } from './Dashboard_p1';
 import './Settings.css';
 
@@ -44,7 +47,7 @@ class SectionErrorBoundary extends Component {
 const SECTIONS = [
   { id: 'systeme',      icon: '⚙️',  label: 'SYSTÈME'    },
   { id: 'constitution', icon: '📜',  label: 'CONSTITUTION' },
-  { id: 'conseil',      icon: '🏛️', label: 'CONSEIL'     },
+  { id: 'conseil',      icon: '🏛️', label: 'GOUVERNEMENT' },
   { id: 'simulation',   icon: '🎲',  label: 'SIMULATION'  },
   { id: 'interface',    icon: '🖥️', label: 'INTERFACE'   },
   { id: 'apropos',      icon: '✦',   label: 'À PROPOS'    },
@@ -54,26 +57,25 @@ const MINISTER_KEYS = [
   'initiateur','gardien','communicant','protecteur','ambassadeur','analyste',
   'arbitre','enqueteur','guide','stratege','inventeur','guerisseur',
 ];
-const MINISTER_LABELS = {
-  initiateur:'L\'Initiateur (Bélier)', gardien:'Le Gardien (Taureau)',
-  communicant:'Le Communicant (Gémeaux)', protecteur:'Le Protecteur (Cancer)',
-  ambassadeur:'L\'Ambassadeur (Lion)', analyste:'L\'Analyste (Vierge)',
-  arbitre:'L\'Arbitre (Balance)', enqueteur:'L\'Enquêteur (Scorpion)',
-  guide:'Le Guide (Sagittaire)', stratege:'Le Stratège (Capricorne)',
-  inventeur:'L\'Inventeur (Verseau)', guerisseur:'Le Guérisseur (Poissons)',
-};
-const MINISTER_EMOJIS = {
-  initiateur:'♈', gardien:'♉', communicant:'♊', protecteur:'♋',
-  ambassadeur:'♌', analyste:'♍', arbitre:'♎', enqueteur:'♏',
-  guide:'♐', stratege:'♑', inventeur:'♒', guerisseur:'♓',
-};
+// ── Getters dynamiques — labels localisés selon aria_lang ─────────────────
+function getMinisterLabels() {
+  const ag = getAgents();
+  return Object.fromEntries(
+    Object.entries(ag.ministers || {}).map(([k, m]) => [k, `${m.name} (${m.sign})`])
+  );
+}
+function getMinisterEmojis() {
+  const ag = getAgents();
+  return Object.fromEntries(
+    Object.entries(ag.ministers || {}).map(([k, m]) => [k, m.emoji || '👤'])
+  );
+}
 
-const MINISTRY_LABELS = {
-  justice:'⚖️ Justice et Vérité', economie:'💰 Économie et Ressources',
-  defense:'⚔️ Défense et Souveraineté', sante:'🏥 Santé et Protection Sociale',
-  education:'🎓 Éducation et Élévation', ecologie:'🌿 Transition Écologique',
-  chance:'🎲 Chance, Imprévu & Crises',
-};
+function getMinistryLabels() {
+  const ag = getAgents();
+  const mins = Array.isArray(ag.ministries) ? ag.ministries : Object.values(ag.ministries || {});
+  return Object.fromEntries(mins.map(m => [m.id, `${m.emoji||''} ${m.name}`]));
+}
 
 const REGIME_LABELS = {
   democratie_liberale:'Démocratie Libérale 🗳️',
@@ -157,35 +159,6 @@ function TextInput({ value, onChange, password, placeholder, mono }) {
   );
 }
 
-// Champ mot de passe avec toggle visibilité (œil)
-function PasswordInput({ value, onChange, placeholder }) {
-  const [show, setShow] = useState(false);
-  return (
-    <div style={{ position:'relative', flex:1, display:'flex' }}>
-      <input
-        type={show ? 'text' : 'password'}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder || ''}
-        className="settings-input"
-        style={{ flex:1, paddingRight:'2rem' }}
-      />
-      <button
-        onClick={() => setShow(s => !s)}
-        title={show ? 'Masquer' : 'Afficher'}
-        style={{
-          position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
-          background:'none', border:'none', cursor:'pointer',
-          fontSize:'0.75rem', opacity:0.45, padding:0, lineHeight:1,
-          color:'rgba(140,160,200,0.8)',
-        }}
-      >
-        {show ? '🙈' : '👁'}
-      </button>
-    </div>
-  );
-}
-
 function TextArea({ value, onChange, rows = 4, mono }) {
   return (
     <textarea
@@ -264,76 +237,22 @@ function DangerButton({ label, onClick, confirm: confirmMsg }) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function SectionSysteme() {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
-
-  // status[provider][index] = null | 'testing' | 'ok' | 'error' | 'missing'
   const [status, setStatus] = useState(() => {
     try {
       const s = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
       const k = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
-      const norm = (p) => {
-        const keys = Array.isArray(k[p]) ? k[p] : (k[p] ? [k[p]] : []);
-        return keys.map((key, i) => ((s[p] === 'ok' || (s[p]?.[i] === 'ok')) && key) ? 'ok' : null);
+      return {
+        claude: (s.claude==='ok' && k.claude) ? 'ok' : null,
+        gemini: (s.gemini==='ok' && k.gemini) ? 'ok' : null,
+        grok:   (s.grok  ==='ok' && k.grok)   ? 'ok' : null,
+        openai: (s.openai==='ok' && k.openai)  ? 'ok' : null,
       };
-      return { claude: norm('claude'), gemini: norm('gemini'), grok: norm('grok'), openai: norm('openai') };
-    } catch { return { claude: [], gemini: [], grok: [], openai: [] }; }
+    } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
   });
-
-  // Normalise les clés d'un provider en tableau de slots {key, model, label}
-  const getSlots = (pid, defaultModel) => {
-    const v = opts.api_keys?.[pid];
-    if (!v) return [];
-    if (Array.isArray(v)) return v.map(item => {
-      if (!item) return null;
-      if (typeof item === 'string') return { key: item, model: defaultModel, label: '' };
-      if (typeof item === 'object') return { key: item.key||'', model: item.model||defaultModel, label: item.label||'' };
-      return null;
-    }).filter(Boolean);
-    if (typeof v === 'string') return v ? [{ key: v, model: defaultModel, label: '' }] : [];
-    return [];
-  };
-
-  // Mise à jour d'un champ d'un slot spécifique
-  const updateSlot = (pid, idx, field, val) => {
-    setOpts(prev => {
-      const next = JSON.parse(JSON.stringify(prev));
-      const defaultModel = PROVIDERS.find(p=>p.id===pid)?.models[0]?.value || '';
-      const arr = getSlots(pid, defaultModel).slice();
-      arr[idx] = { ...arr[idx], [field]: val };
-      next.api_keys[pid] = arr;
-      return next;
-    });
-    if (field === 'key') setStatus(s => { const a=[...(s[pid]||[])]; a[idx]=null; return {...s,[pid]:a}; });
-    setSaved(false);
-  };
-
-  // Ajouter un slot
-  const addKey = (pid) => {
-    const defaultModel = PROVIDERS.find(p=>p.id===pid)?.models[0]?.value || '';
-    setOpts(prev => {
-      const next = JSON.parse(JSON.stringify(prev));
-      const arr = getSlots(pid, defaultModel).slice();
-      arr.push({ key: '', model: defaultModel, label: '' });
-      next.api_keys[pid] = arr;
-      return next;
-    });
-    setStatus(s => ({ ...s, [pid]: [...(s[pid] || []), null] }));
-    setSaved(false);
-  };
-
-  // Supprimer un slot
-  const removeKey = (pid, idx) => {
-    const defaultModel = PROVIDERS.find(p=>p.id===pid)?.models[0]?.value || '';
-    setOpts(prev => {
-      const next = JSON.parse(JSON.stringify(prev));
-      const arr = getSlots(pid, defaultModel).filter((_, i) => i !== idx);
-      next.api_keys[pid] = arr;
-      return next;
-    });
-    setStatus(s => ({ ...s, [pid]: (s[pid] || []).filter((_, i) => i !== idx) }));
-    setSaved(false);
-  };
 
   const update = (path, val) => {
     setOpts(prev => {
@@ -347,90 +266,70 @@ function SectionSysteme() {
     setSaved(false);
   };
 
-  const save = () => {
-    // Sauvegarder aussi aria_api_keys séparément (source de vérité)
-    try { localStorage.setItem('aria_api_keys', JSON.stringify(opts.api_keys)); } catch {}
-    saveOptions(opts);
-    setSaved(true);
-  };
+  const save = () => { saveOptions(opts); setSaved(true); };
 
-  // ── Test d'une clé individuelle ───────────────────────────────────────────
-  const testKey = async (provider, idx) => {
-    const defaultModel = PROVIDERS.find(p=>p.id===provider)?.models[0]?.value || '';
-    const slots = getSlots(provider, defaultModel);
-    const slot  = slots[idx];
-    const key   = slot?.key?.trim();
-    if (!key) {
-      setStatus(s => { const a = [...(s[provider]||[])]; a[idx]='missing'; return { ...s, [provider]:a }; });
-      return;
-    }
-    // Pour Gemini, utilise le modèle du slot pour le test
-    const modelToTest = (provider === 'gemini') ? (slot.model || defaultModel) : (opts.ia_models?.[provider] || defaultModel);
-    setStatus(s => { const a = [...(s[provider]||[])]; a[idx]='testing'; return { ...s, [provider]:a }; });
+  // ── Test de connexion par provider ────────────────────────────────────────
+  const testKey = async (provider) => {
+    const key = opts.api_keys[provider];
+    if (!key) { setStatus(s => ({ ...s, [provider]: 'missing' })); return; }
+    setStatus(s => ({ ...s, [provider]: 'testing' }));
 
-    const setSlotStatus = (result) => {
+    const saveStatus = (result) => {
       setStatus(s => {
-        const a = [...(s[provider]||[])];
-        a[idx] = result;
-        // Persister status global (on prend le meilleur)
-        try {
-          const saved = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
-          saved[provider] = a;
-          localStorage.setItem('aria_api_keys_status', JSON.stringify(saved));
-        } catch {}
-        return { ...s, [provider]: a };
+        const next = { ...s, [provider]: result };
+        try { localStorage.setItem('aria_api_keys_status', JSON.stringify(next)); } catch {}
+        return next;
       });
     };
 
     try {
       if (provider === 'claude') {
+        const model = opts.ia_models?.claude || 'claude-sonnet-4-6';
         const r = await fetch('https://api.anthropic.com/v1/messages', {
           method:'POST',
           headers:{ 'Content-Type':'application/json','x-api-key':key,
             'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-          body: JSON.stringify({ model: modelToTest, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
+          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
         });
-        setSlotStatus(r.ok ? 'ok' : 'error');
+        saveStatus(r.ok ? 'ok' : 'error');
 
       } else if (provider === 'gemini') {
+        const model = opts.ia_models?.gemini || 'gemini-2.0-flash';
         const r = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${modelToTest}:generateContent?key=${key}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
           { method:'POST', headers:{ 'Content-Type':'application/json' },
             body: JSON.stringify({ contents:[{ parts:[{ text:'ping' }] }] }) }
         );
-        setSlotStatus((r.ok || r.status===429) ? 'ok' : 'error');
+        saveStatus((r.ok || r.status===429) ? 'ok' : 'error');
 
       } else if (provider === 'grok') {
+        const model = opts.ia_models?.grok || 'grok-3-mini';
         const r = await fetch('https://api.x.ai/v1/chat/completions', {
           method:'POST',
           headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${key}` },
-          body: JSON.stringify({ model: modelToTest, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
+          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
         });
-        setSlotStatus(r.ok ? 'ok' : 'error');
+        saveStatus(r.ok ? 'ok' : 'error');
 
       } else if (provider === 'openai') {
+        const model = opts.ia_models?.openai || 'gpt-4.1-mini';
         const r = await fetch('https://api.openai.com/v1/chat/completions', {
           method:'POST',
           headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${key}` },
-          body: JSON.stringify({ model: modelToTest, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
+          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
         });
-        setSlotStatus(r.ok ? 'ok' : 'error');
+        saveStatus(r.ok ? 'ok' : 'error');
       }
-    } catch { setSlotStatus('error'); }
+    } catch { saveStatus('error'); }
   };
 
   const statusLabel = (s) =>
-    s==='ok'      ? '✅'         :
-    s==='error'   ? '❌'         :
-    s==='testing' ? '⏳'         :
-    s==='missing' ? '⚠'         : '—';
-  const statusText = (s) =>
-    s==='ok'      ? 'Connecté'  :
-    s==='error'   ? 'Invalide'  :
-    s==='testing' ? 'Test...'   :
-    s==='missing' ? 'Vide'      : 'Non testé';
+    s==='ok'      ? '✅ Connecté'  :
+    s==='error'   ? '❌ Invalide'  :
+    s==='testing' ? '⏳ Test...'   :
+    s==='missing' ? '⚠ Vide'      : '— Non testé';
 
-  // ── Config providers ──────────────────────────────────────────────────────
+  // ── Config providers avec modèles disponibles ─────────────────────────────
   const PROVIDERS = [
     {
       id: 'claude', label: 'Anthropic — Claude', placeholder: 'sk-ant-...',
@@ -445,11 +344,9 @@ function SectionSysteme() {
       id: 'gemini', label: 'Google — Gemini', placeholder: 'AIza...',
       hint: 'Synthèse ministérielle · Synthèse présidentielle',
       models: [
-        { value:'gemini-2.5-flash', label:'gemini-2.5-flash — Défaut ARIA · Rapide' },
-        { value:'gemini-2.5-pro',   label:'gemini-2.5-pro   — Puissant' },
-        { value:'gemini-2.0-flash', label:'gemini-2.0-flash — Stable' },
-        { value:'gemini-1.5-pro',   label:'gemini-1.5-pro   — Ancien · Puissant' },
-        { value:'gemini-1.5-flash', label:'gemini-1.5-flash — Ancien · Rapide' },
+        { value:'gemini-2.0-flash',   label:'gemini-2.0-flash   — Défaut ARIA' },
+        { value:'gemini-1.5-pro',     label:'gemini-1.5-pro     — Puissant' },
+        { value:'gemini-1.5-flash',   label:'gemini-1.5-flash   — Rapide' },
       ],
     },
     {
@@ -470,11 +367,15 @@ function SectionSysteme() {
     },
   ];
 
-  const anyKey = PROVIDERS.some(p => getSlots(p.id, p.models[0].value).some(s => s.key?.trim()));
-  const availableProviders = PROVIDERS.filter(p => getSlots(p.id, p.models[0].value).some(s => s.key?.trim())).map(p => p.id);
-  const iaMode = opts.ia_mode;
+  const hasClaude = !!opts.api_keys.claude;
+  const hasGemini = !!opts.api_keys.gemini;
+  const hasGrok   = !!opts.api_keys.grok;
+  const hasOpenai = !!opts.api_keys.openai;
+  const anyKey    = hasClaude || hasGemini || hasGrok || hasOpenai;
+  const iaMode    = opts.ia_mode;
 
-  const MONO = { fontFamily:"'JetBrains Mono',monospace" };
+  // Tous les providers disponibles (clé présente)
+  const availableProviders = PROVIDERS.filter(p => !!opts.api_keys[p.id]).map(p => p.id);
 
   return (
     <div className="settings-section-body">
@@ -483,151 +384,76 @@ function SectionSysteme() {
       {/* ── CLÉS API + MODÈLES ── */}
       <div className="settings-group">
         <div className="settings-group-title">CLÉS API &amp; MODÈLES</div>
-        <p style={{ ...MONO, fontSize:'0.44rem', color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
+        <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem',
+          color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
           Les clés sont stockées localement (localStorage). Seul votre navigateur y a accès.
-          Ajoutez plusieurs clés par provider pour éviter les limites de quota (rotation automatique).
         </p>
 
         {PROVIDERS.map(prov => {
-          const provSlots  = getSlots(prov.id, prov.models[0].value);
-          const provStats  = status[prov.id] || [];
-          const hasAnyKey  = provSlots.some(s => s.key?.trim());
-          const isGemini   = prov.id === 'gemini'; // Gemini : modèle par slot, les autres : modèle global
-
+          const hasKey = !!opts.api_keys[prov.id];
+          const stat   = status[prov.id];
           return (
             <div key={prov.id} style={{
               marginBottom:'0.9rem', padding:'0.65rem 0.8rem',
-              background: hasAnyKey ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
-              border:`1px solid ${hasAnyKey ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
+              background: hasKey ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
+              border:`1px solid ${hasKey ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
               borderRadius:'2px',
             }}>
               {/* Header provider */}
               <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.55rem' }}>
-                <span style={{ ...MONO, fontSize:'0.50rem', letterSpacing:'0.12em',
-                  color:'rgba(200,215,240,0.80)', flex:1 }}>
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.50rem',
+                  letterSpacing:'0.12em', color:'rgba(200,215,240,0.80)', flex:1 }}>
                   {prov.label}
                 </span>
                 {prov.hint && (
-                  <span style={{ ...MONO, fontSize:'0.38rem', color:'rgba(100,120,160,0.45)' }}>
-                    {prov.hint}
-                  </span>
+                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                    color:'rgba(100,120,160,0.45)' }}>{prov.hint}</span>
                 )}
               </div>
 
-              {/* Slots de clés */}
-              {provSlots.length === 0 && (
-                <div style={{ ...MONO, fontSize:'0.40rem', color:'rgba(100,120,160,0.40)',
-                  marginBottom:'0.4rem', fontStyle:'italic' }}>
-                  Aucune clé configurée
-                </div>
-              )}
-              {provSlots.map((slot, idx) => {
-                const stat = provStats[idx] ?? null;
-                return (
-                  <div key={idx} style={{ marginBottom:'0.55rem',
-                    border:'1px solid rgba(255,255,255,0.05)', borderRadius:'2px',
-                    padding:'0.4rem 0.5rem', background:'rgba(255,255,255,0.012)' }}>
-                    {/* Ligne 1 : numéro + clé + œil + tester + statut + 🗑 */}
-                    <div className="settings-row" style={{ marginBottom:'0.3rem', alignItems:'center' }}>
-                      {provSlots.length > 1 && (
-                        <span style={{ ...MONO, fontSize:'0.38rem', color:'rgba(100,120,160,0.40)',
-                          minWidth:'1rem', textAlign:'center' }}>
-                          {idx + 1}
-                        </span>
-                      )}
-                      <PasswordInput
-                        value={slot.key}
-                        onChange={v => updateSlot(prov.id, idx, 'key', v)}
-                        placeholder={prov.placeholder}
-                      />
-                      <button className="settings-btn-test" onClick={() => testKey(prov.id, idx)} title="Tester cette clé">
-                        Tester
-                      </button>
-                      <span className={`settings-status ${stat}`} title={statusText(stat)}
-                        style={{ minWidth:'1.5rem', textAlign:'center' }}>
-                        {statusLabel(stat)}
-                        <span style={{ ...MONO, fontSize:'0.38rem', marginLeft:'0.25rem', color:'rgba(140,160,200,0.55)' }}>
-                          {statusText(stat)}
-                        </span>
-                      </span>
-                      <button title="Supprimer cette clé" onClick={() => removeKey(prov.id, idx)}
-                        style={{ background:'none', border:'none', cursor:'pointer',
-                          fontSize:'0.85rem', opacity:0.35, padding:'0 0.2rem', lineHeight:1, transition:'opacity 0.15s' }}
-                        onMouseEnter={e => e.target.style.opacity = 0.75}
-                        onMouseLeave={e => e.target.style.opacity = 0.35}>🗑</button>
-                    </div>
-                    {/* Ligne 2 : label + modèle (modèle par slot si Gemini, sinon label seul) */}
-                    <div style={{ display:'flex', gap:'0.5rem', alignItems:'center' }}>
-                      <input
-                        value={slot.label || ''}
-                        onChange={e => updateSlot(prov.id, idx, 'label', e.target.value)}
-                        placeholder={isGemini ? `ex: Clé perso, Projet X…` : `Label (optionnel)`}
-                        className="settings-input"
-                        style={{ flex:1, ...MONO, fontSize:'0.40rem', opacity:0.75 }}
-                      />
-                      {isGemini && (
-                        <select
-                          value={slot.model || prov.models[0].value}
-                          onChange={e => updateSlot(prov.id, idx, 'model', e.target.value)}
-                          className="settings-select"
-                          title="Modèle utilisé par cette clé"
-                          style={{ ...MONO, fontSize:'0.40rem', flex:1.2 }}
-                        >
-                          {prov.models.map(m => (
-                            <option key={m.value} value={m.value}>{m.label}</option>
-                          ))}
-                        </select>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+              {/* Clé API */}
+              <div className="settings-row" style={{ marginBottom: hasKey ? '0.5rem' : 0 }}>
+                <TextInput password
+                  value={opts.api_keys[prov.id] || ''}
+                  onChange={v => update(`api_keys.${prov.id}`, v)}
+                  placeholder={prov.placeholder}
+                />
+                <button className="settings-btn-test" onClick={() => testKey(prov.id)}>
+                  Tester
+                </button>
+                <span className={`settings-status ${stat}`}>{statusLabel(stat)}</span>
+                {hasKey && (
+                  <button title={`Supprimer la clé ${prov.label}`}
+                    onClick={() => { update(`api_keys.${prov.id}`, ''); setStatus(s => ({ ...s, [prov.id]: null })); }}
+                    style={{ background:'none', border:'none', cursor:'pointer',
+                      fontSize:'0.85rem', opacity:0.40, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
+                )}
+              </div>
 
-              {/* Bouton + ajouter slot */}
-              <button onClick={() => addKey(prov.id)} style={{
-                  background:'none', border:'1px dashed rgba(200,164,74,0.20)',
-                  color:'rgba(200,164,74,0.55)', cursor:'pointer', borderRadius:'2px',
-                  padding:'0.25rem 0.6rem', marginTop: provSlots.length > 0 ? '0.3rem' : 0,
-                  ...MONO, fontSize:'0.40rem', letterSpacing:'0.10em',
-                  transition:'all 0.15s', display:'flex', alignItems:'center', gap:'0.35rem',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(200,164,74,0.50)'; e.currentTarget.style.color='rgba(200,164,74,0.85)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor='rgba(200,164,74,0.20)'; e.currentTarget.style.color='rgba(200,164,74,0.55)'; }}>
-                + Ajouter une clé
-              </button>
-
-              {/* Sélecteur modèle global — seulement pour les non-Gemini */}
-              {!isGemini && (
-                <div style={{ display:'flex', alignItems:'center', gap:'0.6rem',
-                  opacity: hasAnyKey ? 1 : 0.35, marginTop:'0.55rem' }}>
-                  <span style={{ ...MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.50)', minWidth:'8rem' }}>
-                    Modèle préféré
-                  </span>
-                  <select disabled={!hasAnyKey}
-                    value={opts.ia_models?.[prov.id] || prov.models[0].value}
-                    onChange={e => update(`ia_models.${prov.id}`, e.target.value)}
-                    className="settings-select"
-                    title="ARIA utilisera ce modèle en priorité"
-                    style={{ cursor: hasAnyKey ? 'pointer' : 'not-allowed', flex:1, ...MONO, fontSize:'0.44rem' }}>
-                    {prov.models.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-                  </select>
-                  {!hasAnyKey && (
-                    <span style={{ ...MONO, fontSize:'0.38rem', color:'rgba(200,80,80,0.55)' }}>⚠ clé manquante</span>
-                  )}
-                </div>
-              )}
+              {/* Sélecteur modèle — grisé si pas de clé */}
+              <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', opacity: hasKey ? 1 : 0.35 }}>
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
+                  color:'rgba(140,160,200,0.50)', minWidth:'4rem' }}>Modèle</span>
+                <select
+                  disabled={!hasKey}
+                  value={opts.ia_models?.[prov.id] || prov.models[0].value}
+                  onChange={e => update(`ia_models.${prov.id}`, e.target.value)}
+                  className="settings-select"
+                  style={{ cursor: hasKey ? 'pointer' : 'not-allowed', flex:1,
+                    fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem' }}
+                >
+                  {prov.models.map(m => (
+                    <option key={m.value} value={m.value}>{m.value}   ({m.label.split('—')[1]?.trim() || ''})</option>
+                  ))}
+                </select>
+                {!hasKey && (
+                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                    color:'rgba(200,80,80,0.55)' }}>⚠ clé manquante</span>
+                )}
+              </div>
             </div>
           );
         })}
-
-        {/* Bouton sauvegarde */}
-        <div style={{ display:'flex', justifyContent:'flex-end', alignItems:'center',
-          gap:'0.8rem', marginTop:'0.4rem' }}>
-          <SaveBadge saved={saved} />
-          <button className="settings-btn-save" onClick={save}>
-            Sauvegarder
-          </button>
-        </div>
       </div>
 
       {/* ── MODE IA ── */}
@@ -669,7 +495,7 @@ function SectionSysteme() {
                   <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>PROVIDER SOLO</div>
                   <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
                     {PROVIDERS.map(p => {
-                      const disabled = !getSlots(p.id, '').some(s => s.key?.trim());
+                      const disabled = !opts.api_keys[p.id];
                       return (
                         <label key={p.id}
                           className={`settings-radio-card${opts.solo_model===p.id?' selected':''}${disabled?' disabled':''}`}
@@ -753,22 +579,22 @@ function SectionSysteme() {
 
       {/* ── CONTEXTE PAYS ── */}
       <div className="settings-group">
-        <div className="settings-group-title">CONTEXTE PAYS DANS LES DÉLIBÉRATIONS</div>
-        <Field label="Mode de contexte global"
-          hint="Contrôle quelles infos sur le pays sont injectées dans chaque prompt de délibération. Surchargeable par pays dans la Constitution.">
+        <div className="settings-group-title">{isEn ? "COUNTRY CONTEXT IN DELIBERATIONS" : "CONTEXTE PAYS DANS LES DÉLIBÉRATIONS"}</div>
+        <Field label={isEn ? "Global context mode" : "Mode de contexte global"}
+          hint={isEn ? "Controls what country info is injected into each deliberation prompt. Overridable per country in the Government panel." : "Contrôle quelles infos sur le pays sont injectées dans chaque prompt de délibération. Surchargeable par pays dans la Constitution."}>
           <div style={{ display:'flex', flexDirection:'column', gap:'0.4rem' }}>
             {[
-              ['auto',       '🤖 Auto',       'Stats toujours + description si disponible (défaut)'],
-              ['rich',       '📖 Enrichi',    'Contexte complet même pour pays fictifs — incite l\'IA à inventer un historique cohérent'],
-              ['stats_only', '📊 Stats seules','Uniquement les chiffres — délibération plus neutre, moins d\'hallucinations'],
-              ['off',        '🚫 Désactivé',  'Aucun contexte injecté — délibération aveugle, universelle'],
+              ['auto',       '🤖 Auto',       isEn ? 'Stats always + description if available (default)' : 'Stats toujours + description si disponible (défaut)'],
+              ['rich',       isEn ? '📖 Enriched' : '📖 Enrichi', isEn ? 'Full context — prompts AI to invent a coherent history' : 'Contexte complet même pour pays fictifs — incite l\'IA à inventer un historique cohérent'],
+              ['stats_only', isEn ? '📊 Stats only' : '📊 Stats seules', isEn ? 'Numbers only — more neutral, fewer hallucinations' : 'Uniquement les chiffres — délibération plus neutre, moins d\'hallucinations'],
+              ['off',        isEn ? '🚫 Disabled' : '🚫 Désactivé', isEn ? 'No context injected — blind universal deliberation' : 'Aucun contexte injecté — délibération aveugle, universelle'],
             ].map(([val, lbl, hint]) => (
               <label key={val} style={{ display:'flex', alignItems:'flex-start', gap:'0.5rem',
                 cursor:'pointer', padding:'0.35rem 0.5rem', borderRadius:'2px',
-                background: opts.gameplay.context_mode === val ? 'rgba(200,164,74,0.08)' : 'transparent',
-                border: `1px solid ${opts.gameplay.context_mode === val ? 'rgba(200,164,74,0.30)' : 'transparent'}` }}>
+                background: (opts.gameplay.context_mode || 'auto') === val ? 'rgba(200,164,74,0.08)' : 'transparent',
+                border: `1px solid ${(opts.gameplay.context_mode || 'auto') === val ? 'rgba(200,164,74,0.30)' : 'transparent'}` }}>
                 <input type="radio" name="context_mode" value={val}
-                  checked={opts.gameplay.context_mode === val}
+                  checked={(opts.gameplay.context_mode || 'auto') === val}
                   onChange={() => update('gameplay.context_mode', val)}
                   style={{ marginTop:'0.1rem', accentColor:'#C8A44A' }} />
                 <div>
@@ -793,6 +619,8 @@ function SectionSysteme() {
 
 
 function SectionConstitution() {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
   const [prompts, setPrompts] = useState(() => getPrompts());
   const [saved, setSaved] = useState(false);
 
@@ -944,10 +772,12 @@ function SectionConstitution() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  SECTION 3 — CONSEIL
+//  SECTION 3 — GOUVERNEMENT
 // ─────────────────────────────────────────────────────────────────────────────
 
 function SectionConseil() {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
   const [agents, setAgents] = useState(() => getAgentOverrides());
   const [govOpts, setGovOpts] = useState(() => getOptions());
   const [selectedMin, setSelectedMin] = useState('initiateur');
@@ -980,22 +810,53 @@ function SectionConseil() {
     return obj ?? fallback;
   };
 
-  const minData = MINISTERS?.[selectedMin] || {};
+
+  // ── Traductions SectionConseil ───────────────────────────────────────
+  const trC = {
+    essence_hint:   isEn ? "Deep philosophy — what drives their positions"
+                         : "Philosophie profonde — ce qui motive ses positions",
+    comm_hint:      isEn ? "Voice, tone, way of arguing"
+                         : "Voix, ton, façon d'argumenter",
+    annot_label:    isEn ? "Universal annotation angle"
+                         : "Angle universel en annotation",
+    annot_hint:     isEn ? "The question they systematically ask on other ministries' syntheses"
+                         : "La question qu'il pose systématiquement sur les synthèses des autres ministères",
+    selMin:         isEn ? "Select a ministry"    : "Sélectionner un ministère",
+    missionLabel:   isEn ? "Ministry mission"     : "Mission du ministère",
+    missionHint:    isEn ? "Defines the ministry's objective and values"
+                         : "Définit l'objectif et les valeurs du ministère",
+    roleHint:       isEn ? "How this minister speaks from this ministry's angle"
+                         : "Comment ce ministre parle depuis l'angle de ce ministère",
+    rolePrefix:     isEn ? "Specific role"        : "Rôle spécifique",
+  };
+  // Données dynamiques localisées
+  const liveAgents    = getAgents();
+  const liveStats     = getStats();
+  const liveMinsters  = liveAgents.ministers  || {};
+  const liveMinstries = Array.isArray(liveAgents.ministries)
+    ? Object.fromEntries(liveAgents.ministries.map(m=>[m.id,m]))
+    : (liveAgents.ministries || {});
+
+  const minData = liveMinsters[selectedMin] || MINISTERS?.[selectedMin] || {};
   const minFallback = (key) => minData[key] || '';
 
-  const ministryData = MINISTRIES?.[selectedMin2] || {};
+  const ministryData = liveMinstries[selectedMin2] || MINISTRIES?.[selectedMin2] || {};
   const ministryFallback = (key) => ministryData[key] || '';
+
+  const ministerLabels  = getMinisterLabels();
+  const ministerEmojis  = getMinisterEmojis();
+  const ministryLabels  = getMinistryLabels();
 
   return (
     <div className="settings-section-body">
-      <SectionTitle icon="🏛️" label="CONSEIL" sub="Prompts des agents — ministres, présidence" />
+      <SectionTitle icon="🏛️" label="GOUVERNEMENT" sub={isEn ? "Deliberating agents — ministers, presidency" : "Agents délibérants — ministres, présidence"} />
 
       <div className="settings-tabs">
         {[
-          { id: 'ministres',   label: 'Ministres' },
-          { id: 'ministeres',  label: 'Ministères' },
-          { id: 'presidence',  label: 'Présidence' },
-          { id: 'gouvernance', label: 'Gouvernance' },
+          { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'  },
+          { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères' },
+          { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence' },
+          { id: 'gouvernance', label: isEn ? 'Governance' : 'Gouvernance' },
         ].map(t => (
           <button key={t.id}
             className={`settings-tab${tab === t.id ? ' active' : ''}`}
@@ -1009,7 +870,7 @@ function SectionConseil() {
           {/* Grille icônes ministres */}
           <div style={{marginBottom:'1.2rem'}}>
             <div style={{fontSize:'0.75rem',color:'rgba(200,164,74,0.7)',letterSpacing:'0.10em',marginBottom:'0.6rem',textTransform:'uppercase'}}>
-              Sélectionner un ministre
+              {isEn ? 'Select a minister' : 'Sélectionner un ministre'}
             </div>
             <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
               {MINISTER_KEYS.map(k => {
@@ -1022,11 +883,11 @@ function SectionConseil() {
                       background: isSelected ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
                       border: `1px solid ${isSelected ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
                       transition:'all 0.12s'}}>
-                    <span style={{fontSize:'1.2rem',lineHeight:1}}>{MINISTER_EMOJIS[k]}</span>
+                    <span style={{fontSize:'1.2rem',lineHeight:1}}>{ministerEmojis[k]}</span>
                     <span style={{fontSize:'0.52rem',color:isSelected?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
                       letterSpacing:'0.03em',textAlign:'center',maxWidth:'4rem',
                       overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3}}>
-                      {MINISTER_LABELS[k].split(' (')[0]}
+                      {ministerLabels[k]?.split(' (')[0] || k}
                     </span>
                   </button>
                 );
@@ -1034,21 +895,21 @@ function SectionConseil() {
             </div>
           </div>
 
-          <Field label="Essence" hint="Philosophie profonde — ce qui motive ses positions">
+          <Field label="Essence" hint={trC.essence_hint}>
             <TextArea rows={4}
               value={getVal(`ministers.${selectedMin}.essence`, minFallback('essence'))}
               onChange={v => updateAgent(`ministers.${selectedMin}.essence`, v)}
             />
           </Field>
 
-          <Field label="Communication" hint="Voix, ton, façon d'argumenter">
+          <Field label="Communication" hint={trC.comm_hint}>
             <TextArea rows={3}
               value={getVal(`ministers.${selectedMin}.comm`, minFallback('comm'))}
               onChange={v => updateAgent(`ministers.${selectedMin}.comm`, v)}
             />
           </Field>
 
-          <Field label="Angle universel en annotation" hint="La question qu'il pose systématiquement sur les synthèses des autres ministères">
+          <Field label={trC.annot_label} hint={trC.annot_hint}>
             <TextArea rows={3}
               value={getVal(`ministers.${selectedMin}.annotation`, minFallback('annotation'))}
               onChange={v => updateAgent(`ministers.${selectedMin}.annotation`, v)}
@@ -1059,15 +920,15 @@ function SectionConseil() {
 
       {tab === 'ministeres' && (
         <div>
-          <Field label="Sélectionner un ministère">
+          <Field label={trC.selMin}>
             <Select
               value={selectedMin2}
               onChange={setSelectedMin2}
-              options={Object.entries(MINISTRY_LABELS).map(([k, v]) => ({ value: k, label: v }))}
+              options={Object.entries(ministryLabels).map(([k, v]) => ({ value: k, label: v }))}
             />
           </Field>
 
-          <Field label="Mission du ministère" hint="Définit l'objectif et les valeurs du ministère">
+          <Field label={trC.missionLabel} hint={trC.missionHint}>
             <TextArea rows={3}
               value={getVal(`ministries.${selectedMin2}.mission`, ministryFallback('mission'))}
               onChange={v => updateAgent(`ministries.${selectedMin2}.mission`, v)}
@@ -1076,8 +937,8 @@ function SectionConseil() {
 
           {/* Prompts spécifiques des 2 ministres dans ce ministère */}
           {(ministryData.ministers || []).map(mKey => (
-            <Field key={mKey} label={`Rôle spécifique — ${MINISTER_LABELS[mKey] || mKey}`}
-              hint="Comment ce ministre parle depuis l'angle de ce ministère">
+            <Field key={mKey} label={`${trC.rolePrefix} — ${ministerLabels[mKey]?.split(' (')[0] || mKey}`}
+              hint={trC.roleHint}>
               <TextArea rows={3}
                 value={getVal(`ministries.${selectedMin2}.${mKey}`,
                   ministryData.ministerPrompts?.[mKey] || '')}
@@ -1090,30 +951,30 @@ function SectionConseil() {
 
       {tab === 'presidence' && (
         <div>
-          <Field label="Le Phare — Rôle" hint="Président de la Volonté et de la Direction">
+          <Field label={liveAgents.presidency?.phare?.name || 'Le Phare'} hint={liveAgents.presidency?.phare?.subtitle || ''}>
             <TextArea rows={4}
-              value={getVal('presidency.phare.role', PRESIDENCY?.phare?.role_long || '')}
+              value={getVal('presidency.phare.role', liveAgents.presidency?.phare?.role_long || PRESIDENCY?.phare?.role_long || '')}
               onChange={v => updateAgent('presidency.phare.role', v)}
             />
           </Field>
-          <Field label="Le Phare — Essence">
+          <Field label="Essence">
             <TextArea rows={3}
-              value={getVal('presidency.phare.essence', PRESIDENCY?.phare?.essence || '')}
+              value={getVal('presidency.phare.essence', liveAgents.presidency?.phare?.essence || PRESIDENCY?.phare?.essence || '')}
               onChange={v => updateAgent('presidency.phare.essence', v)}
             />
           </Field>
 
           <div style={{ borderTop: '1px solid rgba(200,164,74,0.15)', margin: '1.5rem 0' }} />
 
-          <Field label="La Boussole — Rôle" hint="Présidente de l'Âme et de la Réception">
+          <Field label={liveAgents.presidency?.boussole?.name || 'La Boussole'} hint={liveAgents.presidency?.boussole?.subtitle || ''}>
             <TextArea rows={4}
-              value={getVal('presidency.boussole.role', PRESIDENCY?.boussole?.role_long || '')}
+              value={getVal('presidency.boussole.role', liveAgents.presidency?.boussole?.role_long || PRESIDENCY?.boussole?.role_long || '')}
               onChange={v => updateAgent('presidency.boussole.role', v)}
             />
           </Field>
-          <Field label="La Boussole — Essence">
+          <Field label="Essence">
             <TextArea rows={3}
-              value={getVal('presidency.boussole.essence', PRESIDENCY?.boussole?.essence || '')}
+              value={getVal('presidency.boussole.essence', liveAgents.presidency?.boussole?.essence || PRESIDENCY?.boussole?.essence || '')}
               onChange={v => updateAgent('presidency.boussole.essence', v)}
             />
           </Field>
@@ -1137,21 +998,29 @@ function SectionConseil() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ALL_MINISTRY_IDS = ['justice','economie','defense','sante','education','ecologie','chance'];
-const MINISTRY_META = {
-  justice:   { emoji: '⚖️',  label: 'Justice & Vérité'          },
-  economie:  { emoji: '💰',  label: 'Économie & Ressources'      },
-  defense:   { emoji: '⚔️',  label: 'Défense & Souveraineté'     },
-  sante:     { emoji: '🏥',  label: 'Santé & Protection sociale' },
-  education: { emoji: '🎓',  label: 'Éducation & Élévation'      },
-  ecologie:  { emoji: '🌿',  label: 'Transition Écologique'      },
-  chance:    { emoji: '🎲',  label: 'Chance, Imprévu & Crises'   },
-};
-const PRESIDENCY_OPTS = [
-  { value: 'duale',      label: 'Duale — Phare + Boussole (défaut ARIA)' },
-  { value: 'solaire',    label: 'Solaire — Le Phare seul'                },
-  { value: 'lunaire',    label: 'Lunaire — La Boussole seule'            },
-  { value: 'collegiale', label: 'Collégiale — Vote des 12 ministres'     },
-];
+// MINISTRY_META dynamique depuis getAgents()
+function getMinistryMeta() {
+  const agents = getAgents();
+  const mList = Array.isArray(agents.ministries) ? agents.ministries : [];
+  const result = {};
+  mList.forEach(m => {
+    result[m.id] = { emoji: m.emoji || '', label: m.name || m.id };
+  });
+  return result;
+}
+function getPresidencyOpts(isEn) {
+  return isEn ? [
+    { value: 'duale',      label: 'Dual — Phare + Boussole (ARIA default)' },
+    { value: 'solaire',    label: 'Solar — The Phare alone'                },
+    { value: 'lunaire',    label: 'Lunar — The Boussole alone'             },
+    { value: 'collegiale', label: 'Collegial — Vote of 12 ministers'       },
+  ] : [
+    { value: 'duale',      label: 'Duale — Phare + Boussole (défaut ARIA)' },
+    { value: 'solaire',    label: 'Solaire — Le Phare seul'                },
+    { value: 'lunaire',    label: 'Lunaire — La Boussole seule'            },
+    { value: 'collegiale', label: 'Collégiale — Vote des 12 ministres'     },
+  ];
+}
 
 const DEFAULT_GOVERNANCE = {
   presidency: 'duale',
@@ -1159,6 +1028,8 @@ const DEFAULT_GOVERNANCE = {
 };
 
 function SectionGouvernanceDefaut({ opts, setOpts }) {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
   const gov = opts.defaultGovernance || DEFAULT_GOVERNANCE;
 
   const setGov = (key, val) => {
@@ -1182,26 +1053,26 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
       <div className="settings-group">
-        <div className="settings-group-title">PRÉSIDENCE PAR DÉFAUT</div>
-        <Field label="Type de présidence" hint="Appliqué à tous les nouveaux pays sauf override">
+        <div className="settings-group-title">{isEn ? "DEFAULT PRESIDENCY" : "PRÉSIDENCE PAR DÉFAUT"}</div>
+        <Field label={isEn ? "Presidency type" : "Type de présidence"} hint={isEn ? "Applied to all new countries unless overridden" : "Appliqué à tous les nouveaux pays sauf override"}>
           <Select
             value={gov.presidency || 'duale'}
             onChange={v => setGov('presidency', v)}
-            options={PRESIDENCY_OPTS}
+            options={getPresidencyOpts(isEn)}
           />
         </Field>
       </div>
 
       <div className="settings-group">
         <div className="settings-group-title">
-          MINISTÈRES ACTIFS PAR DÉFAUT
+          {isEn ? "ACTIVE MINISTRIES BY DEFAULT" : "MINISTÈRES ACTIFS PAR DÉFAUT"}
           <span style={{ marginLeft: '0.6rem', fontSize: '0.48rem', color: 'rgba(200,164,74,0.45)' }}>
             {(gov.ministries || []).length} / {ALL_MINISTRY_IDS.length} — min. 2
           </span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginTop: '0.4rem' }}>
           {ALL_MINISTRY_IDS.map(id => {
-            const meta   = MINISTRY_META[id];
+            const meta   = getMinistryMeta()[id] || { emoji: '', label: id };
             const active = (gov.ministries || []).includes(id);
             const isMin  = (gov.ministries || []).length <= 2 && active;
             return (
@@ -1233,12 +1104,12 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
       </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">GESTION DE CRISE</div>
-        <Field label="Ministère de la Chance & Crises" hint="Active le 7e ministère pour la gestion des urgences">
+        <div className="settings-group-title">{isEn ? "CRISIS MANAGEMENT" : "GESTION DE CRISE"}</div>
+        <Field label={isEn ? "Ministry of Chance & Crises" : "Ministère de la Chance & Crises"} hint={isEn ? "Activates the 7th ministry for emergency management" : "Active le 7e ministère pour la gestion des urgences"}>
           <Toggle
             value={gov.crisis_ministry !== false}
             onChange={v => setGov('crisis_ministry', v)}
-            label={gov.crisis_ministry !== false ? 'Activé' : 'Désactivé'}
+            label={gov.crisis_ministry !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')}
           />
         </Field>
       </div>
@@ -1495,7 +1366,69 @@ function SectionInterface({ onHardReset }) {
         <div className="settings-group-title">LANGUE / LANGUAGE</div>
         <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', padding:'0.3rem 0' }}>
           {['fr','en'].map(l => (
-            <button key={l} onClick={() => setLang(l)} style={{
+            <button key={l} onClick={() => {
+              setLang(l);
+              // Réécrire aria_agents_override avec la bonne base localisée
+              // Seuls les champs VRAIMENT customisés (différents des deux bases) sont préservés
+              try {
+                const BASE_NEW = l === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
+                const BASE_OLD = l === 'en' ? BASE_AGENTS    : BASE_AGENTS_EN;
+                const cur = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
+                const merged = JSON.parse(JSON.stringify(BASE_NEW));
+                if (cur) {
+                  // Ministères : préserver mission/ministerPrompts seulement si custom (≠ base FR et ≠ base EN)
+                  if (Array.isArray(merged.ministries) && Array.isArray(cur.ministries)) {
+                    merged.ministries = merged.ministries.map(m => {
+                      const curM  = cur.ministries.find(c => c.id === m.id);
+                      const oldBM = (Array.isArray(BASE_OLD.ministries) ? BASE_OLD.ministries : []).find(c => c.id === m.id);
+                      if (!curM) return m;
+                      const missionCustom = curM.mission && curM.mission !== (oldBM?.mission||'') && curM.mission !== m.mission;
+                      const promptsCustom = curM.ministerPrompts && JSON.stringify(curM.ministerPrompts) !== JSON.stringify(oldBM?.ministerPrompts||{}) && JSON.stringify(curM.ministerPrompts) !== JSON.stringify(m.ministerPrompts||{});
+                      return {
+                        ...m,
+                        mission:         missionCustom  ? curM.mission         : m.mission,
+                        ministerPrompts: promptsCustom  ? curM.ministerPrompts : m.ministerPrompts,
+                      };
+                    });
+                  }
+                  // Ministres : préserver essence/comm/annotation seulement si custom
+                  if (merged.ministers && cur.ministers) {
+                    Object.keys(merged.ministers).forEach(k => {
+                      const curMin  = cur.ministers[k];
+                      const oldBMin = BASE_OLD.ministers?.[k] || {};
+                      if (!curMin) return;
+                      const isCustom = (field) =>
+                        curMin[field] && curMin[field] !== (oldBMin[field]||'') && curMin[field] !== merged.ministers[k][field];
+                      merged.ministers[k] = {
+                        ...merged.ministers[k],
+                        essence:    isCustom('essence')    ? curMin.essence    : merged.ministers[k].essence,
+                        comm:       isCustom('comm')       ? curMin.comm       : merged.ministers[k].comm,
+                        annotation: isCustom('annotation') ? curMin.annotation : merged.ministers[k].annotation,
+                      };
+                    });
+                  }
+                  // Présidence : préserver role/essence seulement si custom
+                  if (merged.presidency && cur.presidency) {
+                    ['phare','boussole'].forEach(role => {
+                      if (!cur.presidency[role]) return;
+                      const oldBP = BASE_OLD.presidency?.[role] || {};
+                      const isCustomP = (field) =>
+                        cur.presidency[role][field] && cur.presidency[role][field] !== (oldBP[field]||'') && cur.presidency[role][field] !== merged.presidency[role][field];
+                      merged.presidency[role] = {
+                        ...merged.presidency[role],
+                        role_long: isCustomP('role_long') ? cur.presidency[role].role_long : merged.presidency[role].role_long,
+                        essence:   isCustomP('essence')   ? cur.presidency[role].essence   : merged.presidency[role].essence,
+                      };
+                    });
+                  }
+                  // Préserver les sélections actives
+                  merged.active_ministries = cur.active_ministries;
+                  merged.active_presidency = cur.active_presidency;
+                  merged.active_ministers  = cur.active_ministers;
+                }
+                localStorage.setItem('aria_agents_override', JSON.stringify(merged));
+              } catch(e) { console.warn('lang switch override failed', e); }
+            }} style={{
               background: lang===l ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.03)',
               border:`1px solid ${lang===l ? 'rgba(200,164,74,0.50)' : 'rgba(255,255,255,0.10)'}`,
               borderRadius:'2px', padding:'0.30rem 0.9rem',
