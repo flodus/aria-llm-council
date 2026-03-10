@@ -637,12 +637,36 @@ export function checkSeuils(before, after) {
 //  6. MOTEUR IA
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Récupère les clés API depuis localStorage */
+/** Récupère les clés API depuis localStorage.
+ *  Format stocké : { gemini: [{key, model, label}], claude: ["clé"|{key}], ... }
+ *  Rétrocompat : string → [{key}], string[] → [{key}]
+ */
 export function getApiKeys() {
   try {
     return JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
   } catch { return {}; }
 }
+
+/** Normalise un provider en tableau de slots {key, model, label} */
+export function normalizeSlots(raw, defaultModel) {
+  if (!raw) return [];
+  if (typeof raw === 'string') return raw ? [{ key: raw, model: defaultModel, label: '' }] : [];
+  if (Array.isArray(raw)) {
+    return raw
+      .map(item => {
+        if (!item) return null;
+        if (typeof item === 'string') return item ? { key: item, model: defaultModel, label: '' } : null;
+        if (typeof item === 'object' && item.key) return { key: item.key, model: item.model || defaultModel, label: item.label || '' };
+        return null;
+      })
+      .filter(Boolean)
+      .filter(s => s.key?.trim());
+  }
+  return [];
+}
+
+const GEMINI_DEFAULT = 'gemini-2.5-flash';
+const CLAUDE_DEFAULT = 'claude-sonnet-4-6';
 
 /** Construit le prompt IA de création d'un pays */
 export function buildCountryPrompt(type, nomDemande = '') {
@@ -727,9 +751,25 @@ Génère une notification d'analyse en JSON :
 async function callModel(model, prompt, keys, systemPrompt = '') {
   // Priorité Gemini (gratuit) si les deux clés existent
   // Si le modèle demandé n'a pas de clé → fallback dans l'ordre : gemini → claude → grok → openai
-  const KEY_PRIORITY = ['gemini','claude','grok','openai'];
-  if (!keys[model]) {
-    model = KEY_PRIORITY.find(p => keys[p]) || model;
+  const rawKeys = keys;
+  const geminiSlots = normalizeSlots(rawKeys.gemini, GEMINI_DEFAULT);
+  const claudeSlots = normalizeSlots(rawKeys.claude, CLAUDE_DEFAULT);
+  const grokKey   = typeof rawKeys.grok   === 'string' ? rawKeys.grok   : rawKeys.grok?.[0]?.key   || rawKeys.grok?.[0]   || '';
+  const openaiKey = typeof rawKeys.openai === 'string' ? rawKeys.openai : rawKeys.openai?.[0]?.key || rawKeys.openai?.[0] || '';
+
+  const hasGemini = geminiSlots.length > 0;
+  const hasClaude = claudeSlots.length > 0;
+  const hasGrok   = !!grokKey;
+  const hasOpenai = !!openaiKey;
+
+  const KEY_PRIORITY = [
+    ...(hasGemini ? ['gemini'] : []),
+    ...(hasClaude ? ['claude'] : []),
+    ...(hasGrok   ? ['grok']   : []),
+    ...(hasOpenai ? ['openai'] : []),
+  ];
+  if (!KEY_PRIORITY.includes(model)) {
+    model = KEY_PRIORITY[0] || model;
   }
 
   // 1. On prépare le contenu fusionné (Rôle + Données)
@@ -737,18 +777,20 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
   ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
   : prompt;
 
-  if (model === 'claude' && keys.claude) {
+  if (model === 'claude' && hasClaude) {
+    const claudeKey   = claudeSlots[0].key;
+    const claudeModel = claudeSlots[0].model || CLAUDE_DEFAULT;
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': keys.claude,
+          'x-api-key': claudeKey,
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
-          model: (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').claude || 'claude-sonnet-4-6'; } catch { return 'claude-sonnet-4-6'; } })(),
+          model: claudeModel,
           max_tokens: 1000,
           messages: [{ role: 'user', content: fullContent }],
         }),
@@ -763,39 +805,42 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     }
   }
 
-  if (model === 'gemini' && keys.gemini) {
-    const preferredGemini = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').gemini; } catch { return null; } })();
-    const GEMINI_MODELS = [preferredGemini, 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
-    for (const gModel of GEMINI_MODELS) {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keys.gemini}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: fullContent }] }],
-              generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
-            }),
+  if (model === 'gemini' && hasGemini) {
+    // Itérer sur chaque slot Gemini (chacun a son propre modèle)
+    for (const slot of geminiSlots) {
+      const slotKey   = slot.key;
+      const slotModel = slot.model || GEMINI_DEFAULT;
+      // Pour chaque slot, on essaie son modèle principal puis un fallback stable
+      const modelsToTry = [slotModel, ...(slotModel !== 'gemini-2.0-flash' ? ['gemini-2.0-flash'] : [])].filter((v,i,a)=>a.indexOf(v)===i);
+      for (const gModel of modelsToTry) {
+        try {
+          const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${slotKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: fullContent }] }],
+                generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
+              }),
+            }
+          );
+          if (!res.ok) {
+            if (res.status === 429) { console.warn(`[ARIA] Gemini ${gModel} slot ${slot.label||slotKey.slice(-6)} — 429`); break; } // quota dépassé pour ce slot → slot suivant
+            continue; // autre erreur → modèle suivant
           }
-        );
-        if (!res.ok) {
-          // 429 quota — pas de fallback utile, on retourne erreur gracieuse
-          if (res.status === 429) return { error: true, msg: getRandomFallback() };
-          continue; // autre erreur → essayer modèle suivant
+          const data = await res.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          const clean = text.replace(/```json|```/g, '').trim();
+          return JSON.parse(clean);
+        } catch (e) {
+          console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
         }
-        const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        const clean = text.replace(/```json|```/g, '').trim();
-        return JSON.parse(clean);
-      } catch (e) {
-        console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
-        // continuer avec le modèle suivant
       }
+      // Ce slot a échoué → on passe au slot suivant
     }
     return { error: true, msg: getRandomFallback() };
   }
-  return { error: true, msg: "SYSTÈME : Aucune clé API valide détectée." };
 }
 
 // Pioche une réponse dans tes fichiers locaux (test.js) si pas d'IA
@@ -829,10 +874,14 @@ export function getPromptsSys() {
 // Point d'entrée unique pour tous les appels IA du Dashboard
 export async function callAI(prompt, type = 'standard', context = {}) {
   const opts = getOptions();
-  const promptsSys = getPromptsSys(); // On récupère les prompts personnalisables
+  const promptsSys = getPromptsSys();
   const keys = opts.api_keys;
   const roles = opts.ia_roles;
-  const hasKeys = !!(keys.claude || keys.gemini);
+  // Détecter la présence de clés (format tableau de slots ou string legacy)
+  const hasKeys = normalizeSlots(keys.claude, CLAUDE_DEFAULT).length > 0
+    || normalizeSlots(keys.gemini, GEMINI_DEFAULT).length > 0
+    || !!(typeof keys.grok === 'string' ? keys.grok : keys.grok?.[0]?.key || keys.grok?.[0])
+    || !!(typeof keys.openai === 'string' ? keys.openai : keys.openai?.[0]?.key || keys.openai?.[0]);
 
   // 1. Priorité au mode Board Game ou absence de clés
   if (!hasKeys || (opts.gameplay && opts.gameplay.mode_board_game)) {
@@ -840,56 +889,33 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   }
 
   // 2. Dispatcher intelligent (on passe le modèle de Settings + le prompt système)
-  // Helper : appelle callModel et bascule sur fallback si { error: true }
-  // Pour les types council_* : pas de fallback ariaData → retourne null
-  //   (llmCouncilEngine gère ses propres fallbacks locaux)
-  const isCouncilType = type.startsWith('council_');
-  const callWithFallback = async (model, sysprompt = '') => {
-    const result = await callModel(model, prompt, keys, sysprompt);
-    if (result?.error) {
-      console.warn(`[ARIA] callAI fallback (type=${type}, error=${result.msg})`);
-      return isCouncilType ? null : getLocalResponse(type, context);
-    }
-    return result;
-  };
-
   switch (type) {
-    // ── Types historiques (ariaData.js) ──────────────────────────────────
     case 'ministre':
-      return callWithFallback(roles.ministre_model || 'claude');
+      return callModel(roles.ministre_model || 'claude', prompt, keys);
+
     case 'synthese_ministere':
-      return callWithFallback(roles.synthese_min || 'gemini', promptsSys.synthese_ministere);
+      return callModel(roles.synthese_min || 'gemini', prompt, keys, promptsSys.synthese_ministere);
+
     case 'phare':
-      return callWithFallback(roles.phare_model || 'claude');
+      return callModel(roles.phare_model || 'claude', prompt, keys);
+
     case 'boussole':
-      return callWithFallback(roles.boussole_model || 'claude');
+      return callModel(roles.boussole_model || 'claude', prompt, keys);
+
     case 'synthese_presidence':
-      return callWithFallback(roles.synthese_pres || 'gemini', promptsSys.synthese_presidence);
+      return callModel(roles.synthese_pres || 'gemini', prompt, keys, promptsSys.synthese_presidence);
+
     case 'evenement':
-      return callWithFallback(roles.evenement_model || 'claude');
+      return callModel(roles.evenement_model || 'claude', prompt, keys);
+
     case 'factcheck':
-      return callWithFallback(roles.factcheck_model || 'gemini', promptsSys.factcheck_evenement);
+      return callModel(roles.factcheck_model || 'gemini', prompt, keys, promptsSys.factcheck_evenement);
+
     case 'pays':
-      return callWithFallback(opts.solo_model || 'claude');
-
-    // ── Types Council (llmCouncilEngine.js) ──────────────────────────────
-    // Retournent null en cas d'erreur → llmCouncilEngine déclenche ses fallbacks locaux
-    case 'council_routing':
-    case 'council_ministre':
-      return callWithFallback(roles.ministre_model || 'claude');
-    case 'council_synthese_min':
-      return callWithFallback(roles.synthese_min || 'gemini', promptsSys.synthese_ministere);
-    case 'council_phare':
-      return callWithFallback(roles.phare_model || 'claude');
-    case 'council_boussole':
-      return callWithFallback(roles.boussole_model || 'claude');
-    case 'council_annotation':
-      return callWithFallback(roles.ministre_model || 'claude');
-    case 'council_synthese_pres':
-      return callWithFallback(roles.synthese_pres || 'gemini', promptsSys.synthese_presidence);
-
+      // Génération de pays — utilise le modèle solo configuré (ou claude par défaut)
+      return callModel(opts.solo_model || 'claude', prompt, keys);
     default:
-      return callWithFallback(opts.solo_model || 'claude');
+      return callModel(opts.solo_model || 'claude', prompt, keys);
   }
 }
 export const DEFAULT_OPTIONS = {

@@ -157,6 +157,35 @@ function TextInput({ value, onChange, password, placeholder, mono }) {
   );
 }
 
+// Champ mot de passe avec toggle visibilité (œil)
+function PasswordInput({ value, onChange, placeholder }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div style={{ position:'relative', flex:1, display:'flex' }}>
+      <input
+        type={show ? 'text' : 'password'}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder || ''}
+        className="settings-input"
+        style={{ flex:1, paddingRight:'2rem' }}
+      />
+      <button
+        onClick={() => setShow(s => !s)}
+        title={show ? 'Masquer' : 'Afficher'}
+        style={{
+          position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
+          background:'none', border:'none', cursor:'pointer',
+          fontSize:'0.75rem', opacity:0.45, padding:0, lineHeight:1,
+          color:'rgba(140,160,200,0.8)',
+        }}
+      >
+        {show ? '🙈' : '👁'}
+      </button>
+    </div>
+  );
+}
+
 function TextArea({ value, onChange, rows = 4, mono }) {
   return (
     <textarea
@@ -237,18 +266,74 @@ function DangerButton({ label, onClick, confirm: confirmMsg }) {
 function SectionSysteme() {
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
+
+  // status[provider][index] = null | 'testing' | 'ok' | 'error' | 'missing'
   const [status, setStatus] = useState(() => {
     try {
       const s = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
       const k = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
-      return {
-        claude: (s.claude==='ok' && k.claude) ? 'ok' : null,
-        gemini: (s.gemini==='ok' && k.gemini) ? 'ok' : null,
-        grok:   (s.grok  ==='ok' && k.grok)   ? 'ok' : null,
-        openai: (s.openai==='ok' && k.openai)  ? 'ok' : null,
+      const norm = (p) => {
+        const keys = Array.isArray(k[p]) ? k[p] : (k[p] ? [k[p]] : []);
+        return keys.map((key, i) => ((s[p] === 'ok' || (s[p]?.[i] === 'ok')) && key) ? 'ok' : null);
       };
-    } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
+      return { claude: norm('claude'), gemini: norm('gemini'), grok: norm('grok'), openai: norm('openai') };
+    } catch { return { claude: [], gemini: [], grok: [], openai: [] }; }
   });
+
+  // Normalise les clés d'un provider en tableau de slots {key, model, label}
+  const getSlots = (pid, defaultModel) => {
+    const v = opts.api_keys?.[pid];
+    if (!v) return [];
+    if (Array.isArray(v)) return v.map(item => {
+      if (!item) return null;
+      if (typeof item === 'string') return { key: item, model: defaultModel, label: '' };
+      if (typeof item === 'object') return { key: item.key||'', model: item.model||defaultModel, label: item.label||'' };
+      return null;
+    }).filter(Boolean);
+    if (typeof v === 'string') return v ? [{ key: v, model: defaultModel, label: '' }] : [];
+    return [];
+  };
+
+  // Mise à jour d'un champ d'un slot spécifique
+  const updateSlot = (pid, idx, field, val) => {
+    setOpts(prev => {
+      const next = JSON.parse(JSON.stringify(prev));
+      const defaultModel = PROVIDERS.find(p=>p.id===pid)?.models[0]?.value || '';
+      const arr = getSlots(pid, defaultModel).slice();
+      arr[idx] = { ...arr[idx], [field]: val };
+      next.api_keys[pid] = arr;
+      return next;
+    });
+    if (field === 'key') setStatus(s => { const a=[...(s[pid]||[])]; a[idx]=null; return {...s,[pid]:a}; });
+    setSaved(false);
+  };
+
+  // Ajouter un slot
+  const addKey = (pid) => {
+    const defaultModel = PROVIDERS.find(p=>p.id===pid)?.models[0]?.value || '';
+    setOpts(prev => {
+      const next = JSON.parse(JSON.stringify(prev));
+      const arr = getSlots(pid, defaultModel).slice();
+      arr.push({ key: '', model: defaultModel, label: '' });
+      next.api_keys[pid] = arr;
+      return next;
+    });
+    setStatus(s => ({ ...s, [pid]: [...(s[pid] || []), null] }));
+    setSaved(false);
+  };
+
+  // Supprimer un slot
+  const removeKey = (pid, idx) => {
+    const defaultModel = PROVIDERS.find(p=>p.id===pid)?.models[0]?.value || '';
+    setOpts(prev => {
+      const next = JSON.parse(JSON.stringify(prev));
+      const arr = getSlots(pid, defaultModel).filter((_, i) => i !== idx);
+      next.api_keys[pid] = arr;
+      return next;
+    });
+    setStatus(s => ({ ...s, [pid]: (s[pid] || []).filter((_, i) => i !== idx) }));
+    setSaved(false);
+  };
 
   const update = (path, val) => {
     setOpts(prev => {
@@ -262,70 +347,90 @@ function SectionSysteme() {
     setSaved(false);
   };
 
-  const save = () => { saveOptions(opts); setSaved(true); };
+  const save = () => {
+    // Sauvegarder aussi aria_api_keys séparément (source de vérité)
+    try { localStorage.setItem('aria_api_keys', JSON.stringify(opts.api_keys)); } catch {}
+    saveOptions(opts);
+    setSaved(true);
+  };
 
-  // ── Test de connexion par provider ────────────────────────────────────────
-  const testKey = async (provider) => {
-    const key = opts.api_keys[provider];
-    if (!key) { setStatus(s => ({ ...s, [provider]: 'missing' })); return; }
-    setStatus(s => ({ ...s, [provider]: 'testing' }));
+  // ── Test d'une clé individuelle ───────────────────────────────────────────
+  const testKey = async (provider, idx) => {
+    const defaultModel = PROVIDERS.find(p=>p.id===provider)?.models[0]?.value || '';
+    const slots = getSlots(provider, defaultModel);
+    const slot  = slots[idx];
+    const key   = slot?.key?.trim();
+    if (!key) {
+      setStatus(s => { const a = [...(s[provider]||[])]; a[idx]='missing'; return { ...s, [provider]:a }; });
+      return;
+    }
+    // Pour Gemini, utilise le modèle du slot pour le test
+    const modelToTest = (provider === 'gemini') ? (slot.model || defaultModel) : (opts.ia_models?.[provider] || defaultModel);
+    setStatus(s => { const a = [...(s[provider]||[])]; a[idx]='testing'; return { ...s, [provider]:a }; });
 
-    const saveStatus = (result) => {
+    const setSlotStatus = (result) => {
       setStatus(s => {
-        const next = { ...s, [provider]: result };
-        try { localStorage.setItem('aria_api_keys_status', JSON.stringify(next)); } catch {}
-        return next;
+        const a = [...(s[provider]||[])];
+        a[idx] = result;
+        // Persister status global (on prend le meilleur)
+        try {
+          const saved = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
+          saved[provider] = a;
+          localStorage.setItem('aria_api_keys_status', JSON.stringify(saved));
+        } catch {}
+        return { ...s, [provider]: a };
       });
     };
 
     try {
       if (provider === 'claude') {
-        const model = opts.ia_models?.claude || 'claude-sonnet-4-6';
         const r = await fetch('https://api.anthropic.com/v1/messages', {
           method:'POST',
           headers:{ 'Content-Type':'application/json','x-api-key':key,
             'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
+          body: JSON.stringify({ model: modelToTest, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
         });
-        saveStatus(r.ok ? 'ok' : 'error');
+        setSlotStatus(r.ok ? 'ok' : 'error');
 
       } else if (provider === 'gemini') {
-        const model = opts.ia_models?.gemini || 'gemini-2.0-flash';
         const r = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/${modelToTest}:generateContent?key=${key}`,
           { method:'POST', headers:{ 'Content-Type':'application/json' },
             body: JSON.stringify({ contents:[{ parts:[{ text:'ping' }] }] }) }
         );
-        saveStatus((r.ok || r.status===429) ? 'ok' : 'error');
+        setSlotStatus((r.ok || r.status===429) ? 'ok' : 'error');
 
       } else if (provider === 'grok') {
-        const model = opts.ia_models?.grok || 'grok-3-mini';
         const r = await fetch('https://api.x.ai/v1/chat/completions', {
           method:'POST',
           headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${key}` },
-          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
+          body: JSON.stringify({ model: modelToTest, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
         });
-        saveStatus(r.ok ? 'ok' : 'error');
+        setSlotStatus(r.ok ? 'ok' : 'error');
 
       } else if (provider === 'openai') {
-        const model = opts.ia_models?.openai || 'gpt-4.1-mini';
         const r = await fetch('https://api.openai.com/v1/chat/completions', {
           method:'POST',
           headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${key}` },
-          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
+          body: JSON.stringify({ model: modelToTest, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
         });
-        saveStatus(r.ok ? 'ok' : 'error');
+        setSlotStatus(r.ok ? 'ok' : 'error');
       }
-    } catch { saveStatus('error'); }
+    } catch { setSlotStatus('error'); }
   };
 
   const statusLabel = (s) =>
-    s==='ok'      ? '✅ Connecté'  :
-    s==='error'   ? '❌ Invalide'  :
-    s==='testing' ? '⏳ Test...'   :
-    s==='missing' ? '⚠ Vide'      : '— Non testé';
+    s==='ok'      ? '✅'         :
+    s==='error'   ? '❌'         :
+    s==='testing' ? '⏳'         :
+    s==='missing' ? '⚠'         : '—';
+  const statusText = (s) =>
+    s==='ok'      ? 'Connecté'  :
+    s==='error'   ? 'Invalide'  :
+    s==='testing' ? 'Test...'   :
+    s==='missing' ? 'Vide'      : 'Non testé';
 
-  // ── Config providers avec modèles disponibles ─────────────────────────────
+  // ── Config providers ──────────────────────────────────────────────────────
   const PROVIDERS = [
     {
       id: 'claude', label: 'Anthropic — Claude', placeholder: 'sk-ant-...',
@@ -340,9 +445,11 @@ function SectionSysteme() {
       id: 'gemini', label: 'Google — Gemini', placeholder: 'AIza...',
       hint: 'Synthèse ministérielle · Synthèse présidentielle',
       models: [
-        { value:'gemini-2.0-flash',   label:'gemini-2.0-flash   — Défaut ARIA' },
-        { value:'gemini-1.5-pro',     label:'gemini-1.5-pro     — Puissant' },
-        { value:'gemini-1.5-flash',   label:'gemini-1.5-flash   — Rapide' },
+        { value:'gemini-2.5-flash', label:'gemini-2.5-flash — Défaut ARIA · Rapide' },
+        { value:'gemini-2.5-pro',   label:'gemini-2.5-pro   — Puissant' },
+        { value:'gemini-2.0-flash', label:'gemini-2.0-flash — Stable' },
+        { value:'gemini-1.5-pro',   label:'gemini-1.5-pro   — Ancien · Puissant' },
+        { value:'gemini-1.5-flash', label:'gemini-1.5-flash — Ancien · Rapide' },
       ],
     },
     {
@@ -363,15 +470,11 @@ function SectionSysteme() {
     },
   ];
 
-  const hasClaude = !!opts.api_keys.claude;
-  const hasGemini = !!opts.api_keys.gemini;
-  const hasGrok   = !!opts.api_keys.grok;
-  const hasOpenai = !!opts.api_keys.openai;
-  const anyKey    = hasClaude || hasGemini || hasGrok || hasOpenai;
-  const iaMode    = opts.ia_mode;
+  const anyKey = PROVIDERS.some(p => getSlots(p.id, p.models[0].value).some(s => s.key?.trim()));
+  const availableProviders = PROVIDERS.filter(p => getSlots(p.id, p.models[0].value).some(s => s.key?.trim())).map(p => p.id);
+  const iaMode = opts.ia_mode;
 
-  // Tous les providers disponibles (clé présente)
-  const availableProviders = PROVIDERS.filter(p => !!opts.api_keys[p.id]).map(p => p.id);
+  const MONO = { fontFamily:"'JetBrains Mono',monospace" };
 
   return (
     <div className="settings-section-body">
@@ -380,76 +483,151 @@ function SectionSysteme() {
       {/* ── CLÉS API + MODÈLES ── */}
       <div className="settings-group">
         <div className="settings-group-title">CLÉS API &amp; MODÈLES</div>
-        <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem',
-          color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
+        <p style={{ ...MONO, fontSize:'0.44rem', color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
           Les clés sont stockées localement (localStorage). Seul votre navigateur y a accès.
+          Ajoutez plusieurs clés par provider pour éviter les limites de quota (rotation automatique).
         </p>
 
         {PROVIDERS.map(prov => {
-          const hasKey = !!opts.api_keys[prov.id];
-          const stat   = status[prov.id];
+          const provSlots  = getSlots(prov.id, prov.models[0].value);
+          const provStats  = status[prov.id] || [];
+          const hasAnyKey  = provSlots.some(s => s.key?.trim());
+          const isGemini   = prov.id === 'gemini'; // Gemini : modèle par slot, les autres : modèle global
+
           return (
             <div key={prov.id} style={{
               marginBottom:'0.9rem', padding:'0.65rem 0.8rem',
-              background: hasKey ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
-              border:`1px solid ${hasKey ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
+              background: hasAnyKey ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
+              border:`1px solid ${hasAnyKey ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
               borderRadius:'2px',
             }}>
               {/* Header provider */}
               <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.55rem' }}>
-                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.50rem',
-                  letterSpacing:'0.12em', color:'rgba(200,215,240,0.80)', flex:1 }}>
+                <span style={{ ...MONO, fontSize:'0.50rem', letterSpacing:'0.12em',
+                  color:'rgba(200,215,240,0.80)', flex:1 }}>
                   {prov.label}
                 </span>
                 {prov.hint && (
-                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                    color:'rgba(100,120,160,0.45)' }}>{prov.hint}</span>
+                  <span style={{ ...MONO, fontSize:'0.38rem', color:'rgba(100,120,160,0.45)' }}>
+                    {prov.hint}
+                  </span>
                 )}
               </div>
 
-              {/* Clé API */}
-              <div className="settings-row" style={{ marginBottom: hasKey ? '0.5rem' : 0 }}>
-                <TextInput password
-                  value={opts.api_keys[prov.id] || ''}
-                  onChange={v => update(`api_keys.${prov.id}`, v)}
-                  placeholder={prov.placeholder}
-                />
-                <button className="settings-btn-test" onClick={() => testKey(prov.id)}>
-                  Tester
-                </button>
-                <span className={`settings-status ${stat}`}>{statusLabel(stat)}</span>
-                {hasKey && (
-                  <button title={`Supprimer la clé ${prov.label}`}
-                    onClick={() => { update(`api_keys.${prov.id}`, ''); setStatus(s => ({ ...s, [prov.id]: null })); }}
-                    style={{ background:'none', border:'none', cursor:'pointer',
-                      fontSize:'0.85rem', opacity:0.40, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
-                )}
-              </div>
+              {/* Slots de clés */}
+              {provSlots.length === 0 && (
+                <div style={{ ...MONO, fontSize:'0.40rem', color:'rgba(100,120,160,0.40)',
+                  marginBottom:'0.4rem', fontStyle:'italic' }}>
+                  Aucune clé configurée
+                </div>
+              )}
+              {provSlots.map((slot, idx) => {
+                const stat = provStats[idx] ?? null;
+                return (
+                  <div key={idx} style={{ marginBottom:'0.55rem',
+                    border:'1px solid rgba(255,255,255,0.05)', borderRadius:'2px',
+                    padding:'0.4rem 0.5rem', background:'rgba(255,255,255,0.012)' }}>
+                    {/* Ligne 1 : numéro + clé + œil + tester + statut + 🗑 */}
+                    <div className="settings-row" style={{ marginBottom:'0.3rem', alignItems:'center' }}>
+                      {provSlots.length > 1 && (
+                        <span style={{ ...MONO, fontSize:'0.38rem', color:'rgba(100,120,160,0.40)',
+                          minWidth:'1rem', textAlign:'center' }}>
+                          {idx + 1}
+                        </span>
+                      )}
+                      <PasswordInput
+                        value={slot.key}
+                        onChange={v => updateSlot(prov.id, idx, 'key', v)}
+                        placeholder={prov.placeholder}
+                      />
+                      <button className="settings-btn-test" onClick={() => testKey(prov.id, idx)} title="Tester cette clé">
+                        Tester
+                      </button>
+                      <span className={`settings-status ${stat}`} title={statusText(stat)}
+                        style={{ minWidth:'1.5rem', textAlign:'center' }}>
+                        {statusLabel(stat)}
+                        <span style={{ ...MONO, fontSize:'0.38rem', marginLeft:'0.25rem', color:'rgba(140,160,200,0.55)' }}>
+                          {statusText(stat)}
+                        </span>
+                      </span>
+                      <button title="Supprimer cette clé" onClick={() => removeKey(prov.id, idx)}
+                        style={{ background:'none', border:'none', cursor:'pointer',
+                          fontSize:'0.85rem', opacity:0.35, padding:'0 0.2rem', lineHeight:1, transition:'opacity 0.15s' }}
+                        onMouseEnter={e => e.target.style.opacity = 0.75}
+                        onMouseLeave={e => e.target.style.opacity = 0.35}>🗑</button>
+                    </div>
+                    {/* Ligne 2 : label + modèle (modèle par slot si Gemini, sinon label seul) */}
+                    <div style={{ display:'flex', gap:'0.5rem', alignItems:'center' }}>
+                      <input
+                        value={slot.label || ''}
+                        onChange={e => updateSlot(prov.id, idx, 'label', e.target.value)}
+                        placeholder={isGemini ? `ex: Clé perso, Projet X…` : `Label (optionnel)`}
+                        className="settings-input"
+                        style={{ flex:1, ...MONO, fontSize:'0.40rem', opacity:0.75 }}
+                      />
+                      {isGemini && (
+                        <select
+                          value={slot.model || prov.models[0].value}
+                          onChange={e => updateSlot(prov.id, idx, 'model', e.target.value)}
+                          className="settings-select"
+                          title="Modèle utilisé par cette clé"
+                          style={{ ...MONO, fontSize:'0.40rem', flex:1.2 }}
+                        >
+                          {prov.models.map(m => (
+                            <option key={m.value} value={m.value}>{m.label}</option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
 
-              {/* Sélecteur modèle — grisé si pas de clé */}
-              <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', opacity: hasKey ? 1 : 0.35 }}>
-                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
-                  color:'rgba(140,160,200,0.50)', minWidth:'4rem' }}>Modèle</span>
-                <select
-                  disabled={!hasKey}
-                  value={opts.ia_models?.[prov.id] || prov.models[0].value}
-                  onChange={e => update(`ia_models.${prov.id}`, e.target.value)}
-                  className="settings-select"
-                  style={{ cursor: hasKey ? 'pointer' : 'not-allowed', flex:1,
-                    fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem' }}
-                >
-                  {prov.models.map(m => (
-                    <option key={m.value} value={m.value}>{m.value}   ({m.label.split('—')[1]?.trim() || ''})</option>
-                  ))}
-                </select>
-                {!hasKey && (
-                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                    color:'rgba(200,80,80,0.55)' }}>⚠ clé manquante</span>
-                )}
-              </div>
+              {/* Bouton + ajouter slot */}
+              <button onClick={() => addKey(prov.id)} style={{
+                  background:'none', border:'1px dashed rgba(200,164,74,0.20)',
+                  color:'rgba(200,164,74,0.55)', cursor:'pointer', borderRadius:'2px',
+                  padding:'0.25rem 0.6rem', marginTop: provSlots.length > 0 ? '0.3rem' : 0,
+                  ...MONO, fontSize:'0.40rem', letterSpacing:'0.10em',
+                  transition:'all 0.15s', display:'flex', alignItems:'center', gap:'0.35rem',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(200,164,74,0.50)'; e.currentTarget.style.color='rgba(200,164,74,0.85)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor='rgba(200,164,74,0.20)'; e.currentTarget.style.color='rgba(200,164,74,0.55)'; }}>
+                + Ajouter une clé
+              </button>
+
+              {/* Sélecteur modèle global — seulement pour les non-Gemini */}
+              {!isGemini && (
+                <div style={{ display:'flex', alignItems:'center', gap:'0.6rem',
+                  opacity: hasAnyKey ? 1 : 0.35, marginTop:'0.55rem' }}>
+                  <span style={{ ...MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.50)', minWidth:'8rem' }}>
+                    Modèle préféré
+                  </span>
+                  <select disabled={!hasAnyKey}
+                    value={opts.ia_models?.[prov.id] || prov.models[0].value}
+                    onChange={e => update(`ia_models.${prov.id}`, e.target.value)}
+                    className="settings-select"
+                    title="ARIA utilisera ce modèle en priorité"
+                    style={{ cursor: hasAnyKey ? 'pointer' : 'not-allowed', flex:1, ...MONO, fontSize:'0.44rem' }}>
+                    {prov.models.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+                  </select>
+                  {!hasAnyKey && (
+                    <span style={{ ...MONO, fontSize:'0.38rem', color:'rgba(200,80,80,0.55)' }}>⚠ clé manquante</span>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
+
+        {/* Bouton sauvegarde */}
+        <div style={{ display:'flex', justifyContent:'flex-end', alignItems:'center',
+          gap:'0.8rem', marginTop:'0.4rem' }}>
+          <SaveBadge saved={saved} />
+          <button className="settings-btn-save" onClick={save}>
+            Sauvegarder
+          </button>
+        </div>
       </div>
 
       {/* ── MODE IA ── */}
@@ -491,7 +669,7 @@ function SectionSysteme() {
                   <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>PROVIDER SOLO</div>
                   <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
                     {PROVIDERS.map(p => {
-                      const disabled = !opts.api_keys[p.id];
+                      const disabled = !getSlots(p.id, '').some(s => s.key?.trim());
                       return (
                         <label key={p.id}
                           className={`settings-radio-card${opts.solo_model===p.id?' selected':''}${disabled?' disabled':''}`}

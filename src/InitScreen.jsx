@@ -110,17 +110,10 @@ const KEY_STATUS_STYLE = (s) => ({
 
 function APIKeyInline({ onClose }) {
   const { lang } = useLocale();
-  const loadKeys = () => {
-    try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; }
-  };
-  const loadModels = () => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); } catch { return {}; } };
-  const [keys,   setKeys]   = useState(loadKeys);
-  const [models, setModels] = useState(loadModels);
-  const [status, setStatus] = useState({ claude:null, gemini:null, grok:null, openai:null });
-  const [showPass, setShowPass] = useState({ claude:false, gemini:false, grok:false, openai:false });
 
   const PROVIDERS = [
-    { id:'claude', label:'CLAUDE',  sub:'Anthropic',  ph:'sk-ant-…',
+    { id:'claude', label:'CLAUDE', sub:'Anthropic', ph:'sk-ant-…',
+      defaultModel:'claude-sonnet-4-6',
       versions:[
         { id:'claude-opus-4-6',           label:'Opus 4.6' },
         { id:'claude-sonnet-4-6',         label:'Sonnet 4.6 ★' },
@@ -133,12 +126,14 @@ function APIKeyInline({ onClose }) {
           body: JSON.stringify({ model: model||'claude-haiku-4-5-20251001', max_tokens:10, messages:[{role:'user',content:'Hi'}] }),
         }); return r.ok;
     }},
-    { id:'gemini', label:'GEMINI',  sub:'Google',     ph:'AIza…',
+    { id:'gemini', label:'GEMINI', sub:'Google', ph:'AIza…',
+      defaultModel:'gemini-2.5-flash',
       versions:[
-        { id:'gemini-2.5-pro-preview-05-06', label:'2.5 Pro Preview' },
-        { id:'gemini-2.0-flash',             label:'2.0 Flash ★' },
-        { id:'gemini-1.5-pro',               label:'1.5 Pro' },
-        { id:'gemini-1.5-flash',             label:'1.5 Flash' },
+        { id:'gemini-2.5-flash', label:'2.5 Flash ★' },
+        { id:'gemini-2.5-pro',   label:'2.5 Pro' },
+        { id:'gemini-2.0-flash', label:'2.0 Flash' },
+        { id:'gemini-1.5-pro',   label:'1.5 Pro' },
+        { id:'gemini-1.5-flash', label:'1.5 Flash' },
       ],
       testUrl: async (k, model) => {
         const m = model||'gemini-2.0-flash';
@@ -147,7 +142,8 @@ function APIKeyInline({ onClose }) {
           body: JSON.stringify({ contents:[{parts:[{text:'Hi'}]}], generationConfig:{maxOutputTokens:10} }),
         }); return r.ok || r.status===429;
     }},
-    { id:'grok',   label:'GROK',    sub:'xAI',        ph:'xai-…',
+    { id:'grok', label:'GROK', sub:'xAI', ph:'xai-…',
+      defaultModel:'grok-3-mini',
       versions:[
         { id:'grok-3',      label:'Grok 3' },
         { id:'grok-3-mini', label:'Grok 3 Mini ★' },
@@ -158,7 +154,8 @@ function APIKeyInline({ onClose }) {
           body: JSON.stringify({ model: model||'grok-3-mini', max_tokens:10, messages:[{role:'user',content:'Hi'}] }),
         }); return r.ok;
     }},
-    { id:'openai', label:'OPENAI',  sub:'OpenAI',     ph:'sk-…',
+    { id:'openai', label:'OPENAI', sub:'OpenAI', ph:'sk-…',
+      defaultModel:'gpt-4.1-mini',
       versions:[
         { id:'gpt-4.1',      label:'GPT-4.1' },
         { id:'gpt-4.1-mini', label:'GPT-4.1 Mini ★' },
@@ -172,99 +169,217 @@ function APIKeyInline({ onClose }) {
     }},
   ];
 
-  const testKey = async (id) => {
-    if (!keys[id]) { setStatus(s=>({...s,[id]:'missing'})); return; }
-    setStatus(s=>({...s,[id]:'testing'}));
-    try {
-      const prov = PROVIDERS.find(p=>p.id===id);
-      const ok = await prov.testUrl(keys[id], models[id]);
-      setStatus(s=>({...s,[id]: ok ? 'ok' : 'error'}));
-    } catch { setStatus(s=>({...s,[id]:'error'})); }
+  // Normalise en tableau de slots {key, model, label}
+  const normSlots = (raw, defaultModel) => {
+    if (!raw) return [];
+    if (typeof raw === 'string') return raw ? [{ key: raw, model: defaultModel, label: '' }] : [];
+    if (Array.isArray(raw)) return raw.map(item => {
+      if (!item) return null;
+      if (typeof item === 'string') return item ? { key: item, model: defaultModel, label: '' } : null;
+      if (typeof item === 'object' && item.key) return { key: item.key, model: item.model || defaultModel, label: item.label || '' };
+      return null;
+    }).filter(Boolean);
+    return [];
   };
 
-  const anyOk = Object.values(status).some(s=>s==='ok');
-
-  const save = () => {
+  const loadSlots = () => {
     try {
-      const existing = loadKeys();
-      const merged = { ...existing, ...keys };
-      localStorage.setItem('aria_api_keys', JSON.stringify(merged));
-      const st = {};
-      PROVIDERS.forEach(p => { if (status[p.id]==='ok') st[p.id]='ok'; });
-      localStorage.setItem('aria_api_keys_status', JSON.stringify(st));
-      // Save preferred models per provider
-      const existingModels = loadModels();
-      localStorage.setItem('aria_preferred_models', JSON.stringify({...existingModels, ...models}));
-    } catch {}
-    onClose();
+      const raw = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+      const out = {};
+      PROVIDERS.forEach(p => { out[p.id] = normSlots(raw[p.id], p.defaultModel); });
+      return out;
+    } catch { return Object.fromEntries(PROVIDERS.map(p => [p.id, []])); }
+  };
+
+  const [slots,    setSlots]    = useState(loadSlots);
+  const [status,   setStatus]   = useState(() => Object.fromEntries(PROVIDERS.map(p => [p.id, []])));
+  const [showPass, setShowPass] = useState(() => Object.fromEntries(PROVIDERS.map(p => [p.id, []])));
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  const addSlot = (pid) => {
+    const def = PROVIDERS.find(p=>p.id===pid)?.defaultModel || '';
+    setSlots(s => ({ ...s, [pid]: [...(s[pid]||[]), { key:'', model:def, label:'' }] }));
+    setStatus(s => ({ ...s, [pid]: [...(s[pid]||[]), null] }));
+    setShowPass(p => ({ ...p, [pid]: [...(p[pid]||[]), false] }));
+  };
+
+  const removeSlot = (pid, idx) => {
+    setSlots(s => ({ ...s, [pid]: s[pid].filter((_,i)=>i!==idx) }));
+    setStatus(s => ({ ...s, [pid]: s[pid].filter((_,i)=>i!==idx) }));
+    setShowPass(p => ({ ...p, [pid]: p[pid].filter((_,i)=>i!==idx) }));
+  };
+
+  const updateSlotField = (pid, idx, field, val) => {
+    setSlots(s => { const a=[...s[pid]]; a[idx]={...a[idx],[field]:val}; return {...s,[pid]:a}; });
+    if (field === 'key') setStatus(s => { const a=[...(s[pid]||[])]; a[idx]=null; return {...s,[pid]:a}; });
+  };
+
+  const toggleShow = (pid, idx) => {
+    setShowPass(p => { const a=[...(p[pid]||[])]; a[idx]=!a[idx]; return {...p,[pid]:a}; });
+  };
+
+  // ── Test clé individuelle ────────────────────────────────────────────────
+  const testKey = async (pid, idx) => {
+    const slot = slots[pid]?.[idx];
+    if (!slot?.key?.trim()) {
+      setStatus(s => { const a=[...(s[pid]||[])]; a[idx]='missing'; return {...s,[pid]:a}; });
+      return;
+    }
+    setStatus(s => { const a=[...(s[pid]||[])]; a[idx]='testing'; return {...s,[pid]:a}; });
+    try {
+      const prov = PROVIDERS.find(p=>p.id===pid);
+      const ok = await prov.testUrl(slot.key, slot.model);
+      setStatus(s => { const a=[...(s[pid]||[])]; a[idx]=ok?'ok':'error'; return {...s,[pid]:a}; });
+    } catch {
+      setStatus(s => { const a=[...(s[pid]||[])]; a[idx]='error'; return {...s,[pid]:a}; });
+    }
   };
 
   const stLabel = (s) => s==='ok'?'✅':s==='error'?'❌':s==='testing'?'⏳':s==='missing'?'⚠':'';
 
+  const anyOk = PROVIDERS.some(p => (status[p.id]||[]).some(s=>s==='ok'));
+  const anyFilled = PROVIDERS.some(p => (slots[p.id]||[]).some(s=>s.key?.trim()));
+
+  const save = () => {
+    try {
+      const cleaned = {};
+      PROVIDERS.forEach(p => {
+        cleaned[p.id] = (slots[p.id]||[]).filter(s=>s.key?.trim());
+      });
+      localStorage.setItem('aria_api_keys', JSON.stringify(cleaned));
+      const st = {};
+      PROVIDERS.forEach(p => { if ((status[p.id]||[]).some(s=>s==='ok')) st[p.id]='ok'; });
+      localStorage.setItem('aria_api_keys_status', JSON.stringify(st));
+    } catch {}
+    onClose();
+  };
+
   return (
     <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(4,8,18,0.92)',
       backdropFilter:'blur(8px)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-      <div style={{ ...CARD_STYLE, width:480, display:'flex', flexDirection:'column', gap:'0.7rem' }}>
+      <div style={{ ...CARD_STYLE, width:520, maxHeight:'85vh', overflowY:'auto',
+        display:'flex', flexDirection:'column', gap:'0.7rem' }}>
         <div style={{ ...labelStyle(), marginBottom:'0.1rem' }}>🔑 CLÉS API</div>
-        <p style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.40)',
-          margin:0, lineHeight:1.6 }}>
-          Stockées localement — aucun serveur. Configurez au moins une clé.
+        <p style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.40)', margin:0, lineHeight:1.6 }}>
+          Stockées localement. Plusieurs clés par provider : rotation automatique en cas de quota.
+          Pour Gemini, choisissez le modèle par clé.
         </p>
 
         {PROVIDERS.map(prov => {
-          const val = keys[prov.id] || '';
-          const s   = status[prov.id];
+          const provSlots = slots[prov.id] || [];
+          const provStats = status[prov.id] || [];
+          const provShow  = showPass[prov.id] || [];
+          const hasAny    = provSlots.some(s=>s.key?.trim());
+          const anyProvOk = provStats.some(s=>s==='ok');
+          const isGemini  = prov.id === 'gemini';
+
           return (
             <div key={prov.id} style={{ padding:'0.55rem 0.7rem',
-              background: val ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
-              border:`1px solid ${s==='ok' ? 'rgba(58,191,122,0.28)' : val ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
+              background: hasAny ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
+              border:`1px solid ${anyProvOk ? 'rgba(58,191,122,0.28)' : hasAny ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
               borderRadius:'2px' }}>
+
               <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.4rem' }}>
                 <span style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.14em',
                   color:'rgba(200,215,240,0.75)', flex:1 }}>{prov.label}</span>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem',
-                  color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
               </div>
-              <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', marginBottom:'0.3rem' }}>
-                <div style={{ position:'relative', flex:1 }}>
-                  <input style={{ ...INPUT_STYLE, fontSize:'0.48rem', paddingRight:'2rem' }}
-                    type={showPass[prov.id] ? 'text' : 'password'}
-                    value={val}
-                    onChange={e => { setKeys(k=>({...k,[prov.id]:e.target.value})); setStatus(s=>({...s,[prov.id]:null})); }}
-                    placeholder={prov.ph} />
-                  <button
-                    onClick={() => setShowPass(p=>({...p,[prov.id]:!p[prov.id]}))}
-                    style={{ position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
-                      background:'none', border:'none', cursor:'pointer', padding:'0.1rem',
-                      color: showPass[prov.id] ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)',
-                      fontSize:'0.75rem', lineHeight:1 }}
-                    title={showPass[prov.id] ? 'Masquer' : 'Afficher'}>
-                    {showPass[prov.id] ? '🙈' : '👁'}
-                  </button>
+
+              {provSlots.length === 0 && (
+                <div style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:'rgba(100,120,160,0.35)',
+                  fontStyle:'italic', marginBottom:'0.3rem' }}>Aucune clé configurée</div>
+              )}
+
+              {provSlots.map((slot, idx) => (
+                <div key={idx} style={{ marginBottom:'0.45rem', padding:'0.35rem 0.4rem',
+                  background:'rgba(255,255,255,0.015)', borderRadius:'2px',
+                  border:'1px solid rgba(255,255,255,0.05)' }}>
+                  {/* Ligne clé + test + statut + 🗑 */}
+                  <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', marginBottom:'0.25rem' }}>
+                    {provSlots.length > 1 && (
+                      <span style={{ fontFamily:FONT.mono, fontSize:'0.37rem', color:'rgba(100,120,160,0.35)',
+                        minWidth:'0.8rem', textAlign:'center' }}>{idx+1}</span>
+                    )}
+                    <div style={{ position:'relative', flex:1 }}>
+                      <input style={{ ...INPUT_STYLE, fontSize:'0.46rem', paddingRight:'2rem', width:'100%', boxSizing:'border-box' }}
+                        type={provShow[idx] ? 'text' : 'password'}
+                        value={slot.key}
+                        onChange={e => updateSlotField(prov.id, idx, 'key', e.target.value)}
+                        placeholder={prov.ph} />
+                      <button onClick={() => toggleShow(prov.id, idx)}
+                        style={{ position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
+                          background:'none', border:'none', cursor:'pointer', padding:'0.1rem',
+                          color: provShow[idx] ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)',
+                          fontSize:'0.75rem', lineHeight:1 }}
+                        title={provShow[idx] ? 'Masquer' : 'Afficher'}>
+                        {provShow[idx] ? '🙈' : '👁'}
+                      </button>
+                    </div>
+                    <button style={{ ...BTN_SECONDARY, padding:'0.28rem 0.45rem', fontSize:'0.40rem', whiteSpace:'nowrap' }}
+                      disabled={!slot.key?.trim()} onClick={() => testKey(prov.id, idx)}>Test</button>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', minWidth:'1.2rem', textAlign:'center' }}>
+                      {stLabel(provStats[idx])}
+                    </span>
+                    <button onClick={() => removeSlot(prov.id, idx)} title="Supprimer"
+                      style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.75rem',
+                        opacity:0.35, padding:'0 0.15rem', lineHeight:1, transition:'opacity 0.15s' }}
+                      onMouseEnter={e=>e.target.style.opacity=0.75}
+                      onMouseLeave={e=>e.target.style.opacity=0.35}>🗑</button>
+                  </div>
+                  {/* Ligne label + modèle (modèle seulement pour Gemini) */}
+                  <div style={{ display:'flex', gap:'0.4rem', alignItems:'center' }}>
+                    <input value={slot.label||''}
+                      onChange={e => updateSlotField(prov.id, idx, 'label', e.target.value)}
+                      placeholder={isGemini ? 'Label (ex: Projet X)' : 'Label (optionnel)'}
+                      style={{ ...INPUT_STYLE, fontSize:'0.38rem', flex:1, opacity:0.70 }} />
+                    {isGemini && (
+                      <select value={slot.model || prov.defaultModel}
+                        onChange={e => updateSlotField(prov.id, idx, 'model', e.target.value)}
+                        style={{ ...INPUT_STYLE, fontSize:'0.38rem', flex:1.2, cursor:'pointer' }}
+                        title="Modèle utilisé par cette clé">
+                        {prov.versions.map(v => <option key={v.id} value={v.id}>{v.label}</option>)}
+                      </select>
+                    )}
+                  </div>
                 </div>
-                <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.55rem', fontSize:'0.44rem', whiteSpace:'nowrap' }}
-                  disabled={!val} onClick={()=>testKey(prov.id)}>Test</button>
-                {s && <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', minWidth:'1rem' }}>{stLabel(s)}</span>}
-              </div>
-              {/* Version selector */}
-              <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
-                {prov.versions.map(v => {
-                  const chosen = (models[prov.id] || prov.versions.find(x=>x.label.includes('★'))?.id || prov.versions[0]?.id) === v.id;
-                  return (
-                    <button key={v.id}
-                      style={{ ...BTN_SECONDARY, padding:'0.18rem 0.45rem', fontSize:'0.40rem',
-                        ...(chosen ? { border:'1px solid rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : { opacity:0.55 }) }}
-                      onClick={() => setModels(m => ({...m, [prov.id]: v.id}))}>
-                      {v.label}
-                    </button>
-                  );
-                })}
-              </div>
+              ))}
+
+              <button onClick={() => addSlot(prov.id)}
+                style={{ background:'none', border:'1px dashed rgba(200,164,74,0.18)',
+                  color:'rgba(200,164,74,0.50)', cursor:'pointer', borderRadius:'2px',
+                  padding:'0.20rem 0.55rem', fontFamily:FONT.mono, fontSize:'0.38rem',
+                  letterSpacing:'0.10em', marginBottom: hasAny ? '0.4rem' : '0.1rem',
+                  transition:'all 0.15s' }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(200,164,74,0.45)';e.currentTarget.style.color='rgba(200,164,74,0.80)';}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(200,164,74,0.18)';e.currentTarget.style.color='rgba(200,164,74,0.50)';}}>
+                + Ajouter une clé
+              </button>
+
+              {/* Sélecteur version global pour non-Gemini (si des clés existent) */}
+              {!isGemini && hasAny && (
+                <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap', marginTop:'0.2rem' }}>
+                  {prov.versions.map(v => {
+                    const defModel = prov.defaultModel;
+                    const chosen = (slots[prov.id]?.[0]?.model || defModel) === v.id;
+                    return (
+                      <button key={v.id}
+                        style={{ ...BTN_SECONDARY, padding:'0.18rem 0.45rem', fontSize:'0.40rem',
+                          ...(chosen ? { border:'1px solid rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : { opacity:0.55 }) }}
+                        onClick={() => {
+                          // Appliquer ce modèle à tous les slots de ce provider
+                          setSlots(s => ({ ...s, [prov.id]: (s[prov.id]||[]).map(sl => ({...sl, model:v.id})) }));
+                        }}>
+                        {v.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}
 
-        {!anyOk && Object.values(keys).some(v=>v) && (
+        {!anyOk && anyFilled && (
           <div style={{ fontSize:'0.42rem', color:'rgba(200,164,74,0.45)', lineHeight:1.5 }}>
             ⚠ Testez au moins une clé pour activer la sauvegarde.
           </div>
@@ -794,7 +909,9 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const [ariaMode,    setAriaMode]    = useState(() => loadOpts().ia_mode || 'aria');
   const [boardGame,   setBoardGame]   = useState(() => !!(loadOpts().gameplay?.mode_board_game));
   const apiKeys = loadKeys();
-  const availProviders = ['openrouter','claude','gemini','grok','openai'].filter(id => !!apiKeys[id]);
+  // Supporter les clés en tableau (multi-clés) ou string (legacy)
+  const hasProviderKey = (id) => { const v = apiKeys[id]; return Array.isArray(v) ? v.some(k=>k?.trim()) : !!v; };
+  const availProviders = ['openrouter','claude','gemini','grok','openai'].filter(id => hasProviderKey(id));
   const p0 = availProviders[0] || 'openrouter';
   const p1 = availProviders[1] || p0;
   const prefModels = loadPreferredModels();

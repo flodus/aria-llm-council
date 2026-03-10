@@ -267,6 +267,7 @@ export default function App() {
           onCountriesUpdate={handleCountriesUpdate}
           onReset={handleReset}
           chronologKey={chronologKey}
+          isSettingsOpen={page === 'settings'}
         />
       </main>
 

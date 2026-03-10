@@ -717,12 +717,14 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
   );
 }
 
-export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted }) {
+export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted, isSettingsOpen }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
 
   // Numéro de cycle courant — incrémenté à chaque confirmation de cycle
   const cycleNumRef = useRef(1);
+  // Sauvegarde des defs pays pour relancer startWithAI après changement de clé dans Settings
+  const pendingRetryRef = useRef(null); // { countryDefs, W, H } | null
 
   // ── Modales ──
   const [modalSecession,    setModalSecession]    = useState(false);
@@ -986,9 +988,21 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     }
   }, [aria.countries]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─────────────────────────────────────────────────────────────────────────
-  //  Rendu selon onglet actif
-  // ─────────────────────────────────────────────────────────────────────────
+  // ── Retry automatique après changement de clé dans Settings ─────────────
+  // Quand Settings se ferme (isSettingsOpen passe true → false) ET qu'un
+  // pendingRetry existe, on relance startWithAI avec les defs sauvegardées.
+  const prevSettingsOpen = useRef(false);
+  useEffect(() => {
+    const wasOpen = prevSettingsOpen.current;
+    prevSettingsOpen.current = !!isSettingsOpen;
+    if (wasOpen && !isSettingsOpen && pendingRetryRef.current) {
+      const { countryDefs, W, H } = pendingRetryRef.current;
+      pendingRetryRef.current = null;
+      console.log('[ARIA] Retry startWithAI après changement de clé');
+      onWorldStarted?.();
+      aria.startWithAI(countryDefs, W, H);
+    }
+  }, [isSettingsOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderMainContent = () => {
     if (activeTab === 'council') {
@@ -1082,7 +1096,13 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       <AIErrorModal
         error={aria.aiError}
         onClose={() => aria.clearAiError?.()}
-        onSettings={() => { aria.clearAiError?.(); onGoToSettings?.(); }}
+        onSettings={() => {
+          // Sauvegarder les defs pour relancer après Settings
+          const { countryDefs, W, H } = aria.aiError || {};
+          if (countryDefs?.length) pendingRetryRef.current = { countryDefs, W: W || 1400, H: H || 800 };
+          aria.clearAiError?.();
+          onGoToSettings?.();
+        }}
         onOffline={() => { aria.clearAiError?.(); onReset(); }}
         onCreateLocal={() => {
           const { countryDefs, W, H } = aria.aiError || {};
