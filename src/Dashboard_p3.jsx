@@ -11,6 +11,7 @@
 //    ConstitutionModal → modale gouvernance par pays
 // ═══════════════════════════════════════════════════════════════════════════════
 import { REAL_COUNTRIES_DATA_EN } from './ariaData';
+import { loadLang, t } from './ariaI18n';
 
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
@@ -142,7 +143,7 @@ function VoteResultModal({ session, onClose }) {
                   <ImpactPill label="SATISFACTION" delta={voteResult.impact.satisfaction} />
                 )}
                 {voteResult.impact?.aria_current_delta !== 0 && voteResult.impact?.aria_current_delta !== undefined && (
-                  <ImpactPill label="ADHÉSION ARIA" delta={voteResult.impact.aria_current_delta} />
+                  <ImpactPill label={t('COUNCIL_ADHESION', uiLang)} delta={voteResult.impact.aria_current_delta} />
                 )}
               </div>
               {/* Texte conséquences */}
@@ -237,7 +238,7 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
                   display: 'flex', alignItems: 'center', gap: '0.4rem',
                 }}>
                   <span>{c.emoji}</span>
-                  <span style={{ color: 'rgba(200,215,240,0.75)' }}>{getLocalizedNom(c)}</span>
+                  <span style={{ color: 'rgba(200,215,240,0.75)' }}>{getLocalizedNom(c, uiLang)}</span>
                   <span style={{ marginLeft: 'auto', color: 'rgba(140,160,200,0.40)', fontSize: '0.42rem' }}>aucun conseil ce cycle</span>
                 </div>
               ))}
@@ -312,17 +313,12 @@ function AddCountryModal({ onConfirm, onClose }) {
   const [regime,  setRegime]  = useState('democratie_liberale');
 
   const TERRAIN_OPTS = [
-    ['coastal','Côtier'],['inland','Continental'],['highland','Montagneux'],
-    ['island','Île'],['archipelago','Archipel'],['desert','Désert'],
-    ['foret','Forêt'],['tropical','Tropical'],['toundra','Toundra'],
-  ];
+    'coastal','inland','highland','island','archipelago','desert','foret','tropical','toundra',
+  ].map(k => [k, getTerrainLabel(k, uiLang)]);
   const REGIME_OPTS = [
-    ['democratie_liberale','Démocratie libérale'],['republique_federale','République fédérale'],
-    ['monarchie_constitutionnelle','Monarchie constitutionnelle'],['democratie_directe','Démocratie directe'],
-    ['technocratie','Technocratie'],['oligarchie','Oligarchie'],
-    ['junte_militaire','Junte militaire'],['regime_autoritaire','Régime autoritaire'],
-    ['monarchie_absolue','Monarchie absolue'],['theocracie','Théocratie'],
-  ];
+    'democratie_liberale','republique_federale','monarchie_constitutionnelle','democratie_directe',
+    'technocratie','oligarchie','junte_militaire','regime_autoritaire','monarchie_absolue','theocracie',
+  ].map(k => [k, getRegimeLabel(k, uiLang)]);
 
   const ARIA_EST = { democratie_liberale:48, republique_federale:44, monarchie_constitutionnelle:38, democratie_directe:52, technocratie:65, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocracie:18 };
   const POP_EST  = { coastal:8e6, inland:5e6, highland:3.5e6, island:2e6, archipelago:1.5e6, desert:2.5e6, foret:4e6, tropical:6e6, toundra:1.5e6 };
@@ -423,6 +419,7 @@ import {
   REGIMES,
   getHumeur,
 } from './Dashboard_p1';
+import { getTerrainLabel, getRegimeLabel } from './ariaTheme';
 import { MapSVG } from './Dashboard_p2';
 import ConstitutionModal from './ConstitutionModal';
 import LLMCouncil from './LLMCouncil';
@@ -493,15 +490,9 @@ function SecessionModal({ parent, onConfirm, onClose }) {
   const [regime,   setRegime]   = useState(parent?.regime || 'republique_federale');
 
   const REGIME_LIST = [
-    { value:'democratie_liberale',       label:'Démocratie Libérale 🗳️' },
-    { value:'republique_federale',       label:'République Fédérale 🏛️' },
-    { value:'monarchie_constitutionnelle',label:'Monarchie Const. 👑' },
-    { value:'technocratie_ia',           label:'Technocratie IA 🤖' },
-    { value:'oligarchie',                label:'Oligarchie 💼' },
-    { value:'junte_militaire',           label:'Junte Militaire ⚔️' },
-    { value:'regime_autoritaire',        label:'Autoritaire 🔒' },
-    { value:'theocracie',                label:'Théocratie ✝️' },
-  ];
+    'democratie_liberale','republique_federale','monarchie_constitutionnelle',
+    'technocratie_ia','oligarchie','junte_militaire','regime_autoritaire','theocracie',
+  ].map(k => ({ value: k, label: getRegimeLabel(k, uiLang) }));
 
   return (
     <div style={S.overlay} onClick={onClose}>
@@ -521,10 +512,10 @@ function SecessionModal({ parent, onConfirm, onClose }) {
             value={nom}
             onChange={e => setNom(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && nom.trim() && onConfirm(nom.trim(), relation, regime)}
-            placeholder="Ex : République du Levant…"
+            placeholder={uiLang==='en'?'E.g. Republic of Levant…':'Ex : République du Levant…'}
             autoFocus
           />
-          <label style={S.fieldLabel}>RÉGIME POLITIQUE</label>
+          <label style={S.fieldLabel}>{t('DASH_REGIME_POLITIQUE', uiLang)}</label>
           <select
             style={{
               background:'rgba(8,13,22,0.95)', border:'1px solid rgba(200,164,74,0.18)',
@@ -637,6 +628,7 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
   const isQuota = error.type === 'quota';
   const isNoKey = error.type === 'nokey';
   const FONT_MONO = "'JetBrains Mono', monospace";
+  const isEn = (localStorage.getItem('aria_lang') || 'fr') === 'en';
   return (
     <div style={{
       position:'fixed', inset:0, zIndex:9000,
@@ -658,11 +650,11 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
           <div>
             <div style={{ fontFamily:FONT_MONO, fontSize:'0.72rem', letterSpacing:'0.18em',
               color: isQuota ? 'rgba(220,80,80,0.90)' : 'rgba(200,164,74,0.90)' }}>
-              {isQuota ? 'QUOTA API DÉPASSÉ' : 'GÉNÉRATION IA ÉCHOUÉE'}
+              {isQuota ? (isEn?'API QUOTA EXCEEDED':'QUOTA API DÉPASSÉ') : (isEn?'AI GENERATION FAILED':'GÉNÉRATION IA ÉCHOUÉE')}
             </div>
             <div style={{ fontFamily:FONT_MONO, fontSize:'0.38rem', color:'rgba(100,120,160,0.55)',
               letterSpacing:'0.12em', marginTop:'0.2rem' }}>
-              {isQuota ? 'TROP DE REQUÊTES — 429 TOO MANY REQUESTS' : "AUCUN PAYS GÉNÉRÉ PAR L'IA"}
+              {isQuota ? 'TOO MANY REQUESTS — 429' : (isEn?'NO COUNTRY GENERATED BY AI':"AUCUN PAYS GÉNÉRÉ PAR L'IA")}
             </div>
           </div>
         </div>
@@ -679,8 +671,8 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
         <div style={{ fontFamily:FONT_MONO, fontSize:'0.42rem', color:'rgba(100,120,160,0.50)',
           letterSpacing:'0.05em', lineHeight:1.6 }}>
           {error.countryDefs?.length > 0
-            ? <>Cliquez sur <strong style={{color:'rgba(140,180,240,0.80)'}}>CRÉER EN HORS-LIGNE</strong> pour générer {error.countryDefs.map(d => d.nom || 'un pays').join(', ')} avec des données locales.</>
-            : <>Aucun pays disponible. Réinitialisez ou corrigez votre clé API.</>
+            ? (isEn ? <>Click <strong style={{color:'rgba(140,180,240,0.80)'}}>CREATE OFFLINE</strong> to generate {error.countryDefs.map(d => d.nom || 'a country').join(', ')} with local data.</> : <>Cliquez sur <strong style={{color:'rgba(140,180,240,0.80)'}}>CRÉER EN HORS-LIGNE</strong> pour générer {error.countryDefs.map(d => d.nom || 'un pays').join(', ')} avec des données locales.</>)
+            : (isEn ? <>No country available. Reset or fix your API key.</> : <>Aucun pays disponible. Réinitialisez ou corrigez votre clé API.</>)
           }
         </div>
 
@@ -692,7 +684,7 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
             color:'rgba(140,160,200,0.70)', borderRadius:'2px',
             padding:'0.45rem 1rem', cursor:'pointer',
           }}>
-            ↺ RÉINITIALISER
+            {isEn?'↺ RESET':'↺ RÉINITIALISER'}
           </button>
           <button onClick={onSettings} style={{
             fontFamily:FONT_MONO, fontSize:'0.46rem', letterSpacing:'0.10em',
@@ -700,7 +692,7 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
             color:'rgba(200,164,74,0.85)', borderRadius:'2px',
             padding:'0.45rem 1rem', cursor:'pointer',
           }}>
-            ⚙ CHANGER D'API
+            {isEn?"⚙ CHANGE API":"⚙ CHANGER D'API"}
           </button>
           {error.countryDefs?.length > 0 && (
             <button onClick={onCreateLocal} style={{
@@ -709,7 +701,7 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
               color:'rgba(140,180,240,0.90)', borderRadius:'2px',
               padding:'0.45rem 1rem', cursor:'pointer',
             }}>
-              🌍 CRÉER EN HORS-LIGNE
+              {isEn?'🌍 CREATE OFFLINE':'🌍 CRÉER EN HORS-LIGNE'}
             </button>
           )}
           {error.type !== 'generic' && (
@@ -719,7 +711,7 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
               color:'rgba(58,191,122,0.55)', borderRadius:'2px',
               padding:'0.45rem 1rem', cursor:'pointer',
             }}>
-              CONTINUER QUAND MÊME →
+              {isEn?'CONTINUE ANYWAY →':'CONTINUER QUAND MÊME →'}
             </button>
           )}
         </div>
@@ -730,6 +722,13 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
 
 export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
+  // Langue réactive (écoute event aria-lang-change émis par ariaI18n)
+  const [uiLang, setUiLang] = useState(() => localStorage.getItem('aria_lang') || 'fr');
+  useEffect(() => {
+    const onLang = () => setUiLang(localStorage.getItem('aria_lang') || 'fr');
+    window.addEventListener('aria-lang-change', onLang);
+    return () => window.removeEventListener('aria-lang-change', onLang);
+  }, []);
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
 
   // Numéro de cycle courant — incrémenté à chaque confirmation de cycle
@@ -774,7 +773,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       childEmoji:   '🆕',
       relation,
       popTransmise: 25,
-      narratif:     `${nom} fait sécession de ${parent.nom}. Relation établie : ${relation}.`,
+      narratif:     uiLang==='en' ? `${nom} secedes from ${parent.nom}. Established relation: ${relation}.` : `${nom} fait sécession de ${parent.nom}. Relation établie : ${relation}.`,
     });
   }, [selectedCountry, aria, pushEvent, cycleNumRef]);
 
@@ -1059,7 +1058,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
             fontFamily:"'JetBrains Mono', monospace",
             fontSize:'0.58rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.65)',
             animation:'pulse 1.2s ease-in-out infinite',
-          }}>GÉNÉRATION DU MONDE EN COURS…</div>
+          }}>{t('DASH_GEN_WORLD', uiLang)}</div>
           <div style={{
             width:'260px', height:'2px', background:'rgba(255,255,255,0.06)',
             borderRadius:'1px', overflow:'hidden',
@@ -1073,7 +1072,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
           <div style={{
             fontFamily:"'JetBrains Mono', monospace",
             fontSize:'0.43rem', color:'rgba(120,140,175,0.50)', letterSpacing:'0.12em',
-          }}>CONSULTATION DES ARCHIVES MONDIALES…</div>
+          }}>{t('DASH_GEN_ARCHIVES', uiLang)}</div>
           <style>{`
             @keyframes loading-slide {
               0%   { transform: translateX(-100%); }
@@ -1140,14 +1139,14 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
             <>
               <button
                 style={{ ...S.fabBtn, borderColor: 'rgba(200,164,74,0.40)', color: 'rgba(200,164,74,0.80)', background: 'rgba(200,164,74,0.07)' }}
-                title="Ouvrir le Conseil de délibération"
+                title={t('DASH_COUNCIL_TOOLTIP', uiLang)}
                 onClick={() => onGoToCouncil?.()}
               >
                 ⚖️
               </button>
               <button style={S.fabBtn} title="Diplomatie" onClick={openDiplomacy}>🤝</button>
               <button style={S.fabBtn} title="Gouvernement" onClick={openConstitution}>🏛️</button>
-              <button style={{ ...S.fabBtn, ...S.fabBtnDanger }} title="Sécession" onClick={openSecession}>✂️</button>
+              <button style={{ ...S.fabBtn, ...S.fabBtnDanger }} title={t('DASH_SECESSION_TOOLTIP', uiLang)} onClick={openSecession}>✂️</button>
             </>
           )}
         </div>

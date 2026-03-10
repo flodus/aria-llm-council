@@ -776,41 +776,56 @@ async function callModel(model, prompt, keys, systemPrompt = '', _retryCount = 0
   if (model === 'gemini' && keys.gemini) {
     const preferredGemini = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').gemini; } catch { return null; } })();
     const GEMINI_MODELS = [preferredGemini, 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
+    let lastWas429 = false;
     for (const gModel of GEMINI_MODELS) {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keys.gemini}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: fullContent }] }],
-              generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
-            }),
-          }
-        );
-        if (!res.ok) {
-          // 429 quota — pas de fallback utile, on retourne erreur gracieuse
-          if (res.status === 429) {
-            if (_retryCount < 3) {
-              const delay = 1500 * Math.pow(2, _retryCount); // 1.5s → 3s → 6s
-              await new Promise(r => setTimeout(r, delay));
-              return callModel(model, prompt, keys, systemPrompt, _retryCount + 1);
+      // Si le modèle précédent a eu un 429, attendre avant de tenter le suivant
+      if (lastWas429) await new Promise(r => setTimeout(r, 1500));
+      lastWas429 = false;
+      let attempt = 0;
+      while (attempt <= 2) {
+        try {
+          const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keys.gemini}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: fullContent }] }],
+                generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
+              }),
             }
-            return { error: true, code: 429, msg: '⚠ Quota API dépassé (429) — pause et réessayez.' };
+          );
+          if (!res.ok) {
+            if (res.status === 429) {
+              lastWas429 = true;
+              if (attempt < 2) {
+                const delay = 2000 * Math.pow(2, attempt); // 2s → 4s
+                console.warn(`[ARIA] Gemini 429 (${gModel}) — retry ${attempt+1}/2 dans ${delay}ms`);
+                await new Promise(r => setTimeout(r, delay));
+                attempt++;
+                continue;
+              }
+              // Épuisé sur ce modèle → essayer modèle suivant
+              break;
+            }
+            break; // autre erreur HTTP → modèle suivant
           }
-          continue; // autre erreur → essayer modèle suivant
+          const data = await res.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          const clean = text.replace(/```json|```/g, '').trim();
+          return JSON.parse(clean);
+        } catch (e) {
+          console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
+          break; // exception → modèle suivant
         }
-        const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        const clean = text.replace(/```json|```/g, '').trim();
-        return JSON.parse(clean);
-      } catch (e) {
-        console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
-        // continuer avec le modèle suivant
       }
     }
-    return { error: true, msg: getRandomFallback() };
+    // Tous les modèles Gemini épuisés → fallback Claude si disponible
+    if (keys.claude) {
+      console.warn('[ARIA] Gemini épuisé — fallback Claude');
+      return callModel('claude', prompt, keys, systemPrompt, 0);
+    }
+    return { error: true, code: 429, msg: '⚠ Quota Gemini dépassé — tous les modèles épuisés.' };
   }
   return { error: true, msg: "SYSTÈME : Aucune clé API valide détectée." };
 }
@@ -1299,8 +1314,8 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
       setAiError({
         type: quotaHit ? 'quota' : 'nokey',
         details: quotaHit
-          ? 'Quota API dépassé (429 Too Many Requests). Patientez avant de relancer, ou passez en mode hors-ligne.'
-          : 'L\'IA n\'a pu générer aucun pays. Vérifiez votre clé API dans les paramètres, ou passez en mode hors-ligne.',
+          ? loadLang()==='en'?'API quota exceeded (429 Too Many Requests). Wait before retrying, or switch to offline mode.':'Quota API dépassé (429 Too Many Requests). Patientez avant de relancer, ou passez en mode hors-ligne.'
+          : loadLang()==='en'?'AI could not generate any country. Check your API key in settings, or switch to offline mode.':'L\'IA n\'a pu générer aucun pays. Vérifiez votre clé API dans les paramètres, ou passez en mode hors-ligne.',
         countryDefs, W, H
       });
     }

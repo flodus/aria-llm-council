@@ -14,7 +14,10 @@ export function loadLang() {
   try { return localStorage.getItem(LS_LANG) || 'fr'; } catch { return 'fr'; }
 }
 export function saveLang(l) {
-  try { localStorage.setItem(LS_LANG, l); } catch {}
+  try {
+    localStorage.setItem(LS_LANG, l);
+    window.dispatchEvent(new CustomEvent('aria-lang-change', { detail: l }));
+  } catch {}
 }
 
 // ── Traductions ───────────────────────────────────────────────────────────
@@ -198,6 +201,8 @@ export function useLocale() {
   const setLang = useCallback((l) => {
     saveLang(l);
     setLangState(l);
+    // Notifie tous les composants qui écoutent (Dashboard_p3, CountryPanel, etc.)
+    try { window.dispatchEvent(new CustomEvent('aria-lang-change', { detail: l })); } catch {}
   }, []);
 
   return { lang, setLang };

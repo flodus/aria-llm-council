@@ -64,7 +64,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     secLeader:    isEn ? 'HEAD OF STATE'            : 'CHEF D\'ÉTAT',
     secContext:   isEn ? 'CONTEXT IN DELIBERATIONS' : 'CONTEXTE DANS LES DÉLIBÉRATIONS',
     contextHint:  isEn ? 'Leave on "Inherit" to follow the global setting (Settings).'
-                       : '{tr.contextHint}',
+                       : 'Laissez sur "Hérite" pour suivre le réglage global (Settings).',
     ctxInherit:   isEn ? '⚙️ Inherit global'        : '⚙️ Hérite du global',
     ctxInheritH:  isEn ? 'Follows the Settings rule': 'Suit le réglage de Settings',
     ctxAuto:      isEn ? '🤖 Auto'                  : '🤖 Auto',
@@ -83,11 +83,11 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     crisisTitle:  isEn ? 'CRISIS MANAGEMENT'        : 'GESTION DE CRISE',
     crisisLabel:  isEn ? '🎲 Ministry of Chance & Crises' : '🎲 Ministère de la Chance & Crises',
     crisisDesc:   isEn ? 'Activates the 7th ministry for emergency management.'
-                       : '{tr.crisisDesc}',
+                       : 'Active le 7e ministère pour la gestion des urgences.',
     assignedMins: isEn ? 'ASSIGNED MINISTERS'       : 'MINISTRES ASSIGNÉS',
     secMinisters: isEn ? 'MINISTERS'                : 'MINISTRES',
     cancel:       isEn ? 'Cancel'                   : 'Annuler',
-    apply:        isEn ? '✓ Apply Configuration'    : '{tr.apply}',
+    apply:        isEn ? '✓ Apply Configuration'    : '✓ Appliquer la Configuration',
   };
   const globalGov = getOptions().defaultGovernance || DEFAULT_OPTIONS.defaultGovernance;
   const current   = { ...globalGov, ...(country?.governanceOverride || {}) };

@@ -18,11 +18,13 @@ import { EmptyPanel }   from './CountryPanel';
 import { FONT, COLOR }  from './ariaTheme';
 import { loadLang } from './ariaI18n';
 
-const TABS = [
-  { id: 'map',      label: 'MAP-GRID'    },
-  { id: 'council',  label: 'LLM COUNCIL' },
-  { id: 'timeline', label: 'CHRONOLOG'   },
+const TABS_FR = [
+  { id: 'map',      label: '🗺 MAP-GRID'    },
+  { id: 'council',  label: '⚖ LLM COUNCIL' },
+  { id: 'timeline', label: '📜 CHRONOLOG'   },
 ];
+const TABS_EN = TABS_FR; // same labels
+function getTabs() { return TABS_FR; }
 
 export default function App() {
   // ── États globaux ─────────────────────────────────────────────────────
@@ -242,7 +244,7 @@ export default function App() {
         </div>
 
         <nav className="topbar-tabs">
-          {TABS.map(({ id, label }) => (
+          {getTabs().map(({ id, label }) => (
             <button key={id}
               className={`tab-btn${activeTab === id ? ' active' : ''}`}
               onClick={() => setActiveTab(id)}>
@@ -305,7 +307,7 @@ export default function App() {
       {/* Panneau latéral */}
       <aside className="side-panel">
         {selectedCountry === null
-          ? <EmptyPanel />
+          ? <EmptyPanel activeTab={activeTab} liveCountries={liveCountries} onSelectCountry={setSelectedCountry} />
           : <CountryPanel
               country={selectedCountry}
               isCrisis={isCrisis}
@@ -315,6 +317,8 @@ export default function App() {
               onNextCycle={handleNextCycle}
               onCrisisToggle={handleCrisisToggle}
               onGoToCouncil={() => setActiveTab('council')}
+              onGoToMap={() => setActiveTab('map')}
+              onGoToTimeline={() => setActiveTab('timeline')}
               onConstitution={() => ariaRef.current?.openConstitution?.()}
               onSubmitQuestion={(q, mid) => ariaRef.current?.submitQuestion?.(q, mid)}
               onAddFictionalCountry={() => ariaRef.current?.addFictionalCountry?.()}

@@ -18,7 +18,7 @@
 //   onSubmitQuestion  {function}  — (question, ministryId|null)
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { COLOR, FONT, RESOURCE_DEFS, MARITIME, satisfColor, fmtPop } from './ariaTheme';
 import { getMinistriesList } from './llmCouncilEngine';
 import { REAL_COUNTRIES_DATA_EN } from './ariaData';
@@ -32,6 +32,18 @@ function getLocalizedNom(country) {
   return enData?.nom || country?.nom || '';
 }
 
+
+// Labels ressources localisés
+const RESOURCE_LABELS_EN = {
+  agriculture: 'AGRICULTURE', bois: 'TIMBER', eau: 'FRESH WATER',
+  energie: 'ENERGY', mineraux: 'MINERALS', peche: 'FISHING', petrole: 'OIL',
+};
+function getResourceDefs(isEn) {
+  return RESOURCE_DEFS.map(r => ({
+    ...r,
+    label: isEn ? (RESOURCE_LABELS_EN[r.key] || r.label) : r.label,
+  }));
+}
 // Labels dynamiques localisés
 function getTerrainLabel(key) {
   return getStats().terrains?.[key]?.name || key;
@@ -39,24 +51,110 @@ function getTerrainLabel(key) {
 
 
 // ── EmptyPanel ────────────────────────────────────────────────────────────
-export function EmptyPanel({ activeTab }) {
+export function EmptyPanel({ activeTab, liveCountries = [], onSelectCountry }) {
+  // Réactif au changement de langue sans remontage
+  const [lang, setLang] = useState(() => loadLang());
+  useEffect(() => {
+    const onLangChange = () => setLang(loadLang());
+    window.addEventListener('aria-lang-change', onLangChange);
+    return () => window.removeEventListener('aria-lang-change', onLangChange);
+  }, []);
+  const isEn = lang === 'en';
   if (activeTab === 'council') {
     return (
-      <div className="panel-empty">
-        <div className="panel-empty-icon" style={{ fontSize: '1.6rem', opacity: 0.15 }}>⚖️</div>
-        <div className="panel-empty-label">SÉLECTIONNEZ UN PAYS</div>
-        <p className="panel-empty-hint">
-          Cliquez sur un territoire pour accéder aux ministères et lancer une délibération.
-        </p>
+      <div style={{ display:'flex', flexDirection:'column', height:'100%' }}>
+        <div className="panel-header">
+          <span className="panel-header-emoji">⚖</span>
+          <div style={{ flex:1 }}>
+            <div className="panel-header-title">{isEn?'LLM COUNCIL':'LLM CONSEIL'}</div>
+            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.40)', letterSpacing:'0.10em' }}>
+              {isEn?'SELECT A COUNTRY':'SÉLECTIONNEZ UN PAYS'}
+            </div>
+          </div>
+        </div>
+        {liveCountries.length > 0 ? (
+          <div style={{ padding:'0.6rem 0.8rem', overflowY:'auto', flex:1 }}>
+            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem', letterSpacing:'0.14em', color:'rgba(200,164,74,0.45)', marginBottom:'0.5rem' }}>
+              {isEn?'AVAILABLE NATIONS':'NATIONS DISPONIBLES'}
+            </div>
+            {liveCountries.map(c => (
+              <button key={c.id} onClick={() => onSelectCountry?.(c)}
+                style={{ display:'flex', alignItems:'center', gap:'0.55rem', width:'100%',
+                  background:'rgba(255,255,255,0.02)', border:'1px solid rgba(90,110,160,0.12)',
+                  borderRadius:'2px', padding:'0.45rem 0.6rem', marginBottom:'0.28rem',
+                  cursor:'pointer', textAlign:'left', transition:'all 0.12s',
+                  fontFamily:"'JetBrains Mono',monospace" }}>
+                <span style={{ fontSize:'1.1rem' }}>{c.emoji||'🌍'}</span>
+                <div>
+                  <div style={{ fontSize:'0.50rem', color:'rgba(200,215,240,0.78)', letterSpacing:'0.06em' }}>
+                    {c.nom}
+                  </div>
+                  <div style={{ fontSize:'0.40rem', color:'rgba(100,120,160,0.45)', marginTop:'0.1rem' }}>
+                    {c.satisfaction}% satisfaction
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="panel-empty">
+            <div className="panel-empty-icon" style={{ fontSize:'1.6rem', opacity:0.15 }}>⚖️</div>
+            <div className="panel-empty-label">{isEn?'NO COUNTRY YET':'AUCUN PAYS'}</div>
+          </div>
+        )}
       </div>
     );
   }
+  if (activeTab === 'timeline') {
+    return (
+      <div style={{ display:'flex', flexDirection:'column', height:'100%' }}>
+        <div className="panel-header">
+          <span className="panel-header-emoji">📜</span>
+          <div style={{ flex:1 }}>
+            <div className="panel-header-title">CHRONOLOG</div>
+            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.40)', letterSpacing:'0.10em' }}>
+              {isEn?'SELECT A COUNTRY':'SÉLECTIONNEZ UN PAYS'}
+            </div>
+          </div>
+        </div>
+        {liveCountries.length > 0 ? (
+          <div style={{ padding:'0.6rem 0.8rem', overflowY:'auto', flex:1 }}>
+            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem', letterSpacing:'0.14em', color:'rgba(140,160,200,0.35)', marginBottom:'0.5rem' }}>
+              {isEn?'VIEW HISTORY FOR':'VOIR L’HISTORIQUE DE'}
+            </div>
+            {liveCountries.map(c => (
+              <button key={c.id} onClick={() => onSelectCountry?.(c)}
+                style={{ display:'flex', alignItems:'center', gap:'0.55rem', width:'100%',
+                  background:'rgba(255,255,255,0.02)', border:'1px solid rgba(90,110,160,0.12)',
+                  borderRadius:'2px', padding:'0.45rem 0.6rem', marginBottom:'0.28rem',
+                  cursor:'pointer', textAlign:'left', transition:'all 0.12s',
+                  fontFamily:"'JetBrains Mono',monospace" }}>
+                <span style={{ fontSize:'1.1rem' }}>{c.emoji||'🌍'}</span>
+                <div>
+                  <div style={{ fontSize:'0.50rem', color:'rgba(200,215,240,0.78)', letterSpacing:'0.06em' }}>{c.nom}</div>
+                  <div style={{ fontSize:'0.40rem', color:'rgba(100,120,160,0.45)', marginTop:'0.1rem' }}>
+                    {isEn?`cycle ${c.cycleNum||1}`:`cycle ${c.cycleNum||1}`}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="panel-empty">
+            <div className="panel-empty-icon" style={{ fontSize:'1.6rem', opacity:0.15 }}>📜</div>
+            <div className="panel-empty-label">{isEn?'NO HISTORY YET':'AUCUN HISTORIQUE'}</div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="panel-empty">
       <div className="panel-empty-icon">🌍</div>
-      <div className="panel-empty-label">AUCUN TERRITOIRE SÉLECTIONNÉ</div>
+      <div className="panel-empty-label">{isEn?'NO TERRITORY SELECTED':'AUCUN TERRITOIRE SÉLECTIONNÉ'}</div>
       <p className="panel-empty-hint">
-        Cliquez sur un pays pour afficher ses données, ressources et options de gouvernance.
+        {isEn?'Click a country to view data, resources and governance options.':'Cliquez sur un pays pour afficher ses données, ressources et options de gouvernance.'}
       </p>
     </div>
   );
@@ -66,10 +164,16 @@ export function EmptyPanel({ activeTab }) {
 export default function CountryPanel({
   country, isCrisis, activeTab,
   onClose, onSecession, onNextCycle, onCrisisToggle,
-  onGoToCouncil, onConstitution,
+  onGoToCouncil, onGoToMap, onGoToTimeline, onConstitution,
   onSubmitQuestion, onAddFictionalCountry,
 }) {
-  const { lang } = useLocale();
+  // Réactif au changement de langue sans remontage
+  const [lang, setLang] = useState(() => loadLang());
+  useEffect(() => {
+    const onLangChange = () => setLang(loadLang());
+    window.addEventListener('aria-lang-change', onLangChange);
+    return () => window.removeEventListener('aria-lang-change', onLangChange);
+  }, []);
   const isEn = lang === 'en';
   const [openMinistry, setOpenMinistry] = useState(null);
   const [customQ,      setCustomQ]      = useState('');
@@ -105,17 +209,44 @@ export default function CountryPanel({
           <div style={{ flex: 1 }}>
             <div className="panel-header-title">{getLocalizedNom(country) || nom}</div>
             <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.40)', letterSpacing: '0.10em' }}>
-              CONSEIL DE DÉLIBÉRATION
+              {isEn?'DELIBERATION COUNCIL':'CONSEIL DE DÉLIBÉRATION'}
             </div>
           </div>
           <button className="btn-icon" onClick={onClose}>✕</button>
+        </div>
+
+        {/* Mini-nav tabs contextuels */}
+        <div style={{ display:'flex', gap:'0.3rem', padding:'0.25rem 0.7rem', borderBottom:'1px solid rgba(90,110,160,0.10)', background:'rgba(4,8,18,0.4)' }}>
+          {[
+            { id:'map',      icon:'🗺', label: isEn?'MAP':'CARTE' },
+            { id:'council',  icon:'⚖',  label:'COUNCIL' },
+            { id:'timeline', icon:'📜', label:'CHRON.' },
+          ].map(tab => (
+            <button key={tab.id}
+              onClick={() => {
+                if (tab.id === 'map')      onGoToMap?.();
+                if (tab.id === 'council')  onGoToCouncil?.();
+                if (tab.id === 'timeline') onGoToTimeline?.();
+              }}
+              style={{
+                background: activeTab===tab.id ? 'rgba(200,164,74,0.12)' : 'transparent',
+                border: `1px solid ${activeTab===tab.id ? 'rgba(200,164,74,0.35)' : 'rgba(90,110,160,0.15)'}`,
+                borderRadius:'2px', padding:'0.18rem 0.5rem',
+                fontFamily: "'JetBrains Mono',monospace", fontSize:'0.38rem',
+                letterSpacing:'0.08em', cursor:'pointer',
+                color: activeTab===tab.id ? 'rgba(200,164,74,0.85)' : 'rgba(120,140,180,0.40)',
+                transition:'all 0.12s', display:'flex', alignItems:'center', gap:'0.25rem',
+              }}>
+              <span>{tab.icon}</span><span>{tab.label}</span>
+            </button>
+          ))}
         </div>
 
         <div className="side-panel-scroll">
           <div style={{ padding: '0.6rem 0.8rem' }}>
 
             <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.16em', color: 'rgba(200,164,74,0.45)', marginBottom: '0.55rem' }}>
-              MINISTÈRES
+              {isEn?'MINISTRIES':'MINISTÈRES'}
             </div>
 
             {getMinistriesList().map(m => {
@@ -251,9 +382,9 @@ export default function CountryPanel({
           flexShrink: 0,
         }}>
           {[
-            { icon: '⏭', label: 'Cycle +5 ans',  fn: onNextCycle,    color: 'rgba(200,164,74,0.70)' },
+            { icon: '⏭', label: isEn?'Cycle +5 yrs':'Cycle +5 ans',  fn: onNextCycle,    color: 'rgba(200,164,74,0.70)' },
             { icon: '🏛️', label: 'Gouvernement', fn: onConstitution, color: 'rgba(140,100,220,0.70)' },
-            { icon: '✂️', label: 'Sécession',     fn: onSecession,    color: 'rgba(200,80,80,0.70)'  },
+            { icon: '✂️', label: isEn?'Secession':'Sécession',     fn: onSecession,    color: 'rgba(200,80,80,0.70)'  },
           ].map(({ icon, label, fn, color }) => (
             <button
               key={label}
@@ -295,27 +426,54 @@ export default function CountryPanel({
         <button className="btn-icon" onClick={onClose} style={{ flexShrink: 0 }}>✕</button>
       </div>
 
+        {/* Mini-nav tabs contextuels */}
+        <div style={{ display:'flex', gap:'0.3rem', padding:'0.25rem 0.7rem', borderBottom:'1px solid rgba(90,110,160,0.10)', background:'rgba(4,8,18,0.4)' }}>
+          {[
+            { id:'map',      icon:'🗺', label: isEn?'MAP':'CARTE' },
+            { id:'council',  icon:'⚖',  label:'COUNCIL' },
+            { id:'timeline', icon:'📜', label:'CHRON.' },
+          ].map(tab => (
+            <button key={tab.id}
+              onClick={() => {
+                if (tab.id === 'map')      onGoToMap?.();
+                if (tab.id === 'council')  onGoToCouncil?.();
+                if (tab.id === 'timeline') onGoToTimeline?.();
+              }}
+              style={{
+                background: activeTab===tab.id ? 'rgba(200,164,74,0.12)' : 'transparent',
+                border: `1px solid ${activeTab===tab.id ? 'rgba(200,164,74,0.35)' : 'rgba(90,110,160,0.15)'}`,
+                borderRadius:'2px', padding:'0.18rem 0.5rem',
+                fontFamily: "'JetBrains Mono',monospace", fontSize:'0.38rem',
+                letterSpacing:'0.08em', cursor:'pointer',
+                color: activeTab===tab.id ? 'rgba(200,164,74,0.85)' : 'rgba(120,140,180,0.40)',
+                transition:'all 0.12s', display:'flex', alignItems:'center', gap:'0.25rem',
+              }}>
+              <span>{tab.icon}</span><span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
       <div className="side-panel-scroll">
         <div className="panel-body">
 
           <section>
-            <div className="section-title">DÉMOGRAPHIE</div>
+            <div className="section-title">{isEn?"DEMOGRAPHICS":"DÉMOGRAPHIE"}</div>
             <div className="stat-row">
-              <span className="stat-label">POPULATION</span>
+              <span className="stat-label">{isEn?"POPULATION":"POPULATION"}</span>
               <span className="stat-value">{fmtPop(population)}</span>
             </div>
             <div className="stat-row" style={{ marginTop: '0.36rem' }}>
-              <span className="stat-label">NATALITÉ</span>
+              <span className="stat-label">{isEn?"BIRTH RATE":"NATALITÉ"}</span>
               <span className="stat-value">{tauxNatalite.toFixed(1)} ‰</span>
             </div>
             <div className="stat-row" style={{ marginTop: '0.36rem' }}>
-              <span className="stat-label">MORTALITÉ</span>
+              <span className="stat-label">{isEn?"DEATH RATE":"MORTALITÉ"}</span>
               <span className="stat-value">{tauxMortalite.toFixed(1)} ‰</span>
             </div>
           </section>
 
           <section>
-            <div className="section-title">SATISFACTION POPULAIRE</div>
+            <div className="section-title">{isEn?"POPULAR SATISFACTION":"SATISFACTION POPULAIRE"}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.72rem' }}>
               <div style={{ flex: 1, height: '7px', background: 'rgba(14,20,36,0.9)', borderRadius: '4px', overflow: 'hidden' }}>
                 <div style={{
@@ -329,16 +487,16 @@ export default function CountryPanel({
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: FONT.mono, fontSize: '0.44rem', color: '#3A4A62', marginTop: '0.26rem' }}>
-              <span>MÉCONTENTS</span><span>SATISFAITS</span>
+              <span>{isEn?"UNHAPPY":"MÉCONTENTS"}</span><span>{isEn?"SATISFIED":"SATISFAITS"}</span>
             </div>
           </section>
 
           {aria_irl !== null && (
             <section>
-              <div className="section-title">LÉGITIMITÉ ARIA</div>
+              <div className="section-title">{isEn?"ARIA LEGITIMACY":"LÉGITIMITÉ ARIA"}</div>
               <div style={{ marginBottom: '0.55rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.22rem' }}>
-                  <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', letterSpacing: '0.10em', color: 'rgba(90,110,160,0.55)' }}>ANCRE THINK-TANK (IRL)</span>
+                  <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', letterSpacing: '0.10em', color: 'rgba(90,110,160,0.55)' }}>{isEn?'THINK-TANK ANCHOR (IRL)':'ANCRE THINK-TANK (IRL)'}</span>
                   <span style={{ fontFamily: FONT.mono, fontSize: '0.52rem', color: 'rgba(90,110,160,0.55)', fontWeight: 600 }}>{aria_irl}%</span>
                 </div>
                 <div style={{ height: '4px', background: 'rgba(14,20,36,0.9)', borderRadius: '3px', overflow: 'hidden' }}>
@@ -347,7 +505,7 @@ export default function CountryPanel({
               </div>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.22rem' }}>
-                  <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', letterSpacing: '0.10em', color: aria_current >= 60 ? 'rgba(140,100,220,0.80)' : 'rgba(100,80,140,0.55)' }}>ADHÉSION IN-GAME</span>
+                  <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', letterSpacing: '0.10em', color: aria_current >= 60 ? 'rgba(140,100,220,0.80)' : 'rgba(100,80,140,0.55)' }}>{isEn?'IN-GAME SUPPORT':'ADHÉSION IN-GAME'}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     {aria_current !== aria_irl && (
                       <span style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: aria_current > aria_irl ? COLOR.green : COLOR.redDim }}>
@@ -365,21 +523,21 @@ export default function CountryPanel({
                   }} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: FONT.mono, fontSize: '0.42rem', color: '#2A3450', marginTop: '0.20rem' }}>
-                  <span>RÉSISTANCE</span><span>ADHÉSION</span>
+                  <span>{isEn?"RESISTANCE":"RÉSISTANCE"}</span><span>{isEn?"SUPPORT":"ADHÉSION"}</span>
                 </div>
               </div>
             </section>
           )}
 
           <section>
-            <div className="section-title">RESSOURCES</div>
+            <div className="section-title">{isEn?"RESOURCES":"RESSOURCES"}</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.30rem' }}>
-              {RESOURCE_DEFS.map(({ key, icon, label }) => {
+              {getResourceDefs(isEn).map(({ key, icon, label }) => {
                 const present = !!ressources[key];
                 return (
                   <span key={key} className={`resource-badge ${key}`}
                     style={{ opacity: present ? 1 : 0.22 }}
-                    title={present ? label : `${label} — absent`}>
+                    title={present ? label : `${label} — ${isEn?'absent':'absent'}`}>
                     <span className="r-icon">{icon}</span>
                     <span className="r-name">{label}</span>
                   </span>
@@ -388,7 +546,7 @@ export default function CountryPanel({
             </div>
             {!MARITIME.has(terrain) && (
               <div className="coastal-note" style={{ marginTop: '0.55rem' }}>
-                ⚠ Pays enclavé — aucune ZEE ni ressource maritime
+                {isEn?'⚠ Landlocked — no EEZ or maritime resources':'⚠ Pays enclavé — aucune ZEE ni ressource maritime'}
               </div>
             )}
           </section>
@@ -398,30 +556,30 @@ export default function CountryPanel({
 
       {/* Actions footer */}
       <div className="side-panel-footer">
-        <div className="section-title" style={{ marginBottom: '0.08rem' }}>ACTIONS</div>
+        <div className="section-title" style={{ marginBottom: '0.08rem' }}>{isEn?"ACTIONS":"ACTIONS"}</div>
 
         {/* ⚖️ Accès direct au Conseil */}
         <button className="cp-act-btn btn-full" onClick={onGoToCouncil}
           style={{ borderColor: 'rgba(200,164,74,0.35)', color: 'rgba(200,164,74,0.80)', background: 'rgba(200,164,74,0.06)', marginBottom: '0.3rem' }}
-          title="Ouvrir le Conseil de délibération"
+          title={isEn?'Open the Deliberation Council':'Ouvrir le Conseil de délibération'}
         >
-          ⚖️ CONSEIL
+          {isEn?'⚖️ COUNCIL':'⚖️ CONSEIL'}
         </button>
 
         <button className="cp-act-btn btn-full" onClick={onConstitution}
           style={{ borderColor: 'rgba(140,100,220,0.25)', color: 'rgba(140,100,220,0.70)', marginBottom: '0.3rem' }}
-          title="Configuration du gouvernement"
+          title={isEn?'Government configuration':'Configuration du gouvernement'}
         >
-          🏛️ GOUVERNEMENT
+          {isEn?'🏛️ GOVERNMENT':'🏛️ GOUVERNEMENT'}
         </button>
 
-        <button className="cp-act-btn purple btn-full" onClick={onSecession}>✂️ SÉCESSION</button>
-        <button className="cp-act-btn muted btn-full" onClick={onNextCycle}>⏭ CYCLE +5 ANS</button>
+        <button className="cp-act-btn purple btn-full" onClick={onSecession}>{isEn?'✂️ SECESSION':'✂️ SÉCESSION'}</button>
+        <button className="cp-act-btn muted btn-full" onClick={onNextCycle}>{isEn?'⏭ CYCLE +5 YRS':'⏭ CYCLE +5 ANS'}</button>
         <button className="cp-act-btn btn-full" onClick={onCrisisToggle}
           style={isCrisis
             ? { borderColor: '#FF3A3A', color: '#FF3A3A', background: 'rgba(255,58,58,0.07)' }
             : { borderColor: 'rgba(200,164,74,0.18)', color: '#4A5A72' }}>
-          {isCrisis ? '🔴 DÉSACTIVER LA CRISE' : '⚠️ SIMULER UNE CRISE'}
+          {isCrisis ? (isEn?'🔴 DISABLE CRISIS':'🔴 DÉSACTIVER LA CRISE') : (isEn?'⚠️ SIMULATE CRISIS':'⚠️ SIMULER UNE CRISE')}
         </button>
       </div>
     </div>

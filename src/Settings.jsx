@@ -4,6 +4,7 @@
 //  Usage : <Settings onClose={() => setPage('dashboard')} />
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { getRegimeLabel } from './ariaTheme';
 import { useState, useCallback, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
 import BASE_AGENTS    from '../templates/base_agents.json';
@@ -44,14 +45,16 @@ class SectionErrorBoundary extends Component {
 //  CONSTANTES
 // ─────────────────────────────────────────────────────────────────────────────
 
-const SECTIONS = [
-  { id: 'systeme',      icon: '⚙️',  label: 'SYSTÈME'    },
-  { id: 'constitution', icon: '📜',  label: 'CONSTITUTION' },
-  { id: 'conseil',      icon: '🏛️', label: 'GOUVERNEMENT' },
-  { id: 'simulation',   icon: '🎲',  label: 'SIMULATION'  },
-  { id: 'interface',    icon: '🖥️', label: 'INTERFACE'   },
-  { id: 'apropos',      icon: '✦',   label: 'À PROPOS'    },
-];
+function getSections(isEn) {
+  return [
+    { id: 'systeme',      icon: '⚙️',  label: isEn ? 'SYSTEM'       : 'SYSTÈME'      },
+    { id: 'constitution', icon: '📜',  label: isEn ? 'CONSTITUTION' : 'CONSTITUTION' },
+    { id: 'conseil',      icon: '🏛️', label: isEn ? 'GOVERNMENT'   : 'GOUVERNEMENT' },
+    { id: 'simulation',   icon: '🎲',  label: isEn ? 'SIMULATION'   : 'SIMULATION'   },
+    { id: 'interface',    icon: '🖥️', label: isEn ? 'INTERFACE'    : 'INTERFACE'    },
+    { id: 'apropos',      icon: '✦',   label: isEn ? 'ABOUT'        : 'À PROPOS'     },
+  ];
+}
 
 const MINISTER_KEYS = [
   'initiateur','gardien','communicant','protecteur','ambassadeur','analyste',
@@ -77,15 +80,14 @@ function getMinistryLabels() {
   return Object.fromEntries(mins.map(m => [m.id, `${m.emoji||''} ${m.name}`]));
 }
 
-const REGIME_LABELS = {
-  democratie_liberale:'Démocratie Libérale 🗳️',
-  republique_federale:'République Fédérale 🏛️',
-  monarchie_constitutionnelle:'Monarchie Constitutionnelle 👑',
-  technocratie_ia:'Technocratie IA 🤖',
-  junte_militaire:'Junte Militaire ⚔️',
-  oligarchie:'Oligarchie 💼',
-  theocratie:'Théocratie ✝️',
-};
+// REGIME_LABELS migré → getRegimeLabel(key, lang) depuis ariaTheme
+const REGIME_LABEL_KEYS = [
+  'democratie_liberale','republique_federale','monarchie_constitutionnelle',
+  'technocratie_ia','junte_militaire','oligarchie','theocracie',
+];
+function getRegimeLabelMap(lang) {
+  return Object.fromEntries(REGIME_LABEL_KEYS.map(k => [k, getRegimeLabel(k, lang)]));
+}
 
 const DEFAULT_PROMPTS = {
   global_system: `Tu es un ministre du gouvernement ARIA, système de gouvernance augmentée par IA. Tu délibères avec rigueur, cohérence et fidélité à ta philosophie fondatrice. Chaque prise de position doit être argumentée, contextualisée et orientée vers le bien collectif à long terme.`,
@@ -212,7 +214,8 @@ function NumberInput({ value, onChange, min, max, step = 1 }) {
 
 function SaveBadge({ saved }) {
   if (!saved) return null;
-  return <span className="settings-save-badge">✓ Sauvegardé</span>;
+  const { lang: badgeLang } = useLocale();
+  return <span className="settings-save-badge">{t('SETTINGS_SAVED', badgeLang)}</span>;
 }
 
 function DangerButton({ label, onClick, confirm: confirmMsg }) {
@@ -324,45 +327,45 @@ function SectionSysteme() {
   };
 
   const statusLabel = (s) =>
-    s==='ok'      ? '✅ Connecté'  :
-    s==='error'   ? '❌ Invalide'  :
-    s==='testing' ? '⏳ Test...'   :
-    s==='missing' ? '⚠ Vide'      : '— Non testé';
+    s==='ok'      ? (isEn?'✅ Connected':'✅ Connecté')  :
+    s==='error'   ? (isEn?'❌ Invalid':'❌ Invalide')  :
+    s==='testing' ? '⏳ Test...'  :
+    s==='missing' ? (isEn?'⚠ Empty':'⚠ Vide') : (isEn?'— Not tested':'— Non testé');
 
   // ── Config providers avec modèles disponibles ─────────────────────────────
   const PROVIDERS = [
     {
       id: 'claude', label: 'Anthropic — Claude', placeholder: 'sk-ant-...',
-      hint: 'Ministres · Phare · Boussole',
+      hint: isEn?'Ministers · Phare · Boussole':'Ministres · Phare · Boussole',
       models: [
-        { value:'claude-opus-4-6',          label:'claude-opus-4-6       — Puissant' },
-        { value:'claude-sonnet-4-6',         label:'claude-sonnet-4-6      — Défaut ARIA' },
-        { value:'claude-haiku-4-5-20251001', label:'claude-haiku-4-5       — Rapide' },
+        { value:'claude-opus-4-6',          label:`claude-opus-4-6 — ${isEn?'Powerful':'Puissant'}` },
+        { value:'claude-sonnet-4-6',         label:`claude-sonnet-4-6 — ${isEn?'ARIA default':'Défaut ARIA'}` },
+        { value:'claude-haiku-4-5-20251001', label:`claude-haiku-4-5 — ${isEn?'Fast':'Rapide'}` },
       ],
     },
     {
       id: 'gemini', label: 'Google — Gemini', placeholder: 'AIza...',
-      hint: 'Synthèse ministérielle · Synthèse présidentielle',
+      hint: isEn?'Ministry synthesis · Presidential synthesis':'Synthèse ministérielle · Synthèse présidentielle',
       models: [
-        { value:'gemini-2.0-flash',   label:'gemini-2.0-flash   — Défaut ARIA' },
-        { value:'gemini-1.5-pro',     label:'gemini-1.5-pro     — Puissant' },
-        { value:'gemini-1.5-flash',   label:'gemini-1.5-flash   — Rapide' },
+        { value:'gemini-2.0-flash',   label:`gemini-2.0-flash — ${isEn?'ARIA default':'Défaut ARIA'}` },
+        { value:'gemini-1.5-pro',     label:`gemini-1.5-pro — ${isEn?'Powerful':'Puissant'}` },
+        { value:'gemini-1.5-flash',   label:`gemini-1.5-flash — ${isEn?'Fast':'Rapide'}` },
       ],
     },
     {
       id: 'grok', label: 'xAI — Grok', placeholder: 'xai-...',
-      hint: 'Provider alternatif compatible OpenAI',
+      hint: isEn?'Alternative provider (OpenAI-compatible)':'Provider alternatif compatible OpenAI',
       models: [
-        { value:'grok-3',      label:'grok-3      — Puissant' },
-        { value:'grok-3-mini', label:'grok-3-mini — Défaut · Rapide' },
+        { value:'grok-3',      label:`grok-3 — ${isEn?'Powerful':'Puissant'}` },
+        { value:'grok-3-mini', label:`grok-3-mini — ${isEn?'Default · Fast':'Défaut · Rapide'}` },
       ],
     },
     {
       id: 'openai', label: 'OpenAI — GPT', placeholder: 'sk-...',
-      hint: 'Provider alternatif',
+      hint: isEn?'Alternative provider':'Provider alternatif',
       models: [
-        { value:'gpt-4.1',      label:'gpt-4.1      — Puissant' },
-        { value:'gpt-4.1-mini', label:'gpt-4.1-mini — Défaut · Rapide' },
+        { value:'gpt-4.1',      label:`gpt-4.1 — ${isEn?'Powerful':'Puissant'}` },
+        { value:'gpt-4.1-mini', label:`gpt-4.1-mini — ${isEn?'Default · Fast':'Défaut · Rapide'}` },
       ],
     },
   ];
@@ -379,14 +382,14 @@ function SectionSysteme() {
 
   return (
     <div className="settings-section-body">
-      <SectionTitle icon="⚙️" label="SYSTÈME" sub="Clés API · Modèles · Architecture de délibération" />
+      <SectionTitle icon="⚙️" label={isEn?"SYSTEM":"SYSTÈME"} sub={isEn?"API Keys · Models · Deliberation architecture":"Clés API · Modèles · Architecture de délibération"} />
 
       {/* ── CLÉS API + MODÈLES ── */}
       <div className="settings-group">
-        <div className="settings-group-title">CLÉS API &amp; MODÈLES</div>
+        <div className="settings-group-title">{isEn?"API KEYS & MODELS":"CLÉS API & MODÈLES"}</div>
         <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem',
           color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
-          Les clés sont stockées localement (localStorage). Seul votre navigateur y a accès.
+          {isEn?"Keys are stored locally (localStorage). Only your browser has access.":"Les clés sont stockées localement (localStorage). Seul votre navigateur y a accès."}
         </p>
 
         {PROVIDERS.map(prov => {
@@ -419,11 +422,11 @@ function SectionSysteme() {
                   placeholder={prov.placeholder}
                 />
                 <button className="settings-btn-test" onClick={() => testKey(prov.id)}>
-                  Tester
+                  {isEn?'Test':'Tester'}
                 </button>
                 <span className={`settings-status ${stat}`}>{statusLabel(stat)}</span>
                 {hasKey && (
-                  <button title={`Supprimer la clé ${prov.label}`}
+                  <button title={isEn?`Delete key for ${prov.label}`:`Supprimer la clé ${prov.label}`}
                     onClick={() => { update(`api_keys.${prov.id}`, ''); setStatus(s => ({ ...s, [prov.id]: null })); }}
                     style={{ background:'none', border:'none', cursor:'pointer',
                       fontSize:'0.85rem', opacity:0.40, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
@@ -433,7 +436,7 @@ function SectionSysteme() {
               {/* Sélecteur modèle — grisé si pas de clé */}
               <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', opacity: hasKey ? 1 : 0.35 }}>
                 <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
-                  color:'rgba(140,160,200,0.50)', minWidth:'4rem' }}>Modèle</span>
+                  color:'rgba(140,160,200,0.50)', minWidth:'4rem' }}>{isEn?"Model":"Modèle"}</span>
                 <select
                   disabled={!hasKey}
                   value={opts.ia_models?.[prov.id] || prov.models[0].value}
@@ -448,7 +451,7 @@ function SectionSysteme() {
                 </select>
                 {!hasKey && (
                   <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                    color:'rgba(200,80,80,0.55)' }}>⚠ clé manquante</span>
+                    color:'rgba(200,80,80,0.55)' }}>{isEn?'⚠ missing key':'⚠ clé manquante'}</span>
                 )}
               </div>
             </div>
@@ -458,15 +461,15 @@ function SectionSysteme() {
 
       {/* ── MODE IA ── */}
       <div className="settings-group">
-        <div className="settings-group-title">ARCHITECTURE DE DÉLIBÉRATION</div>
+        <div className="settings-group-title">{isEn?"DELIBERATION ARCHITECTURE":"ARCHITECTURE DE DÉLIBÉRATION"}</div>
         <Field label="Mode IA">
           {!anyKey ? (
             <div style={{ padding:'0.65rem 0.9rem', background:'rgba(200,164,74,0.04)',
               border:'1px solid rgba(200,164,74,0.12)', borderRadius:'2px',
               fontFamily:"'JetBrains Mono',monospace", fontSize:'0.47rem',
               color:'rgba(200,164,74,0.60)', lineHeight:1.7 }}>
-              <div style={{ fontWeight:700, marginBottom:'0.3rem', letterSpacing:'0.12em' }}>MODE ARIA — HORS LIGNE</div>
-              Aucune clé API configurée. Ajoutez au moins une clé pour activer la délibération en temps réel.
+              <div style={{ fontWeight:700, marginBottom:'0.3rem', letterSpacing:'0.12em' }}>{isEn?'ARIA MODE — OFFLINE':'MODE ARIA — HORS LIGNE'}</div>
+              {isEn?"No API key configured. Add at least one key to enable real-time deliberation.":"Aucune clé API configurée. Ajoutez au moins une clé pour activer la délibération en temps réel."}
             </div>
           ) : (
             <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
@@ -474,9 +477,9 @@ function SectionSysteme() {
               {/* Modes */}
               <div className="settings-radio-group">
                 {[
-                  { value:'aria',   label:'ARIA',         desc:'Architecture multi-providers (défaut)' },
-                  { value:'solo',   label:'Solo',          desc:'Tous les rôles sur un seul provider' },
-                  { value:'custom', label:'Personnalisé',  desc:'Assignation rôle par rôle' },
+                  { value:'aria',   label:'ARIA',         desc:isEn?'Multi-provider architecture (default)':'Architecture multi-providers (défaut)' },
+                  { value:'solo',   label:'Solo',          desc:isEn?'All roles on a single provider':'Tous les rôles sur un seul provider' },
+                  { value:'custom', label:isEn?'Custom':'Personnalisé',  desc:isEn?'Role-by-role assignment':'Assignation rôle par rôle' },
                 ].map(m => (
                   <label key={m.value}
                     className={`settings-radio-card${iaMode===m.value?' selected':''}`}
@@ -492,7 +495,7 @@ function SectionSysteme() {
               {/* Solo : choisir provider */}
               {iaMode === 'solo' && (
                 <div style={{ paddingLeft:'0.8rem' }}>
-                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>PROVIDER SOLO</div>
+                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"SOLO PROVIDER":"PROVIDER SOLO"}</div>
                   <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
                     {PROVIDERS.map(p => {
                       const disabled = !opts.api_keys[p.id];
@@ -516,10 +519,10 @@ function SectionSysteme() {
               {/* ARIA : qui pense, qui synthétise */}
               {iaMode === 'aria' && (
                 <div style={{ paddingLeft:'0.8rem' }}>
-                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>DÉLIBÉRATION</div>
+                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"DELIBERATION":"DÉLIBÉRATION"}</div>
                   {[
-                    { key:'ministre_model', label:'Ministres pensent' },
-                    { key:'synthese_min',   label:'Synthèse ministérielle' },
+                    { key:'ministre_model', label:isEn?'Ministers think':'Ministres pensent' },
+                    { key:'synthese_min',   label:isEn?'Ministry synthesis':'Synthèse ministérielle' },
                   ].map(r => (
                     <div key={r.key} className="settings-role-row">
                       <span className="settings-role-label">{r.label}</span>
@@ -538,15 +541,15 @@ function SectionSysteme() {
               {/* Custom : tous les rôles */}
               {iaMode === 'custom' && (
                 <div style={{ paddingLeft:'0.8rem' }}>
-                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>ASSIGNATION DES RÔLES</div>
+                  <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"ROLE ASSIGNMENT":"ASSIGNATION DES RÔLES"}</div>
                   {[
-                    { key:'ministre_model',  label:'Incarnation des ministres' },
-                    { key:'synthese_min',    label:'Synthèse ministérielle' },
-                    { key:'phare_model',     label:'Le Phare (Président)' },
-                    { key:'boussole_model',  label:'La Boussole (Présidente)' },
-                    { key:'synthese_pres',   label:'Synthèse présidentielle' },
-                    { key:'evenement_model', label:'Événements narratifs' },
-                    { key:'factcheck_model', label:'Fact-check' },
+                    { key:'ministre_model',  label:isEn?'Minister incarnation':'Incarnation des ministres' },
+                    { key:'synthese_min',    label: t('SETTINGS_SYNTH_MIN_LABEL', lang) },
+                    { key:'phare_model',     label:isEn?'The Lighthouse (President)':'Le Phare (Président)' },
+                    { key:'boussole_model',  label:isEn?'The Compass (Vice-President)':'La Boussole (Présidente)' },
+                    { key:'synthese_pres',   label:isEn?'Presidential synthesis':'Synthèse présidentielle' },
+                    { key:'evenement_model', label:isEn?'Narrative events':'Événements narratifs' },
+                    { key:'factcheck_model', label:isEn?'Fact-check':'Fact-check' },
                   ].map(r => (
                     <div key={r.key} className="settings-role-row">
                       <span className="settings-role-label">{r.label}</span>
@@ -568,12 +571,12 @@ function SectionSysteme() {
 
       {/* ── MODE BOARD GAME ── */}
       <div className="settings-group">
-        <div className="settings-group-title">MODE BOARD GAME</div>
-        <Field label="Forcer les textes locaux"
-          hint="Même avec des clés API valides, utilise les réponses pré-écrites d'ariaData.js">
+        <div className="settings-group-title">{isEn?"BOARD GAME MODE":"MODE BOARD GAME"}</div>
+        <Field label={isEn?"Force local texts":"Forcer les textes locaux"}
+          hint={isEn?"Even with valid API keys, use pre-written responses from ariaData.js":"Même avec des clés API valides, utilise les réponses pré-écrites d'ariaData.js"}>
           <Toggle value={opts.gameplay.mode_board_game}
             onChange={v => update('gameplay.mode_board_game', v)}
-            label={opts.gameplay.mode_board_game ? 'Activé' : 'Désactivé'} />
+            label={opts.gameplay.mode_board_game ? (isEn?'Enabled':'Activé') : (isEn?'Disabled':'Désactivé')} />
         </Field>
       </div>
 
@@ -610,7 +613,7 @@ function SectionSysteme() {
       </div>
 
       <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>Sauvegarder</button>
+        <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
         <SaveBadge saved={saved} />
       </div>
     </div>
@@ -642,61 +645,60 @@ function SectionConstitution() {
   };
 
   const SYNTH_ENTRIES = [
-    { key: 'synthese_ministere',  label: 'Synthèse ministérielle',
-      hint: 'Reçoit les 2 ministres d\'un ministère → produit la position officielle du ministère' },
-    { key: 'synthese_presidence', label: 'Synthèse présidentielle',
-      hint: 'Reçoit Phare + Boussole → détecte convergence/divergence + formate référendum citoyen' },
-    { key: 'factcheck_evenement', label: 'Fact-check événements',
-      hint: 'Vérifie la cohérence des événements narratifs avec les statistiques réelles du pays' },
+    { key: 'synthese_ministere',  label: isEn?'Ministry synthesis':'Synthèse ministérielle',
+      hint: isEn?'Receives the 2 ministers of a ministry → produces the official ministry position':'Reçoit les 2 ministres d\'un ministère → produit la position officielle du ministère' },
+    { key: 'synthese_presidence', label: isEn?'Presidential synthesis':'Synthèse présidentielle',
+      hint: isEn?'Receives Lighthouse + Compass → detects convergence/divergence + formats citizen referendum':'Reçoit Phare + Boussole → détecte convergence/divergence + formate référendum citoyen' },
+    { key: 'factcheck_evenement', label: isEn?'Event fact-check':'Fact-check événements',
+      hint: isEn?'Verifies narrative event consistency with real country statistics':'Vérifie la cohérence des événements narratifs avec les statistiques réelles du pays' },
   ];
 
   return (
     <div className="settings-section-body">
-      <SectionTitle icon="📜" label="CONSTITUTION" sub="Prompts système, ton de synthèse, contexte géopolitique" />
+      <SectionTitle icon="📜" label={isEn?"CONSTITUTION":"CONSTITUTION"} sub={isEn?"System prompts, synthesis tone, geopolitical context":"Prompts système, ton de synthèse, contexte géopolitique"} />
 
       {/* ── ADN GLOBAL — modifiable ── */}
       <div className="settings-group">
-        <div className="settings-group-title">ADN GLOBAL</div>
+        <div className="settings-group-title">{isEn?"GLOBAL DNA":"ADN GLOBAL"}</div>
 
-        <Field label="Prompt système global" hint="Injecté en préambule de chaque appel IA — définit la mission d'ARIA">
+        <Field label={isEn?"Global system prompt":"Prompt système global"} hint={isEn?"Injected as preamble to every AI call — defines ARIA's mission":"Injecté en préambule de chaque appel IA — définit la mission d'ARIA"}>
           <TextArea rows={4} value={prompts.global_system} onChange={v => update('global_system', v)} />
-          <button className="settings-btn-reset" onClick={() => reset('global_system')}>↺ Réinitialiser</button>
+          <button className="settings-btn-reset" onClick={() => reset('global_system')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
         </Field>
 
-        <Field label="Ton de synthèse" hint="Style de voix pour les synthèses ministérielles et présidentielles">
+        <Field label={isEn?"Synthesis tone":"Ton de synthèse"} hint={isEn?"Voice style for ministry and presidential syntheses":"Style de voix pour les synthèses ministérielles et présidentielles"}>
           <TextArea rows={2} value={prompts.ton_synthese} onChange={v => update('ton_synthese', v)} />
-          <button className="settings-btn-reset" onClick={() => reset('ton_synthese')}>↺ Réinitialiser</button>
+          <button className="settings-btn-reset" onClick={() => reset('ton_synthese')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
         </Field>
 
-        <Field label="Contexte géopolitique mondial" hint="Description de l'état du monde injectée dans chaque délibération">
+        <Field label={isEn?"Global geopolitical context":"Contexte géopolitique mondial"} hint={isEn?"World state description injected into each deliberation":"Description de l'état du monde injectée dans chaque délibération"}>
           <TextArea rows={3} value={prompts.contexte_mondial} onChange={v => update('contexte_mondial', v)} />
-          <button className="settings-btn-reset" onClick={() => reset('contexte_mondial')}>↺ Réinitialiser</button>
+          <button className="settings-btn-reset" onClick={() => reset('contexte_mondial')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
         </Field>
       </div>
 
       <div className="settings-footer" style={{ marginBottom: '1.2rem' }}>
-        <button className="settings-save-btn" onClick={save}>Sauvegarder l'ADN</button>
+        <button className="settings-save-btn" onClick={save}>{isEn?"Save DNA":"Sauvegarder l'ADN"}</button>
         <SaveBadge saved={saved} />
       </div>
 
       {/* ── PROMPTS ARIA — SYNTHÈSE — lecture seule ── */}
       <div className="settings-group">
         <div className="settings-group-title" style={{ display:'flex', alignItems:'center', gap:'0.6rem' }}>
-          PROMPTS ARIA — SYNTHÈSE
+          {isEn?'ARIA PROMPTS — SYNTHESIS':'PROMPTS ARIA — SYNTHÈSE'}
           <span style={{
             fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
             padding:'0.15rem 0.5rem', borderRadius:'2px',
             background:'rgba(90,110,160,0.10)', border:'1px solid rgba(90,110,160,0.22)',
             color:'rgba(140,160,200,0.55)', letterSpacing:'0.10em',
-          }}>LECTURE SEULE</span>
+          }}>{isEn?"READ ONLY":"LECTURE SEULE"}</span>
         </div>
         <div style={{
           fontFamily:"'JetBrains Mono',monospace", fontSize:'0.43rem',
           color:'rgba(140,160,200,0.45)', lineHeight:1.6, marginBottom:'0.8rem',
         }}>
-          Ces prompts définissent le format de réponse JSON attendu par le moteur ARIA.
-          Leur structure est critique pour le bon fonctionnement du Conseil — toute modification
-          peut casser le parsing. Ils sont affichés ici à titre de référence.
+          {isEn?"These prompts define the expected JSON response format for the ARIA engine.":"Ces prompts définissent le format de réponse JSON attendu par le moteur ARIA."}
+          {isEn?'Their structure is critical for Council operation — any modification may break parsing. Displayed for reference only.':'Leur structure est critique pour le bon fonctionnement du Conseil — toute modification peut casser le parsing. Ils sont affichés ici à titre de référence.'}
         </div>
 
         {SYNTH_ENTRIES.map(({ key, label, hint }) => {
@@ -729,7 +731,7 @@ function SectionConstitution() {
                   padding:'0.1rem 0.4rem', borderRadius:'2px',
                   background:'rgba(90,110,160,0.08)', border:'1px solid rgba(90,110,160,0.15)',
                   color:'rgba(90,110,160,0.50)', letterSpacing:'0.08em',
-                }}>🔒 non-modifiable</span>
+                }}>{isEn?"🔒 read-only":"🔒 non-modifiable"}</span>
               </div>
 
               {/* Corps du prompt */}
@@ -749,7 +751,7 @@ function SectionConstitution() {
                   }}>
                     <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
                       letterSpacing:'0.12em', color:'rgba(200,164,74,0.40)', marginBottom:'0.3rem' }}>
-                      ◈ FORMAT DE RÉPONSE ATTENDU
+                      {isEn?'◈ EXPECTED RESPONSE FORMAT':'◈ FORMAT DE RÉPONSE ATTENDU'}
                     </div>
                     <pre style={{
                       fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
@@ -816,7 +818,7 @@ function SectionConseil() {
     essence_hint:   isEn ? "Deep philosophy — what drives their positions"
                          : "Philosophie profonde — ce qui motive ses positions",
     comm_hint:      isEn ? "Voice, tone, way of arguing"
-                         : "Voix, ton, façon d'argumenter",
+                         : t('SETTINGS_VOICE_HINT', lang),
     annot_label:    isEn ? "Universal annotation angle"
                          : "Angle universel en annotation",
     annot_hint:     isEn ? "The question they systematically ask on other ministries' syntheses"
@@ -824,9 +826,9 @@ function SectionConseil() {
     selMin:         isEn ? "Select a ministry"    : "Sélectionner un ministère",
     missionLabel:   isEn ? "Ministry mission"     : "Mission du ministère",
     missionHint:    isEn ? "Defines the ministry's objective and values"
-                         : "Définit l'objectif et les valeurs du ministère",
+                         : t('SETTINGS_MISSION_HINT', lang),
     roleHint:       isEn ? "How this minister speaks from this ministry's angle"
-                         : "Comment ce ministre parle depuis l'angle de ce ministère",
+                         : t('SETTINGS_COMM_HINT', lang),
     rolePrefix:     isEn ? "Specific role"        : "Rôle spécifique",
   };
   // Données dynamiques localisées
@@ -986,7 +988,7 @@ function SectionConseil() {
       )}
 
       <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>Sauvegarder</button>
+        <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
         <SaveBadge saved={saved} />
       </div>
     </div>
@@ -1015,10 +1017,10 @@ function getPresidencyOpts(isEn) {
     { value: 'lunaire',    label: 'Lunar — The Boussole alone'             },
     { value: 'collegiale', label: 'Collegial — Vote of 12 ministers'       },
   ] : [
-    { value: 'duale',      label: 'Duale — Phare + Boussole (défaut ARIA)' },
+    { value: 'duale',      label: t('SETTINGS_DUAL_MODE', lang) },
     { value: 'solaire',    label: 'Solaire — Le Phare seul'                },
     { value: 'lunaire',    label: 'Lunaire — La Boussole seule'            },
-    { value: 'collegiale', label: 'Collégiale — Vote des 12 ministres'     },
+    { value: 'collegiale', label: t('SETTINGS_COLLEGIAL_MODE', lang)     },
   ];
 }
 
@@ -1122,6 +1124,8 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function SectionSimulation() {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
   const [sim, setSim]   = useState(() => getSimOverrides());
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
@@ -1155,51 +1159,51 @@ function SectionSimulation() {
 
   return (
     <div className="settings-section-body">
-      <SectionTitle icon="🎲" label="SIMULATION" sub="Régimes, seuils critiques, vitesse des cycles, ressources" />
+      <SectionTitle icon="🎲" label={isEn?"SIMULATION":"SIMULATION"} sub={isEn?"Regimes, critical thresholds, cycle speed, resources":"Régimes, seuils critiques, vitesse des cycles, ressources"} />
 
       <div className="settings-group">
-        <div className="settings-group-title">VITESSE & CYCLES</div>
-        <Field label="Cycles automatiques">
+        <div className="settings-group-title">{isEn?"SPEED & CYCLES":"VITESSE & CYCLES"}</div>
+        <Field label={isEn?"Automatic cycles":"Cycles automatiques"}>
           <Toggle value={opts.gameplay.cycles_auto}
             onChange={v => updateOpts('cycles_auto', v)}
-            label={opts.gameplay.cycles_auto ? 'Activé' : 'Désactivé'} />
+            label={opts.gameplay.cycles_auto ? (isEn?'Enabled':'Activé') : (isEn?'Disabled':'Désactivé')} />
         </Field>
         {opts.gameplay.cycles_auto && (
-          <Field label="Intervalle entre cycles (secondes)">
+          <Field label={isEn?"Interval between cycles (seconds)":"Intervalle entre cycles (secondes)"}>
             <NumberInput value={opts.gameplay.cycles_interval}
               onChange={v => updateOpts('cycles_interval', v)} min={5} max={300} step={5} />
           </Field>
         )}
-        <Field label="Événements narratifs IA">
+        <Field label={isEn?"AI narrative events":"Événements narratifs IA"}>
           <Toggle value={opts.gameplay.events_ia}
             onChange={v => updateOpts('events_ia', v)}
-            label={opts.gameplay.events_ia ? 'Activés' : 'Désactivés'} />
+            label={opts.gameplay.events_ia ? (isEn?'Enabled':'Activés') : (isEn?'Disabled':'Désactivés')} />
         </Field>
       </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">SEUILS CRITIQUES</div>
-        <Field label="Seuil de révolte (satisfaction %)"
-          hint="En dessous de ce seuil, une révolte est déclenchée">
+        <div className="settings-group-title">{isEn?"CRITICAL THRESHOLDS":"SEUILS CRITIQUES"}</div>
+        <Field label={isEn?"Revolt threshold (satisfaction %)":"Seuil de révolte (satisfaction %)"}
+          hint={isEn?"Below this threshold, a revolt is triggered":"En dessous de ce seuil, une révolte est déclenchée"}>
           <NumberInput value={getSeuil('seuil_revolte')}
             onChange={v => updateSim('seuils.seuil_revolte', v)} min={5} max={40} />
         </Field>
-        <Field label="Seuil explosion démographique (×%)"
-          hint="Si la population × ce facteur / 100 en un cycle, crise déclenchée">
+        <Field label={isEn?"Demographic explosion threshold (×%)":"Seuil explosion démographique (×%)"}
+          hint={isEn?"If population × factor / 100 in a cycle, crisis triggered":"Si la population × ce facteur / 100 en un cycle, crise déclenchée"}>
           <NumberInput value={getSeuil('seuil_crise_demo')}
             onChange={v => updateSim('seuils.seuil_crise_demo', v)} min={110} max={300} step={10} />
         </Field>
-        <Field label="Bruit aléatoire max (satisfaction ±)"
-          hint="Amplitude du hasard dans chaque cycle">
+        <Field label={isEn?"Max random noise (satisfaction ±)":"Bruit aléatoire max (satisfaction ±)"}
+          hint={isEn?"Random amplitude in each cycle":"Amplitude du hasard dans chaque cycle"}>
           <NumberInput value={getSeuil('bruit_max')}
             onChange={v => updateSim('seuils.bruit_max', v)} min={0} max={10} />
         </Field>
       </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">COEFFICIENTS DES RÉGIMES</div>
+        <div className="settings-group-title">{isEn?"REGIME COEFFICIENTS":"COEFFICIENTS DES RÉGIMES"}</div>
 
-        {Object.keys(REGIME_LABELS).map(rk => {
+        {REGIME_LABEL_KEYS.map(rk => {
           const coeff_sat  = getReg(rk, 'coeff_satisfaction');
           const coeff_cro  = getReg(rk, 'coeff_croissance');
           const natalite   = getReg(rk, 'taux_natalite');
@@ -1223,19 +1227,19 @@ function SectionSimulation() {
                 fontSize: '0.50rem', letterSpacing: '0.14em',
                 color: 'rgba(200,164,74,0.80)',
               }}>
-                {REGIME_LABELS[rk]}
+                {getRegimeLabel(rk, lang)}
               </div>
               {/* Séparateur */}
               <div style={{ padding: '0.55rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                 {[
-                  { key: 'coeff_satisfaction', label: 'SATISFACTION', val: coeff_sat,
-                    hint: 'Dérive de satisfaction par cycle' },
-                  { key: 'coeff_croissance',   label: 'CROISSANCE',   val: coeff_cro,
-                    hint: 'Rendement démographique et économique' },
-                  { key: 'taux_natalite',      label: 'NATALITÉ',     val: natalite,
-                    hint: 'Taux de natalité de base (‰)' },
-                  { key: 'taux_mortalite',     label: 'MORTALITÉ',    val: mortalite,
-                    hint: 'Taux de mortalité de base (‰)' },
+                  { key: 'coeff_satisfaction', label: isEn?'SATISFACTION':'SATISFACTION', val: coeff_sat,
+                    hint: isEn?'Satisfaction drift per cycle':'Dérive de satisfaction par cycle' },
+                  { key: 'coeff_croissance',   label: isEn?'GROWTH':'CROISSANCE',   val: coeff_cro,
+                    hint: isEn?'Demographic and economic yield':'Rendement démographique et économique' },
+                  { key: 'taux_natalite',      label: isEn?'BIRTH RATE':'NATALITÉ',     val: natalite,
+                    hint: isEn?'Base birth rate (‰)':'Taux de natalité de base (‰)' },
+                  { key: 'taux_mortalite',     label: isEn?'DEATH RATE':'MORTALITÉ',    val: mortalite,
+                    hint: isEn?'Base death rate (‰)':'Taux de mortalité de base (‰)' },
                 ].map(({ key, label, val, hint }) => (
                   <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{
@@ -1270,17 +1274,17 @@ function SectionSimulation() {
       </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">RESSOURCES PAR TERRAIN</div>
+        <div className="settings-group-title">{isEn?"RESOURCES BY TERRAIN":"RESSOURCES PAR TERRAIN"}</div>
         {Object.entries(TERRAINS || {}).map(([tk, tv]) => (
           <div key={tk} className="settings-terrain-block">
             <div className="settings-terrain-name">{tv.name || tk}</div>
-            <Field label="Modificateur population">
+            <Field label={isEn?"Population modifier":"Modificateur population"}>
               <NumberInput step={0.05}
                 value={getTerrain(tk, 'modificateur_pop')}
                 onChange={v => updateSim(`terrains.${tk}.modificateur_pop`, v)}
                 min={0.5} max={2.0} />
             </Field>
-            <Field label="Modificateur économie">
+            <Field label={isEn?"Economy modifier":"Modificateur économie"}>
               <NumberInput step={0.05}
                 value={getTerrain(tk, 'modificateur_eco')}
                 onChange={v => updateSim(`terrains.${tk}.modificateur_eco`, v)}
@@ -1291,7 +1295,7 @@ function SectionSimulation() {
       </div>
 
       <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>Sauvegarder</button>
+        <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
         <SaveBadge saved={saved} />
       </div>
     </div>
@@ -1332,13 +1336,13 @@ function SectionInterface({ onHardReset }) {
     try {
       const world = JSON.parse(localStorage.getItem('aria_world') || 'null');
       const countries = JSON.parse(localStorage.getItem('aria_countries') || 'null');
-      if (!world && !countries) { alert('Aucun monde en cours.'); return; }
+      if (!world && !countries) { alert(isEn?'No active world.':'Aucun monde en cours.'); return; }
       const blob = new Blob([JSON.stringify({ world, countries, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = `aria-world-${Date.now()}.json`;
       a.click();
-    } catch { alert('Erreur export monde.'); }
+    } catch { alert(isEn?'World export error.':'Erreur export monde.'); }
   };
 
   const importConfig = (e) => {
@@ -1352,15 +1356,15 @@ function SectionInterface({ onHardReset }) {
         if (config.prompts)  savePrompts(config.prompts);
         if (config.agents)   saveAgentOverrides(config.agents);
         if (config.sim)      saveSimOverrides(config.sim);
-        alert('Configuration importée. Rechargez la page pour appliquer.');
-      } catch { alert('Fichier invalide.'); }
+        alert(isEn?'Configuration imported. Reload page to apply.':'Configuration importée. Rechargez la page pour appliquer.');
+      } catch { alert(isEn?'Invalid file.':'Fichier invalide.'); }
     };
     reader.readAsText(file);
   };
 
   return (
     <div className="settings-section-body">
-      <SectionTitle icon="🖥️" label="INTERFACE & MAINTENANCE" sub="Affichage, export/import, réinitialisation" />
+      <SectionTitle icon="🖥️" label={isEn?"INTERFACE & MAINTENANCE":"INTERFACE & MAINTENANCE"} sub={isEn?"Display, export/import, reset":"Affichage, export/import, réinitialisation"} />
 
       <div className="settings-group">
         <div className="settings-group-title">LANGUE / LANGUAGE</div>
@@ -1439,56 +1443,56 @@ function SectionInterface({ onHardReset }) {
           ))}
           <span style={{ fontFamily:"'JetBrains Mono', monospace", fontSize:'0.42rem',
             color:'rgba(120,140,175,0.40)', marginLeft:'0.5rem' }}>
-            {lang === 'fr' ? 'Interface en français' : 'Interface in English'}
+            {t('SETTINGS_LANG_LABEL', lang)}
           </span>
         </div>
       </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">AFFICHAGE CARTE</div>
-        <Field label="Afficher les ZEE (zones économiques exclusives)">
+        <div className="settings-group-title">{isEn?"MAP DISPLAY":"AFFICHAGE CARTE"}</div>
+        <Field label={isEn?"Show EEZ (exclusive economic zones)":"Afficher les ZEE (zones économiques exclusives)"}>
           <Toggle value={opts.gameplay.show_zee} onChange={v => update('show_zee', v)}
-            label={opts.gameplay.show_zee ? 'Visible' : 'Masqué'} />
+            label={opts.gameplay.show_zee ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
         </Field>
-        <Field label="Afficher la légende">
+        <Field label={isEn?"Show legend":"Afficher la légende"}>
           <Toggle value={opts.gameplay.show_legend} onChange={v => update('show_legend', v)}
-            label={opts.gameplay.show_legend ? 'Visible' : 'Masqué'} />
+            label={opts.gameplay.show_legend ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
         </Field>
       </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">EXPORT / IMPORT</div>
+        <div className="settings-group-title">{isEn?"EXPORT / IMPORT":"EXPORT / IMPORT"}</div>
         <div className="settings-export-row">
           <button className="settings-export-btn" onClick={exportConfig}>
-            ↓ Exporter la configuration
+            {isEn?'↓ Export configuration':'↓ Exporter la configuration'}
           </button>
           <button className="settings-export-btn" onClick={exportWorld}>
-            ↓ Exporter le monde actuel
+            {isEn?'↓ Export current world':'↓ Exporter le monde actuel'}
           </button>
           <label className="settings-export-btn import">
-            ↑ Importer une configuration
+            {isEn?'↑ Import configuration':'↑ Importer une configuration'}
             <input type="file" accept=".json" onChange={importConfig} style={{ display: 'none' }} />
           </label>
         </div>
       </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">RÉINITIALISATION</div>
+        <div className="settings-group-title">{isEn?"RESET":"RÉINITIALISATION"}</div>
         <div className="settings-danger-zone">
           <div className="settings-danger-desc">
-            Le Hard Reset efface <strong>toutes</strong> les données : clés API, prompts personnalisés,
-            coefficients modifiés, monde en cours. Irréversible.
+            {isEn?"Hard Reset erases":"Le Hard Reset efface"} <strong>{isEn?"all":"toutes"}</strong> {isEn?"data: API keys, custom prompts,":"les données : clés API, prompts personnalisés,"}
+            {isEn?"modified coefficients, current world. Irreversible.":"coefficients modifiés, monde en cours. Irréversible."}
           </div>
           <DangerButton
-            label="☢ Hard Reset — Tout effacer"
-            confirm="Confirmer la destruction totale ?"
+            label={isEn?"☢ Hard Reset — Erase everything":"☢ Hard Reset — Tout effacer"}
+            confirm={isEn?"Confirm total destruction?":"Confirmer la destruction totale ?"}
             onClick={onHardReset}
           />
         </div>
       </div>
 
       <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>Sauvegarder l'affichage</button>
+        <button className="settings-save-btn" onClick={save}>{isEn?"Save display settings":"Sauvegarder l'affichage"}</button>
         <SaveBadge saved={saved} />
       </div>
     </div>
@@ -1611,9 +1615,11 @@ export function ARIAManifeste() {
 
 
 function SectionAPropos() {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
   return (
     <div className="settings-section-body">
-      <SectionTitle icon="✦" label="À PROPOS" sub="Version · Documentation · Crédits" />
+      <SectionTitle icon="✦" label={isEn?"ABOUT":"À PROPOS"} sub={isEn?"Version · Documentation · Credits":"Version · Documentation · Crédits"} />
 
       <div className="settings-apropos-block">
         <div className="settings-version-badge">
@@ -1621,14 +1627,14 @@ function SectionAPropos() {
           <span className="settings-version-name">"Alpha Cinzel"</span>
         </div>
         <div className="settings-apropos-desc">
-          Architecture de Raisonnement Institutionnel par l'IA.<br />
-          Un système de gouvernance délibérative augmentée.<br />
-          <em>Délibérer. Annoter. Synthétiser. Décider.</em>
+          {isEn?"Institutional Reasoning Architecture by AI.":"Architecture de Raisonnement Institutionnel par l'IA."}<br />
+          {isEn?"An augmented deliberative governance system.":"Un système de gouvernance délibérative augmentée."}<br />
+          <em>{lang==='en'?'Deliberate. Annotate. Synthesize. Decide.':'Délibérer. Annoter. Synthétiser. Décider.'}</em>
         </div>
         </div>
 
         <div className="settings-group">
-          <div className="settings-group-title">PRINCIPE FONDATEUR</div>
+          <div className="settings-group-title">{isEn?"FOUNDING PRINCIPLE":"PRINCIPE FONDATEUR"}</div>
             <blockquote className="settings-quote">
               "La vraie question n'est pas de savoir si l'IA entrera dans la gouvernance —
               elle y entre déjà, de manière opaque et non régulée. La question est de savoir
@@ -1638,29 +1644,29 @@ function SectionAPropos() {
         </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">DOCUMENTATION</div>
+        <div className="settings-group-title">{isEn?"DOCUMENTATION":"DOCUMENTATION"}</div>
         <div className="settings-links">
           <a className="settings-link" href="../doc/aria.pdf" target="_blank" rel="noopener">
-            📄 Document de vision ARIA (PDF)
+            {isEn?"📄 ARIA Vision Document (PDF)":"📄 Document de vision ARIA (PDF)"}
           </a>
           <a className="settings-link" href="#" target="_blank" rel="noopener">
-            💻 Code source GitHub
+            {isEn?"💻 GitHub source code":"💻 Code source GitHub"}
           </a>
           <a className="settings-link" href="#" target="_blank" rel="noopener">
-            🎮 Démonstration interactive
+            {isEn?"🎮 Interactive demo":"🎮 Démonstration interactive"}
           </a>
         </div>
       </div>
 
       <div className="settings-group">
-        <div className="settings-group-title">ARCHITECTURE TECHNIQUE</div>
+        <div className="settings-group-title">{isEn?"TECHNICAL ARCHITECTURE":"ARCHITECTURE TECHNIQUE"}</div>
         <div className="settings-tech-stack">
-          <div className="settings-tech-row"><span>Frontend</span><span>React 18 · Vite · CSS custom</span></div>
-          <div className="settings-tech-row"><span>Carte</span><span>SVG pur · PRNG reproductible</span></div>
-          <div className="settings-tech-row"><span>IA Pensée</span><span>Claude · Gemini · Grok · OpenAI (configurable)</span></div>
-          <div className="settings-tech-row"><span>IA Synthèse</span><span>Multi-providers — sélection par rôle</span></div>
-          <div className="settings-tech-row"><span>Persistance</span><span>localStorage</span></div>
-          <div className="settings-tech-row"><span>Données</span><span>base_agents.json · base_stats.json · ariaData.js</span></div>
+          <div className="settings-tech-row"><span>{isEn?"Frontend":"Frontend"}</span><span>React 18 · Vite · CSS custom</span></div>
+          <div className="settings-tech-row"><span>{isEn?"Map":"Carte"}</span><span>SVG pur · PRNG reproductible</span></div>
+          <div className="settings-tech-row"><span>{isEn?"AI Thinking":"IA Pensée"}</span><span>Claude · Gemini · Grok · OpenAI (configurable)</span></div>
+          <div className="settings-tech-row"><span>{isEn?"AI Synthesis":"IA Synthèse"}</span><span>Multi-providers — sélection par rôle</span></div>
+          <div className="settings-tech-row"><span>{isEn?"Persistence":"Persistance"}</span><span>localStorage</span></div>
+          <div className="settings-tech-row"><span>{isEn?"Data":"Données"}</span><span>base_agents.json · base_stats.json · ariaData.js</span></div>
         </div>
       </div>
     </div>
@@ -1672,6 +1678,9 @@ function SectionAPropos() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Settings({ onClose }) {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
+  const SECTIONS = getSections(isEn);
   const [activeSection, setActiveSection] = useState('systeme');
 
   const hardReset = useCallback(() => {
@@ -1693,11 +1702,11 @@ export default function Settings({ onClose }) {
         <div className="settings-header-left">
           <span className="settings-header-glyph">✦</span>
           <div>
-            <div className="settings-header-title">ARIA — CONFIGURATION</div>
-            <div className="settings-header-sub">Architecture de Raisonnement Institutionnel</div>
+            <div className="settings-header-title">{isEn?"ARIA — CONFIGURATION":"ARIA — CONFIGURATION"}</div>
+            <div className="settings-header-sub">{isEn?"Institutional Reasoning Architecture":"Architecture de Raisonnement Institutionnel"}</div>
           </div>
         </div>
-        <button className="settings-close-btn" onClick={onClose} title="Retour au Dashboard">
+        <button className="settings-close-btn" onClick={onClose} title={isEn?"Back to Dashboard":"Retour au Dashboard"}>
           ✕
         </button>
       </div>
