@@ -962,38 +962,6 @@ function SectionConseil() {
         <SectionGouvernanceDefaut opts={govOpts} setOpts={(v) => { setGovOpts(v); setSaved(false); }} />
       )}
 
-      {/* ── CONTEXTE PAYS ── */}
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn ? "COUNTRY CONTEXT IN DELIBERATIONS" : "CONTEXTE PAYS DANS LES DÉLIBÉRATIONS"}</div>
-        <Field label={isEn ? "Global context mode" : "Mode de contexte global"}
-          hint={isEn ? "Controls what country info is injected into each deliberation prompt. Overridable per country in the Constitution." : "Contrôle quelles infos sur le pays sont injectées dans chaque prompt de délibération. Surchargeable par pays dans la Constitution."}>
-          <div style={{ display:'flex', flexDirection:'column', gap:'0.4rem' }}>
-            {[
-              ['auto',       '🤖 Auto',                isEn ? 'Stats always + description if available (default)' : 'Stats toujours + description si disponible (défaut)'],
-              ['rich',       isEn ? '📖 Enriched' : '📖 Enrichi', isEn ? 'Full context — prompts AI to invent a coherent history' : 'Contexte complet même pour pays fictifs — incite l\'IA à inventer un historique cohérent'],
-              ['stats_only', isEn ? '📊 Stats only' : '📊 Stats seules', isEn ? 'Numbers only — more neutral, fewer hallucinations' : 'Uniquement les chiffres — délibération plus neutre, moins d\'hallucinations'],
-              ['off',        isEn ? '🚫 Disabled' : '🚫 Désactivé', isEn ? 'No context injected — blind universal deliberation' : 'Aucun contexte injecté — délibération aveugle, universelle'],
-            ].map(([val, lbl, hint]) => (
-              <label key={val} style={{ display:'flex', alignItems:'flex-start', gap:'0.5rem',
-                cursor:'pointer', padding:'0.35rem 0.5rem', borderRadius:'2px',
-                background: (govOpts.gameplay?.context_mode || 'auto') === val ? 'rgba(200,164,74,0.08)' : 'transparent',
-                border: `1px solid ${(govOpts.gameplay?.context_mode || 'auto') === val ? 'rgba(200,164,74,0.30)' : 'transparent'}` }}>
-                <input type="radio" name="context_mode" value={val}
-                  checked={(govOpts.gameplay?.context_mode || 'auto') === val}
-                  onChange={() => updateGovOpts('gameplay.context_mode', val)}
-                  style={{ marginTop:'0.1rem', accentColor:'#C8A44A' }} />
-                <div>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
-                    color:'rgba(220,228,240,0.85)' }}>{lbl}</div>
-                  <div style={{ fontSize:'0.46rem', color:'rgba(140,160,200,0.50)',
-                    marginTop:'0.1rem', lineHeight:1.45 }}>{hint}</div>
-                </div>
-              </label>
-            ))}
-          </div>
-        </Field>
-      </div>
-
       <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
         <SaveBadge saved={saved} />
@@ -1040,88 +1008,133 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
   const { lang } = useLocale();
   const isEn = lang === 'en';
   const gov = opts.defaultGovernance || DEFAULT_GOVERNANCE;
+  const [openAcc, setOpenAcc] = useState(null);
+
+  const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
 
   const setGov = (key, val) => {
-    setOpts({
-      ...opts,
-      defaultGovernance: { ...(opts.defaultGovernance || DEFAULT_GOVERNANCE), [key]: val },
-    });
+    setOpts({ ...opts, defaultGovernance: { ...(opts.defaultGovernance || DEFAULT_GOVERNANCE), [key]: val } });
+  };
+
+  const setCtx = (val) => {
+    setOpts({ ...opts, gameplay: { ...(opts.gameplay || {}), context_mode: val } });
   };
 
   const toggleMinistry = (id) => {
     const current = new Set(gov.ministries || []);
-    if (current.has(id)) {
-      if (current.size <= 2) return;
-      current.delete(id);
-    } else {
-      current.add(id);
-    }
+    if (current.has(id)) { if (current.size <= 2) return; current.delete(id); }
+    else current.add(id);
     setGov('ministries', [...current]);
   };
 
+  const ACC = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden' };
+  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
+  const HDR = (key, label, badge) => (
+    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
+      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
+      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key ? '▾' : '▸'}</span>
+      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
+        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
+      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
+        color:'rgba(200,164,74,0.45)', marginLeft:'auto' }}>{badge}</span>}
+    </button>
+  );
+  const BODY = { padding:'0.4rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.5rem',
+    borderTop:'1px solid rgba(200,164,74,0.08)' };
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn ? "DEFAULT PRESIDENCY" : "PRÉSIDENCE PAR DÉFAUT"}</div>
-        <Field label={isEn ? "Presidency type" : "Type de présidence"} hint={isEn ? "Applied to all new countries unless overridden" : "Appliqué à tous les nouveaux pays sauf override"}>
-          <Select
-            value={gov.presidency || 'duale'}
-            onChange={v => setGov('presidency', v)}
-            options={getPresidencyOpts(isEn)}
-          />
-        </Field>
+    <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+
+      {/* ▸ PRÉSIDENCE */}
+      <div style={openAcc==='pres' ? ACC_OPEN : ACC}>
+        {HDR('pres', isEn ? 'DEFAULT PRESIDENCY' : 'PRÉSIDENCE PAR DÉFAUT')}
+        {openAcc==='pres' && (
+          <div style={BODY}>
+            <Field label={isEn ? "Presidency type" : "Type de présidence"}
+              hint={isEn ? "Applied to all new countries unless overridden" : "Appliqué à tous les nouveaux pays sauf override"}>
+              <Select value={gov.presidency || 'duale'} onChange={v => setGov('presidency', v)} options={getPresidencyOpts(isEn)} />
+            </Field>
+          </div>
+        )}
       </div>
 
-      <div className="settings-group">
-        <div className="settings-group-title">
-          {isEn ? "ACTIVE MINISTRIES BY DEFAULT" : "MINISTÈRES ACTIFS PAR DÉFAUT"}
-          <span style={{ marginLeft: '0.6rem', fontSize: '0.48rem', color: 'rgba(200,164,74,0.45)' }}>
-            {(gov.ministries || []).length} / {ALL_MINISTRY_IDS.length} — min. 2
-          </span>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginTop: '0.4rem' }}>
-          {ALL_MINISTRY_IDS.map(id => {
-            const meta   = getMinistryMeta()[id] || { emoji: '', label: id };
-            const active = (gov.ministries || []).includes(id);
-            const isMin  = (gov.ministries || []).length <= 2 && active;
-            return (
-              <label key={id} style={{
-                display: 'flex', alignItems: 'center', gap: '0.6rem',
-                cursor: isMin ? 'not-allowed' : 'pointer',
-                opacity: isMin ? 0.5 : 1,
-                padding: '0.3rem 0.5rem',
-                borderRadius: '2px',
-                background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
-                border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent',
-                transition: 'all 0.15s',
-              }}>
-                <input
-                  type="checkbox"
-                  checked={active}
-                  disabled={isMin}
-                  onChange={() => toggleMinistry(id)}
-                  style={{ accentColor: '#C8A44A', width: '13px', height: '13px' }}
-                />
-                <span style={{ fontSize: '0.9rem' }}>{meta.emoji}</span>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.52rem', color: 'rgba(200,215,240,0.80)' }}>
-                  {meta.label}
-                </span>
+      {/* ▸ MINISTÈRES */}
+      <div style={openAcc==='mins' ? ACC_OPEN : ACC}>
+        {HDR('mins', isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT',
+          `${(gov.ministries||[]).length}/${ALL_MINISTRY_IDS.length}`)}
+        {openAcc==='mins' && (
+          <div style={BODY}>
+            {ALL_MINISTRY_IDS.map(id => {
+              const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
+              const active = (gov.ministries||[]).includes(id);
+              const isMin  = (gov.ministries||[]).length <= 2 && active;
+              return (
+                <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
+                  cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
+                  padding:'0.3rem 0.5rem', borderRadius:'2px',
+                  background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
+                  border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
+                  <input type="checkbox" checked={active} disabled={isMin} onChange={() => toggleMinistry(id)}
+                    style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
+                  <span style={{ fontSize:'0.9rem' }}>{meta.emoji}</span>
+                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
+                    color:'rgba(200,215,240,0.80)' }}>{meta.label}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* ▸ GESTION DE CRISE */}
+      <div style={openAcc==='crise' ? ACC_OPEN : ACC}>
+        {HDR('crise', isEn ? 'CRISIS MANAGEMENT' : 'GESTION DE CRISE')}
+        {openAcc==='crise' && (
+          <div style={BODY}>
+            <Field label={isEn ? "Ministry of Chance & Crises" : "Ministère de la Chance & Crises"}
+              hint={isEn ? "Activates the 7th ministry for emergency management" : "Active le 7e ministère pour la gestion des urgences"}>
+              <Toggle value={gov.crisis_ministry !== false} onChange={v => setGov('crisis_ministry', v)}
+                label={gov.crisis_ministry !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
+            </Field>
+          </div>
+        )}
+      </div>
+
+      {/* ▸ CONTEXTE PAYS */}
+      <div style={openAcc==='ctx' ? ACC_OPEN : ACC}>
+        {HDR('ctx', isEn ? 'COUNTRY CONTEXT IN DELIBERATIONS' : 'CONTEXTE PAYS DANS LES DÉLIBÉRATIONS')}
+        {openAcc==='ctx' && (
+          <div style={BODY}>
+            <div style={{ fontSize:'0.44rem', color:'rgba(140,160,200,0.45)', lineHeight:1.5 }}>
+              {isEn ? "Controls what country info is injected into each deliberation prompt. Overridable per country in the Constitution."
+                     : "Contrôle quelles infos sur le pays sont injectées dans chaque prompt. Surchargeable par pays dans la Constitution."}
+            </div>
+            {[
+              ['auto',       '🤖 Auto',                isEn ? 'Stats always + description if available (default)' : 'Stats toujours + description si disponible (défaut)'],
+              ['rich',       isEn ? '📖 Enriched' : '📖 Enrichi', isEn ? 'Full context — prompts AI to invent a coherent history' : 'Contexte complet même pour fictifs — incite l\'IA à inventer un historique cohérent'],
+              ['stats_only', isEn ? '📊 Stats only' : '📊 Stats seules', isEn ? 'Numbers only — more neutral, fewer hallucinations' : 'Uniquement les chiffres — délibération plus neutre'],
+              ['off',        isEn ? '🚫 Disabled' : '🚫 Désactivé', isEn ? 'No context injected — blind universal deliberation' : 'Aucun contexte injecté — délibération aveugle'],
+            ].map(([val, lbl, hint]) => (
+              <label key={val} style={{ display:'flex', alignItems:'flex-start', gap:'0.5rem',
+                cursor:'pointer', padding:'0.35rem 0.5rem', borderRadius:'2px',
+                background: (opts.gameplay?.context_mode || 'auto') === val ? 'rgba(200,164,74,0.08)' : 'transparent',
+                border: `1px solid ${(opts.gameplay?.context_mode || 'auto') === val ? 'rgba(200,164,74,0.30)' : 'transparent'}` }}>
+                <input type="radio" name="context_mode_gov" value={val}
+                  checked={(opts.gameplay?.context_mode || 'auto') === val}
+                  onChange={() => setCtx(val)}
+                  style={{ marginTop:'0.1rem', accentColor:'#C8A44A' }} />
+                <div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
+                    color:'rgba(220,228,240,0.85)' }}>{lbl}</div>
+                  <div style={{ fontSize:'0.46rem', color:'rgba(140,160,200,0.50)',
+                    marginTop:'0.1rem', lineHeight:1.45 }}>{hint}</div>
+                </div>
               </label>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn ? "CRISIS MANAGEMENT" : "GESTION DE CRISE"}</div>
-        <Field label={isEn ? "Ministry of Chance & Crises" : "Ministère de la Chance & Crises"} hint={isEn ? "Activates the 7th ministry for emergency management" : "Active le 7e ministère pour la gestion des urgences"}>
-          <Toggle
-            value={gov.crisis_ministry !== false}
-            onChange={v => setGov('crisis_ministry', v)}
-            label={gov.crisis_ministry !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')}
-          />
-        </Field>
-      </div>
     </div>
   );
 }
