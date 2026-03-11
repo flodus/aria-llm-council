@@ -170,6 +170,10 @@ export default function App() {
       localStorage.removeItem('aria_session_countries');
       localStorage.removeItem('aria_session_alliances');
       localStorage.removeItem('aria_chronolog_cycles');
+      const _o = JSON.parse(localStorage.getItem('aria_options') || '{}');
+      if (!_o.gameplay) _o.gameplay = {};
+      _o.gameplay.context_mode = 'auto';
+      localStorage.setItem('aria_options', JSON.stringify(_o));
     } catch {}
     // Réécrire aria_agents_override avec la langue courante
     try {
