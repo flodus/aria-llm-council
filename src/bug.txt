@@ -46,3 +46,8 @@ react-dom_client.js?v=3b3dfec2:4596 Uncaught Error: Objects are not valid as a R
     at beginWork (react-dom_client.js?v=3b3dfec2:8699:104)
     at runWithFiberInDEV (react-dom_client.js?v=3b3dfec2:995:72)
     at performUnitOfWork (react-dom_client.js?v=3b3dfec2:12559:98)
+
+
+
+
+    voir si on met pas les icones des régimes lors de la création monde, monde fictif
