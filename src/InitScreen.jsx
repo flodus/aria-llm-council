@@ -799,7 +799,8 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const [newMinData,   setNewMinData]   = useState({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
   const [newMinistryForm, setNewMinistryForm] = useState(false);
   const [newMinistryData, setNewMinistryData] = useState({ id:'', name:'', emoji:'🏛', color:'#8090C0', mission:'', ministers:[] });
-  const [activeMinsters, setActiveMinsters] = useState(null); // null = tous actifs
+  const [activeMinsters,   setActiveMinsters]   = useState(null); // null = tous actifs
+  const [selectedMinistry, setSelectedMinistry] = useState(null); // id du ministère ouvert
   const scrollRef = useRef(null);
   // Contexte délibérations par pays (index = index dans pendingDefs)
   const [plCtxOpen,  setPlCtxOpen]  = useState(null); // index du pays ouvert, ou null
@@ -1354,6 +1355,54 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
           {/* ── MINISTÈRES ──────────────────────────────────────────── */}
           {plTab === 'ministries' && (<>
+            {/* Grille toggle ministères */}
+            <div style={{ ...CARD_STYLE }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.45rem' }}>
+            <div style={labelStyle('0.42rem')}>{plAgents.ministries.length} MINISTÈRES</div>
+            <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.38rem' }}
+            onClick={() => setActiveMins(null)}>Tous actifs</button>
+            </div>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:'0.28rem' }}>
+            {plAgents.ministries.map(m => {
+              const on = activeMins === null || activeMins.includes(m.id);
+              const sel = selectedMinistry === m.id;
+              return (
+                <div key={m.id} style={{ display:'flex', alignItems:'center', gap:'0.28rem',
+                  padding:'0.26rem 0.50rem', borderRadius:'2px', cursor:'pointer',
+                  background: sel ? m.color+'22' : on ? m.color+'12' : 'rgba(255,255,255,0.02)',
+                      border: sel ? `2px solid ${m.color}99` : on ? `1px solid ${m.color}55` : '1px solid rgba(255,255,255,0.05)',
+                      opacity: on ? 1 : 0.45 }}
+                      onClick={() => setSelectedMinistry(sel ? null : m.id)}>
+                      <span style={{ fontSize:'0.85rem' }}>{m.emoji}</span>
+                      <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem',
+                        color: on ? m.color+'CC' : 'rgba(140,160,200,0.40)' }}>
+                        {m.name}
+                        </span>
+                        {/* Toggle actif/inactif */}
+                        <span style={{ fontFamily:FONT.mono, fontSize:'0.32rem',
+                          color: on ? 'rgba(58,191,122,0.60)' : 'rgba(200,80,80,0.40)',
+                      marginLeft:'0.15rem' }}
+                      onClick={e => {
+                        e.stopPropagation();
+                        const all = plAgents.ministries.map(x=>x.id);
+                        const cur = activeMins || all;
+                        const next = on ? cur.filter(id=>id!==m.id) : [...cur, m.id];
+                        setActiveMins(next.length === all.length ? null : next);
+                      }}>
+                      {on ? '● ON' : '○ OFF'}
+                      </span>
+                      </div>
+              );
+            })}
+            </div>
+            {(activeMins && activeMins.length === 0) && (
+              <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem',
+                color:'rgba(200,100,60,0.55)', marginTop:'0.3rem' }}>
+                ⚠ {lang==='en'?'No active ministry — presidency only':'Aucun ministère actif — seule la présidence arbitrera'}
+                </div>
+            )}
+            </div>
+
             {/* Bouton sticky + Nouveau ministère */}
             <div style={{ position:'sticky', top:0, zIndex:10,
               background:'rgba(4,8,18,0.97)', paddingBottom:'0.4rem',
@@ -1403,9 +1452,10 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
               )}
             </div>
 
-            {plAgents.ministries.map((ministry, mi) => {
+            {plAgents.ministries.filter(m => selectedMinistry === null || m.id === selectedMinistry).map((ministry, mi) => {
               const allMinKeys = Object.keys(plAgents.ministers);
               const on = activeMins === null || activeMins.includes(ministry.id);
+              const miReal = plAgents.ministries.findIndex(m => m.id === ministry.id);
               return (
                 <div key={ministry.id} style={{ ...CARD_STYLE, opacity: on ? 1 : 0.5 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.45rem' }}>
@@ -1431,7 +1481,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                       <button style={{ background:'none', border:'none', cursor:'pointer',
                         color:'rgba(200,80,80,0.40)', fontSize:'0.75rem' }}
                         onClick={() => setPlAgents(a => ({...a,
-                          ministries: a.ministries.filter((_,i)=>i!==mi)
+                          ministries: a.ministries.filter((_,i)=>i!==miReal)
                         }))}>✕</button>
                     )}
                   </div>
@@ -1442,7 +1492,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                     lineHeight:1.5, marginBottom:'0.40rem' }}
                     value={ministry.mission}
                     onChange={e => setPlAgents(a => ({...a,
-                      ministries:a.ministries.map((m,i)=>i===mi?{...m,mission:e.target.value}:m)
+                      ministries:a.ministries.map((m,i)=>i===miReal?{...m,mission:e.target.value}:m)
                     }))}
                   />
                   <div style={{ fontFamily:FONT.mono, fontSize:'0.37rem',
@@ -1457,7 +1507,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                             ...(isIn?{border:'1px solid '+min.color+'88',color:min.color,
                               background:min.color+'16'}:{}) }}
                           onClick={() => setPlAgents(a => ({...a,
-                            ministries:a.ministries.map((m,i)=>i!==mi?m:{
+                            ministries:a.ministries.map((m,i)=>i!==miReal?m:{
                               ...m, ministers:isIn
                                 ?m.ministers.filter(k=>k!==mkey)
                                 :[...m.ministers,mkey]
@@ -1483,7 +1533,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                             resize:'vertical', fontSize:'0.39rem', fontFamily:FONT.mono, lineHeight:1.48 }}
                             value={ministry.ministerPrompts?.[mkey]||''}
                             onChange={e => setPlAgents(a => ({...a,
-                              ministries:a.ministries.map((m,i)=>i!==mi?m:{
+                              ministries:a.ministries.map((m,i)=>i!==miReal?m:{
                                 ...m, ministerPrompts:{...(m.ministerPrompts||{}),[mkey]:e.target.value}
                               })
                             }))}
