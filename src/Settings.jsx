@@ -81,7 +81,7 @@ function getMinistryLabels() {
 }
 
 // REGIME_LABELS → getRegimeLabel(key, lang) depuis ariaTheme
-const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocratie'];
+const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocracie'];
 function getRegimeLabelMap(lang) {
   return Object.fromEntries(REGIME_LABEL_KEYS.map(k => [k, getRegimeLabel(k, lang)]));
 }
@@ -477,7 +477,7 @@ function SectionSysteme() {
                   { value:'aria',   label:'ARIA',         desc:isEn?'Multi-provider architecture (default)':'Architecture multi-providers (défaut)' },
                   { value:'solo',   label:'Solo',          desc:isEn?'All roles on a single provider':'Tous les rôles sur un seul provider' },
                   { value:'custom', label:isEn?'Custom':'Personnalisé',  desc:isEn?'Role-by-role assignment':'Assignation rôle par rôle' },
-                  { value:'none',   label:isEn?'🚫 Off':'🚫 Désactivé',  desc:isEn?'Local pre-written responses (offline mode)':'Réponses locales pré-écrites (mode hors ligne)' },
+                  { value:'none',   label:'🎲 Board Game',  desc:isEn?'Force local pre-written responses (even with API keys)':'Force les réponses pré-écrites locales (même avec des clés API)' },
                 ].map(m => (
                   <label key={m.value}
                     className={`settings-radio-card${iaMode===m.value?' selected':''}`}
@@ -564,17 +564,6 @@ function SectionSysteme() {
               )}
             </div>
           )}
-        </Field>
-      </div>
-
-      {/* ── MODE BOARD GAME ── */}
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"BOARD GAME MODE":"MODE BOARD GAME"}</div>
-        <Field label={isEn?"Force local texts":"Forcer les textes locaux"}
-          hint={isEn?"Even with valid API keys, use pre-written responses from ariaData.js":"Même avec des clés API valides, utilise les réponses pré-écrites d'ariaData.js"}>
-          <Toggle value={opts.gameplay.mode_board_game}
-            onChange={v => update('gameplay.mode_board_game', v)}
-            label={opts.gameplay.mode_board_game ? (isEn?'Enabled':'Activé') : (isEn?'Disabled':'Désactivé')} />
         </Field>
       </div>
 
