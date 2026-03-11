@@ -62,3 +62,6 @@ hard reset ça le fait pas
 init :
 - petits drapeau pour pays dans init (en plus de fr en)
 - clés API pas traduit en anglais
+
+
+partie custom en fait c'est de 2 à 6 pays car 1 c'est par défaut
