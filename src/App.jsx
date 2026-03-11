@@ -61,14 +61,14 @@ export default function App() {
   const crisisRef    = useRef(null);
   const fadeTimerRef = useRef(null);
   const audioStarted = useRef(false);
-  // GEMINI
-  const SOUND_ENABLED = false; // Passe à true pour réactiver
+  const [audioMuted, setAudioMuted] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('aria_audio_muted') ?? 'true'); }
+    catch { return true; }
+  });
 
   // ── Audio ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    // GEMINI Si le son est désactivé, on arrête tout immédiatement
-    if (!SOUND_ENABLED) return;
-    // Code Claude
+    if (audioMuted) return;
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const ambient = new Audio(`${base}/assets/audio/ambient_flow.mp3`);
     const crisis  = new Audio(`${base}/assets/audio/emergency_protocol.mp3`);
@@ -151,7 +151,20 @@ export default function App() {
 
   const handleSecession    = useCallback(() => ariaRef.current?.openSecession?.(), []);
   const handleCrisisToggle = useCallback(() => setIsCrisis(p => !p), []);
-
+  const toggleAudio = useCallback(() => {
+    setAudioMuted(prev => {
+      const next = !prev;
+      localStorage.setItem('aria_audio_muted', JSON.stringify(next));
+      if (next) {
+        ambientRef.current?.pause();
+        crisisRef.current?.pause();
+        audioStarted.current = false;
+      } else {
+        startAudio();
+      }
+      return next;
+    });
+  }, []);
   const handleReset = useCallback(() => {
     // Nettoyer toute la session persistée
     try {
@@ -280,11 +293,19 @@ export default function App() {
               {t('CRISIS', loadLang())}
             </span>
           )}
+          <button className="btn-icon" onClick={toggleAudio}
+          title={audioMuted ? (lang==='en'?'Enable sound':'Activer le son') : (lang==='en'?'Mute sound':'Couper le son')}
+          style={{ fontSize:'1rem', opacity: audioMuted ? 0.35 : 0.80, color: 'white' }}>
+          {audioMuted
+            ? <span className="mdi mdi-volume-off" />
+            : <span className="mdi mdi-volume-high" />
+          }
+          </button>
           {worldGenerated && (
             <button className="btn-icon" onClick={handleReset}
-              title={t('BTN_NEW_GAME', loadLang())}
-              style={{ fontSize:'0.75rem', opacity:0.55, letterSpacing:'0.05em' }}>
-              ↺
+            title={t('BTN_NEW_GAME', loadLang())}
+            style={{ fontSize:'0.75rem', opacity:0.55, letterSpacing:'0.05em' }}>
+            ↺
             </button>
           )}
           <button className="btn-icon" onClick={() => setPage('settings')} title={t('BTN_CONFIG', loadLang())}>⚙</button>
