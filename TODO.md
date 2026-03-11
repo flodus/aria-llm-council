@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-11_
+_Dernière mise à jour : 2026-03-12_
 
 ---
 
@@ -9,11 +9,6 @@ _Dernière mise à jour : 2026-03-11_
 - [ ] **B1 — Ajout pays in-game** : erreur console lors de l'ajout d'un pays depuis le dashboard
   - Ouvrir F12, reproduire l'erreur, capturer le stack trace complet
   - Probablement une mutation d'état dans Dashboard_p3 (handleAddCountry)
-
-- [ ] **B2 — Country Context pipeline** : le mode contexte + override défini dans Init
-  n'atteint pas fiablement les prompts de délibération in-game
-  - Vérifier que `context_mode` et `contextOverride` survivent à `saveAndLaunch` → `onLaunch` → `startLocal/startWithAI`
-  - Vérifier que `buildCountryContext()` dans llmCouncilEngine les lit bien
 
 ---
 
@@ -24,8 +19,6 @@ _Dernière mise à jour : 2026-03-11_
   (Init PreLaunchScreen · Settings in-game · popup ConstitutionModal in-game)
 - [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
   (satisfaction détaillée, décisions clés, événements notables)
-- [ ] **U5 — Récap contexte au lancement** : afficher `context_mode` et `contextOverride` de chaque pays
-  dans la boîte de dialogue de confirmation "Créer le monde" (InitScreen)
 - [ ] **U4 — Contexte pays dans la Constitution** : déplacer/dupliquer `context_mode` et `contextOverride`
   depuis les options système (Settings) vers la ConstitutionModal par pays
   — logique : le contexte de délibération est une propriété du pays, pas un réglage global
@@ -61,5 +54,21 @@ _(bloqué sur refonte carte V1)_
 
 ---
 
+## ✅ LIVRÉ cette session (2026-03-12)
+
+- [x] **B2 — Country Context pipeline** : `context_mode` et `contextOverride` perdus à l'init
+  - `startLocal` ne transmettait pas ces champs — corrigé
+  - `startWithAI` omettait `contextOverride` dans les deux branches — corrigé
+- [x] **Toast manquant** : composant `Toast` perdu lors d'une refactorisation — restauré
+- [x] **Flèches navigation pays** : réapplication du commit `dcb04a7` dans App.jsx
+- [x] **context_mode hint dynamique** : "Suit le réglage mondial (actuellement : 🤖 Auto)"
+  dans InitScreen (ContextPanel) et ConstitutionModal
+- [x] **Reset context_mode à 'auto'** : `clearSession()` réinitialisait les sessions
+  mais laissait `aria_options.gameplay.context_mode` à sa valeur précédente
+- [x] **Accordéon CONTEXTE DÉLIBÉRATIONS remonté** en tête du résumé Init (avant PRÉSIDENCE ACTIVE)
+- [x] **Récap création monde** : affichage du contexte délibérations (icône + label + override) par pays
+
+---
+
 ## 📁 Fichiers actifs
-`InitScreen.jsx` · `Dashboard_p1.jsx` · `Dashboard_p3.jsx` · `App.jsx` · `llmCouncilEngine.js`
+`InitScreen.jsx` · `Dashboard_p1.jsx` · `Dashboard_p3.jsx` · `App.jsx` · `llmCouncilEngine.js` · `ConstitutionModal.jsx`
