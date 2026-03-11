@@ -12,6 +12,29 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 import { REAL_COUNTRIES_DATA_EN } from './ariaData';
 import { loadLang, t, useLocale } from './ariaI18n';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { useChronolog } from './useChronolog';
+import ChronologView   from './ChronologView';
+import {
+  useARIA,
+  PAYS_LOCAUX,
+  REGIMES,
+  getHumeur,
+  getStats,
+} from './Dashboard_p1';
+import { getTerrainLabel, getRegimeLabel } from './ariaTheme';
+import { MapSVG } from './Dashboard_p2';
+import ConstitutionModal from './ConstitutionModal';
+import LLMCouncil from './LLMCouncil';
+import {
+  routeQuestion,
+  runMinisterePhase,
+  runCerclePhase,
+  runPresidencePhase,
+  computeVoteImpact,
+  MINISTRIES_LIST,
+} from './llmCouncilEngine';
 
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
@@ -23,10 +46,6 @@ function getLocalizedNom(country) {
   } catch { return country?.nom || ''; }
 }
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { useChronolog } from './useChronolog';
-import ChronologView   from './ChronologView';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  POPUP RÉSULTAT DE VOTE
@@ -185,8 +204,21 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
   const allCountryIds = countries.map(c => c.id);
   const councilledIds = new Set(withCouncil.map(h => h.countryId));
   const uncounselled  = countries.filter(c => !councilledIds.has(c.id));
-
   const isEmpty = withCouncil.length === 0;
+  // Projections passives pour tous les pays (doCycle tourne toujours)
+  const cycleForecasts = countries.map(c => {
+    const regime  = getStats().regimes[c.regime]  || getStats().regimes.republique_federale;
+    const terrain = getStats().terrains[c.terrain] || getStats().terrains.inland;
+    const natalite  = (c.tauxNatalite  ?? regime.taux_natalite  * 1000) / 1000 * 5;
+    const mortalite = (c.tauxMortalite ?? regime.taux_mortalite * 1000) / 1000 * 5;
+    const growthMod = terrain.modificateur_pop * regime.coeff_croissance;
+    const popDelta  = Math.round(c.population * (natalite - mortalite) * growthMod);
+    const ecoBase   = terrain.modificateur_eco * regime.coeff_croissance;
+    const ecoRatio  = Object.values(c.ressources || {}).filter(Boolean).length / 7;
+    const ecoDelta  = Math.round((ecoBase - 1) * 8 + (ecoRatio - 0.5) * 6);
+    const satDrift  = Math.round(-2 * regime.coeff_satisfaction); // dérive de base hors vote
+    return { id: c.id, nom: c.nom, emoji: c.emoji, popDelta, ecoDelta, satDrift };
+  });
   const isSingle = countries.length === 1;
 
   // Cas A : un seul pays, rien
@@ -299,10 +331,10 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
                         {aria !== undefined && aria !== 0 && (
                           <span style={{ fontFamily:MONO, fontSize:'0.38rem', padding:'0.08rem 0.35rem', borderRadius:'2px',
                             background: aria > 0 ? 'rgba(58,191,122,0.08)' : 'rgba(200,80,80,0.08)',
-                            border:`1px solid ${aria > 0 ? 'rgba(58,191,122,0.22)' : 'rgba(200,80,80,0.22)'}`,
-                            color: aria > 0 ? 'rgba(58,191,122,0.80)' : 'rgba(200,80,80,0.75)' }}>
-                            ARIA {aria > 0 ? '+' : ''}{Math.round(aria)}%
-                          </span>
+                                                              border:`1px solid ${aria > 0 ? 'rgba(58,191,122,0.22)' : 'rgba(200,80,80,0.22)'}`,
+                                                              color: aria > 0 ? 'rgba(58,191,122,0.80)' : 'rgba(200,80,80,0.75)' }}>
+                                                              ARIA {aria > 0 ? '+' : ''}{Math.round(aria)}%
+                                                              </span>
                         )}
                       </div>
                     )}
@@ -313,10 +345,54 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
             </div>
           )}
 
-          {/* Question confirmation */}
-          <p style={{ fontFamily: MONO, fontSize: '0.50rem', color: 'rgba(200,215,240,0.55)', lineHeight: 1.6, margin: 0 }}>
+          {/* Projections passives — tous les pays */}
+          <div>
+          <div style={{ fontFamily: MONO, fontSize: '0.38rem', letterSpacing: '0.18em',
+            color: 'rgba(140,160,200,0.40)', marginBottom: '0.4rem' }}>
+            {uiLang==='en' ? 'PASSIVE CHANGES THIS CYCLE' : 'ÉVOLUTIONS PASSIVES CE CYCLE'}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+            {cycleForecasts.map(f => (
+              <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem',
+                padding: '0.35rem 0.6rem', borderRadius: '2px',
+                background: 'rgba(255,255,255,0.015)',
+                                      border: '1px solid rgba(255,255,255,0.05)' }}>
+                                      <span style={{ fontSize: '0.85rem' }}>{f.emoji}</span>
+                                      <span style={{ fontFamily: MONO, fontSize: '0.42rem',
+                                        color: 'rgba(200,215,240,0.55)', flex: 1 }}>{f.nom}</span>
+                                        {/* Pop */}
+                                        <span style={{ fontFamily: MONO, fontSize: '0.38rem', padding: '0.06rem 0.30rem',
+                                          borderRadius: '2px',
+                                          background: f.popDelta >= 0 ? 'rgba(58,191,122,0.07)' : 'rgba(200,80,80,0.07)',
+                                      border: `1px solid ${f.popDelta >= 0 ? 'rgba(58,191,122,0.20)' : 'rgba(200,80,80,0.20)'}`,
+                                      color: f.popDelta >= 0 ? 'rgba(58,191,122,0.75)' : 'rgba(200,80,80,0.70)' }}>
+                                      👥 {f.popDelta >= 0 ? '+' : ''}{(f.popDelta/1000).toFixed(1)}k
+                                      </span>
+                                      {/* Éco */}
+                                      <span style={{ fontFamily: MONO, fontSize: '0.38rem', padding: '0.06rem 0.30rem',
+                                        borderRadius: '2px',
+                                        background: f.ecoDelta >= 0 ? 'rgba(58,191,122,0.07)' : 'rgba(200,80,80,0.07)',
+                                      border: `1px solid ${f.ecoDelta >= 0 ? 'rgba(58,191,122,0.20)' : 'rgba(200,80,80,0.20)'}`,
+                                      color: f.ecoDelta >= 0 ? 'rgba(58,191,122,0.75)' : 'rgba(200,80,80,0.70)' }}>
+                                      💰 {f.ecoDelta >= 0 ? '+' : ''}{f.ecoDelta}
+                                      </span>
+                                      {/* Sat dérive */}
+                                      <span style={{ fontFamily: MONO, fontSize: '0.38rem', padding: '0.06rem 0.30rem',
+                                        borderRadius: '2px',
+                                        background: f.satDrift >= 0 ? 'rgba(58,191,122,0.07)' : 'rgba(200,80,80,0.07)',
+                                      border: `1px solid ${f.satDrift >= 0 ? 'rgba(58,191,122,0.20)' : 'rgba(200,80,80,0.20)'}`,
+                                      color: f.satDrift >= 0 ? 'rgba(58,191,122,0.75)' : 'rgba(200,80,80,0.70)' }}>
+                                      😊 {f.satDrift >= 0 ? '+' : ''}{f.satDrift}%
+                                      </span>
+                                      </div>
+            ))}
+            </div>
+            </div>
+
+            {/* Question confirmation */}
+            <p style={{ fontFamily: MONO, fontSize: '0.50rem', color: 'rgba(200,215,240,0.55)', lineHeight: 1.6, margin: 0 }}>
             {uiLang==='en'?'Confirm advancement to the next cycle?':'Confirmer le passage au cycle suivant ?'}
-          </p>
+            </p>
 
         </div>
 
@@ -389,13 +465,13 @@ function AddCountryModal({ onConfirm, onClose }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
             <div>
               <div style={{ fontFamily: MONO, fontSize: '0.40rem', letterSpacing: '0.16em', color: 'rgba(200,164,74,0.50)', marginBottom: '0.3rem' }}>TERRAIN</div>
-              <select style={{ ...fieldStyle, fontSize: '0.48rem' }} value={terrain} onChange={e => setTerrain(e.target.value)}>
+              <select style={{ ...fieldStyle, fontSize: '0.48rem', background: 'rgba(8,13,22,0.95)' }} value={terrain} onChange={e => setTerrain(e.target.value)}>
                 {TERRAIN_OPTS.map(([k,v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
             <div>
               <div style={{ fontFamily: MONO, fontSize: '0.40rem', letterSpacing: '0.16em', color: 'rgba(200,164,74,0.50)', marginBottom: '0.3rem' }}>RÉGIME</div>
-              <select style={{ ...fieldStyle, fontSize: '0.48rem' }} value={regime} onChange={e => setRegime(e.target.value)}>
+              <select style={{ ...fieldStyle, fontSize: '0.48rem', background: 'rgba(8,13,22,0.95)' }} value={regime} onChange={e => setRegime(e.target.value)}>
                 {REGIME_OPTS.map(([k,v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
@@ -440,24 +516,6 @@ function ImpactPill({ label, delta }) {
     </div>
   );
 }
-import {
-  useARIA,
-  PAYS_LOCAUX,
-  REGIMES,
-  getHumeur,
-} from './Dashboard_p1';
-import { getTerrainLabel, getRegimeLabel } from './ariaTheme';
-import { MapSVG } from './Dashboard_p2';
-import ConstitutionModal from './ConstitutionModal';
-import LLMCouncil from './LLMCouncil';
-import {
-  routeQuestion,
-  runMinisterePhase,
-  runCerclePhase,
-  runPresidencePhase,
-  computeVoteImpact,
-  MINISTRIES_LIST,
-} from './llmCouncilEngine';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTES UI
