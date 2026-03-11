@@ -220,6 +220,7 @@ export default function CountryPanel({
     satisfaction = 50, ressources = {},
     aria_irl = null, aria_current = null,
   } = country;
+//  const { countryIndex = 0, countryTotal = 1, onPrevCountry, onNextCountry } = props;
   const sc = satisfColor(satisfaction);
   const handleSubmit = (question, ministryId = null) => {
     if (!question.trim() || submitting) return;

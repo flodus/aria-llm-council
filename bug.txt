@@ -50,4 +50,52 @@ react-dom_client.js?v=3b3dfec2:4596 Uncaught Error: Objects are not valid as a R
 
 
 
-    voir si on met pas les icones des régimes lors de la création monde, monde fictif
+    voir si on met pas les icones des régimes dans liste déroulante lors de la création monde, monde fictif
+
+
+
+
+
+
+
+
+  constitution lors de la création d'un monde est-ce qu'on garde tout !!!!
+    PRÉSIDENCE ACTIVE
+
+☉ Le Phare ✓
+Soleil · Volonté
+
+☽ La Boussole ✓
+Lune · Âme
+MINISTÈRES ACTIFS
+Tous
+⚖️ Justice et Vérité
+💰 Économie et Ressources
+⚔️ Défense et Souveraineté
+🏥 Santé et Protection Sociale
+🎓 Éducation et Élévation
+🌿 Transition Écologique
+🎲 Chance et Imprévu
+Tout activer
+⚖️ Justice et Vérité
+♎ ♏
+💰 Économie et Ressources
+♉ ♍
+⚔️ Défense et Souveraineté
+♈ ♑
+🏥 Santé et Protection Sociale
+♋ ♓
+🎓 Éducation et Élévation
+♊ ♐
+🌿 Transition Écologique
+♒ ♌
+🎲 Chance et Imprévu
+♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓
+
+
+
+
+
+dans creation> constitution je voulais que l'onglet ministères ressemble à l'onglet ministres avec la dialog box 12 ministres (là ça sera 7 ministères) avec toutes les icones correspondant aux ministères :
+♈ L'Initiateur ♉ Le Gardien ♊ Le Communicant ♋ Le Protecteur ♌ L'Ambassadeur ♍ L'Analyste
+♎ L'Arbitre ♏ L'Enquêteur ♐ Le Guide ♑ Le Stratège ♒ L'Inventeur ♓ Le Guérisseur

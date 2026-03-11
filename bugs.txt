@@ -51,27 +51,14 @@ dans init offline pays fictif j'ai  :
 
 il faudrait traduire les contextes politiques des pays real_countries
 
-erreur que j'ai modif :
-[plugin:vite:react-babel] /var/home/bazzite/aria/src/ConstitutionModal.jsx: Identifier 'loadLang' has already been declared. (658:9)
-  659 |
-/var/home/bazzite/aria/src/ConstitutionModal.jsx:658:9
-656 |  import BASE_AGENTS    from '../templates/base_agents.json';
-657 |  import BASE_AGENTS_EN from '../templates/base_agents_en.json';
-658 |  import { loadLang } from './ariaI18n';
-    |           ^
-659 |
-j'ai remonté ca en haut :
-import BASE_AGENTS    from '../templates/base_agents.json';
-import BASE_AGENTS_EN from '../templates/base_agents_en.json';
-et virer le 2eme :
-658 |  import { loadLang } from './ariaI18n';
-
-dans le side panel map-grid je me retrouve avec "constitution + icone" au lieu de "gouvernement + icone"
-pareil pour le side panel "council"
-
 fr >> offline >> défaut >> pays fictif >> j'ai les terrains en anglais (coastal, highlan ...)
 fr >> changement de langue dans settings pour changement en anglais :  popup gouvernement prompts ok en anglais mais header du popup en français : "Gouvernement — République de Valoria RÉGIME PRÉSIDENCE MINISTÈRES MINISTRES"...GESTION DE CRISE
 🎲 Ministère de la Chance & Crises
 Active le 7e ministère pour la gestion des urgences"
 nouvelle partie en après partie fr >> init world le gouvernement est encore en français
 hard reset ça le fait pas
+
+
+init :
+- petits drapeau pour pays dans init (en plus de fr en)
+- clés API pas traduit en anglais

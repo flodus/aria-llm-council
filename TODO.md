@@ -1,45 +1,41 @@
-# ARIA — TODO.md
-_Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-11_
+# ARIA — TODO
 
----
+## ✅ COMPLÉTÉ
 
-## ✅ COMPLÉTÉ — Session 11 mars 2026
-
-- [x] theocracie clé corrigée dans REGIME_LABEL_KEYS (Settings.jsx)
-- [x] Board Game Mode remplace tuile OFF (Settings.jsx)
-- [x] Emoji fallback régime au lieu de 🌍 (CountryPanel, HexGrid, Dashboard_p1)
-- [x] Select terrain/régime : background sombre rgba(8,13,22,0.95) (Dashboard_p3)
-- [x] CycleConfirmModal : bloc "ÉVOLUTIONS PASSIVES CE CYCLE" 👥💰😊 (Dashboard_p3)
-- [x] Icônes terrains dans RESOURCES BY TERRAIN (Settings.jsx)
+### Init — Constitution (onglet MINISTÈRES + MINISTRES)
+- [x] Grille d'icônes + focus/toggle dans les deux onglets
+- [x] Harmonisation stricte : 1er clic = focus (remonte fiche), 2e clic = toggle actif/inactif
+- [x] Si actif → désactive + retire focus (fiche descend en bas)
+- [x] Si inactif → active + maintient focus en haut
+- [x] Toutes les fiches toujours visibles (pas de filtre par sélection)
+- [x] Fiches inactives : opacity 0.32 + saturate(0.15) — lisibles mais clairement en retrait
+- [x] Hint : italique, centré, très discret (opacity 0.28), séparateur visuel
+- [x] Tri dynamique : focused → actifs → inactifs en bas
+- [x] États : `selectedMinistry`, `selectedMinister`
 
 ---
 
 ## 🔴 EN COURS
 
-### ÉTAPE 4 — App.jsx
-- [ ] Son OFF au lancement : `audioMuted` initialisé à `true`, persisté localStorage
-- [ ] Icône 🔇/🔊 (mdi-volume-off / mdi-volume-high, blanche) dans header
-
-### ÉTAPE 5 — CountryPanel.jsx
-- [ ] Flèche discrète ‹ NomPays › pour naviguer entre pays (COUNCIL / MAP / CHRONOLOG)
-- [ ] Props : `onPrevCountry`, `onNextCountry`, `countryIndex`, `countryTotal` depuis App.jsx
-
-### ÉTAPE 6 — InitScreen.jsx
-- [ ] 6a : Constitution par pays — perGov[i] indépendant
-- [ ] 6b : Boutons + sticky ministères/ministres
-- [ ] 6c : Icônes voir/masquer clés API (mdi-eye-lock)
+### ÉTAPE 6a-2 — InitScreen.jsx : perGov override par pays
+- Constitution commune par défaut, override indépendant par pays via bouton "Personnaliser"
+- États actuellement globaux à refactoriser : `activeMins`, `activePres`, `activeMinsters`, `plAgents`
+- Nouveau : `perGov[i]` = override local par pays (index dans pendingDefs)
+- Badge visuel sur sélecteur de pays si override actif
+- `saveAndLaunch` merge constitution commune + overrides par pays
 
 ### ÉTAPE 7 — WorldEngine.js
-- [ ] Distance minimum entre centroïdes pays
+- `placeCountries()` : contrainte distance minimum entre centroïdes (`MIN_CENTROID_DIST = HEX_R * 8`)
+- Retry avec seed modifié si overlap détecté
 
 ---
 
-## 🔵 BACKLOG — Plus tard
-- [ ] Delta économique 💰 dans CycleConfirmModal (coefficients croissance variables)
-- [ ] Icônes terrain + régime dans listes déroulantes (Init création monde, ajout pays fictif)
-- [ ] Icônes régime dans REGIME COEFFICIENTS (Settings.jsx) — même principe que terrains
+## 🔵 BACKLOG
+
+- [ ] Delta économique 💰 dans CycleConfirmModal
+- [ ] Icônes terrain + régime dans listes déroulantes Init
+- [ ] Icônes régime dans REGIME COEFFICIENTS (Settings.jsx)
 - [ ] Dashboard_p3.jsx : remonter tous les imports en tête de fichier
 - [ ] Init → Constitution → ajouter un président custom
-- [ ] Settings : icônes voir/masquer clés API (mdi-eye-lock)
-- [ ] i18n
+- [ ] i18n : LegitimiteOverlay.jsx, HexGrid.jsx
+- [ ] Phase V1 : Carte SVG procédurale low-poly
