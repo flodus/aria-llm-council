@@ -1,15 +1,16 @@
 
--- Pbs communs
-- bouton pour couper le son
-- pour le changement de cycle on sait les impacts qu'il va y avoir mais il manque la fluctuation du nb d'habitants...
+-- Pbs communs et questions :
+- fais en sorte que le son soit off au lancement des parties et met une icone dans le header du dashboard à coté du bouton "nouvelle partie"
+- pour le changement de cycle on sait les impacts qu'il va y avoir mais il manque la fluctuation du nb d'habitants et peut être d'autres infos qui vont/ont changé...
 - les pays sont forcément collés sur la carte ? j'ai l'impression que c'est le cas à chaque fois
 - dans settings est ce que board game mode est encore nécessaire si y a le mode off dans mode ia ? Je pense que le mieux serait de déplacer BOARD GAME MOD à la place de OFF, en faisant une tuile cliquable, je pense que c'est là sa place, par contre je garde le nom board game mode j'aime bien à la place de off. donc on garde : BOARD GAME MODE Force local texts
-Even with valid API keys, use pre-written responses from ariaData.js mais on le met à la place de off
+Even with valid API keys, use pre-written responses from ariaData.js mais on le met à la place de off (on est peut être pas obligé de tout écrire)
 - theocratie n'a pas d'icone ?
 - dans init custom constitution on peut pas choisir les gouvernements par pays ? si je désactive un president ministère ou ministre ça le désactive pour tous les autres pays
-- init -> constitution -> ajouter ministre ou ministère il faudrait le mettre en haut, car là faut aller tout en bas et si on sait pas que c'est possible on descend pas. Peut être en icone + dans la box "12 ministres", d'ailleurs faudrait aussi faire une box " 7ministères" et insérer + ajouter dedans. Faut penser à pouvoir rajouter 1 président aussi (peut être plus tard mais faudrait faire un todo.md avec tous les trucs a faire plus tard). (==> En fait faudrait faire les mêmes box que dans la popup gouvernement)
+- init -> constitution -> ajouter ministre ou ministère il faudrait le mettre en haut, car là faut aller tout en bas et si on sait pas que c'est possible on descend pas. Peut être en icone + dans la box "12 ministres", d'ailleurs faudrait aussi faire une box " 7ministères" et insérer + ajouter dedans. Faut penser à pouvoir rajouter 1 président aussi (peut être plus tard mais faudrait faire un todo.md avec tous les trucs a faire plus tard). (==> En fait faudrait peut être faire les mêmes box que dans la popup gouvernement, juste celle avec les icones et donc +)
 - in game :  nouveau pays fictif liste déroulante terrain et régime trop moche car toute blanche
 sidepanel (mapgride, council, chronolog : une toute petite flèche discrète à coté du nom du pays pour changer de pays ?)
+- settings : RESOURCES BY TERRAIN je veux bien des icônesà côté des terrains comme Coastal, Highland...
 
 -- PB de traduction :
 - init : les fenêtres sont encore avec des titres et champ fr : default : nation de depart, nation fictive, jouer, pays reel, chosir un pays, jouer. custom : ajouter, générer le monde, choisir pour real country, sous titre de deliberation context, sous titre de auto, stats seules et son sous titre, tous actifs, inactif, tous, tout activer, ministres actifs.
@@ -21,8 +22,27 @@ sidepanel (mapgride, council, chronolog : une toute petite flèche discrète à 
 - info bulles survol de certaines icones (gouvernement, avancer de 5 ans ...)
 - fenetre diplomatie
 - fenetre gouvernement : actif, tous actifs, clic = ouvrir · reclic = désactive, ministres : essence, STYLE DE COMMUNICATION, angles d'annotations, + nouveau ministre
-- settings : RESOURCES BY TERRAIN je veux bien des icônesà côté des terrains comme Coastal
 
 ####
 COUNTRY CONTEXT IN DELIBERATIONS
 ####
+
+
+
+init >> constitution ministères dans le bloc du haut 7/7 ministères & + ajouter ministeres j'aurai voulu les icônes de ministères avec action au clic comme pour l'onglet ministres de la même page
+
+j'ai créé un nouveau pays depuis map grid mais il ne se crée pas : Dashboard_p3.jsx:1232 Uncaught TypeError: aria.addFictionalCountry is not a function
+    at onConfirm (Dashboard_p3.jsx:1232:22)
+    at onClick (Dashboard_p3.jsx:460:42)
+
+react-dom_client.js?v=3b3dfec2:4596 Uncaught Error: Objects are not valid as a React child (found: object with keys {nom, titre, trait}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectTypeImpl (react-dom_client.js?v=3b3dfec2:4596:15)
+    at throwOnInvalidObjectType (react-dom_client.js?v=3b3dfec2:4604:13)
+    at createChild (react-dom_client.js?v=3b3dfec2:4782:13)
+    at reconcileChildrenArray (react-dom_client.js?v=3b3dfec2:4963:26)
+    at reconcileChildFibersImpl (react-dom_client.js?v=3b3dfec2:5169:88)
+    at react-dom_client.js?v=3b3dfec2:5235:35
+    at reconcileChildren (react-dom_client.js?v=3b3dfec2:7180:53)
+    at beginWork (react-dom_client.js?v=3b3dfec2:8699:104)
+    at runWithFiberInDEV (react-dom_client.js?v=3b3dfec2:995:72)
+    at performUnitOfWork (react-dom_client.js?v=3b3dfec2:12559:98)
