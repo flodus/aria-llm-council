@@ -1248,6 +1248,56 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
           {/* ── RÉSUMÉ ──────────────────────────────────────────────── */}
           {plTab === 'resume' && (<>
+            {/* Contexte délibérations — 1 accordéon groupé */}
+            {(pendingDefs||[]).length > 0 && (
+              <div style={{ width:'100%', borderRadius:'2px',
+                border:`1px solid ${plCtxOpen!=null ? 'rgba(200,164,74,0.22)' : 'rgba(255,255,255,0.07)'}`,
+                background: plCtxOpen!=null ? 'rgba(200,164,74,0.03)' : 'transparent' }}>
+                {/* Header groupe */}
+                <button style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
+                  padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}
+                  onClick={() => setPlCtxOpen(p => p!=null ? null : 0)}>
+                  <span style={{ fontSize:'0.75rem' }}>{plCtxOpen!=null ? '▾' : '▸'}</span>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
+                    color: plCtxOpen!=null ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>
+                    {t('CONTEXT', lang)}
+                  </span>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.35)',
+                    marginLeft:'auto' }}>{pendingDefs.length} {lang==='en'?'countries':'pays'}</span>
+                </button>
+                {/* Onglets pays + contenu */}
+                {plCtxOpen != null && (
+                  <div style={{ padding:'0 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.4rem' }}>
+                    {pendingDefs.length > 1 && (
+                      <div style={{ display:'flex', gap:'0.3rem', flexWrap:'wrap' }}>
+                        {pendingDefs.map((def, i) => (
+                          <button key={i}
+                            style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.16rem 0.45rem',
+                              ...(plCtxOpen===i ? { border:'1px solid rgba(200,164,74,0.40)',
+                                color:'rgba(200,164,74,0.85)', background:'rgba(200,164,74,0.08)' } : {}) }}
+                            onClick={() => setPlCtxOpen(i)}>
+                            {def.realData?.flag || def.realData?.emoji || '🌐'} {def.nom || def.realData?.nom || `Nation ${i+1}`}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {pendingDefs.map((def, i) => plCtxOpen === i && (
+                      <ContextPanel key={i}
+                        countryName={def.nom || def.realData?.nom || `Nation ${i+1}`}
+                        open={true}
+                        onToggle={() => {}}
+                        mode={plCtxModes[i] || ''}
+                        setMode={v => setPlCtxModes(p => { const a=[...p]; a[i]=v; return a; })}
+                        override={plCtxOvrs[i] || ''}
+                        setOverride={v => setPlCtxOvrs(p => { const a=[...p]; a[i]=v; return a; })}
+                        embedded={true}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Présidence active */}
             <div style={{ ...CARD_STYLE }}>
               <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.5rem' }}>{t('ACTIVE_PRESIDENCY',lang)}</div>
@@ -1368,55 +1418,6 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 })}
               </div>
             </div>
-            {/* Contexte délibérations — 1 accordéon groupé */}
-            {(pendingDefs||[]).length > 0 && (
-              <div style={{ width:'100%', borderRadius:'2px',
-                border:`1px solid ${plCtxOpen!=null ? 'rgba(200,164,74,0.22)' : 'rgba(255,255,255,0.07)'}`,
-                background: plCtxOpen!=null ? 'rgba(200,164,74,0.03)' : 'transparent' }}>
-                {/* Header groupe */}
-                <button style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
-                  padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}
-                  onClick={() => setPlCtxOpen(p => p!=null ? null : 0)}>
-                  <span style={{ fontSize:'0.75rem' }}>{plCtxOpen!=null ? '▾' : '▸'}</span>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
-                    color: plCtxOpen!=null ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>
-                    {t('CONTEXT', lang)}
-                  </span>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.35)',
-                    marginLeft:'auto' }}>{pendingDefs.length} {lang==='en'?'countries':'pays'}</span>
-                </button>
-                {/* Onglets pays + contenu */}
-                {plCtxOpen != null && (
-                  <div style={{ padding:'0 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.4rem' }}>
-                    {pendingDefs.length > 1 && (
-                      <div style={{ display:'flex', gap:'0.3rem', flexWrap:'wrap' }}>
-                        {pendingDefs.map((def, i) => (
-                          <button key={i}
-                            style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.16rem 0.45rem',
-                              ...(plCtxOpen===i ? { border:'1px solid rgba(200,164,74,0.40)',
-                                color:'rgba(200,164,74,0.85)', background:'rgba(200,164,74,0.08)' } : {}) }}
-                            onClick={() => setPlCtxOpen(i)}>
-                            {def.realData?.flag || def.realData?.emoji || '🌐'} {def.nom || def.realData?.nom || `Nation ${i+1}`}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    {pendingDefs.map((def, i) => plCtxOpen === i && (
-                      <ContextPanel key={i}
-                        countryName={def.nom || def.realData?.nom || `Nation ${i+1}`}
-                        open={true}
-                        onToggle={() => {}}
-                        mode={plCtxModes[i] || ''}
-                        setMode={v => setPlCtxModes(p => { const a=[...p]; a[i]=v; return a; })}
-                        override={plCtxOvrs[i] || ''}
-                        setOverride={v => setPlCtxOvrs(p => { const a=[...p]; a[i]=v; return a; })}
-                        embedded={true}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
 
             {/* ── CONFIG IA + BOARD GAME (accordéons) ──────────────────── */}
             {[
