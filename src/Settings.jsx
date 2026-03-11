@@ -1274,7 +1274,7 @@ function SectionSimulation() {
         <div className="settings-group-title">{isEn?"RESOURCES BY TERRAIN":"RESSOURCES PAR TERRAIN"}</div>
         {Object.entries(dynTerrains || TERRAINS || {}).map(([tk, tv]) => (
           <div key={tk} className="settings-terrain-block">
-            <div className="settings-terrain-name">{tv.name || tk}</div>
+            <div className="settings-terrain-name">{getTerrainLabel(tk, lang)} </div>
             <Field label={isEn?"Population modifier":"Modificateur population"}>
               <NumberInput step={0.05}
                 value={getTerrain(tk, 'modificateur_pop')}
