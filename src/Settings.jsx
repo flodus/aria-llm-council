@@ -4,7 +4,7 @@
 //  Usage : <Settings onClose={() => setPage('dashboard')} />
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { getRegimeLabel, getTerrainLabel } from './ariaTheme';
+import { getRegimeLabel } from './ariaTheme';
 import { useState, useCallback, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
 import BASE_AGENTS    from '../templates/base_agents.json';
@@ -1621,8 +1621,8 @@ function SectionAPropos() {
 
       <div className="settings-apropos-block">
         <div className="settings-version-badge">
-          <span className="settings-version-number">v0.9</span>
-          <span className="settings-version-name">"Alpha Cinzel"</span>
+          <span className="settings-version-number">v1.0</span>
+          <span className="settings-version-name">"Phare"</span>
         </div>
         <div className="settings-apropos-desc">
           {isEn?"Institutional Reasoning Architecture by AI.":"Architecture de Raisonnement Institutionnel par l'IA."}<br />
