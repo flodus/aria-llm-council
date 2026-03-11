@@ -48,9 +48,10 @@ const S = {
     overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
   }),
   mCard: {
-    background:'rgba(255,255,255,0.02)', border:`1px solid ${COLOR.border}`,
-    borderRadius:'2px', padding:'1rem 1.2rem', cursor:'pointer',
-    display:'flex', flexDirection:'column', gap:'0.4rem', flex:1,
+    background:'rgba(8,14,26,0.80)', border:`1px solid rgba(140,160,200,0.15)`,
+    borderRadius:'3px', padding:'0.85rem 1rem', cursor:'pointer',
+    display:'flex', flexDirection:'column', gap:'0.35rem', flex:1,
+    transition:'border-color 0.15s, background 0.15s',
   },
   tag: {
     fontFamily: FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
@@ -546,7 +547,8 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
         <div style={labelStyle('0.44rem')}>NATION {idx + 1}</div>
         <div style={{ display:'flex', gap:'0.5rem', alignItems:'center' }}>
-          {c.realData && <span style={S.tag}>{c.realData.flag} PAYS RÉEL</span>}
+          {c.type === 'imaginaire' && <span style={{ ...S.tag, color:'rgba(100,180,255,0.60)', border:'1px solid rgba(100,180,255,0.22)', background:'rgba(100,180,255,0.05)' }}>{c.realData?.emoji || '🌐'} FICTIF</span>}
+          {c.realData && c.type === 'reel' && <span style={S.tag}>{c.realData.flag} PAYS RÉEL</span>}
           {canRemove && (
             <button onClick={onRemove} style={{ background:'none', border:'none', color:'rgba(200,80,80,0.45)', cursor:'pointer', fontSize:'0.75rem' }}>✕</button>
           )}
@@ -672,24 +674,30 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
           <div>
             <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NATION PRÉDÉFINIE</div>
             <div style={{ display:'flex', gap:'0.35rem', flexWrap:'wrap' }}>
-              {getPaysLocaux().map(p => (
+              {getPaysLocaux().map(p => {
+                const sel = c.realData?.id === p.id;
+                return (
                 <button key={p.id}
-                  style={{ ...SELECT_STYLE, flex:'1 1 80px', cursor:'pointer', padding:'0.28rem 0.4rem',
-                    border: c.realData?.id === p.id ? `1px solid ${p.couleur}80` : undefined,
-                    background:  c.realData?.id === p.id ? `${p.couleur}18` : undefined,
-                    color: c.realData?.id === p.id ? p.couleur : 'rgba(180,200,230,0.60)',
-                    fontSize:'0.46rem', letterSpacing:'0.06em',
+                  style={{ flex:'1 1 80px', cursor:'pointer', padding:'0.28rem 0.4rem',
+                    fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.06em',
+                    borderRadius:'2px', transition:'all 0.13s',
+                    border: sel ? `1px solid ${p.couleur}80` : '1px solid rgba(140,160,200,0.14)',
+                    background: sel ? `${p.couleur}18` : 'rgba(8,14,26,0.75)',
+                    color: sel ? p.couleur : 'rgba(180,200,230,0.60)',
+                    boxShadow: sel ? `0 0 8px ${p.couleur}18` : 'none',
                   }}
                   onClick={() => onChange({ ...c, nom: p.nom, terrain: p.terrain, regime: p.regime, realData: p })}>
                   {p.emoji} {p.nom}
                 </button>
-              ))}
+                );
+              })}
               <button
-                style={{ ...SELECT_STYLE, flex:'1 1 80px', cursor:'pointer', padding:'0.28rem 0.4rem',
-                  border: (!c.realData) ? '1px solid rgba(200,164,74,0.45)' : '1px solid rgba(255,255,255,0.06)',
-                  background:  (!c.realData) ? 'rgba(200,164,74,0.08)' : 'rgba(255,255,255,0.01)',
-                  color: (!c.realData) ? 'rgba(200,164,74,0.90)' : 'rgba(180,200,230,0.60)',
-                  fontSize:'0.46rem', letterSpacing:'0.06em',
+                style={{ flex:'1 1 80px', cursor:'pointer', padding:'0.28rem 0.4rem',
+                  fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.06em',
+                  borderRadius:'2px', transition:'all 0.13s',
+                  border: (!c.realData) ? '1px solid rgba(200,164,74,0.45)' : '1px solid rgba(140,160,200,0.14)',
+                  background: (!c.realData) ? 'rgba(200,164,74,0.08)' : 'rgba(8,14,26,0.75)',
+                  color: (!c.realData) ? 'rgba(200,164,74,0.90)' : 'rgba(180,200,230,0.55)',
                 }}
                 onClick={() => onChange({ ...c, nom: '', realData: null })}>
                 {lang==='en'?'✨ New':'✨ Nouveau'}
@@ -784,12 +792,141 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
 }
 
 // ── Composant principal ───────────────────────────────────────────────────
+// ── RecapAccordion — accordéon constitution dans le dialog récap ─────────────
+function RecapAccordion({ pendingDefs, perGov, commonAgents, commonMins, commonPres, commonMinsters, lang }) {
+  const [openIdx, setOpenIdx] = useState(null); // index pays ouvert
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:'0.45rem', maxHeight:'55vh', overflowY:'auto' }}>
+      {(pendingDefs||[]).map((d, i) => {
+        const nom     = d.nom?.trim() || d.realData?.nom || `Nation ${i+1}`;
+        const flag    = d.realData?.flag || d.realData?.emoji || d.emoji || '🌐';
+        const isReel  = d.type === 'reel';
+        const regime  = d.regime || d.realData?.regime || '—';
+        const terrain = d.terrain || d.realData?.terrain || '—';
+        const hasGov  = !!perGov[i];
+        const open    = openIdx === i;
+
+        // Constitution effective pour ce pays
+        const gov         = perGov[i];
+        const effAgents   = gov?.agents   || commonAgents;
+        const effMins     = gov?.activeMins    ?? commonMins;      // null = tous actifs
+        const effPres     = gov?.activePres    ?? commonPres;
+        const effMinsters = gov?.activeMinsters ?? commonMinsters;  // null = tous actifs
+
+        // Données constitution
+        const allMins     = effAgents?.ministries || [];
+        const allMinsters = effAgents?.ministers   || {};
+        const allPres     = effAgents?.presidency  || {};
+
+        const activeMins     = effMins     ? allMins.filter(m => effMins.includes(m.id))     : allMins;
+        const activeMinsters = effMinsters ? Object.entries(allMinsters).filter(([k]) => effMinsters.includes(k)) : Object.entries(allMinsters);
+        const activePres     = effPres     ? Object.entries(allPres).filter(([k]) => effPres.includes(k))         : Object.entries(allPres);
+
+        return (
+          <div key={i} style={{ borderRadius:'3px', overflow:'hidden',
+            border: hasGov ? '1px solid rgba(100,180,255,0.22)' : '1px solid rgba(200,164,74,0.16)',
+            background:'rgba(8,14,26,0.60)' }}>
+
+            {/* Header cliquable */}
+            <div onClick={() => setOpenIdx(open ? null : i)}
+              style={{ display:'flex', alignItems:'center', gap:'0.5rem', padding:'0.50rem 0.70rem', cursor:'pointer',
+                background: open ? 'rgba(200,164,74,0.05)' : 'transparent', transition:'background 0.15s' }}>
+              <span style={{ fontSize:'0.82rem' }}>{flag}</span>
+              <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', color:'rgba(215,225,240,0.92)', fontWeight:600, flex:1 }}>{nom}</span>
+              {hasGov && <span style={{ fontFamily:FONT.mono, fontSize:'0.30rem', color:'rgba(100,180,255,0.70)' }}>✦</span>}
+              <span style={{ fontFamily:FONT.mono, fontSize:'0.33rem', color:'rgba(140,160,200,0.40)' }}>
+                {isReel ? (lang==='en'?'Real':'Réel') : (lang==='en'?'Fictional':'Fictif')}
+              </span>
+              <div style={{ display:'flex', gap:'0.5rem', marginLeft:'0.3rem' }}>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:'rgba(140,160,200,0.45)' }}>
+                  {getRegimeLabels()[regime] || regime}
+                </span>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:'rgba(140,160,200,0.30)' }}>·</span>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:'rgba(140,160,200,0.45)' }}>
+                  {getTerrainLabels()[terrain] || terrain}
+                </span>
+              </div>
+              <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(200,164,74,0.55)', marginLeft:'0.2rem' }}>
+                {open ? '▲' : '▼'}
+              </span>
+            </div>
+
+            {/* Corps accordéon */}
+            {open && (
+              <div style={{ padding:'0.55rem 0.75rem', display:'flex', flexDirection:'column', gap:'0.55rem',
+                borderTop:'1px solid rgba(200,164,74,0.08)' }}>
+
+                {/* Présidence */}
+                <div>
+                  <div style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.14em',
+                    color:'rgba(200,164,74,0.50)', marginBottom:'0.25rem' }}>
+                    {lang==='en' ? 'PRESIDENCY' : 'PRÉSIDENCE'}
+                  </div>
+                  <div style={{ display:'flex', gap:'0.35rem', flexWrap:'wrap' }}>
+                    {activePres.length > 0 ? activePres.map(([k, p]) => (
+                      <span key={k} style={{ fontFamily:FONT.mono, fontSize:'0.40rem',
+                        color: k==='phare' ? 'rgba(255,210,80,0.85)' : 'rgba(160,180,255,0.85)',
+                        background: k==='phare' ? 'rgba(255,200,50,0.07)' : 'rgba(100,140,255,0.07)',
+                        border: k==='phare' ? '1px solid rgba(255,200,50,0.20)' : '1px solid rgba(100,140,255,0.20)',
+                        borderRadius:'2px', padding:'0.15rem 0.40rem' }}>
+                        {k==='phare' ? '☉' : '☽'} {p.name || (k==='phare' ? 'Le Phare' : 'La Boussole')}
+                      </span>
+                    )) : <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.35)' }}>—</span>}
+                  </div>
+                </div>
+
+                {/* Ministères */}
+                <div>
+                  <div style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.14em',
+                    color:'rgba(200,164,74,0.50)', marginBottom:'0.25rem' }}>
+                    {lang==='en' ? 'MINISTRIES' : 'MINISTÈRES'} ({activeMins.length})
+                  </div>
+                  <div style={{ display:'flex', gap:'0.25rem', flexWrap:'wrap' }}>
+                    {activeMins.map(m => (
+                      <span key={m.id} style={{ fontFamily:FONT.mono, fontSize:'0.38rem',
+                        color: m.color || 'rgba(140,180,255,0.75)',
+                        background: (m.color || '#8090C0')+'12',
+                        border: `1px solid ${(m.color || '#8090C0')}30`,
+                        borderRadius:'2px', padding:'0.13rem 0.35rem' }}>
+                        {m.emoji || '🏛'} {m.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Ministres */}
+                <div>
+                  <div style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.14em',
+                    color:'rgba(200,164,74,0.50)', marginBottom:'0.25rem' }}>
+                    {lang==='en' ? 'MINISTERS' : 'MINISTRES'} ({activeMinsters.length})
+                  </div>
+                  <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
+                    {activeMinsters.map(([k, m]) => (
+                      <span key={k} title={m.name} style={{ fontFamily:FONT.mono, fontSize:'0.44rem',
+                        filter: `drop-shadow(0 0 3px ${m.color}66)`,
+                        cursor:'default' }}>
+                        {m.emoji}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── PreLaunchScreen — constitution editor before world generation ────────────
 function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaunch }) {
   const { lang } = useLocale();
   const [plLoading,    setPlLoading]    = useState(true);
   const [plTab,        setPlTab]        = useState('resume');
   const [plCountry,    setPlCountry]    = useState(0);
+  const [confirmLaunch, setConfirmLaunch] = useState(false); // dialog récap final
 
   // ── Constitution commune (base partagée par tous les pays) ────────────────
   const [commonAgents,  setCommonAgents]  = useState(null);
@@ -1026,49 +1163,46 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box' }}>
       <ARIAHeader showQuote={false} />
 
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%', flexWrap:'wrap', gap:'0.4rem' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', width:'100%', flexWrap:'wrap', gap:'0.4rem' }}>
         <div style={labelStyle()}>CONSTITUTION — {worldName}</div>
         {hasMulti && (
-          <div style={{ display:'flex', gap:'0.3rem', flexWrap:'wrap', justifyContent:'flex-end' }}>
-            {countries.map((c, i) => {
-              const isCustom = !!perGov[i];
-              const nom = c.nom || c.realData?.nom || `Nation ${i+1}`;
-              const flag = c.realData?.flag || '🌐';
-              return (
-                <button key={i}
-                  style={{ ...BTN_SECONDARY, padding:'0.26rem 0.60rem', fontSize:'0.48rem', position:'relative',
-                    ...(plCountry===i ? { border:'1px solid rgba(200,164,74,0.55)',
-                      color:'rgba(200,164,74,0.95)', background:'rgba(200,164,74,0.10)' } : {
-                      color:'rgba(180,190,210,0.70)' }) }}
-                  onClick={() => { setPlCountry(i); setSelectedMinistry(null); setSelectedMinister(null); }}>
-                  <span style={{ fontSize:'0.65rem', marginRight:'0.25rem' }}>{flag}</span>
-                  {nom}
-                  {isCustom && (
-                    <span style={{ marginLeft:'0.3rem', fontSize:'0.32rem', fontFamily:FONT.mono,
-                      color:'rgba(100,180,255,0.80)', letterSpacing:'0.05em' }}>✦</span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        )}
-        {/* Bouton Personnaliser / Réinitialiser — à gauche, même ligne que les pays */}
-        {hasMulti && (
-          <div style={{ display:'flex', gap:'0.35rem', width:'100%', justifyContent:'flex-start', marginTop:'-0.3rem' }}>
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'0.35rem' }}>
+            {/* Badges pays */}
+            <div style={{ display:'flex', gap:'0.3rem', flexWrap:'wrap', justifyContent:'flex-end' }}>
+              {countries.map((c, i) => {
+                const isCustom = !!perGov[i];
+                const nom = c.nom || c.realData?.nom || `Nation ${i+1}`;
+                const flag = c.realData?.flag || c.realData?.emoji || '🌐';
+                return (
+                  <button key={i}
+                    style={{ ...BTN_SECONDARY, padding:'0.26rem 0.60rem', fontSize:'0.48rem', position:'relative',
+                      ...(plCountry===i ? { border:'1px solid rgba(200,164,74,0.55)',
+                        color:'rgba(200,164,74,0.95)', background:'rgba(200,164,74,0.10)' } : {
+                        color:'rgba(180,190,210,0.70)' }) }}
+                    onClick={() => { setPlCountry(i); setSelectedMinistry(null); setSelectedMinister(null); }}>
+                    <span style={{ fontSize:'0.65rem', marginRight:'0.25rem' }}>{flag}</span>
+                    {nom}
+                    {isCustom && (
+                      <span style={{ marginLeft:'0.3rem', fontSize:'0.32rem', fontFamily:FONT.mono,
+                        color:'rgba(100,180,255,0.80)', letterSpacing:'0.05em' }}>✦</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            {/* Bouton Personnaliser / ↺ Constitution Commune — sous les badges, aligné à droite */}
             {!hasOverride ? (
-              <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.16rem 0.55rem',
-                color:'rgba(100,180,255,0.70)', border:'1px solid rgba(100,180,255,0.25)' }}
+              <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.50rem',
+                color:'rgba(100,180,255,0.70)', border:'1px solid rgba(100,180,255,0.22)' }}
                 onClick={forkCountry}>
                 ✦ {lang==='en' ? 'Customize this country' : 'Personnaliser ce pays'}
               </button>
             ) : (
-              <>
-                <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.16rem 0.55rem',
-                  color:'rgba(200,80,80,0.55)', border:'1px solid rgba(200,80,80,0.25)' }}
-                  onClick={() => resetCountryOverride(plCountry)}>
-                  ↺ {lang==='en' ? 'Reset to common' : 'Revenir à la commune'}
-                </button>
-              </>
+              <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.50rem',
+                color:'rgba(200,80,80,0.55)', border:'1px solid rgba(200,80,80,0.22)' }}
+                onClick={() => resetCountryOverride(plCountry)}>
+                ↺ {lang==='en' ? 'Common Constitution' : 'Constitution Commune'}
+              </button>
             )}
           </div>
         )}
@@ -1087,17 +1221,18 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
             {tab[lang] || tab.fr}
           </button>
         ))}
-        {/* Statut constitution — décalé après les onglets, pas à l'extrême droite */}
+        {/* Statut constitution — décalé après les onglets */}
         {(() => {
           const countryName = countries[plCountry]?.nom || countries[plCountry]?.realData?.nom || `Nation ${plCountry + 1}`;
           return hasOverride ? (
-            <span style={{ marginLeft:'2.5rem', fontFamily:FONT.mono, fontSize:'0.36rem',
-              letterSpacing:'0.09em', color:'rgba(100,180,255,0.75)', whiteSpace:'nowrap' }}>
-              ✦ {lang==='en' ? `INDEPENDENT CONSTITUTION — ${countryName.toUpperCase()}` : `CONSTITUTION INDÉPENDANTE — ${countryName.toUpperCase()}`}
+            <span style={{ marginLeft:'2.5rem', fontFamily:FONT.mono, fontSize:'0.40rem',
+              letterSpacing:'0.10em', color:'rgba(100,180,255,0.90)', whiteSpace:'nowrap',
+              fontWeight:600 }}>
+              ✦ {lang==='en' ? `INDEPENDENT — ${countryName.toUpperCase()}` : `CONSTITUTION INDÉPENDANTE — ${countryName.toUpperCase()}`}
             </span>
           ) : (
-            <span style={{ marginLeft:'2.5rem', fontFamily:FONT.mono, fontSize:'0.36rem',
-              letterSpacing:'0.09em', color:'rgba(200,164,74,0.40)', whiteSpace:'nowrap' }}>
+            <span style={{ marginLeft:'2.5rem', fontFamily:FONT.mono, fontSize:'0.40rem',
+              letterSpacing:'0.10em', color:'rgba(200,164,74,0.60)', whiteSpace:'nowrap' }}>
               ◈ {lang==='en' ? 'COMMON CONSTITUTION' : 'CONSTITUTION COMMUNE'}
             </span>
           );
@@ -1261,7 +1396,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                               ...(plCtxOpen===i ? { border:'1px solid rgba(200,164,74,0.40)',
                                 color:'rgba(200,164,74,0.85)', background:'rgba(200,164,74,0.08)' } : {}) }}
                             onClick={() => setPlCtxOpen(i)}>
-                            {def.realData?.flag||'🌐'} {def.nom || def.realData?.nom || `Nation ${i+1}`}
+                            {def.realData?.flag || def.realData?.emoji || '🌐'} {def.nom || def.realData?.nom || `Nation ${i+1}`}
                           </button>
                         ))}
                       </div>
@@ -1529,14 +1664,15 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 <div key={m.id}
                 onClick={() => handleGridClickMin(m.id)}
                 style={{ display:'flex', alignItems:'center', gap:'0.28rem',
-                  padding:'0.26rem 0.50rem', borderRadius:'2px', cursor:'pointer',
-                  background: sel ? m.color+'28' : on ? m.color+'0C' : 'rgba(255,255,255,0.012)',
-                  border: sel ? `2px solid ${m.color}CC` : on ? `1px solid ${m.color}44` : '1px solid rgba(255,255,255,0.04)',
+                  padding:'0.26rem 0.50rem', borderRadius:'3px', cursor:'pointer',
+                  background: sel ? m.color+'38' : on ? m.color+'18' : 'rgba(8,14,26,0.60)',
+                  border: sel ? `2px solid ${m.color}EE` : on ? `1px solid ${m.color}70` : '1px solid rgba(140,160,200,0.10)',
                   transition:'all 0.13s',
-                  boxShadow: sel ? `0 0 8px ${m.color}22` : 'none' }}>
-                  <span style={{ fontSize:'0.85rem', filter: on ? 'none' : 'grayscale(1)', opacity: on ? 1 : 0.40, transition:'all 0.13s' }}>{m.emoji}</span>
+                  boxShadow: sel ? `0 0 12px ${m.color}44, inset 0 0 6px ${m.color}10` : on ? `0 0 6px ${m.color}22` : 'none' }}>
+                  <span style={{ fontSize:'0.85rem', filter: on ? `drop-shadow(0 0 4px ${m.color}88)` : 'grayscale(1)', opacity: on ? 1 : 0.28, transition:'all 0.13s' }}>{m.emoji}</span>
                   <span style={{ fontFamily:FONT.mono, fontSize:'0.41rem',
-                    color: sel ? m.color+'EE' : on ? m.color+'BB' : 'rgba(140,160,200,0.32)', transition:'all 0.13s' }}>{m.name}</span>
+                    color: sel ? m.color : on ? m.color+'CC' : 'rgba(140,160,200,0.28)', transition:'all 0.13s',
+                    textShadow: (sel || on) ? `0 0 8px ${m.color}66` : 'none' }}>{m.name}</span>
                 </div>
               );
             })}
@@ -1727,14 +1863,15 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 <div key={key}
                 onClick={() => handleGridClickMinster(key)}
                 style={{ display:'flex', alignItems:'center', gap:'0.28rem',
-                  padding:'0.26rem 0.50rem', borderRadius:'2px', cursor:'pointer',
-                  background: sel ? min.color+'28' : on ? min.color+'0C' : 'rgba(255,255,255,0.012)',
-                  border: sel ? `2px solid ${min.color}CC` : on ? `1px solid ${min.color}44` : '1px solid rgba(255,255,255,0.04)',
+                  padding:'0.26rem 0.50rem', borderRadius:'3px', cursor:'pointer',
+                  background: sel ? min.color+'38' : on ? min.color+'18' : 'rgba(8,14,26,0.60)',
+                  border: sel ? `2px solid ${min.color}EE` : on ? `1px solid ${min.color}70` : '1px solid rgba(140,160,200,0.10)',
                   transition:'all 0.13s',
-                  boxShadow: sel ? `0 0 8px ${min.color}22` : 'none' }}>
-                  <span style={{ fontSize:'0.85rem', filter: on ? 'none' : 'grayscale(1)', opacity: on ? 1 : 0.40, transition:'all 0.13s' }}>{min.emoji}</span>
+                  boxShadow: sel ? `0 0 8px ${min.color}33` : on ? `0 0 4px ${min.color}18` : 'none' }}>
+                  <span style={{ fontSize:'0.85rem', filter: on ? `drop-shadow(0 0 3px ${min.color}66)` : 'grayscale(1)', opacity: on ? 1 : 0.28, transition:'all 0.13s' }}>{min.emoji}</span>
                   <span style={{ fontFamily:FONT.mono, fontSize:'0.41rem',
-                    color: sel ? min.color+'EE' : on ? min.color+'BB' : 'rgba(140,160,200,0.32)', transition:'all 0.13s' }}>{min.name}</span>
+                    color: sel ? min.color : on ? min.color+'CC' : 'rgba(140,160,200,0.28)', transition:'all 0.13s',
+                    textShadow: sel ? `0 0 6px ${min.color}55` : 'none' }}>{min.name}</span>
                   {min.sign === 'Custom' && (
                     <span style={{ fontFamily:FONT.mono, fontSize:'0.28rem',
                       color:'rgba(140,160,200,0.22)', marginLeft:'0.1rem' }}>custom</span>
@@ -1886,11 +2023,43 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
           <button style={{ ...BTN_SECONDARY, fontSize:'0.44rem',
             color:'rgba(200,80,80,0.50)', border:'1px solid rgba(200,80,80,0.20)' }}
             onClick={resetAgents}>{lang==='en'?'↺ Default':'↺ Défaut'}</button>
-          <button style={BTN_PRIMARY} onClick={saveAndLaunch}>
+          <button style={BTN_PRIMARY} onClick={() => setConfirmLaunch(true)}>
             {t('GENERATE',lang)}
           </button>
         </div>
       </div>
+
+      {/* ── Dialog récap final avant génération ── */}
+      {confirmLaunch && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(4,8,18,0.92)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:9999 }}
+          onClick={() => setConfirmLaunch(false)}>
+          <div style={{ background:'rgba(8,14,26,0.98)', border:'1px solid rgba(200,164,74,0.30)',
+            borderRadius:'4px', maxWidth:480, width:'92%', display:'flex', flexDirection:'column',
+            gap:'1.1rem', padding:'1.8rem', boxShadow:'0 8px 40px rgba(0,0,0,0.7)' }}
+            onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:FONT.mono, fontSize:'0.58rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.90)' }}>
+              ⚖ {lang==='en' ? 'WORLD SUMMARY' : 'RÉCAPITULATIF DU MONDE'}
+            </div>
+            <RecapAccordion
+              pendingDefs={pendingDefs}
+              perGov={perGov}
+              commonAgents={commonAgents}
+              commonMins={commonMins}
+              commonPres={commonPres}
+              commonMinsters={commonMinsters}
+              lang={lang}
+            />
+            <div style={{ display:'flex', gap:'0.6rem', justifyContent:'flex-end' }}>
+              <button style={{ ...BTN_SECONDARY, fontSize:'0.46rem' }} onClick={() => setConfirmLaunch(false)}>
+                {lang==='en' ? '← Edit' : '← Modifier'}
+              </button>
+              <button style={{ ...BTN_PRIMARY, fontSize:'0.46rem' }} onClick={() => { setConfirmLaunch(false); saveAndLaunch(); }}>
+                {lang==='en' ? 'GENERATE WORLD →' : 'GÉNÉRER LE MONDE →'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2001,6 +2170,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   const [mode,       setMode]      = useState(null);
   const [preset,     setPreset]    = useState(null);
   const [countries,  setCountries] = useState([DEFAULT_COUNTRY()]);
+  const [confirmOpen, setConfirmOpen] = useState(false); // dialog récap avant génération
   const [progress,   setProgress]  = useState(0);
   const [msg,        setMsg]       = useState('INITIALISATION…');
   const [showKeys,   setShowKeys]  = useState(false);
@@ -2734,14 +2904,11 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 title={canGen ? '' : lang==='en'?`Check: ${unvalidated.map(c=>c.nom||'?').join(', ')}`:`Vérifiez : ${unvalidated.map(c=>c.nom||'?').join(', ')}`}
                 onClick={() => {
                   if (!canGen) return;
-                  const filled = countries.map((c, i) => ({
-                    ...c,
-                    nom: c.nom.trim() || (c.realData?.nom) || `Nation ${i + 1}`,
-                  }));
+                  const filled = countries.map((c, i) => ({ ...c, nom: c.nom.trim() || c.realData?.nom || `Nation ${i+1}` }));
                   setCountries(filled);
                   preLaunch('custom', filled);
                 }}>
-                {canGen ? 'GÉNÉRER LE MONDE →' : hasNotFound ? 'PAYS INTROUVABLES — CORRIGEZ' : `COMPLÉTER LES PAYS (${unvalidated.length})`}
+                {canGen ? (lang==='en'?'CONFIGURE GOVERNMENT →':'CONFIGURER LE GOUVERNEMENT →') : hasNotFound ? 'PAYS INTROUVABLES — CORRIGEZ' : `COMPLÉTER LES PAYS (${unvalidated.length})`}
               </button>
             );
           })()}

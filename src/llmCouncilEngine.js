@@ -308,6 +308,9 @@ function localKeywordRoute(questionLow) {
  * @returns {Promise<{ ministerA, ministerB, synthese, isOrphan? }>}
  */
 export async function runMinisterePhase(ministry, question, country) {
+  // DEBUG — à retirer après validation
+  console.log('[ARIA GOV DEBUG] governanceOverride:', JSON.stringify(country?.governanceOverride ?? 'NONE'));
+  console.log('[ARIA GOV DEBUG] country.id:', country?.id, '| active_ministries:', country?.governanceOverride?.active_ministries);
   // ── Question orpheline hors-ligne ────────────────────────────────────────
   if (!ministry) {
     const rA = FALLBACK_RESPONSES.ministerA;

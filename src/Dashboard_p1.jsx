@@ -454,7 +454,7 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
   return {
     id:           aiData.nom.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-'),
     nom:          aiData.nom,
-    emoji:        aiData.emoji || regime.emoji || '🌍',
+    emoji:        aiData.emoji || '🌍',
     couleur:      aiData.couleur || '#4A7EC8',
     regime:       aiData.regime || 'republique_federale',
     regimeName:   regime.name,
@@ -1217,7 +1217,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
             return {
               id:           (d.nom || 'nation').toLowerCase().replace(/[^a-z0-9]/g, '-'),
               nom:          d.nom || 'Nation Inconnue',
-              emoji:        getStats().regimes?.[d.regime || 'republique_federale']?.emoji || '🌍',
+              emoji:        '🌍',
               couleur:      '#4A7EC8',
               regime:       d.regime || 'republique_federale',
               terrain:      d.terrain || 'coastal',
@@ -1235,9 +1235,14 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
       : [PAYS_LOCAUX[0]];
 
     const raw   = templates.map(t => buildCountryFromLocal(t, world));
-    const built = raw.map(c => {
+    const built = raw.map((c, i) => {
       const irl = calcAriaIRL(c);
-      return { ...c, aria_irl: irl, aria_current: irl };
+      const def = customDefs?.[i];
+      return {
+        ...c,
+        aria_irl: irl, aria_current: irl,
+        ...(def?.governanceOverride ? { governanceOverride: def.governanceOverride } : {}),
+      };
     });
 
     setCountries(built);
@@ -1277,7 +1282,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
           const irl = irlAI ?? calcAriaIRL(c);
           // Le nom validé par l'utilisateur est prioritaire sur le nom généré par l'IA
           const finalNom = def.nom || c.nom;
-          built.push({ ...c, nom: finalNom, aria_irl: irl, aria_current: irl, _fallback: false, ...(def.context_mode ? { context_mode: def.context_mode } : {}) });
+          built.push({ ...c, nom: finalNom, aria_irl: irl, aria_current: irl, _fallback: false, ...(def.context_mode ? { context_mode: def.context_mode } : {}), ...(def.governanceOverride ? { governanceOverride: def.governanceOverride } : {}) });
         } else {
           // Fallback : si le pays a un realData → construction locale fidèle
           // sinon → pays local générique
@@ -1291,7 +1296,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
             );
           }
           const irl = calcAriaIRL(fallback);
-          built.push({ ...fallback, aria_irl: irl, aria_current: irl, _fallback: true, _errorCode: aiData?.code, ...(def.context_mode ? { context_mode: def.context_mode } : {}) });
+          built.push({ ...fallback, aria_irl: irl, aria_current: irl, _fallback: true, _errorCode: aiData?.code, ...(def.context_mode ? { context_mode: def.context_mode } : {}), ...(def.governanceOverride ? { governanceOverride: def.governanceOverride } : {}) });
         }
       } catch (e) {
         console.warn('[ARIA] startWithAI error:', e);

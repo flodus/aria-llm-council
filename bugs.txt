@@ -149,6 +149,7 @@ mechanisms for resolving future conflicts
 
 
 
+- demander confirmation au clic sur "nouvelle partie" sur les dashboard
 
 
 

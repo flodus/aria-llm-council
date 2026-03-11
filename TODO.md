@@ -95,3 +95,35 @@ _Dernière mise à jour : 2026-03-11_
 
 ## 📁 Fichiers actifs
 `InitScreen.jsx` · `llmCouncilEngine.js` · `WorldEngine.js`
+
+##########################################################################################
+
+# ARIA — TODO.md
+_Dernière mise à jour : 2026-03-11_
+
+---
+
+## ✅ COMPLÉTÉ cette session
+
+- [x] MC cards nations prédéfinies : fond sombre (rgba 8,14,26)
+- [x] Tag "🌐 FICTIF" dans header CountryConfig
+- [x] Icônes ministres : effet glow actif / grisé inactif
+- [x] Dialog récap : accordéon par pays (Présidence / Ministères / Ministres)
+- [x] Fix selectedCountry sync dans App.jsx (governanceOverride in-game)
+
+---
+
+## 🔴 À VALIDER
+
+- [ ] Tester dialog récap avec 2 pays dont 1 avec constitution indépendante
+- [ ] Vérifier que perGov est bien lu dans RecapAccordion (effAgents peut être null si BASE pas encore chargée)
+
+---
+
+## PROCHAINE ÉTAPE
+
+### ÉTAPE 7 — WorldEngine.js
+- [ ] Distance minimum entre centroïdes (MIN_CENTROID_DIST = HEX_R × 8)
+
+### REFACTOR ARBORESCENCE (session dédiée)
+- [ ] src/components/, src/engine/, src/lib/
