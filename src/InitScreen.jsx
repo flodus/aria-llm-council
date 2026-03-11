@@ -793,7 +793,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
 
 // ── Composant principal ───────────────────────────────────────────────────
 // ── RecapAccordion — accordéon constitution dans le dialog récap ─────────────
-function RecapAccordion({ pendingDefs, perGov, commonAgents, commonMins, commonPres, commonMinsters, lang }) {
+function RecapAccordion({ pendingDefs, perGov, commonAgents, commonMins, commonPres, commonMinsters, lang, ctxModes, ctxOvrs }) {
   const [openIdx, setOpenIdx] = useState(null); // index pays ouvert
 
   return (
@@ -911,6 +911,32 @@ function RecapAccordion({ pendingDefs, perGov, commonAgents, commonMins, commonP
                     ))}
                   </div>
                 </div>
+
+                {/* Contexte délibérations */}
+                {(() => {
+                  const CTX_LABELS = { '':'⚙️ '+(lang==='en'?'Inherit global':'Hérite du global'), auto:'🤖 Auto', rich:lang==='en'?'📖 Enriched':'📖 Enrichi', stats_only:lang==='en'?'📊 Stats only':'📊 Stats seules', off:lang==='en'?'🚫 Disabled':'🚫 Désactivé' };
+                  const mode = ctxModes?.[i] || '';
+                  const ovr  = ctxOvrs?.[i]  || '';
+                  return (
+                    <div>
+                      <div style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.14em',
+                        color:'rgba(200,164,74,0.50)', marginBottom:'0.25rem' }}>
+                        {lang==='en' ? 'DELIBERATION CONTEXT' : 'CONTEXTE DÉLIBÉRATIONS'}
+                      </div>
+                      <div style={{ display:'flex', gap:'0.35rem', flexWrap:'wrap', alignItems:'center' }}>
+                        <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem',
+                          color:'rgba(160,180,220,0.75)', background:'rgba(100,120,180,0.08)',
+                          border:'1px solid rgba(100,120,180,0.20)', borderRadius:'2px', padding:'0.13rem 0.40rem' }}>
+                          {CTX_LABELS[mode] || CTX_LABELS['']}
+                        </span>
+                        {ovr && (
+                          <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(200,164,74,0.60)',
+                            fontStyle:'italic' }}>✎ override</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             )}
           </div>
@@ -2049,6 +2075,8 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
               commonPres={commonPres}
               commonMinsters={commonMinsters}
               lang={lang}
+              ctxModes={plCtxModes}
+              ctxOvrs={plCtxOvrs}
             />
             <div style={{ display:'flex', gap:'0.6rem', justifyContent:'flex-end' }}>
               <button style={{ ...BTN_SECONDARY, fontSize:'0.46rem' }} onClick={() => setConfirmLaunch(false)}>
