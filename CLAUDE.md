@@ -101,6 +101,8 @@ Afficher à chaque fin d'échange :
 2. Commit avec message conventionnel (`feat:`, `fix:`, `chore:`, `refactor:`, etc.)
 3. `git push` — sans attendre une demande explicite
 
+Pas de `Co-Authored-By` dans les messages de commit.
+
 ## Règles de livraison
 
 Pour chaque étape :
