@@ -259,7 +259,8 @@ function APIKeyInline({ onClose }) {
                       color: showPass[prov.id] ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)',
                       fontSize:'0.75rem', lineHeight:1 }}
                     title={showPass[prov.id] ? (lang==='en'?'Hide':'Masquer') : (lang==='en'?'Show':'Afficher')}>
-                    {showPass[prov.id] ? '🙈' : '👁'}
+                    <span className={showPass[prov.id] ? 'mdi mdi-eye-lock-open' : 'mdi mdi-eye-lock'}
+                      style={{ fontSize:'1rem' }} />
                   </button>
                 </div>
                 <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.55rem', fontSize:'0.44rem', whiteSpace:'nowrap' }}
