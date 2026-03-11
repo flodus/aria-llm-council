@@ -2070,6 +2070,8 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
   const { lang } = useLocale();
   const GOLD = 'rgba(200,164,74,0.88)';
   const DIM  = 'rgba(140,160,200,0.46)';
+  const _globalCtxMode = (() => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}').gameplay?.context_mode || 'auto'; } catch { return 'auto'; } })();
+  const _globalCtxLabel = ({ auto:'🤖 Auto', rich: lang==='en'?'📖 Enriched':'📖 Enrichi', stats_only: lang==='en'?'📊 Stats only':'📊 Stats seules', off: lang==='en'?'🚫 Disabled':'🚫 Désactivé' })[_globalCtxMode] || '🤖 Auto';
   return (
     <div style={{ width:'100%', borderRadius:'2px',
       ...(!embedded ? {
@@ -2108,7 +2110,7 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
           {/* Mode radio */}
           <div style={{ display:'flex', flexDirection:'column', gap:'0.26rem' }}>
             {[
-              ['', '⚙️ '+(lang==='en'?'Inherit global':'Hérite du global'), lang==='en'?'Follows Settings config':'Suit le réglage de Settings'],
+              ['', '⚙️ '+(lang==='en'?'Inherit global':'Hérite du global'), lang==='en'?`Follows global setting (currently: ${_globalCtxLabel})`:`Suit le réglage mondial (actuellement : ${_globalCtxLabel})`],
               ['auto',       '🤖 Auto',                  'Stats + description si disponible'],
               ['rich', '📖 '+(lang==='en'?'Enriched':'Enrichi'), lang==='en'?"Full context — AI reasons from regime history and its resources.":"Contexte complet — l'IA raisonne sur l'historique du régime."],
               ['stats_only', '📊 Stats seules',          'Chiffres uniquement — neutre'],

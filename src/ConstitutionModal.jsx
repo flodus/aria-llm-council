@@ -54,6 +54,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
   const { lang } = useLocale();
   // ── Traductions UI inline ──────────────────────────────────────────────
   const isEn = lang === 'en';
+  const _globalCtxMode = (() => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}').gameplay?.context_mode || 'auto'; } catch { return 'auto'; } })();
+  const _globalCtxLabel = ({ auto:'🤖 Auto', rich: isEn?'📖 Enriched':'📖 Enrichi', stats_only: isEn?'📊 Stats only':'📊 Stats seules', off: isEn?'🚫 Disabled':'🚫 Désactivé' })[_globalCtxMode] || '🤖 Auto';
   const tr = {
     title:        isEn ? '🏛️ Government'           : '🏛️ Gouvernement',
     tabRegime:    isEn ? 'REGIME'                   : 'RÉGIME',
@@ -66,7 +68,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     contextHint:  isEn ? 'Leave on "Inherit" to follow the global setting (Settings).'
                        : t('CONST_CTX_INHERIT_HINT', lang),
     ctxInherit:   isEn ? '⚙️ Inherit global'        : '⚙️ Hérite du global',
-    ctxInheritH:  isEn ? 'Follows the Settings rule': 'Suit le réglage de Settings',
+    ctxInheritH:  isEn ? `Follows global setting (currently: ${_globalCtxLabel})` : `Suit le réglage mondial (actuellement : ${_globalCtxLabel})`,
     ctxAuto:      isEn ? '🤖 Auto'                  : '🤖 Auto',
     ctxRich:      isEn ? '📖 Enriched'              : '📖 Enrichi',
     ctxRichH:     isEn ? 'Full context — prompts AI to reason historically'
