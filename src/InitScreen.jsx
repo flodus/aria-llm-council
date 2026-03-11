@@ -787,19 +787,74 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
 // ── PreLaunchScreen — constitution editor before world generation ────────────
 function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaunch }) {
   const { lang } = useLocale();
-  const [plAgents,     setPlAgents]     = useState(null);
   const [plLoading,    setPlLoading]    = useState(true);
   const [plTab,        setPlTab]        = useState('resume');
   const [plCountry,    setPlCountry]    = useState(0);
-  // Active subsets
-  const [activeMins,   setActiveMins]   = useState(null); // null = tous
-  const [activePres,   setActivePres]   = useState(['phare','boussole']);
+
+  // ── Constitution commune (base partagée par tous les pays) ────────────────
+  const [commonAgents,  setCommonAgents]  = useState(null);
+  const [commonMins,    setCommonMins]    = useState(null);             // null = tous actifs
+  const [commonPres,    setCommonPres]    = useState(['phare','boussole']);
+  const [commonMinsters,setCommonMinsters]= useState(null);             // null = tous actifs
+
+  // ── Overrides par pays : perGov[i] = null (hérite) | { agents, activeMins, activePres, activeMinsters }
+  const [perGov, setPerGov] = useState(() => (pendingDefs||[]).map(() => null));
+
+  // ── Getters/setters courants (agissent sur plCountry) ────────────────────
+  const curGov = perGov[plCountry];
+  const hasOverride = !!curGov;
+
+  // Valeurs effectives pour le pays courant
+  const plAgents       = curGov?.agents       ?? commonAgents;
+  const activeMins     = curGov?.activeMins    ?? commonMins;
+  const activePres     = curGov?.activePres    ?? commonPres;
+  const activeMinsters = curGov?.activeMinsters ?? commonMinsters;
+
+  // Setters qui écrivent dans le bon endroit (override si exists, sinon commun)
+  const setPlAgents = (fn) => {
+    if (hasOverride) setPerGov(p => { const a=[...p]; a[plCountry]={...a[plCountry], agents: typeof fn==='function' ? fn(a[plCountry].agents) : fn}; return a; });
+    else setCommonAgents(fn);
+  };
+  const setActiveMins = (v) => {
+    if (hasOverride) setPerGov(p => { const a=[...p]; a[plCountry]={...a[plCountry], activeMins:typeof v==='function'?v(a[plCountry].activeMins):v}; return a; });
+    else setCommonMins(v);
+  };
+  const setActivePres = (v) => {
+    if (hasOverride) setPerGov(p => { const a=[...p]; a[plCountry]={...a[plCountry], activePres:typeof v==='function'?v(a[plCountry].activePres):v}; return a; });
+    else setCommonPres(v);
+  };
+  const setActiveMinsters = (v) => {
+    if (hasOverride) setPerGov(p => { const a=[...p]; a[plCountry]={...a[plCountry], activeMinsters:typeof v==='function'?v(a[plCountry].activeMinsters):v}; return a; });
+    else setCommonMinsters(v);
+  };
+
+  // Fork : crée un override pour le pays courant à partir de la constitution commune
+  const forkCountry = () => {
+    setPerGov(p => {
+      if (p[plCountry]) return p; // déjà un override
+      const a = [...p];
+      a[plCountry] = {
+        agents:        JSON.parse(JSON.stringify(commonAgents)),
+        activeMins:    commonMins,
+        activePres:    [...commonPres],
+        activeMinsters: commonMinsters,
+      };
+      return a;
+    });
+  };
+
+  // Reset override d'un pays → revient à la commune
+  const resetCountryOverride = (i) => {
+    setPerGov(p => { const a=[...p]; a[i]=null; return a; });
+    setSelectedMinistry(null);
+    setSelectedMinister(null);
+  };
+
   // New minister/ministry forms
   const [newMinForm,   setNewMinForm]   = useState(false);
   const [newMinData,   setNewMinData]   = useState({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
   const [newMinistryForm, setNewMinistryForm] = useState(false);
   const [newMinistryData, setNewMinistryData] = useState({ id:'', name:'', emoji:'🏛', color:'#8090C0', mission:'', ministers:[] });
-  const [activeMinsters,   setActiveMinsters]   = useState(null); // null = tous actifs
   const [selectedMinistry, setSelectedMinistry] = useState(null);
   const [selectedMinister, setSelectedMinister] = useState(null);
   const scrollRef = useRef(null);
@@ -854,15 +909,15 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       try {
         const ov = JSON.parse(localStorage.getItem('aria_agents_override')||'null');
         if (ov) {
-          setPlAgents(ov);
-          if (ov.active_ministries) setActiveMins(ov.active_ministries);
-          if (ov.active_presidency) setActivePres(ov.active_presidency);
-          if (ov.active_ministers)  setActiveMinsters(ov.active_ministers);
+          setCommonAgents(ov);
+          if (ov.active_ministries) setCommonMins(ov.active_ministries);
+          if (ov.active_presidency) setCommonPres(ov.active_presidency);
+          if (ov.active_ministers)  setCommonMinsters(ov.active_ministers);
           setPlLoading(false); return;
         }
         const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
-        setPlAgents(JSON.parse(JSON.stringify(BASE)));
-      } catch { setPlAgents(null); }
+        setCommonAgents(JSON.parse(JSON.stringify(BASE)));
+      } catch { setCommonAgents(null); }
       setPlLoading(false);
     };
     load();
@@ -879,13 +934,14 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   };
 
   const saveAndLaunch = () => {
-    if (plAgents) {
+    // Sauvegarde constitution commune comme fallback global
+    if (commonAgents) {
       try {
         localStorage.setItem('aria_agents_override', JSON.stringify({
-          ...plAgents,
-          active_ministries: activeMins,
-          active_presidency: activePres,
-          active_ministers:  activeMinsters,
+          ...commonAgents,
+          active_ministries: commonMins,
+          active_presidency: commonPres,
+          active_ministers:  commonMinsters,
         }));
       } catch {}
     }
@@ -903,20 +959,34 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
         }).filter(Boolean))
       ));
     } catch {}
-    // Merge ctx overrides back into pendingDefs
-    const defs = (pendingDefs || []).map((d, i) => ({
-      ...d,
-      context_mode:    plCtxModes[i] || undefined,
-      contextOverride: plCtxOvrs[i]  || undefined,
-    }));
+    // Merge ctx overrides + perGov overrides dans chaque pendingDef
+    const defs = (pendingDefs || []).map((d, i) => {
+      const gov = perGov[i];
+      return {
+        ...d,
+        context_mode:    plCtxModes[i] || undefined,
+        contextOverride: plCtxOvrs[i]  || undefined,
+        // Override gouvernance par pays si défini
+        ...(gov ? {
+          governanceOverride: {
+            agents:           gov.agents,
+            active_ministries: gov.activeMins,
+            active_presidency: gov.activePres,
+            active_ministers:  gov.activeMinsters,
+          }
+        } : {}),
+      };
+    });
     onLaunch(pendingPreset, defs);
   };
 
   const resetAgents = () => {
     localStorage.removeItem('aria_agents_override');
-    setActiveMins(null); setActivePres(['phare','boussole']);
-    setPlAgents(null); setPlLoading(true);
-    try { const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS; setPlAgents(JSON.parse(JSON.stringify(BASE))); } catch {} setPlLoading(false);
+    setCommonMins(null); setCommonPres(['phare','boussole']); setCommonMinsters(null);
+    setCommonAgents(null); setPlLoading(true);
+    try { const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS; setCommonAgents(JSON.parse(JSON.stringify(BASE))); } catch {} setPlLoading(false);
+    // Reset tous les overrides pays aussi
+    setPerGov((pendingDefs||[]).map(() => null));
   };
 
   const addMinister = () => {
@@ -956,19 +1026,50 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box' }}>
       <ARIAHeader showQuote={false} />
 
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%', flexWrap:'wrap', gap:'0.4rem' }}>
         <div style={labelStyle()}>CONSTITUTION — {worldName}</div>
         {hasMulti && (
           <div style={{ display:'flex', gap:'0.3rem', flexWrap:'wrap', justifyContent:'flex-end' }}>
-            {countries.map((c, i) => (
-              <button key={i}
-                style={{ ...BTN_SECONDARY, padding:'0.22rem 0.50rem', fontSize:'0.42rem',
-                  ...(plCountry===i ? { border:'1px solid rgba(200,164,74,0.50)',
-                    color:'rgba(200,164,74,0.90)', background:'rgba(200,164,74,0.08)' } : {}) }}
-                onClick={() => setPlCountry(i)}>
-                {c.realData?.flag||'🌐'} {c.nom||c.realData?.nom||`Nation ${i+1}`}
+            {countries.map((c, i) => {
+              const isCustom = !!perGov[i];
+              return (
+                <button key={i}
+                  style={{ ...BTN_SECONDARY, padding:'0.22rem 0.50rem', fontSize:'0.42rem', position:'relative',
+                    ...(plCountry===i ? { border:'1px solid rgba(200,164,74,0.50)',
+                      color:'rgba(200,164,74,0.90)', background:'rgba(200,164,74,0.08)' } : {}) }}
+                  onClick={() => { setPlCountry(i); setSelectedMinistry(null); setSelectedMinister(null); }}>
+                  {c.realData?.flag||'🌐'} {c.nom||c.realData?.nom||`Nation ${i+1}`}
+                  {isCustom && (
+                    <span style={{ marginLeft:'0.3rem', fontSize:'0.30rem', fontFamily:FONT.mono,
+                      color:'rgba(100,180,255,0.70)', letterSpacing:'0.05em' }}>✦</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+        {/* Bouton Personnaliser / Réinitialiser le pays courant */}
+        {hasMulti && (
+          <div style={{ display:'flex', gap:'0.35rem', width:'100%', justifyContent:'flex-end' }}>
+            {!hasOverride ? (
+              <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.5rem',
+                color:'rgba(100,180,255,0.60)', border:'1px solid rgba(100,180,255,0.20)' }}
+                onClick={forkCountry}>
+                ✦ {lang==='en' ? 'Customize this country' : 'Personnaliser ce pays'}
               </button>
-            ))}
+            ) : (
+              <>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:'rgba(100,180,255,0.55)',
+                  alignSelf:'center', fontStyle:'italic' }}>
+                  {lang==='en' ? '✦ Custom constitution' : '✦ Constitution personnalisée'}
+                </span>
+                <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.5rem',
+                  color:'rgba(200,80,80,0.50)', border:'1px solid rgba(200,80,80,0.20)' }}
+                  onClick={() => resetCountryOverride(plCountry)}>
+                  ↺ {lang==='en' ? 'Reset to common' : 'Revenir à la commune'}
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
