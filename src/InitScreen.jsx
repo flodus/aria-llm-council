@@ -1354,6 +1354,55 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
           {/* ── MINISTÈRES ──────────────────────────────────────────── */}
           {plTab === 'ministries' && (<>
+            {/* Bouton sticky + Nouveau ministère */}
+            <div style={{ position:'sticky', top:0, zIndex:10,
+              background:'rgba(4,8,18,0.97)', paddingBottom:'0.4rem',
+              borderBottom:'1px solid rgba(200,164,74,0.08)' }}>
+              {newMinistryForm ? (
+                <div style={{ ...CARD_STYLE, border:'1px solid rgba(100,160,255,0.25)' }}>
+                  <div style={{ ...labelStyle('0.42rem'), color:'rgba(100,160,255,0.70)',
+                    marginBottom:'0.5rem' }}>+ {lang==='en'?'NEW MINISTRY':'NOUVEAU MINISTÈRE'}</div>
+                  <div style={{ display:'grid', gridTemplateColumns:'auto 1fr 1fr', gap:'0.5rem', marginBottom:'0.4rem' }}>
+                    <input style={{ ...INPUT_STYLE, width:'2.5rem', textAlign:'center', fontSize:'1rem' }}
+                      value={newMinistryData.emoji}
+                      onChange={e => setNewMinistryData(d=>({...d,emoji:e.target.value}))}
+                      placeholder="🏛" />
+                    <input style={{ ...INPUT_STYLE, fontSize:'0.50rem' }}
+                      value={newMinistryData.name}
+                      onChange={e => setNewMinistryData(d=>({...d,name:e.target.value}))}
+                      placeholder={t('MINISTRY_NAME', lang)} />
+                    <input style={{ ...INPUT_STYLE, fontSize:'0.50rem' }}
+                      value={newMinistryData.id}
+                      onChange={e => setNewMinistryData(d=>({...d,id:e.target.value}))}
+                      placeholder="id_unique" />
+                  </div>
+                  <div style={{ display:'flex', gap:'0.5rem', alignItems:'center', marginBottom:'0.4rem' }}>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.45)' }}>{lang==='en'?'Color':'Couleur'}</span>
+                    <input type="color" value={newMinistryData.color}
+                      style={{ width:'2rem', height:'1.4rem', border:'none', background:'none', cursor:'pointer' }}
+                      onChange={e => setNewMinistryData(d=>({...d,color:e.target.value}))} />
+                  </div>
+                  <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'40px', resize:'vertical',
+                    fontSize:'0.42rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.4rem' }}
+                    value={newMinistryData.mission}
+                    onChange={e => setNewMinistryData(d=>({...d,mission:e.target.value}))}
+                    placeholder={t('MINISTRY_MISSION', lang)} />
+                  <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end' }}>
+                    <button style={BTN_SECONDARY} onClick={() => setNewMinistryForm(false)}>{lang==='en'?'Cancel':'Annuler'}</button>
+                    <button style={{ ...BTN_PRIMARY, opacity: newMinistryData.name&&newMinistryData.id ? 1 : 0.35 }}
+                      disabled={!newMinistryData.name||!newMinistryData.id}
+                      onClick={addMinistry}>{lang==='en'?'Add →':'Ajouter →'}</button>
+                  </div>
+                </div>
+              ) : (
+                <button style={{ ...BTN_SECONDARY, fontSize:'0.46rem', width:'100%',
+                  color:'rgba(100,160,255,0.60)', border:'1px solid rgba(100,160,255,0.25)' }}
+                  onClick={() => setNewMinistryForm(true)}>
+                  {lang==='en'?'+ New ministry':'+ Nouveau ministère'}
+                </button>
+              )}
+            </div>
+
             {plAgents.ministries.map((ministry, mi) => {
               const allMinKeys = Object.keys(plAgents.ministers);
               const on = activeMins === null || activeMins.includes(ministry.id);
@@ -1446,56 +1495,65 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 </div>
               );
             })}
-
-            {/* Formulaire nouveau ministère */}
-            {newMinistryForm ? (
-              <div style={{ ...CARD_STYLE, border:'1px solid rgba(100,160,255,0.25)' }}>
-                <div style={{ ...labelStyle('0.42rem'), color:'rgba(100,160,255,0.70)',
-                  marginBottom:'0.5rem' }}>+ NOUVEAU MINISTÈRE</div>
-                <div style={{ display:'grid', gridTemplateColumns:'auto 1fr 1fr', gap:'0.5rem', marginBottom:'0.4rem' }}>
-                  <input style={{ ...INPUT_STYLE, width:'2.5rem', textAlign:'center', fontSize:'1rem' }}
-                    value={newMinistryData.emoji}
-                    onChange={e => setNewMinistryData(d=>({...d,emoji:e.target.value}))}
-                    placeholder="🏛" />
-                  <input style={{ ...INPUT_STYLE, fontSize:'0.50rem' }}
-                    value={newMinistryData.name}
-                    onChange={e => setNewMinistryData(d=>({...d,name:e.target.value}))}
-                    placeholder={t('MINISTRY_NAME', lang)} />
-                  <input style={{ ...INPUT_STYLE, fontSize:'0.50rem' }}
-                    value={newMinistryData.id}
-                    onChange={e => setNewMinistryData(d=>({...d,id:e.target.value}))}
-                    placeholder="id_unique" />
-                </div>
-                <div style={{ display:'flex', gap:'0.5rem', alignItems:'center', marginBottom:'0.4rem' }}>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.45)' }}>Couleur</span>
-                  <input type="color" value={newMinistryData.color}
-                    style={{ width:'2rem', height:'1.4rem', border:'none', background:'none', cursor:'pointer' }}
-                    onChange={e => setNewMinistryData(d=>({...d,color:e.target.value}))} />
-                </div>
-                <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'40px', resize:'vertical',
-                  fontSize:'0.42rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.4rem' }}
-                  value={newMinistryData.mission}
-                  onChange={e => setNewMinistryData(d=>({...d,mission:e.target.value}))}
-                  placeholder={t('MINISTRY_MISSION', lang)} />
-                <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end' }}>
-                  <button style={BTN_SECONDARY} onClick={() => setNewMinistryForm(false)}>{lang==='en'?'Cancel':'Annuler'}</button>
-                  <button style={{ ...BTN_PRIMARY, opacity: newMinistryData.name&&newMinistryData.id ? 1 : 0.35 }}
-                    disabled={!newMinistryData.name||!newMinistryData.id}
-                    onClick={addMinistry}>{lang==='en'?'Add →':'Ajouter →'}</button>
-                </div>
-              </div>
-            ) : (
-              <button style={{ ...BTN_SECONDARY, alignSelf:'center', fontSize:'0.46rem',
-                color:'rgba(100,160,255,0.60)', border:'1px solid rgba(100,160,255,0.25)' }}
-                onClick={() => setNewMinistryForm(true)}>
-                {lang==='en'?'+ New ministry':'+ Nouveau ministère'}
-              </button>
-            )}
           </>)}
 
           {/* ── MINISTRES ───────────────────────────────────────────── */}
           {plTab === 'ministers' && (<>
-            <div style={{ ...CARD_STYLE }}>
+            {/* Bouton sticky + Nouveau ministre */}
+            <div style={{ position:'sticky', top:0, zIndex:10,
+              background:'rgba(4,8,18,0.97)', paddingBottom:'0.4rem',
+              borderBottom:'1px solid rgba(58,191,122,0.08)' }}>
+              {newMinForm ? (
+                <div style={{ ...CARD_STYLE, border:'1px solid rgba(100,200,120,0.25)' }}>
+                <div style={{ ...labelStyle('0.42rem'), color:'rgba(100,200,120,0.70)',
+                  marginBottom:'0.5rem' }}>+ {lang==='en'?'NEW MINISTER':'NOUVEAU MINISTRE'}</div>
+                  <div style={{ display:'grid', gridTemplateColumns:'auto 1fr 1fr auto', gap:'0.45rem',
+                    marginBottom:'0.4rem', alignItems:'center' }}>
+                    <input style={{ ...INPUT_STYLE, width:'2.2rem', textAlign:'center', fontSize:'1rem' }}
+                    value={newMinData.emoji} onChange={e => setNewMinData(d=>({...d,emoji:e.target.value}))}
+                    placeholder="🌟" />
+                    <input style={{ ...INPUT_STYLE, fontSize:'0.48rem' }}
+                    value={newMinData.name} onChange={e => setNewMinData(d=>({...d,name:e.target.value}))}
+                    placeholder="Nom du ministre" />
+                    <input style={{ ...INPUT_STYLE, fontSize:'0.48rem' }}
+                    value={newMinData.id} onChange={e => setNewMinData(d=>({...d,id:e.target.value}))}
+                    placeholder="id_unique" />
+                    <input type="color" value={newMinData.color}
+                    style={{ width:'2rem', height:'1.8rem', border:'none', background:'none', cursor:'pointer' }}
+                    onChange={e => setNewMinData(d=>({...d,color:e.target.value}))} />
+                    </div>
+                    <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'36px', resize:'vertical',
+                      fontSize:'0.41rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.35rem' }}
+                      value={newMinData.essence} onChange={e => setNewMinData(d=>({...d,essence:e.target.value}))}
+                      placeholder={t('CONST_ESSENCE_PH', lang)} />
+                      <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'28px', resize:'vertical',
+                        fontSize:'0.41rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.4rem' }}
+                        value={newMinData.comm} onChange={e => setNewMinData(d=>({...d,comm:e.target.value}))}
+                        placeholder="Style de communication…" />
+                        <div style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(90,110,150,0.42)', marginBottom:'0.12rem' }}>
+                        ANGLE D'ANNOTATION <span style={{ fontWeight:'normal', color:'rgba(90,110,150,0.32)' }}>— question posée lors des annotations inter-ministérielles</span>
+                        </div>
+                        <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'26px', resize:'vertical',
+                          fontSize:'0.41rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.4rem' }}
+                          value={newMinData.annotation} onChange={e => setNewMinData(d=>({...d,annotation:e.target.value}))}
+                          placeholder={lang==='en'?"E.g. What is the minister's position on…":"Ex : Quelle est la position du ministre sur l'équilibre entre…"} />
+                          <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end' }}>
+                          <button style={BTN_SECONDARY} onClick={() => setNewMinForm(false)}>{lang==='en'?'Cancel':'Annuler'}</button>
+                          <button style={{ ...BTN_PRIMARY, opacity: newMinData.name&&newMinData.id ? 1 : 0.35 }}
+                          disabled={!newMinData.name||!newMinData.id}
+                          onClick={addMinister}>{lang==='en'?'Add →':'Ajouter →'}</button>
+                          </div>
+                          </div>
+              ) : (
+                <button style={{ ...BTN_SECONDARY, fontSize:'0.46rem', width:'100%',
+                  color:'rgba(100,200,120,0.60)', border:'1px solid rgba(100,200,120,0.25)' }}
+                  onClick={() => setNewMinForm(true)}>
+                  {lang==='en'?'+ New minister':'+ Nouveau ministre'}
+                  </button>
+              )}
+              </div>
+
+              <div style={{ ...CARD_STYLE }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.45rem' }}>
                 <div style={labelStyle('0.42rem')}>{Object.keys(plAgents.ministers).length} MINISTRES</div>
                 <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.38rem' }}
@@ -1579,62 +1637,6 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 />
               </div>
             ))}
-
-            {/* Nouveau ministre */}
-            {newMinForm ? (
-              <div style={{ ...CARD_STYLE, border:'1px solid rgba(100,200,120,0.25)' }}>
-                <div style={{ ...labelStyle('0.42rem'), color:'rgba(100,200,120,0.70)',
-                  marginBottom:'0.5rem' }}>+ NOUVEAU MINISTRE</div>
-                <div style={{ display:'grid', gridTemplateColumns:'auto 1fr 1fr auto', gap:'0.45rem',
-                  marginBottom:'0.4rem', alignItems:'center' }}>
-                  <input style={{ ...INPUT_STYLE, width:'2.2rem', textAlign:'center', fontSize:'1rem' }}
-                    value={newMinData.emoji}
-                    onChange={e => setNewMinData(d=>({...d,emoji:e.target.value}))}
-                    placeholder="🌟" />
-                  <input style={{ ...INPUT_STYLE, fontSize:'0.48rem' }}
-                    value={newMinData.name}
-                    onChange={e => setNewMinData(d=>({...d,name:e.target.value}))}
-                    placeholder="Nom du ministre" />
-                  <input style={{ ...INPUT_STYLE, fontSize:'0.48rem' }}
-                    value={newMinData.id}
-                    onChange={e => setNewMinData(d=>({...d,id:e.target.value}))}
-                    placeholder="id_unique" />
-                  <input type="color" value={newMinData.color}
-                    style={{ width:'2rem', height:'1.8rem', border:'none', background:'none', cursor:'pointer' }}
-                    onChange={e => setNewMinData(d=>({...d,color:e.target.value}))} />
-                </div>
-                <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'36px', resize:'vertical',
-                  fontSize:'0.41rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.35rem' }}
-                  value={newMinData.essence}
-                  onChange={e => setNewMinData(d=>({...d,essence:e.target.value}))}
-                  placeholder={t('CONST_ESSENCE_PH', lang)} />
-                <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'28px', resize:'vertical',
-                  fontSize:'0.41rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.4rem' }}
-                  value={newMinData.comm}
-                  onChange={e => setNewMinData(d=>({...d,comm:e.target.value}))}
-                  placeholder="Style de communication…" />
-                <div style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(90,110,150,0.42)', marginBottom:'0.12rem' }}>
-                  ANGLE D'ANNOTATION <span style={{ fontWeight:'normal', color:'rgba(90,110,150,0.32)' }}>— question posée lors des annotations inter-ministérielles</span>
-                </div>
-                <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'26px', resize:'vertical',
-                  fontSize:'0.41rem', fontFamily:FONT.mono, lineHeight:1.5, marginBottom:'0.4rem' }}
-                  value={newMinData.annotation}
-                  onChange={e => setNewMinData(d=>({...d,annotation:e.target.value}))}
-                  placeholder={lang==='en'?"E.g. What is the minister's position on the balance between…":"Ex : Quelle est la position du ministre sur l'équilibre entre…"} />
-                <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end' }}>
-                  <button style={BTN_SECONDARY} onClick={() => setNewMinForm(false)}>{lang==='en'?'Cancel':'Annuler'}</button>
-                  <button style={{ ...BTN_PRIMARY, opacity: newMinData.name&&newMinData.id ? 1 : 0.35 }}
-                    disabled={!newMinData.name||!newMinData.id}
-                    onClick={addMinister}>{lang==='en'?'Add →':'Ajouter →'}</button>
-                </div>
-              </div>
-            ) : (
-              <button style={{ ...BTN_SECONDARY, alignSelf:'center', fontSize:'0.46rem',
-                color:'rgba(100,200,120,0.60)', border:'1px solid rgba(100,200,120,0.25)' }}
-                onClick={() => setNewMinForm(true)}>
-                {lang==='en'?'+ New minister':'+ Nouveau ministre'}
-              </button>
-            )}
           </>)}
         </div>
       )}
