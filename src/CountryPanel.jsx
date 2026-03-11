@@ -35,7 +35,35 @@ function getCountryEmoji(country) {
   }
   return '🌍';
 }
-
+function CountryNavArrows({ countryIndex, countryTotal, onPrevCountry, onNextCountry }) {
+  if (!countryTotal || countryTotal < 2) return null;
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:'0.25rem' }}>
+    <button onClick={onPrevCountry} style={{
+      background:'none', border:'none', cursor:'pointer', padding:'0.1rem 0.2rem',
+      color:'rgba(140,160,200,0.40)', fontSize:'0.85rem', lineHeight:1,
+          transition:'color 0.15s',
+    }}
+    onMouseEnter={e => e.target.style.color='rgba(200,164,74,0.70)'}
+    onMouseLeave={e => e.target.style.color='rgba(140,160,200,0.40)'}>
+    <span className="mdi mdi-chevron-left" />
+    </button>
+    <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
+      color:'rgba(140,160,200,0.30)', letterSpacing:'0.08em', userSelect:'none' }}>
+      {countryIndex + 1}/{countryTotal}
+      </span>
+      <button onClick={onNextCountry} style={{
+        background:'none', border:'none', cursor:'pointer', padding:'0.1rem 0.2rem',
+        color:'rgba(140,160,200,0.40)', fontSize:'0.85rem', lineHeight:1,
+          transition:'color 0.15s',
+      }}
+      onMouseEnter={e => e.target.style.color='rgba(200,164,74,0.70)'}
+      onMouseLeave={e => e.target.style.color='rgba(140,160,200,0.40)'}>
+      <span className="mdi mdi-chevron-right" />
+      </button>
+      </div>
+  );
+}
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
   if (loadLang() !== 'en') return country?.nom || '';
@@ -172,6 +200,7 @@ export default function CountryPanel({
   onClose, onSecession, onNextCycle, onCrisisToggle,
   onGoToCouncil, onGoToMap, onGoToTimeline, onConstitution,
   onSubmitQuestion, onAddFictionalCountry,
+  countryIndex = 0, countryTotal = 1, onPrevCountry, onNextCountry,
 }) {
   // Réactif au changement de langue sans remontage
   const [lang, setLang] = useState(() => loadLang());
@@ -185,16 +214,13 @@ export default function CountryPanel({
   const [customQ,      setCustomQ]      = useState('');
   const [freeQ,        setFreeQ]        = useState('');
   const [submitting,   setSubmitting]   = useState(false);
-
   const {
     nom = 'Inconnu', emoji = '🌍', terrain = 'coastal',
     population = 0, tauxNatalite = 0, tauxMortalite = 0,
     satisfaction = 50, ressources = {},
     aria_irl = null, aria_current = null,
   } = country;
-
   const sc = satisfColor(satisfaction);
-
   const handleSubmit = (question, ministryId = null) => {
     if (!question.trim() || submitting) return;
     setSubmitting(true);
@@ -211,13 +237,14 @@ export default function CountryPanel({
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div className="panel-header">
-          <span className="panel-header-emoji">{getCountryEmoji(country)}</span>
-          <div style={{ flex: 1 }}>
-            <div className="panel-header-title">{getLocalizedNom(country) || nom}</div>
-            <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.40)', letterSpacing: '0.10em' }}>
-              {isEn?'DELIBERATION COUNCIL':'CONSEIL DE DÉLIBÉRATION'}
-            </div>
+        <span className="panel-header-emoji">{getCountryEmoji(country)}</span>
+        <div style={{ flex: 1 }}>
+          <div className="panel-header-title">{getLocalizedNom(country) || nom}</div>
+          <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.40)', letterSpacing: '0.10em' }}>
+            {isEn?'DELIBERATION COUNCIL':'CONSEIL DE DÉLIBÉRATION'}
           </div>
+        </div>
+          <CountryNavArrows countryIndex={countryIndex} countryTotal={countryTotal} onPrevCountry={onPrevCountry} onNextCountry={onNextCountry} />
           <button className="btn-icon" onClick={onClose}>✕</button>
         </div>
 
@@ -424,14 +451,14 @@ export default function CountryPanel({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className="panel-header">
-        <span className="panel-header-emoji">{emoji}</span>
+        <span className="panel-header-emoji">{getCountryEmoji(country)}</span>
         <div style={{ flex: 1 }}>
           <div className="panel-header-title">{getLocalizedNom(country) || nom}</div>
           <div className="panel-header-regime">{getTerrainLabel(terrain)}</div>
         </div>
+        <CountryNavArrows countryIndex={countryIndex} countryTotal={countryTotal} onPrevCountry={onPrevCountry} onNextCountry={onNextCountry} />
         <button className="btn-icon" onClick={onClose} style={{ flexShrink: 0 }}>✕</button>
       </div>
-
         {/* Mini-nav tabs contextuels */}
         <div style={{ display:'flex', gap:'0.3rem', padding:'0.25rem 0.7rem', borderBottom:'1px solid rgba(90,110,160,0.10)', background:'rgba(4,8,18,0.4)' }}>
           {[
