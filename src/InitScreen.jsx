@@ -1032,39 +1032,39 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
           <div style={{ display:'flex', gap:'0.3rem', flexWrap:'wrap', justifyContent:'flex-end' }}>
             {countries.map((c, i) => {
               const isCustom = !!perGov[i];
+              const nom = c.nom || c.realData?.nom || `Nation ${i+1}`;
+              const flag = c.realData?.flag || '🌐';
               return (
                 <button key={i}
-                  style={{ ...BTN_SECONDARY, padding:'0.22rem 0.50rem', fontSize:'0.42rem', position:'relative',
-                    ...(plCountry===i ? { border:'1px solid rgba(200,164,74,0.50)',
-                      color:'rgba(200,164,74,0.90)', background:'rgba(200,164,74,0.08)' } : {}) }}
+                  style={{ ...BTN_SECONDARY, padding:'0.26rem 0.60rem', fontSize:'0.48rem', position:'relative',
+                    ...(plCountry===i ? { border:'1px solid rgba(200,164,74,0.55)',
+                      color:'rgba(200,164,74,0.95)', background:'rgba(200,164,74,0.10)' } : {
+                      color:'rgba(180,190,210,0.70)' }) }}
                   onClick={() => { setPlCountry(i); setSelectedMinistry(null); setSelectedMinister(null); }}>
-                  {c.realData?.flag||'🌐'} {c.nom||c.realData?.nom||`Nation ${i+1}`}
+                  <span style={{ fontSize:'0.65rem', marginRight:'0.25rem' }}>{flag}</span>
+                  {nom}
                   {isCustom && (
-                    <span style={{ marginLeft:'0.3rem', fontSize:'0.30rem', fontFamily:FONT.mono,
-                      color:'rgba(100,180,255,0.70)', letterSpacing:'0.05em' }}>✦</span>
+                    <span style={{ marginLeft:'0.3rem', fontSize:'0.32rem', fontFamily:FONT.mono,
+                      color:'rgba(100,180,255,0.80)', letterSpacing:'0.05em' }}>✦</span>
                   )}
                 </button>
               );
             })}
           </div>
         )}
-        {/* Bouton Personnaliser / Réinitialiser le pays courant */}
+        {/* Bouton Personnaliser / Réinitialiser — à gauche, même ligne que les pays */}
         {hasMulti && (
-          <div style={{ display:'flex', gap:'0.35rem', width:'100%', justifyContent:'flex-end' }}>
+          <div style={{ display:'flex', gap:'0.35rem', width:'100%', justifyContent:'flex-start', marginTop:'-0.3rem' }}>
             {!hasOverride ? (
-              <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.5rem',
-                color:'rgba(100,180,255,0.60)', border:'1px solid rgba(100,180,255,0.20)' }}
+              <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.16rem 0.55rem',
+                color:'rgba(100,180,255,0.70)', border:'1px solid rgba(100,180,255,0.25)' }}
                 onClick={forkCountry}>
                 ✦ {lang==='en' ? 'Customize this country' : 'Personnaliser ce pays'}
               </button>
             ) : (
               <>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:'rgba(100,180,255,0.55)',
-                  alignSelf:'center', fontStyle:'italic' }}>
-                  {lang==='en' ? '✦ Custom constitution' : '✦ Constitution personnalisée'}
-                </span>
-                <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.5rem',
-                  color:'rgba(200,80,80,0.50)', border:'1px solid rgba(200,80,80,0.20)' }}
+                <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.16rem 0.55rem',
+                  color:'rgba(200,80,80,0.55)', border:'1px solid rgba(200,80,80,0.25)' }}
                   onClick={() => resetCountryOverride(plCountry)}>
                   ↺ {lang==='en' ? 'Reset to common' : 'Revenir à la commune'}
                 </button>
@@ -1074,8 +1074,8 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
         )}
       </div>
 
-      {/* Tabs */}
-      <div style={{ display:'flex', gap:0, borderBottom:'1px solid rgba(200,164,74,0.10)', width:'100%' }}>
+      {/* Tabs + bandeau statut inline */}
+      <div style={{ display:'flex', alignItems:'center', gap:0, borderBottom:'1px solid rgba(200,164,74,0.10)', width:'100%' }}>
         {[
           {id:'resume',     fr:'RÉSUMÉ',     en:'SUMMARY'   },
           {id:'presidency', fr:'PRÉSIDENCE', en:'PRESIDENCY'},
@@ -1087,6 +1087,21 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
             {tab[lang] || tab.fr}
           </button>
         ))}
+        {/* Statut constitution — décalé après les onglets, pas à l'extrême droite */}
+        {(() => {
+          const countryName = countries[plCountry]?.nom || countries[plCountry]?.realData?.nom || `Nation ${plCountry + 1}`;
+          return hasOverride ? (
+            <span style={{ marginLeft:'2.5rem', fontFamily:FONT.mono, fontSize:'0.36rem',
+              letterSpacing:'0.09em', color:'rgba(100,180,255,0.75)', whiteSpace:'nowrap' }}>
+              ✦ {lang==='en' ? `INDEPENDENT CONSTITUTION — ${countryName.toUpperCase()}` : `CONSTITUTION INDÉPENDANTE — ${countryName.toUpperCase()}`}
+            </span>
+          ) : (
+            <span style={{ marginLeft:'2.5rem', fontFamily:FONT.mono, fontSize:'0.36rem',
+              letterSpacing:'0.09em', color:'rgba(200,164,74,0.40)', whiteSpace:'nowrap' }}>
+              ◈ {lang==='en' ? 'COMMON CONSTITUTION' : 'CONSTITUTION COMMUNE'}
+            </span>
+          );
+        })()}
       </div>
 
       {plLoading && <div style={{ fontFamily:FONT.mono, fontSize:'0.48rem',
@@ -2072,8 +2087,6 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           onLaunchLocal(customDefs || countries);
         } else {
           const defs = (customDefs || countries).map(c => {
-            // c.type est la source de vérité (bouton Fictif/Pays réel dans l'UI)
-            // c.realData est présent uniquement si le pays est dans REAL_COUNTRIES_DATA
             const isReel = c.type === 'reel';
             return {
               type:     isReel ? 'reel' : 'imaginaire',
@@ -2081,6 +2094,10 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               regime:   c.regime   || c.realData?.regime,
               terrain:  c.terrain  || c.realData?.terrain,
               realData: c.realData || null,
+              // Préserver les overrides passés par PreLaunchScreen
+              ...(c.context_mode      ? { context_mode:      c.context_mode      } : {}),
+              ...(c.contextOverride   ? { contextOverride:   c.contextOverride   } : {}),
+              ...(c.governanceOverride? { governanceOverride: c.governanceOverride } : {}),
             };
           });
           onLaunchAI(defs);

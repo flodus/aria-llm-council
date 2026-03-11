@@ -90,6 +90,64 @@ et sinon in game y a eu aucun changement, c'est la constitution commune qui s'ap
 
 
 
+priorité 1 :
+en fait ca il faut le mettre à gauche au dessus du bandeau et plus visible (taille de caractères tout ça) : (c'est un exemple de pays hein !)
+🇨🇳 Chine 🌐 Royaume d'Eldoria✦
+✦ Personnaliser ce pays
+Ca :  "Bandeau statut inline dans barre d'onglets (◈ COMMUNE / ✦ INDÉPENDANTE — NOM)" on le met juste après Ministres sur la bandeau onglet avec entre 3 et 5 tab de différence je sais pas, ou centré mais plus loin que "ministres mais pas à l'autre bout non plus ! et on met "constitution indépendante -- NOM"
+
+priorité 2 : llmCouncilEngine.js
+
+- `perGov` pourrait être persisté dans `localStorage` pour survivre à un rechargement de la page Init : quel intérêt ?
+
+Enfin je voudrais que tu m'organises (redondances, priorités ...), alimentes et me tri cette liste, pour intégrer todo.md et roadmap.md :
+
+ - revoir toute la mécanique de : COUNTRY CONTEXT IN DELIBERATIONS
+ - problème de création de pays depuis le dashboard map grid (capture F12)
+ - constitution lors de la création d'un monde partie résumé est-ce pertinent de tout garder ? est ce que cette partie la n'est pas redondante :
+⚖️ Justice et Vérité | 💰 Économie et Ressources | ⚔️ Défense et Souveraineté | 🏥 Santé et Protection Sociale | 🎓 Éducation et Élévation | 🌿 Transition Écologique | 🎲 Chance et Imprévu
+♎ ♏                | ♉ ♍                     | ♈ ♑                      | ♋ ♓                          | ♊ ♐                     | ♒ ♌                    | ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓
+ - mettre les icones des régimes dans liste déroulante lors de la création monde, monde fictif
+ - in game pour les gouvernements (présidence ministère ministre) reprendre le principe de creation > constituion. Par contre dans création constitution reprendre le même style d'icone (tuiles) pour ministres (et ministères) que popup gouvernement ministres, pareil pour settings ministres et ministères
+ - Mon but c'est d'avoir des clones pour init, settings, popup (présidence, ministres ministères)
+ - Revoir l'utilité de la partie settings gouvernement si y a plusieurs pays ? et vu que tout est accessible sur la map grid
+custom plusieurs pays >> impossibilité de prendre plus d'une fois le pays
+ - chronolog plus d'infos pour les 5 derniers cycles
+ - 1 à 3 présidents possibles (peut être permettre plus mais y a déjà le mode collégiale, revoir si c'est un prompt d synthès particulier pour ce mode) peut être revoir l'affichage du council pour les réponses de +2 présidents
+ - partie custom en fait c'est de 2 à 6 pays, car partie par défaut c'est 1. Donc prévoir minimum 2 pays lors de la création au lieu de 1 actuel
+ - revoir si mis en place : est-ce que les choix précédents sont pris dans les contextes des nouvelles délibération à venir ?
+ - faire des randon crise//chance, soit globale au niveau du monde soit au niveau d'un pays tous les random cycles. Mener la réflexion
+ - A quoi sert le bouton "simuler une crise" actuellement
+ - tous les +5 cycles demander si on change la constitution // gouvernement (ministres ministères présidence)
+ - crises : "6.2 Crisis mode — The twelve voices
+A situation is declared an emergency when at least two of the following four criteria are met,
+including necessarily the irreversible risk or critical collapse criterion:
+• Immediate systemic impact: more than 20% of the population directly affected
+• Irreversible risk: the situation cannot be corrected after the action deadline
+• Critical action deadline of less than 30 days
+• Collapse of a vital function: water, energy, health or security
+Three ministers are designated by the constitution to validate the triggering of an emergency —
+chosen for their most analytical and structured characters: the Analyst, the Strategist and the
+Arbiter.
+Three ministers are designated to propose the end of the crisis: the Guardian (resources
+restored?), the Protector (return of sense of security?), the Guide (clear and shared exit vision?).
+"
+ - sécession : "sécesion :
+7.2 The assisted secession protocol
+CONDITION 1 — THE NEGOTIATION PERIOD
+Before any formal secession, a mandatory negotiation period is opened (typically between three
+and twelve months depending on the size of the group). This period allows for an attempt to revise
+the founding prompts that might make the secession unnecessary.
+CONDITION 2 — THE NON-AGGRESSION TREATY
+Before receiving departure assistance, the secessionist group signs a non-aggression treaty with
+the original entity. This treaty defines borders, shared resources, rules of coexistence and
+mechanisms for resolving future conflicts
+"
+
+#######
+ - penser de discuter avec claude du principe décret/réferendum. Charte constituion, déclaration des droits fondamentaux et inaliénables. Révision tous les x cycles....
+
+
 
 
 

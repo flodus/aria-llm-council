@@ -83,6 +83,69 @@ function getAgents() {
   } catch { return BASE; }
 }
 
+/** Retourne les agents pour un pays spécifique.
+ *  Priorité : country.governanceOverride > localStorage(aria_agents_override) > BASE */
+function getAgentsFor(country) {
+  const gov = country?.governanceOverride;
+  if (!gov) return getAgents(); // pas d'override pays → comportement global inchangé
+
+  const BASE = loadLang() === 'en' ? AGENTS_RAW_EN : AGENTS_RAW;
+  const ov   = gov.agents || {};
+
+  const mergedMinistries = BASE.ministries.map(bm => {
+    const om = (ov.ministries || []).find(m => m.id === bm.id);
+    if (!om) return bm;
+    return { ...bm,
+      ministerPrompts: om.ministerPrompts || om.minister_prompts || bm.ministerPrompts,
+      mission: om.mission || bm.mission,
+    };
+  });
+  const mergedMinisters = { ...BASE.ministers };
+  Object.keys(ov.ministers || {}).forEach(k => {
+    if (mergedMinisters[k]) mergedMinisters[k] = { ...mergedMinisters[k],
+      essence:    ov.ministers[k].essence    || mergedMinisters[k].essence,
+      comm:       ov.ministers[k].comm       || mergedMinisters[k].comm,
+      annotation: ov.ministers[k].annotation || mergedMinisters[k].annotation,
+    };
+  });
+  const mergedPresidency = { ...BASE.presidency };
+  Object.keys(ov.presidency || {}).forEach(k => {
+    if (mergedPresidency[k]) mergedPresidency[k] = { ...mergedPresidency[k],
+      essence: ov.presidency[k].essence || mergedPresidency[k].essence,
+    };
+  });
+
+  return {
+    ministries: mergedMinistries,
+    ministers:  mergedMinisters,
+    presidency: mergedPresidency,
+    _active_ministries: gov.active_ministries ?? null,
+    _active_presidency: gov.active_presidency ?? null,
+    _active_ministers:  gov.active_ministers  ?? null,
+  };
+}
+
+function getMinistriesListFor(country) {
+  const a = getAgentsFor(country);
+  const all = a.ministries || [];
+  const active = a._active_ministries;
+  return active ? all.filter(m => active.includes(m.id)) : all;
+}
+
+function getMinistersMapFor(country) {
+  const a = getAgentsFor(country);
+  const all = a.ministers || {};
+  const active = a._active_ministers;
+  return active ? Object.fromEntries(Object.entries(all).filter(([k]) => active.includes(k))) : all;
+}
+
+function getPresidencyFor(country) {
+  const a = getAgentsFor(country);
+  const full = a.presidency || {};
+  const active = a._active_presidency;
+  return active ? Object.fromEntries(Object.entries(full).filter(([k]) => active.includes(k))) : full;
+}
+
 /** Retourne la liste des ministères actifs (filtrée si constitution le précise) */
 export function getMinistriesList() {
   const agents = getAgents();
@@ -264,7 +327,7 @@ export async function runMinisterePhase(ministry, question, country) {
   }
 
   const [idA, idB]  = ministry.ministers || [];
-  const _minMap = getMinistersMap();
+  const _minMap = getMinistersMapFor(country);
   const minA        = _minMap[idA] || {};
   const minB        = _minMap[idB] || {};
   const promptA     = ministry.ministerPrompts?.[idA] || minA.essence || '';
@@ -333,7 +396,7 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases argumentées", "mot_cle
 export async function runCerclePhase(targetMinistryId, question, synthese, country) {
   // ── Question orpheline : annotations bureaucratiques pour tous les ministères ──
   if (targetMinistryId === 'orphan') {
-    return getMinistriesList().map(m => ({
+    return getMinistriesListFor(country).map(m => ({
       ministryId:    m.id,
       ministryName:  m.name,
       ministryEmoji: m.emoji,
@@ -342,14 +405,14 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
     }));
   }
 
-  const others = getMinistriesList().filter(m => m.id !== targetMinistryId);
+  const others = getMinistriesListFor(country).filter(m => m.id !== targetMinistryId);
   const keys = getApiKeys();
   const ctx = buildCountryContext(country);
   const syntheseText = synthese?.synthese || 'Délibération en cours.';
 
   const annotations = await Promise.all(
     others.map(async (m) => {
-      const minister1 = getMinistersMap()[m.ministers?.[0]];
+      const minister1 = getMinistersMapFor(country)[m.ministers?.[0]];
       const annotation = minister1?.annotation || `Analyse la question du point de vue de ${m.name}.`;
 
       let result = null;
@@ -386,7 +449,7 @@ Réponds UNIQUEMENT en JSON : { "annotation": "1-2 phrases, ton sobre, angle sp�
  * @returns {Promise<{ phare, boussole, synthese }>}
  */
 export async function runPresidencePhase(question, ministereResult, cercleAnnotations, country) {
-  const _pres = getPresidency();
+  const _pres = getPresidencyFor(country);
   const phareData    = _pres.phare    || {};
   const boussoleData = _pres.boussole || {};
 

@@ -4,58 +4,94 @@ _Dernière mise à jour : 2026-03-11_
 
 ---
 
-## ✅ COMPLÉTÉ — Session 11 mars 2026
+## ✅ COMPLÉTÉ cette session
 
-- [x] theocracie clé corrigée dans REGIME_LABEL_KEYS (Settings.jsx)
-- [x] Board Game Mode remplace tuile OFF (Settings.jsx)
-- [x] Emoji fallback régime (CountryPanel, HexGrid, Dashboard_p1)
-- [x] Select terrain/régime : background sombre (Dashboard_p3)
-- [x] CycleConfirmModal : bloc ÉVOLUTIONS PASSIVES CE CYCLE 👥💰😊 (Dashboard_p3)
-- [x] Icônes terrains dans RESOURCES BY TERRAIN (Settings.jsx)
-- [x] MDI font via @import dans App.css
-- [x] Son OFF par défaut + icône mdi header (App.jsx)
-- [x] Navigation entre pays ‹ 1/3 › MAP + COUNCIL (CountryPanel + App.jsx)
-- [x] Icônes MDI eye-lock clés API (InitScreen.jsx)
-- [x] Boutons + Nouveau sticky (InitScreen.jsx)
-- [x] Grille icônes ministères + focus/toggle (InitScreen.jsx)
-- [x] Harmonisation complète onglets MINISTÈRES / MINISTRES :
-  - Logique : 1er clic = focus (fiche remonte en tête de liste), ordre grille inchangé
-  - 2e clic actif = désactive + icône glisse en bas de grille
-  - 2e clic inactif = active + reste en haut
-  - Toutes les fiches toujours visibles
-  - Fiches inactives : aucun grisé sur la fiche, seule l'icône grille est grisée
-  - Hint italique discret centré
+- [x] governanceOverride lu par llmCouncilEngine (getAgentsFor + 3 helpers For)
+- [x] Badges pays plus visibles dans Init (flag grand, nom lisible)
+- [x] Bouton "Personnaliser" à gauche au-dessus des onglets
+- [x] Bandeau statut inline : "CONSTITUTION INDÉPENDANTE — NOM" après les onglets
 
 ---
 
-## 🔴 PROCHAINE ÉTAPE
+## 🔴 BUGS ACTIFS
 
-### ÉTAPE 6a-2 — InitScreen.jsx : perGov override par pays
-- Constitution commune par défaut, override indépendant par pays via bouton "Personnaliser"
-- États à refactoriser en `perGov[i]` : `activeMins`, `activePres`, `activeMinsters`, `plAgents`
-- Badge visuel sur sélecteur de pays si override actif
-- `saveAndLaunch` merge constitution commune + overrides par pays
+### B1 — Création pays depuis dashboard map grid (F12)
+- [ ] Investiguer l'erreur console lors de l'ajout d'un pays in-game
+
+### B2 — Country Context in Deliberations
+- [ ] Auditer buildCountryContext() : contenu, format, réception LLM
+- [ ] Vérifier injection stats (régime, terrain, satisfaction, ressources)
+
+---
+
+## 🟡 UX COURT TERME
+
+### U1 — Icônes régimes dans listes déroulantes
+- [ ] Init création monde fictif + ajout pays in-game
+
+### U2 — Résumé constitution : ligne signes zodiacaux redondante
+- [ ] Décider : supprimer ou remplacer par noms des ministres actifs
+
+### U3 — Harmonisation tuiles Init ↔ Settings ↔ popup in-game
+- [ ] Même style tuiles ministres/ministères dans les 3 contextes
+
+### U4 — Chronolog enrichi (5 derniers cycles)
+- [ ] Satisfaction détaillée, décisions clés, événements par cycle
+
+---
+
+## 🟠 FONCTIONNEL MOYEN TERME
+
+### F1 — Minimum 2 pays en mode custom
+- [ ] Forcer min 2 nations à la création (mode custom)
+
+### F2 — Settings gouvernement : repenser avec multi-pays
+- [ ] Clarifier rôle : constitution commune par défaut ou supprimer
+
+### F3 — Custom multi-pays : bloquer doublons pays réels
+- [ ] Griser pays déjà sélectionnés dans le picker
+
+### F4 — Révision constitutionnelle tous les +5 cycles
+- [ ] Pop-up de rappel : "Réviser la constitution ?"
+
+### F5 — Contexte historique dans délibérations
+- [ ] Vérifier si chronolog est injecté dans les prompts LLM
+
+---
+
+## 🔵 GAMEPLAY LONG TERME
+
+### G1 — Crises aléatoires (protocole 6.2)
+- [ ] Déclenchement auto tous les N cycles (N aléatoire)
+- [ ] 3 ministres validateurs + 3 ministres de sortie
+- [ ] Critères : impact systémique / risque irréversible / délai / effondrement vital
+
+### G2 — Bouton "Simuler une crise" : clarifier ou implémenter
+- [ ] Audit de l'état actuel + décision
+
+### G3 — Sécession assistée : protocole complet
+- [ ] Délai négociation + traité non-agression avant sécession
+
+### G4 — Présidence 1 à 3 présidents
+- [ ] Config 1/2/3 présidents en Init et Settings
+- [ ] Mode collégial (synthèse 3 voix) + affichage council adapté
+
+---
+
+## 🟣 VISION / À DISCUTER
+
+### V1 — Décret vs référendum + Charte constitutionnelle
+### V2 — Ministère du Culte (délibération ARIA interne)
+
+---
+
+## PROCHAINE ÉTAPE TECHNIQUE
 
 ### ÉTAPE 7 — WorldEngine.js
-- `placeCountries()` : distance minimum entre centroïdes (`MIN_CENTROID_DIST = HEX_R * 8`)
-- Retry avec seed modifié si overlap détecté
-
----
-
-## 🔵 BACKLOG
-
-- [ ] **Présidence — 1 à 3 présidents** _(étape future)_
-  - Même logique focus/glissement que ministères/ministres (fiche en tête au focus, glisse en bas si désactivé)
-  - Revoir l'opacité des fiches inactives à ce moment-là en prenant comme référence la valeur actuelle de la présidence (plus lisible que ministères/ministres)
-- [ ] Delta économique 💰 dans CycleConfirmModal (coefficients croissance variables)
-- [ ] Icônes terrain + régime dans listes déroulantes Init
-- [ ] Icônes régime dans REGIME COEFFICIENTS (Settings.jsx)
-- [ ] Dashboard_p3.jsx : remonter tous les imports en tête de fichier
-- [ ] Init → Constitution → ajouter un président custom
-- [ ] i18n : LegitimiteOverlay.jsx, HexGrid.jsx
-- [ ] Phase V1 : Carte SVG procédurale low-poly
+- [ ] Distance minimum entre centroïdes (MIN_CENTROID_DIST = HEX_R × 8)
+- [ ] Retry seed si overlap
 
 ---
 
 ## 📁 Fichiers actifs
-`InitScreen.jsx` · `Settings.jsx` · `CountryPanel.jsx` · `HexGrid.jsx` · `Dashboard_p1.jsx` · `Dashboard_p3.jsx` · `App.jsx` · `WorldEngine.js`
+`InitScreen.jsx` · `llmCouncilEngine.js` · `WorldEngine.js`
