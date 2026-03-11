@@ -80,11 +80,8 @@ function getMinistryLabels() {
   return Object.fromEntries(mins.map(m => [m.id, `${m.emoji||''} ${m.name}`]));
 }
 
-// REGIME_LABELS migré → getRegimeLabel(key, lang) depuis ariaTheme
-const REGIME_LABEL_KEYS = [
-  'democratie_liberale','republique_federale','monarchie_constitutionnelle',
-  'technocratie_ia','junte_militaire','oligarchie','theocracie',
-];
+// REGIME_LABELS → getRegimeLabel(key, lang) depuis ariaTheme
+const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocratie'];
 function getRegimeLabelMap(lang) {
   return Object.fromEntries(REGIME_LABEL_KEYS.map(k => [k, getRegimeLabel(k, lang)]));
 }
@@ -480,6 +477,7 @@ function SectionSysteme() {
                   { value:'aria',   label:'ARIA',         desc:isEn?'Multi-provider architecture (default)':'Architecture multi-providers (défaut)' },
                   { value:'solo',   label:'Solo',          desc:isEn?'All roles on a single provider':'Tous les rôles sur un seul provider' },
                   { value:'custom', label:isEn?'Custom':'Personnalisé',  desc:isEn?'Role-by-role assignment':'Assignation rôle par rôle' },
+                  { value:'none',   label:isEn?'🚫 Off':'🚫 Désactivé',  desc:isEn?'Local pre-written responses (offline mode)':'Réponses locales pré-écrites (mode hors ligne)' },
                 ].map(m => (
                   <label key={m.value}
                     className={`settings-radio-card${iaMode===m.value?' selected':''}`}
@@ -522,7 +520,7 @@ function SectionSysteme() {
                   <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"DELIBERATION":"DÉLIBÉRATION"}</div>
                   {[
                     { key:'ministre_model', label:isEn?'Ministers think':'Ministres pensent' },
-                    { key:'synthese_min',   label:isEn?'Ministry synthesis':'Synthèse ministérielle' },
+                    { key:'synthese_min',   label:t('SETTINGS_SYNTH_MIN_LABEL', lang) },
                   ].map(r => (
                     <div key={r.key} className="settings-role-row">
                       <span className="settings-role-label">{r.label}</span>
@@ -645,7 +643,7 @@ function SectionConstitution() {
   };
 
   const SYNTH_ENTRIES = [
-    { key: 'synthese_ministere',  label: isEn?'Ministry synthesis':'Synthèse ministérielle',
+    { key: 'synthese_ministere',  label: t('SETTINGS_SYNTH_MIN_LABEL', lang),
       hint: isEn?'Receives the 2 ministers of a ministry → produces the official ministry position':'Reçoit les 2 ministres d\'un ministère → produit la position officielle du ministère' },
     { key: 'synthese_presidence', label: isEn?'Presidential synthesis':'Synthèse présidentielle',
       hint: isEn?'Receives Lighthouse + Compass → detects convergence/divergence + formats citizen referendum':'Reçoit Phare + Boussole → détecte convergence/divergence + formate référendum citoyen' },
@@ -683,6 +681,14 @@ function SectionConstitution() {
       </div>
 
       {/* ── PROMPTS ARIA — SYNTHÈSE — lecture seule ── */}
+      {isEn && (
+        <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
+          color:'rgba(200,164,74,0.55)', background:'rgba(200,164,74,0.04)',
+          border:'1px solid rgba(200,164,74,0.18)', borderRadius:'2px',
+          padding:'0.5rem 0.75rem', marginBottom:'0.5rem', lineHeight:1.55 }}>
+          ℹ️ The constitution prompts below are in French — this is intentional. ARIA's deliberation engine was designed in French, and these prompts define the JSON response format that the engine parses. The DNA fields above (global system prompt, synthesis tone, geopolitical context) can be freely written in English.
+        </div>
+      )}
       <div className="settings-group">
         <div className="settings-group-title" style={{ display:'flex', alignItems:'center', gap:'0.6rem' }}>
           {isEn?'ARIA PROMPTS — SYNTHESIS':'PROMPTS ARIA — SYNTHÈSE'}
@@ -818,7 +824,7 @@ function SectionConseil() {
     essence_hint:   isEn ? "Deep philosophy — what drives their positions"
                          : "Philosophie profonde — ce qui motive ses positions",
     comm_hint:      isEn ? "Voice, tone, way of arguing"
-                         : t('SETTINGS_VOICE_HINT', lang),
+                         : "Voix, ton, façon d'argumenter",
     annot_label:    isEn ? "Universal annotation angle"
                          : "Angle universel en annotation",
     annot_hint:     isEn ? "The question they systematically ask on other ministries' syntheses"
@@ -826,9 +832,9 @@ function SectionConseil() {
     selMin:         isEn ? "Select a ministry"    : "Sélectionner un ministère",
     missionLabel:   isEn ? "Ministry mission"     : "Mission du ministère",
     missionHint:    isEn ? "Defines the ministry's objective and values"
-                         : t('SETTINGS_MISSION_HINT', lang),
+                         : "Définit l'objectif et les valeurs du ministère",
     roleHint:       isEn ? "How this minister speaks from this ministry's angle"
-                         : t('SETTINGS_COMM_HINT', lang),
+                         : "Comment ce ministre parle depuis l'angle de ce ministère",
     rolePrefix:     isEn ? "Specific role"        : "Rôle spécifique",
   };
   // Données dynamiques localisées
@@ -1017,10 +1023,10 @@ function getPresidencyOpts(isEn) {
     { value: 'lunaire',    label: 'Lunar — The Boussole alone'             },
     { value: 'collegiale', label: 'Collegial — Vote of 12 ministers'       },
   ] : [
-    { value: 'duale',      label: t('SETTINGS_DUAL_MODE', lang) },
+    { value: 'duale',      label: 'Duale — Phare + Boussole (défaut ARIA)' },
     { value: 'solaire',    label: 'Solaire — Le Phare seul'                },
     { value: 'lunaire',    label: 'Lunaire — La Boussole seule'            },
-    { value: 'collegiale', label: t('SETTINGS_COLLEGIAL_MODE', lang)     },
+    { value: 'collegiale', label: 'Collégiale — Vote des 12 ministres'     },
   ];
 }
 
@@ -1129,6 +1135,8 @@ function SectionSimulation() {
   const [sim, setSim]   = useState(() => getSimOverrides());
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
+  // Terrains localisés (réactif à la langue)
+  const dynTerrains = getStats().terrains;
 
   // Valeurs courantes avec fallback JSON
   const getReg = (regKey, field) => sim.regimes?.[regKey]?.[field] ?? REGIMES?.[regKey]?.[field] ?? 1.0;
@@ -1275,7 +1283,7 @@ function SectionSimulation() {
 
       <div className="settings-group">
         <div className="settings-group-title">{isEn?"RESOURCES BY TERRAIN":"RESSOURCES PAR TERRAIN"}</div>
-        {Object.entries(TERRAINS || {}).map(([tk, tv]) => (
+        {Object.entries(dynTerrains || TERRAINS || {}).map(([tk, tv]) => (
           <div key={tk} className="settings-terrain-block">
             <div className="settings-terrain-name">{tv.name || tk}</div>
             <Field label={isEn?"Population modifier":"Modificateur population"}>
@@ -1308,6 +1316,7 @@ function SectionSimulation() {
 
 function SectionInterface({ onHardReset }) {
   const { lang, setLang } = useLocale();
+  const isEn = lang === 'en';
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
 
@@ -1636,10 +1645,10 @@ function SectionAPropos() {
         <div className="settings-group">
           <div className="settings-group-title">{isEn?"FOUNDING PRINCIPLE":"PRINCIPE FONDATEUR"}</div>
             <blockquote className="settings-quote">
-              "La vraie question n'est pas de savoir si l'IA entrera dans la gouvernance —
-              elle y entre déjà, de manière opaque et non régulée. La question est de savoir
-              si nous choisirons de le faire délibérément, avec des garde-fous démocratiques,
-              ou par défaut, sans eux."
+              {isEn
+                ? "The real question is not whether AI will enter governance — it already is, in an opaque and unregulated way. The question is whether we will choose to do so deliberately, with democratic safeguards, or by default, without them."
+                : `« La vraie question n’est pas de savoir si l’IA entrera dans la gouvernance — elle y entre déjà, de manière opaque et non régulée. La question est de savoir si nous choisirons de le faire délibérément, avec des garde-fous démocratiques, ou par défaut, sans eux. »`
+              }
             </blockquote>
         </div>
 
@@ -1690,6 +1699,8 @@ export default function Settings({ onClose }) {
       'aria_session_active','aria_session_world',
       'aria_session_countries','aria_session_alliances',
       'aria_api_keys_status',
+      'aria_agents_override','aria_chronolog_cycles',
+      'aria_lang','aria_preferred_models',
     ].forEach(k => localStorage.removeItem(k));
     window.location.reload();
   }, []);

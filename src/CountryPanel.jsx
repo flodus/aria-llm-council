@@ -19,7 +19,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from 'react';
-import { COLOR, FONT, RESOURCE_DEFS, MARITIME, satisfColor, fmtPop } from './ariaTheme';
+import { COLOR, FONT, RESOURCE_DEFS, MARITIME, satisfColor, fmtPop, getResourceDefs } from './ariaTheme';
 import { getMinistriesList } from './llmCouncilEngine';
 import { REAL_COUNTRIES_DATA_EN } from './ariaData';
 import { loadLang, useLocale } from './ariaI18n';
@@ -38,12 +38,7 @@ const RESOURCE_LABELS_EN = {
   agriculture: 'AGRICULTURE', bois: 'TIMBER', eau: 'FRESH WATER',
   energie: 'ENERGY', mineraux: 'MINERALS', peche: 'FISHING', petrole: 'OIL',
 };
-function getResourceDefs(isEn) {
-  return RESOURCE_DEFS.map(r => ({
-    ...r,
-    label: isEn ? (RESOURCE_LABELS_EN[r.key] || r.label) : r.label,
-  }));
-}
+// getResourceDefs → importé depuis ariaTheme
 // Labels dynamiques localisés
 function getTerrainLabel(key) {
   return getStats().terrains?.[key]?.name || key;
@@ -532,7 +527,7 @@ export default function CountryPanel({
           <section>
             <div className="section-title">{isEn?"RESOURCES":"RESSOURCES"}</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.30rem' }}>
-              {getResourceDefs(isEn).map(({ key, icon, label }) => {
+              {getResourceDefs(isEn ? 'en' : 'fr').map(({ key, icon, label }) => {
                 const present = !!ressources[key];
                 return (
                   <span key={key} className={`resource-badge ${key}`}

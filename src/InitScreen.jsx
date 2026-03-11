@@ -13,13 +13,31 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef } from 'react';
-import { useLocale, t } from './ariaI18n';
-import BASE_AGENTS from '../templates/base_agents.json';
-import { REAL_COUNTRIES_DATA } from './ariaData';
-import { PAYS_LOCAUX } from './Dashboard_p1';
+import { useLocale, t, loadLang } from './ariaI18n';
+import BASE_AGENTS    from '../templates/base_agents.json';
+import BASE_AGENTS_EN from '../templates/base_agents_en.json';
+import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './ariaData';
+
+function getRealCountries() {
+  return loadLang() === 'en' ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA;
+}
+import { PAYS_LOCAUX, getStats } from './Dashboard_p1';
+
+// ── Getters localisés — labels terrain/régime/pays depuis JSON ────────────
+function getTerrainLabels() {
+  const t = getStats().terrains;
+  return Object.fromEntries(Object.entries(t).map(([k, v]) => [k, v.name]));
+}
+function getRegimeLabels() {
+  const r = getStats().regimes;
+  return Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.name]));
+}
+function getPaysLocaux() {
+  return getStats().pays_locaux || PAYS_LOCAUX;
+}
 import {
   FONT, COLOR, CARD_STYLE, INPUT_STYLE, SELECT_STYLE,
-  BTN_PRIMARY, BTN_SECONDARY, TERRAIN_LABELS, REGIME_LABELS, labelStyle,
+  BTN_PRIMARY, BTN_SECONDARY, labelStyle,
 } from './ariaTheme';
 
 // ── Styles locaux ─────────────────────────────────────────────────────────
@@ -94,8 +112,10 @@ function ARIAHeader({ showQuote }) {
           fontSize:'0.75rem', color:'#5A6A8A', fontStyle:'italic',
           marginTop:'0.8rem', lineHeight:1.75, maxWidth:380, textAlign:'center',
         }}>
-          "Et si les politiques d'un pays étaient soumises au peuple<br/>
-          par l'intermédiaire d'un conseil des ministres IA ?"
+          {lang==='en'
+            ? "What if a country's policies were submitted to the people through a council of AI ministers?"
+            : "Et si les politiques d'un pays étaient soumises au peuple par l'intermédiaire d'un conseil des ministres IA ?"
+          }
         </p>
       )}
     </div>
@@ -205,10 +225,10 @@ function APIKeyInline({ onClose }) {
     <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(4,8,18,0.92)',
       backdropFilter:'blur(8px)', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <div style={{ ...CARD_STYLE, width:480, display:'flex', flexDirection:'column', gap:'0.7rem' }}>
-        <div style={{ ...labelStyle(), marginBottom:'0.1rem' }}>{t('API_KEYS_TITLE', lang)}</div>
+        <div style={{ ...labelStyle(), marginBottom:'0.1rem' }}>{lang==='en'?'🔑 API KEYS':'🔑 CLÉS API'}</div>
         <p style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.40)',
           margin:0, lineHeight:1.6 }}>
-          {t('API_KEYS_STORED', lang)}
+          {lang==='en'?'Stored locally — no server. Configure at least one key.':'Stockées localement — aucun serveur. Configurez au moins une clé.'}
         </p>
 
         {PROVIDERS.map(prov => {
@@ -238,7 +258,7 @@ function APIKeyInline({ onClose }) {
                       background:'none', border:'none', cursor:'pointer', padding:'0.1rem',
                       color: showPass[prov.id] ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)',
                       fontSize:'0.75rem', lineHeight:1 }}
-                    title={showPass[prov.id] ? 'Masquer' : 'Afficher'}>
+                    title={showPass[prov.id] ? (lang==='en'?'Hide':'Masquer') : (lang==='en'?'Show':'Afficher')}>
                     {showPass[prov.id] ? '🙈' : '👁'}
                   </button>
                 </div>
@@ -266,14 +286,14 @@ function APIKeyInline({ onClose }) {
 
         {!anyOk && Object.values(keys).some(v=>v) && (
           <div style={{ fontSize:'0.42rem', color:'rgba(200,164,74,0.45)', lineHeight:1.5 }}>
-            {t('API_KEYS_TEST_WARN', lang)}
+            {lang==='en'?'⚠ Test at least one key to enable saving.':'⚠ Testez au moins une clé pour activer la sauvegarde.'}
           </div>
         )}
 
         <div style={{ display:'flex', gap:'0.6rem', justifyContent:'flex-end', marginTop:'0.2rem' }}>
-          <button style={BTN_SECONDARY} onClick={onClose}>ANNULER</button>
+          <button style={BTN_SECONDARY} onClick={onClose}>{lang==='en'?'CANCEL':'ANNULER'}</button>
           <button style={{ ...BTN_PRIMARY, opacity: anyOk ? 1 : 0.35 }}
-            disabled={!anyOk} onClick={save}>SAUVEGARDER</button>
+            disabled={!anyOk} onClick={save}>{lang==='en'?'SAVE':'SAUVEGARDER'}</button>
         </div>
       </div>
     </div>
@@ -283,6 +303,7 @@ function APIKeyInline({ onClose }) {
 
 // ── Sous-composant : Fiche info pays réel ────────────────────────────────
 function CountryInfoCard({ data }) {
+  const { lang } = useLocale();
   const [open, setOpen] = useState(false);
   if (!data) return null;
   const fmtPop = (n) => n >= 1e9 ? (n/1e9).toFixed(1)+' Md' : n >= 1e6 ? (n/1e6).toFixed(1)+' M' : n >= 1e3 ? Math.round(n/1e3)+' k' : String(n);
@@ -322,7 +343,7 @@ function CountryInfoCard({ data }) {
         <button
           onClick={() => setOpen(o=>!o)}
           style={{ background:'none', border:'1px solid rgba(90,110,160,0.20)', borderRadius:'2px', padding:'0.28rem 0.55rem', cursor:'pointer', fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(90,110,160,0.55)', textAlign:'left', letterSpacing:'0.08em' }}>
-          {open ? t('HIDE_GEO_CONTEXT', lang) : t('SHOW_GEO_CONTEXT', lang)}
+          {open ? lang==='en'?'▲ Hide geopolitical context':'▲ Masquer le contexte géopolitique' : lang==='en'?'▼ Show geopolitical context':'▼ Voir le contexte géopolitique'}
         </button>
       )}
       {open && data.triple_combo && (
@@ -467,7 +488,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
     rcQueryRef.current = query;
     if (!query || query.length < 3) { setRcStatus(null); return; }
     // 1. Check local hardcoded list
-    const local = REAL_COUNTRIES_DATA.find(r =>
+    const local = getRealCountries().find(r =>
       r.nom.toLowerCase() === query.toLowerCase() ||
       r.id === query.toLowerCase().replace(/[^a-z]/g,'')
     );
@@ -524,7 +545,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
         <div style={labelStyle('0.44rem')}>NATION {idx + 1}</div>
         <div style={{ display:'flex', gap:'0.5rem', alignItems:'center' }}>
-          {c.realData && <span style={S.tag}>{c.realData.flag} {t('REAL_COUNTRY', lang)}</span>}
+          {c.realData && <span style={S.tag}>{c.realData.flag} PAYS RÉEL</span>}
           {canRemove && (
             <button onClick={onRemove} style={{ background:'none', border:'none', color:'rgba(200,80,80,0.45)', cursor:'pointer', fontSize:'0.75rem' }}>✕</button>
           )}
@@ -534,7 +555,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
       {/* Toggle fictif / réel */}
       <div style={{ display:'flex', gap:'0.4rem' }}>
         {[
-          { v:'imaginaire', l: mode==='ai' ? '🌐 Fictif (IA)' : '🌐 Fictif' },
+          { v:'imaginaire', l: mode==='ai' ? (lang==='en'?'🌐 Fictional (AI)':'🌐 Fictif (IA)') : (lang==='en'?'🌐 Fictional':'🌐 Fictif') },
           { v:'reel',       l: mode==='ai' ? t('INIT_MODE_REAL_AI', lang) : t('INIT_MODE_REAL', lang) },
         ].map(t => (
           <button key={t.v}
@@ -549,7 +570,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
       {/* ── PAYS RÉEL EN LIGNE : saisie libre → IA génère, avec fiche si connu ── */}
       {c.type === 'reel' && mode === 'ai' && (() => {
         const nomLow = c.nom.toLowerCase().replace(/[^a-z]/g, '');
-        const knownMatch = REAL_COUNTRIES_DATA.find(r =>
+        const knownMatch = getRealCountries().find(r =>
           r.nom.toLowerCase() === c.nom.toLowerCase() ||
           r.id === nomLow
         );
@@ -565,18 +586,18 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
                 onChange={e => {
                   if (e.target.value === '_free') { setField('nom', ''); }
                   else {
-                    const rc = REAL_COUNTRIES_DATA.find(r => r.id === e.target.value);
+                    const rc = getRealCountries().find(r => r.id === e.target.value);
                     if (rc) setField('nom', rc.nom);
                   }
                 }}>
                 <option value="_free">— Saisir librement —</option>
-                {REAL_COUNTRIES_DATA.map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
+                {getRealCountries().map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
               </select>
               {(!knownMatch) && (
                 <div style={{ marginTop:'0.4rem' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', marginBottom:'0.2rem' }}>
-                    <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(100,120,160,0.45)' }}>{t('INIT_VERIF', lang)}</span>
-                    {rcStatus === 'searching'  && <span style={{ color:'rgba(200,164,74,0.55)', fontSize:'0.38rem' }}>{t('INIT_VERIF_LOADING', lang)}</span>}
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(100,120,160,0.45)' }}>VÉRIFICATION</span>
+                    {rcStatus === 'searching'  && <span style={{ color:'rgba(200,164,74,0.55)', fontSize:'0.38rem' }}>⟳ vérification…</span>}
                     {rcStatus === 'found'      && <span style={{ color:'rgba(58,191,122,0.80)',  fontSize:'0.38rem' }}>✓ pays reconnu</span>}
                     {rcStatus === 'notfound'   && <span style={{ color:'rgba(200,80,80,0.70)',   fontSize:'0.38rem' }}>✗ pays inconnu</span>}
                     {rcStatus === 'error'      && <span style={{ color:'rgba(200,164,74,0.50)',  fontSize:'0.38rem' }}>⚠ hors ligne</span>}
@@ -599,7 +620,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
               ? <CountryInfoCard data={knownMatch} />
               : c.nom && (
                 <div style={{ fontSize:'0.43rem', color:'rgba(100,120,160,0.50)', fontStyle:'italic', lineHeight:1.5 }}>
-                  {t('INIT_AI_WILL_GEN', lang)} <strong style={{ color:'rgba(200,164,74,0.60)' }}>{c.nom}</strong> basé sur sa situation politique actuelle.
+                  ⚡ L'IA génèrera <strong style={{ color:'rgba(200,164,74,0.60)' }}>{c.nom}</strong> basé sur sa situation politique actuelle.
                 </div>
               )
             }
@@ -614,11 +635,11 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
             <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('SELECT',lang)}</div>
             <select style={SELECT_STYLE} value={c.realData?.id||''}
               onChange={e => {
-                const rc = REAL_COUNTRIES_DATA.find(r => r.id === e.target.value);
+                const rc = getRealCountries().find(r => r.id === e.target.value);
                 if (rc) onChange({ ...c, nom:rc.nom, regime:rc.regime, terrain:rc.terrain, realData:rc });
               }}>
               <option value="">— Choisir —</option>
-              {REAL_COUNTRIES_DATA.map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
+              {getRealCountries().map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
             </select>
           </div>
           {c.realData && (
@@ -627,13 +648,13 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
                 <div>
                   <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.25rem' }}>{t('TERRAIN',lang)}</div>
                   <select style={SELECT_STYLE} value={c.terrain} onChange={e => setField('terrain', e.target.value)}>
-                    {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                    {Object.entries(getTerrainLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
                 <div>
                   <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.25rem' }}>{t('REGIME',lang)}</div>
                   <select style={SELECT_STYLE} value={c.regime} onChange={e => setField('regime', e.target.value)}>
-                    {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                    {Object.entries(getRegimeLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
               </div>
@@ -648,12 +669,12 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
         <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
           {/* Sélecteur preset */}
           <div>
-            <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('INIT_NATION_PREDEFINED', lang)}</div>
+            <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NATION PRÉDÉFINIE</div>
             <div style={{ display:'flex', gap:'0.35rem', flexWrap:'wrap' }}>
-              {PAYS_LOCAUX.map(p => (
+              {getPaysLocaux().map(p => (
                 <button key={p.id}
                   style={{ ...SELECT_STYLE, flex:'1 1 80px', cursor:'pointer', padding:'0.28rem 0.4rem',
-                    borderColor: c.realData?.id === p.id ? `${p.couleur}80` : undefined,
+                    border: c.realData?.id === p.id ? `1px solid ${p.couleur}80` : undefined,
                     background:  c.realData?.id === p.id ? `${p.couleur}18` : undefined,
                     color: c.realData?.id === p.id ? p.couleur : 'rgba(180,200,230,0.60)',
                     fontSize:'0.46rem', letterSpacing:'0.06em',
@@ -664,25 +685,25 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
               ))}
               <button
                 style={{ ...SELECT_STYLE, flex:'1 1 80px', cursor:'pointer', padding:'0.28rem 0.4rem',
-                  borderColor: (!c.realData) ? 'rgba(200,164,74,0.45)' : 'rgba(255,255,255,0.06)',
+                  border: (!c.realData) ? '1px solid rgba(200,164,74,0.45)' : '1px solid rgba(255,255,255,0.06)',
                   background:  (!c.realData) ? 'rgba(200,164,74,0.08)' : 'rgba(255,255,255,0.01)',
                   color: (!c.realData) ? 'rgba(200,164,74,0.90)' : 'rgba(180,200,230,0.60)',
                   fontSize:'0.46rem', letterSpacing:'0.06em',
                 }}
                 onClick={() => onChange({ ...c, nom: '', realData: null })}>
-                ✨ Nouveau
+                {lang==='en'?'✨ New':'✨ Nouveau'}
               </button>
             </div>
           </div>
 
           {/* Si preset local sélectionné : résumé */}
-          {c.realData?.id && PAYS_LOCAUX.find(p => p.id === c.realData.id) && (
+          {c.realData?.id && getPaysLocaux().find(p => p.id === c.realData.id) && (
             <div style={{ fontSize:'0.43rem', color:'rgba(140,160,200,0.55)', lineHeight:1.55,
               padding:'0.35rem 0.5rem', background:'rgba(200,164,74,0.03)',
               borderLeft:'2px solid rgba(200,164,74,0.15)', borderRadius:'2px' }}>
               {c.realData.description}
               <div style={{ marginTop:'0.3rem', display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>
-                <span>👤 {c.realData.leader}</span>
+                <span>👤 {typeof c.realData.leader === 'object' ? [c.realData.leader.titre, c.realData.leader.nom].filter(Boolean).join(' ') : c.realData.leader}</span>
                 <span>👥 {(c.realData.population/1e6).toFixed(1)} M hab.</span>
                 <span style={{ color: c.realData.couleur }}>■ {c.realData.terrain}</span>
               </div>
@@ -701,13 +722,13 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
                 <div>
                   <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('TERRAIN',lang)}</div>
                   <select style={SELECT_STYLE} value={c.terrain} onChange={e => setField('terrain', e.target.value)}>
-                    {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                    {Object.entries(getTerrainLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
                 <div>
                   <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('REGIME',lang)}</div>
                   <select style={SELECT_STYLE} value={c.regime} onChange={e => setField('regime', e.target.value)}>
-                    {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                    {Object.entries(getRegimeLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
               </div>
@@ -731,7 +752,7 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
                       😊 ~{sat}% sat.
                     </span>
                     <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.50)' }}>
-                      🌍 {TERRAIN_LABELS[c.terrain] || c.terrain}
+                      🌍 {getTerrainLabels()[c.terrain] || c.terrain}
                     </span>
                     <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:ariaCol }}>
                       ◈ ARIA IRL ~{irl}%
@@ -836,7 +857,8 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
           if (ov.active_ministers)  setActiveMinsters(ov.active_ministers);
           setPlLoading(false); return;
         }
-        setPlAgents(JSON.parse(JSON.stringify(BASE_AGENTS)));
+        const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
+        setPlAgents(JSON.parse(JSON.stringify(BASE)));
       } catch { setPlAgents(null); }
       setPlLoading(false);
     };
@@ -891,7 +913,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
     localStorage.removeItem('aria_agents_override');
     setActiveMins(null); setActivePres(['phare','boussole']);
     setPlAgents(null); setPlLoading(true);
-    try { setPlAgents(JSON.parse(JSON.stringify(BASE_AGENTS))); } catch {} setPlLoading(false);
+    try { const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS; setPlAgents(JSON.parse(JSON.stringify(BASE))); } catch {} setPlLoading(false);
   };
 
   const addMinister = () => {
@@ -951,9 +973,9 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       {/* Tabs */}
       <div style={{ display:'flex', gap:0, borderBottom:'1px solid rgba(200,164,74,0.10)', width:'100%' }}>
         {[
-          {id:'resume',     fr:t('SUMMARY','fr'),     en:t('SUMMARY','en')   },
-          {id:'presidency', fr:t('COUNCIL_PHASE_PRESIDENCE','fr'), en:t('COUNCIL_PHASE_PRESIDENCE','en')},
-          {id:'ministries', fr:t('MINISTRIES','fr'), en:t('MINISTRIES','en')},
+          {id:'resume',     fr:'RÉSUMÉ',     en:'SUMMARY'   },
+          {id:'presidency', fr:'PRÉSIDENCE', en:'PRESIDENCY'},
+          {id:'ministries', fr:'MINISTÈRES', en:'MINISTRIES'},
           {id:'ministers',  fr:'MINISTRES',  en:'MINISTERS' },
         ].map(tab => (
           <button key={tab.id} style={tabStyle(plTab===tab.id)}
@@ -964,7 +986,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       </div>
 
       {plLoading && <div style={{ fontFamily:FONT.mono, fontSize:'0.48rem',
-        color:'rgba(200,164,74,0.50)', padding:'1.5rem', textAlign:'center' }}>Chargement…</div>}
+        color:'rgba(200,164,74,0.50)', padding:'1.5rem', textAlign:'center' }}>{lang==='en'?'Loading…':'Chargement…'}</div>}
 
       {!plLoading && plAgents && (
         <div ref={scrollRef} style={{ width:'100%', overflowY:'auto', maxHeight:'52vh',
@@ -1021,7 +1043,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                   return (
                     <button key={m.id}
                       style={{ ...BTN_SECONDARY, padding:'0.22rem 0.55rem', fontSize:'0.42rem',
-                        ...(on ? { borderColor:m.color+'77', color:m.color, background:m.color+'14' } : {}) }}
+                        ...(on ? { border:'1px solid '+m.color+'77', color:m.color, background:m.color+'14' } : {}) }}
                       onClick={() => {
                         const all = plAgents.ministries.map(x=>x.id);
                         const cur = activeMins || all;
@@ -1084,7 +1106,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                   return (
                     <button key={key}
                       style={{ ...BTN_SECONDARY, padding:'0.18rem 0.46rem', fontSize:'0.40rem',
-                        ...(on ? { borderColor:min.color+'88', color:min.color, background:min.color+'14' } : { opacity:0.40 }) }}
+                        ...(on ? { border:'1px solid '+min.color+'88', color:min.color, background:min.color+'14' } : { opacity:0.40 }) }}
                       onClick={() => toggleMinster(key)}>
                       {min.emoji} {min.name} {on ? '' : '○'}
                     </button>
@@ -1092,19 +1114,55 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 })}
               </div>
             </div>
-            {/* Contexte délibérations par pays */}
-            {(pendingDefs || []).map((def, i) => (
-              <ContextPanel
-                key={i}
-                countryName={def.nom || def.realData?.nom || `Nation ${i+1}`}
-                open={plCtxOpen === i}
-                onToggle={() => setPlCtxOpen(p => p === i ? null : i)}
-                mode={plCtxModes[i] || ''}
-                setMode={v => setPlCtxModes(p => { const a=[...p]; a[i]=v; return a; })}
-                override={plCtxOvrs[i] || ''}
-                setOverride={v => setPlCtxOvrs(p => { const a=[...p]; a[i]=v; return a; })}
-              />
-            ))}
+            {/* Contexte délibérations — 1 accordéon groupé */}
+            {(pendingDefs||[]).length > 0 && (
+              <div style={{ width:'100%', borderRadius:'2px',
+                border:`1px solid ${plCtxOpen!=null ? 'rgba(200,164,74,0.22)' : 'rgba(255,255,255,0.07)'}`,
+                background: plCtxOpen!=null ? 'rgba(200,164,74,0.03)' : 'transparent' }}>
+                {/* Header groupe */}
+                <button style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
+                  padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}
+                  onClick={() => setPlCtxOpen(p => p!=null ? null : 0)}>
+                  <span style={{ fontSize:'0.75rem' }}>{plCtxOpen!=null ? '▾' : '▸'}</span>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
+                    color: plCtxOpen!=null ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>
+                    {t('CONTEXT', lang)}
+                  </span>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.35)',
+                    marginLeft:'auto' }}>{pendingDefs.length} {lang==='en'?'countries':'pays'}</span>
+                </button>
+                {/* Onglets pays + contenu */}
+                {plCtxOpen != null && (
+                  <div style={{ padding:'0 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.4rem' }}>
+                    {pendingDefs.length > 1 && (
+                      <div style={{ display:'flex', gap:'0.3rem', flexWrap:'wrap' }}>
+                        {pendingDefs.map((def, i) => (
+                          <button key={i}
+                            style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.16rem 0.45rem',
+                              ...(plCtxOpen===i ? { border:'1px solid rgba(200,164,74,0.40)',
+                                color:'rgba(200,164,74,0.85)', background:'rgba(200,164,74,0.08)' } : {}) }}
+                            onClick={() => setPlCtxOpen(i)}>
+                            {def.realData?.flag||'🌐'} {def.nom || def.realData?.nom || `Nation ${i+1}`}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {pendingDefs.map((def, i) => plCtxOpen === i && (
+                      <ContextPanel key={i}
+                        countryName={def.nom || def.realData?.nom || `Nation ${i+1}`}
+                        open={true}
+                        onToggle={() => {}}
+                        mode={plCtxModes[i] || ''}
+                        setMode={v => setPlCtxModes(p => { const a=[...p]; a[i]=v; return a; })}
+                        override={plCtxOvrs[i] || ''}
+                        setOverride={v => setPlCtxOvrs(p => { const a=[...p]; a[i]=v; return a; })}
+                        embedded={true}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* ── CONFIG IA + BOARD GAME (accordéons) ──────────────────── */}
             {[
@@ -1116,7 +1174,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                       style={{ marginTop:'0.15rem', accentColor:'#C8A44A', cursor:'pointer', flexShrink:0 }} />
                     <label htmlFor="bg-chk-resume" style={{ cursor:'pointer' }}>
                       <div style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.10em',
-                        color:'rgba(200,164,74,0.70)' }}>{t('INIT_LOCAL_RESPONSES', lang)}</div>
+                        color:'rgba(200,164,74,0.70)' }}>RÉPONSES LOCALES PRÉ-ÉCRITES</div>
                       <div style={{ fontSize:'0.43rem', color:'rgba(140,160,200,0.40)', marginTop:'0.2rem', lineHeight:1.5 }}>
                         Utilise les textes pré-écrits même avec une clé API active. Idéal pour tester sans frais.
                       </div>
@@ -1125,7 +1183,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 )
               },
               { id:'ia', label:'⚡ MODE IA',
-                badge: ariaMode === 'solo' ? 'SOLO' : ariaMode === 'custom' ? 'CUSTOM' : 'ARIA',
+                badge: ariaMode === 'none' ? 'OFFLINE' : ariaMode === 'solo' ? 'SOLO' : ariaMode === 'custom' ? 'CUSTOM' : 'ARIA',
                 content: (
                   <div style={{ padding:'0.5rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem' }}>
                     {/* Mode selector */}
@@ -1134,6 +1192,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                         { id:'aria',   label:'ARIA — Multi-agent complet' },
                         { id:'solo',   label: t('INIT_SOLO_LABEL', lang) },
                         { id:'custom', label: t('INIT_CUSTOM_LABEL', lang) },
+                        { id:'none',   label: lang==='en' ? '🚫 NONE (offline)' : '🚫 AUCUN (offline)' },
                       ].map(m => (
                         <button key={m.id}
                           style={{ ...BTN_SECONDARY, flex:1, fontSize:'0.40rem', padding:'0.28rem 0.4rem',
@@ -1149,10 +1208,10 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                       <div style={{ display:'flex', flexDirection:'column', gap:'0.3rem' }}>
                         {[
                           { provKey:'ministre_provider',  modelKey:'ministre_model',  label:'Ministre' },
-                          { provKey:'synthese_min_prov',  modelKey:'synthese_min_model', label:t('INIT_SYNTH_MIN', lang) },
+                          { provKey:'synthese_min_prov',  modelKey:'synthese_min_model', label: t('INIT_SYNTH_MIN', lang) },
                           { provKey:'phare_provider',     modelKey:'phare_model',     label:'Phare ☉' },
                           { provKey:'boussole_provider',  modelKey:'boussole_model',  label:'Boussole ☽' },
-                          { provKey:'synthese_pres_prov', modelKey:'synthese_pres_model', label:t('INIT_SYNTH_PRES', lang) },
+                          { provKey:'synthese_pres_prov', modelKey:'synthese_pres_model', label: t('INIT_SYNTH_PRES', lang) },
                         ].map(({ provKey, modelKey, label }) => {
                           const prov = roles[provKey] || availProviders[0] || 'openrouter';
                           const models = modelReg[prov] || ARIA_FALLBACK_MODELS[prov] || [];
@@ -1245,7 +1304,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                   return (
                     <button key={key}
                       style={{ ...BTN_SECONDARY, flex:1, padding:'0.28rem 0.6rem', fontSize:'0.44rem',
-                        ...(on ? { borderColor:'rgba(200,164,74,0.50)', color:GOLD,
+                        ...(on ? { border:'1px solid rgba(200,164,74,0.50)', color:GOLD,
                           background:'rgba(200,164,74,0.08)' } : {}) }}
                       onClick={() => setActivePres(prev => on ? prev.filter(k=>k!==key) : [...prev, key])}>
                       {p.symbol} {p.name} {on ? '● ACTIF' : '○ INACTIF'}
@@ -1279,7 +1338,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                         [key]:{...a.presidency[key], essence:e.target.value}}}))}
                     />
                     <div style={{ fontFamily:FONT.mono, fontSize:'0.38rem',
-                      color:'rgba(90,110,150,0.42)', margin:'0.28rem 0 0.15rem' }}>{t('EXTENDED_ROLE', lang)}</div>
+                      color:'rgba(90,110,150,0.42)', margin:'0.28rem 0 0.15rem' }}>RÔLE ÉTENDU</div>
                     <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'48px',
                       resize:'vertical', fontSize:'0.41rem', fontFamily:FONT.mono, lineHeight:1.5 }}
                       value={p.role_long}
@@ -1307,7 +1366,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                     </div>
                     {/* Toggle actif */}
                     <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.16rem 0.45rem',
-                      ...(on ? { borderColor:ministry.color+'66', color:ministry.color,
+                      ...(on ? { border:'1px solid '+ministry.color+'66', color:ministry.color,
                         background:ministry.color+'10' } : {}) }}
                       onClick={() => {
                         const all = plAgents.ministries.map(x=>x.id);
@@ -1345,7 +1404,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                       return (
                         <button key={mkey}
                           style={{ ...BTN_SECONDARY, padding:'0.17rem 0.44rem', fontSize:'0.39rem',
-                            ...(isIn?{borderColor:min.color+'88',color:min.color,
+                            ...(isIn?{border:'1px solid '+min.color+'88',color:min.color,
                               background:min.color+'16'}:{}) }}
                           onClick={() => setPlAgents(a => ({...a,
                             ministries:a.ministries.map((m,i)=>i!==mi?m:{
@@ -1361,7 +1420,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                   </div>
                   {ministry.ministers.length > 0 && (<>
                     <div style={{ fontFamily:FONT.mono, fontSize:'0.37rem',
-                      color:'rgba(90,110,150,0.38)', marginBottom:'0.20rem' }}>{t('MINISTER_PROMPTS', lang)}</div>
+                      color:'rgba(90,110,150,0.38)', marginBottom:'0.20rem' }}>PROMPTS MINISTÉRIELS</div>
                     {ministry.ministers.map(mkey => {
                       const min = plAgents.ministers[mkey];
                       return (
@@ -1391,7 +1450,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
             {newMinistryForm ? (
               <div style={{ ...CARD_STYLE, border:'1px solid rgba(100,160,255,0.25)' }}>
                 <div style={{ ...labelStyle('0.42rem'), color:'rgba(100,160,255,0.70)',
-                  marginBottom:'0.5rem' }}>{t('CONST_NEW_MINISTRY', lang)}</div>
+                  marginBottom:'0.5rem' }}>+ NOUVEAU MINISTÈRE</div>
                 <div style={{ display:'grid', gridTemplateColumns:'auto 1fr 1fr', gap:'0.5rem', marginBottom:'0.4rem' }}>
                   <input style={{ ...INPUT_STYLE, width:'2.5rem', textAlign:'center', fontSize:'1rem' }}
                     value={newMinistryData.emoji}
@@ -1418,17 +1477,17 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                   onChange={e => setNewMinistryData(d=>({...d,mission:e.target.value}))}
                   placeholder={t('MINISTRY_MISSION', lang)} />
                 <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end' }}>
-                  <button style={BTN_SECONDARY} onClick={() => setNewMinistryForm(false)}>Annuler</button>
+                  <button style={BTN_SECONDARY} onClick={() => setNewMinistryForm(false)}>{lang==='en'?'Cancel':'Annuler'}</button>
                   <button style={{ ...BTN_PRIMARY, opacity: newMinistryData.name&&newMinistryData.id ? 1 : 0.35 }}
                     disabled={!newMinistryData.name||!newMinistryData.id}
-                    onClick={addMinistry}>Ajouter →</button>
+                    onClick={addMinistry}>{lang==='en'?'Add →':'Ajouter →'}</button>
                 </div>
               </div>
             ) : (
               <button style={{ ...BTN_SECONDARY, alignSelf:'center', fontSize:'0.46rem',
-                color:'rgba(100,160,255,0.60)', borderColor:'rgba(100,160,255,0.25)' }}
+                color:'rgba(100,160,255,0.60)', border:'1px solid rgba(100,160,255,0.25)' }}
                 onClick={() => setNewMinistryForm(true)}>
-                + Nouveau ministère
+                {lang==='en'?'+ New ministry':'+ Nouveau ministère'}
               </button>
             )}
           </>)}
@@ -1509,7 +1568,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 />
                 <div style={{ fontFamily:FONT.mono, fontSize:'0.37rem',
                   color:'rgba(90,110,150,0.38)', marginBottom:'0.14rem', marginTop:'0.22rem' }}>
-                  ANGLE D'ANNOTATION <span style={{ fontWeight:'normal', opacity:0.55 }}>— question inter-ministérielle</span>
+                  {lang==='en'?'ANNOTATION ANGLE':'ANGLE D\'ANNOTATION'} <span style={{ fontWeight:'normal', opacity:0.55 }}>— question inter-ministérielle</span>
                 </div>
                 <textarea style={{ ...INPUT_STYLE, width:'100%', minHeight:'26px', resize:'vertical',
                   fontSize:'0.40rem', fontFamily:FONT.mono, lineHeight:1.5 }}
@@ -1562,17 +1621,17 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                   onChange={e => setNewMinData(d=>({...d,annotation:e.target.value}))}
                   placeholder={lang==='en'?"E.g. What is the minister's position on the balance between…":"Ex : Quelle est la position du ministre sur l'équilibre entre…"} />
                 <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end' }}>
-                  <button style={BTN_SECONDARY} onClick={() => setNewMinForm(false)}>Annuler</button>
+                  <button style={BTN_SECONDARY} onClick={() => setNewMinForm(false)}>{lang==='en'?'Cancel':'Annuler'}</button>
                   <button style={{ ...BTN_PRIMARY, opacity: newMinData.name&&newMinData.id ? 1 : 0.35 }}
                     disabled={!newMinData.name||!newMinData.id}
-                    onClick={addMinister}>Ajouter →</button>
+                    onClick={addMinister}>{lang==='en'?'Add →':'Ajouter →'}</button>
                 </div>
               </div>
             ) : (
               <button style={{ ...BTN_SECONDARY, alignSelf:'center', fontSize:'0.46rem',
-                color:'rgba(100,200,120,0.60)', borderColor:'rgba(100,200,120,0.25)' }}
+                color:'rgba(100,200,120,0.60)', border:'1px solid rgba(100,200,120,0.25)' }}
                 onClick={() => setNewMinForm(true)}>
-                + Nouveau ministre
+                {lang==='en'?'+ New minister':'+ Nouveau ministre'}
               </button>
             )}
           </>)}
@@ -1590,7 +1649,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
         <button style={BTN_SECONDARY} onClick={onBack}>{t('BACK',lang)}</button>
         <div style={{ display:'flex', gap:'0.5rem' }}>
           <button style={{ ...BTN_SECONDARY, fontSize:'0.44rem',
-            color:'rgba(200,80,80,0.50)', borderColor:'rgba(200,80,80,0.20)' }}
+            color:'rgba(200,80,80,0.50)', border:'1px solid rgba(200,80,80,0.20)' }}
             onClick={resetAgents}>{lang==='en'?'↺ Default':'↺ Défaut'}</button>
           <button style={BTN_PRIMARY} onClick={saveAndLaunch}>
             {t('GENERATE',lang)}
@@ -1603,36 +1662,40 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
 
 
 // ── ContextPanel — accordéon contexte délibérations (réutilisé dans Init) ────
-function ContextPanel({ countryName, open, onToggle, mode, setMode, override, setOverride }) {
+function ContextPanel({ countryName, open, onToggle, mode, setMode, override, setOverride, embedded }) {
   const { lang } = useLocale();
   const GOLD = 'rgba(200,164,74,0.88)';
   const DIM  = 'rgba(140,160,200,0.46)';
   return (
     <div style={{ width:'100%', borderRadius:'2px',
-      border:`1px solid ${open ? 'rgba(200,164,74,0.22)' : 'rgba(255,255,255,0.07)'}`,
-      background: open ? 'rgba(200,164,74,0.03)' : 'transparent',
-      transition:'all 0.2s' }}>
-      {/* Header toggle */}
-      <button style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
-        padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer',
-        textAlign:'left' }}
-        onClick={onToggle}>
-        <span style={{ fontSize:'0.75rem' }}>{open ? '▾' : '▸'}</span>
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
-          color: open ? GOLD : 'rgba(140,160,200,0.55)' }}>
-          {t('CONTEXT',lang)}
-        </span>
-        {(mode || override) && (
-          <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', marginLeft:'auto',
-            color:'rgba(200,164,74,0.55)',
-            background:'rgba(200,164,74,0.08)', border:'1px solid rgba(200,164,74,0.20)',
-            borderRadius:'2px', padding:'0.10rem 0.35rem' }}>
-            {override ? '✎ custom' : mode || 'auto'}
+      ...(!embedded ? {
+        border:`1px solid ${open ? 'rgba(200,164,74,0.22)' : 'rgba(255,255,255,0.07)'}`,
+        background: open ? 'rgba(200,164,74,0.03)' : 'transparent',
+        transition:'all 0.2s'
+      } : {}) }}>
+      {/* Header toggle — masqué si embedded */}
+      {!embedded && (
+        <button style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
+          padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer',
+          textAlign:'left' }}
+          onClick={onToggle}>
+          <span style={{ fontSize:'0.75rem' }}>{open ? '▾' : '▸'}</span>
+          <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
+            color: open ? GOLD : 'rgba(140,160,200,0.55)' }}>
+            {t('CONTEXT',lang)}
           </span>
-        )}
-      </button>
+          {(mode || override) && (
+            <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', marginLeft:'auto',
+              color:'rgba(200,164,74,0.55)',
+              background:'rgba(200,164,74,0.08)', border:'1px solid rgba(200,164,74,0.20)',
+              borderRadius:'2px', padding:'0.10rem 0.35rem' }}>
+              {override ? '✎ custom' : mode || 'auto'}
+            </span>
+          )}
+        </button>
+      )}
 
-      {open && (
+      {(open || embedded) && (
         <div style={{ padding:'0 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem' }}>
           <div style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:DIM, lineHeight:1.5 }}>
             Contrôle ce qui est injecté dans chaque prompt de délibération pour {countryName || 'ce pays'}.
@@ -1643,8 +1706,8 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
             {[
               ['', '⚙️ '+(lang==='en'?'Inherit global':'Hérite du global'), lang==='en'?'Follows Settings config':'Suit le réglage de Settings'],
               ['auto',       '🤖 Auto',                  'Stats + description si disponible'],
-              ['rich',       '📖 Enrichi',               "Contexte complet — l'IA raisonne sur l'historique du régime"],
-              ['stats_only', '📊 '+(lang==='en'?'Stats only':'Stats seules'), lang==='en'?'Numbers only — neutre'],
+              ['rich', '📖 '+(lang==='en'?'Enriched':'Enrichi'), lang==='en'?"Full context — AI reasons from regime history and its resources.":"Contexte complet — l'IA raisonne sur l'historique du régime."],
+              ['stats_only', '📊 Stats seules',          'Chiffres uniquement — neutre'],
               ['off', '🚫 '+(lang==='en'?'Disabled':'Désactivé'), lang==='en'?'No context — blind deliberation':'Aucun contexte — délibération aveugle'],
             ].map(([val, lbl, hint]) => {
               const on = mode === val;
@@ -1676,16 +1739,18 @@ function ContextPanel({ countryName, open, onToggle, mode, setMode, override, se
             <textarea
               style={{ ...INPUT_STYLE, width:'100%', minHeight:'64px', resize:'vertical',
                 fontSize:'0.40rem', fontFamily:FONT.mono, lineHeight:1.55,
-                borderColor: override ? 'rgba(200,164,74,0.30)' : undefined }}
+                border: override ? '1px solid rgba(200,164,74,0.30)' : undefined }}
               value={override}
               onChange={e => setOverride(e.target.value)}
-              placeholder={`Ex : ${countryName||'Ce pays'} est une ancienne colonie reconvertie en technocratie insulaire. Son conseil délibère selon la doctrine des Grands Algorithmes de 1978…`}
+              placeholder={lang==='en'
+                ? `E.g. ${countryName||'This country'} is a former colony turned into an island technocracy. Its council deliberates according to the doctrine of the Grand Algorithms of 1978…`
+                : `Ex : ${countryName||'Ce pays'} est une ancienne colonie reconvertie en technocratie insulaire. Son conseil délibère selon la doctrine des Grands Algorithmes de 1978…`}
             />
             {override && (
               <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.12rem 0.38rem',
                 marginTop:'0.2rem', color:'rgba(200,80,80,0.50)',
-                borderColor:'rgba(200,80,80,0.20)', alignSelf:'flex-end' }}
-                onClick={() => setOverride('')}>✕ Effacer</button>
+                border:'1px solid rgba(200,80,80,0.20)', alignSelf:'flex-end' }}
+                onClick={() => setOverride('')}>{lang==='en'?'✕ Clear':'✕ Effacer'}</button>
             )}
           </div>
         </div>
@@ -1719,7 +1784,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
     // Marque cette query comme courante — les réponses d'une ancienne query seront ignorées
     rcDefautQueryRef.current = query;
     const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-    const local = REAL_COUNTRIES_DATA.find(r => norm(r.nom) === norm(query));
+    const local = getRealCountries().find(r => norm(r.nom) === norm(query));
     if (local) {
       if (rcDefautQueryRef.current !== query) return; // réponse obsolète
       setRcDefaut({ status: 'found', suggestion: null, canonical: local.nom });
@@ -1840,9 +1905,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             border:`1px solid ${lang===l ? 'rgba(200,164,74,0.45)' : 'rgba(255,255,255,0.10)'}`,
             borderRadius:'2px', padding:'0.22rem 0.55rem',
             color: lang===l ? 'rgba(200,164,74,0.90)' : 'rgba(150,170,205,0.35)',
-            fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem',
-            letterSpacing:'0.14em', cursor:'pointer', transition:'all 0.15s',
-          }}>{l.toUpperCase()}</button>
+            fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem',
+            letterSpacing:'0.10em', cursor:'pointer', transition:'all 0.15s',
+            display:'flex', alignItems:'center', gap:'0.25rem',
+          }}>
+            <span style={{fontSize:'0.85rem',lineHeight:1}}>{l==='fr'?'🇫🇷':'🇬🇧'}</span>
+            <span>{l.toUpperCase()}</span>
+          </button>
         ))}
       </div>
       {showKeys && <APIKeyInline onClose={() => { setShowKeys(false); onRefreshKeys?.(); }} />}
@@ -1856,32 +1925,31 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           {...{placeholder:t("WORLD_NAME_PH",lang)}} autoFocus />
       </div>
 
-      <div style={{ display:'flex', gap:'0.8rem', width:'100%', justifyContent:'space-between', alignItems:'center' }}>
-        {/* Bouton clé API — encadré pour signaler le clic */}
+      <div style={{ display:'grid', gridTemplateColumns:'1fr auto 1fr', gap:'0.8rem', width:'100%', alignItems:'center' }}>
+        {/* Colonne gauche : bouton clé API */}
         <button
           style={{
             background:'rgba(200,164,74,0.06)', border:'1px solid rgba(200,164,74,0.30)',
             borderRadius:'2px', padding:'0.35rem 0.75rem', cursor:'pointer',
             fontFamily:FONT.mono, fontSize:'0.48rem', letterSpacing:'0.12em',
             color: hasApiKeys ? 'rgba(100,200,120,0.70)' : 'rgba(200,164,74,0.55)',
-            boxShadow: '0 0 8px rgba(200,164,74,0.08)',
+            boxShadow: '0 0 8px rgba(200,164,74,0.08)', justifySelf:'start',
+            whiteSpace:'nowrap',
           }}
           onClick={() => setShowKeys(true)}
           title={lang==='en'?'Configure API keys':'Configurer les clés API'}>
-          {hasApiKeys ? '🔑 CLÉS API ✓' : '🔑 CLÉS API'}
+          {hasApiKeys ? `${lang==='en'?'🔑 API KEYS':'🔑 CLÉS API'} ✓` : (lang==='en'?'🔑 API KEYS':'🔑 CLÉS API')}
         </button>
-
-        <div style={{ display:'flex', gap:'0.8rem', alignItems:'center' }}>
-          {!hasApiKeys && (
-            <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(200,100,74,0.55)' }}>
-              ⚠ Pas de clé — mode hors ligne uniquement
-            </span>
-          )}
-          <button style={{ ...BTN_PRIMARY, opacity: worldName.trim() ? 1 : 0.35 }}
-            disabled={!worldName.trim()} onClick={() => setStep('mode')}>
-            {t('CONTINUE',lang)}
-          </button>
-        </div>
+        {/* Colonne centre : message no key — occupe toujours la place même vide */}
+        <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(200,100,74,0.55)',
+          textAlign:'center', visibility: hasApiKeys ? 'hidden' : 'visible' }}>
+          {lang==='en' ? '⚠ No key — offline mode only' : '⚠ Pas de clé — mode hors ligne uniquement'}
+        </span>
+        {/* Colonne droite : bouton continuer */}
+        <button style={{ ...BTN_PRIMARY, opacity: worldName.trim() ? 1 : 0.35, justifySelf:'end', minWidth:'9rem', textAlign:'center' }}
+          disabled={!worldName.trim()} onClick={() => setStep('mode')}>
+          {t('CONTINUE',lang)}
+        </button>
       </div>
     </div>
   );
@@ -1903,7 +1971,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <div style={{ fontSize:'1.4rem' }}>{m.icon}</div>
               <div style={{ fontFamily:FONT.cinzel, fontSize:'0.58rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.85)' }}>{m.title}</div>
               <div style={{ fontSize:'0.50rem', color:'rgba(140,160,200,0.55)', lineHeight:1.6 }}>{m.desc}</div>
-              {m.disabled && <span style={{ ...S.tag, color:'rgba(200,80,80,0.55)', borderColor:'rgba(200,80,80,0.20)' }}>{t('KEY_MISSING',lang)}</span>}
+              {m.disabled && <span style={{ ...S.tag, color:'rgba(200,80,80,0.55)', border:'1px solid rgba(200,80,80,0.20)' }}>{t('KEY_MISSING',lang)}</span>}
             </div>
           ))}
         </div>
@@ -2002,7 +2070,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
       // B — Choisir parmi les 3 fictifs ou en créer un nouveau
       if (defautType === 'fictif') {
         const chosen = defautFictif && defautFictif !== 'new'
-          ? PAYS_LOCAUX.find(p => p.id === defautFictif)
+          ? getPaysLocaux().find(p => p.id === defautFictif)
           : null;
         const isNew = defautFictif === 'new';
 
@@ -2020,31 +2088,31 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
 
             {/* Grille 2×2 : 3 presets + 1 créer */}
             <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'0.7rem', width:'100%' }}>
-              {PAYS_LOCAUX.map(p => (
+              {getPaysLocaux().map(p => (
                 <MC key={p.id}
                   style={{
-                    borderColor: defautFictif===p.id ? `${p.couleur}70` : undefined,
+                    border: defautFictif===p.id ? `1px solid ${p.couleur}70` : undefined,
                     background:  defautFictif===p.id ? `${p.couleur}14` : undefined,
                     cursor:'pointer',
                   }}
                   onClick={() => setDefautFictif(p.id)}>
                   <div style={{ fontSize:'1.2rem' }}>{p.emoji}</div>
                   <McTitle t={p.nom} />
-                  <McSub t={`${p.terrain} · ${p.regime.replace(/_/g,' ')}`} />
+                  <McSub t={`${getTerrainLabels()[p.terrain] || p.terrain} · ${getRegimeLabels()[p.regime] || p.regime.replace(/_/g,' ')}`} />
                 </MC>
               ))}
 
               {/* Carte + Créer */}
               <MC
                 style={{
-                  borderColor: isNew ? 'rgba(58,191,122,0.55)' : 'rgba(58,191,122,0.18)',
+                  border: isNew ? '1px solid rgba(58,191,122,0.55)' : '1px solid rgba(58,191,122,0.18)',
                   background:  isNew ? 'rgba(58,191,122,0.07)' : undefined,
                   cursor:'pointer', justifyContent:'center', alignItems:'center',
                 }}
                 onClick={() => setDefautFictif('new')}>
                 <div style={{ fontSize:'1.4rem' }}>🌍</div>
                 <McTitle t={t('CREATE',lang)} />
-                <McSub t="Nation fictive personnalisée" />
+                <McSub t={lang==='en'?'Custom fictional nation':'Nation fictive personnalisée'} />
               </MC>
             </div>
 
@@ -2053,7 +2121,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <div style={{ ...CARD_STYLE, width:'100%', display:'flex', flexDirection:'column', gap:'0.5rem' }}>
                 <div style={{ fontSize:'0.44rem', color:'rgba(140,160,200,0.65)', lineHeight:1.6 }}>{chosen.description}</div>
                 <div style={{ display:'flex', gap:'1rem', flexWrap:'wrap', alignItems:'center' }}>
-                  {[`👤 ${chosen.leader}`, `👥 ${(chosen.population/1e6).toFixed(1)} M hab.`, `😊 Satisfaction ${chosen.satisfaction}%`].map(t => (
+                  {[`👤 ${typeof chosen.leader === 'string' ? chosen.leader : (chosen.leader?.nom || chosen.leader?.name || '')}`, `👥 ${(chosen.population/1e6).toFixed(1)} M hab.`, `😊 Satisfaction ${chosen.satisfaction}%`].map(t => (
                     <span key={t} style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.50)' }}>{t}</span>
                   ))}
                   {(() => {
@@ -2074,7 +2142,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 <div>
                   <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NOM</div>
                   <input
-                    style={{ ...INPUT_STYLE, fontSize:'0.54rem', borderColor:'rgba(58,191,122,0.25)' }}
+                    style={{ ...INPUT_STYLE, fontSize:'0.54rem', border:'1px solid rgba(58,191,122,0.25)' }}
                     value={defautNom}
                     onChange={e => setDefautNom(e.target.value)}
                     placeholder="Ex : Arvalia, Morvaine, Zephoria…"
@@ -2085,13 +2153,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                   <div>
                     <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('TERRAIN',lang)}</div>
                     <select style={SELECT_STYLE} value={newFictifTerrain} onChange={e => setNewFictifTerrain(e.target.value)}>
-                      {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                      {Object.entries(getTerrainLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                   </div>
                   <div>
                     <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('REGIME',lang)}</div>
                     <select style={SELECT_STYLE} value={newFictifRegime} onChange={e => setNewFictifRegime(e.target.value)}>
-                      {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                      {Object.entries(getRegimeLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                   </div>
                 </div>
@@ -2140,7 +2208,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
 
       // C — Choisir un pays réel hors ligne
       if (defautType === 'reel') {
-        const chosen = REAL_COUNTRIES_DATA.find(r => r.id === defautReel);
+        const chosen = getRealCountries().find(r => r.id === defautReel);
         return (
           <div style={S.wrap(false)}>
             <ARIAHeader showQuote={false} />
@@ -2149,7 +2217,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <select style={SELECT_STYLE} value={defautReel}
                 onChange={e => setDefautReel(e.target.value)}>
                 <option value="">— Choisir un pays —</option>
-                {REAL_COUNTRIES_DATA.map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
+                {getRealCountries().map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
               </select>
               {chosen && <CountryInfoCard data={chosen} />}
             </div>
@@ -2179,12 +2247,12 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             <MC onClick={() => setDefautType('fictif')}>
               <div style={{ fontSize:'1.3rem' }}>🌐</div>
               <McTitle t={t('FICTIONAL_NATION',lang)} />
-              <McSub t="1 des 3 nations prédéfinies ou 1 nouvelle — l'IA l'enrichit." />
+              <McSub t={lang==='en'?"1 of 3 preset nations or 1 new one — AI enriches it.":"1 des 3 nations prédéfinies ou 1 nouvelle — l'IA l'enrichit."} />
             </MC>
             <MC onClick={() => setDefautType('reel')}>
               <div style={{ fontSize:'1.3rem' }}>🗺</div>
               <McTitle t={t('REAL_COUNTRY',lang)} />
-              <McSub t="L'IA génère le portrait depuis sa situation actuelle." />
+              <McSub t={lang==='en'?"AI generates the portrait from its current situation.":"L'IA génère le portrait depuis sa situation actuelle."} />
             </MC>
           </div>
           {BK(() => setPreset(null))}
@@ -2193,7 +2261,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
 
       // B — Pays réel en ligne
       if (defautType === 'reel') {
-        const knownReel = REAL_COUNTRIES_DATA.find(r => r.id === defautReel);
+        const knownReel = getRealCountries().find(r => r.id === defautReel);
         const canLaunch = defautReel || (defautNom.trim() && rcDefaut.status === 'found');
         return (
           <div style={S.wrap(false)}>
@@ -2203,7 +2271,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <select style={SELECT_STYLE} value={defautReel}
                 onChange={e => { setDefautReel(e.target.value); setDefautNom(''); }}>
                 <option value="">— ou tapez un nom ci-dessous —</option>
-                {REAL_COUNTRIES_DATA.map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
+                {getRealCountries().map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
               </select>
               <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(140,160,200,0.35)', textAlign:'center' }}>— OU —</div>
               <div>
@@ -2260,7 +2328,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
       // C — Nation fictive en ligne (identique hors-ligne : grille 2×2 + bandeau + créer)
       if (defautType === 'fictif') {
         const chosen = defautFictif && defautFictif !== 'new'
-          ? PAYS_LOCAUX.find(p => p.id === defautFictif)
+          ? getPaysLocaux().find(p => p.id === defautFictif)
           : null;
         const isNew = defautFictif === 'new';
         const ARIA_BASE = { republique_federale:44, democratie_liberale:48, monarchie_constitutionnelle:38, technocratie_ia:72, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocracie:18, communisme:32 };
@@ -2274,29 +2342,29 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
 
             {/* Grille 2×2 identique hors-ligne */}
             <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'0.7rem', width:'100%' }}>
-              {PAYS_LOCAUX.map(p => (
+              {getPaysLocaux().map(p => (
                 <MC key={p.id}
                   style={{
-                    borderColor: defautFictif===p.id ? `${p.couleur}70` : undefined,
+                    border: defautFictif===p.id ? `1px solid ${p.couleur}70` : undefined,
                     background:  defautFictif===p.id ? `${p.couleur}14` : undefined,
                     cursor:'pointer',
                   }}
                   onClick={() => { setDefautFictif(p.id); setDefautNom(''); }}>
                   <div style={{ fontSize:'1.2rem' }}>{p.emoji}</div>
                   <McTitle t={p.nom} />
-                  <McSub t={`${p.terrain} · ${p.regime.replace(/_/g,' ')}`} />
+                  <McSub t={`${getTerrainLabels()[p.terrain] || p.terrain} · ${getRegimeLabels()[p.regime] || p.regime.replace(/_/g,' ')}`} />
                 </MC>
               ))}
               <MC
                 style={{
-                  borderColor: isNew ? 'rgba(58,191,122,0.55)' : 'rgba(58,191,122,0.18)',
+                  border: isNew ? '1px solid rgba(58,191,122,0.55)' : '1px solid rgba(58,191,122,0.18)',
                   background:  isNew ? 'rgba(58,191,122,0.07)' : undefined,
                   cursor:'pointer', justifyContent:'center', alignItems:'center',
                 }}
                 onClick={() => { setDefautFictif('new'); setDefautNom(''); }}>
                 <div style={{ fontSize:'1.4rem' }}>🌍</div>
                 <McTitle t={t('CREATE',lang)} />
-                <McSub t="Nation fictive personnalisée" />
+                <McSub t={lang==='en'?'Custom fictional nation':'Nation fictive personnalisée'} />
               </MC>
             </div>
 
@@ -2305,7 +2373,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               <div style={{ ...CARD_STYLE, width:'100%', display:'flex', flexDirection:'column', gap:'0.5rem' }}>
                 <div style={{ fontSize:'0.44rem', color:'rgba(140,160,200,0.65)', lineHeight:1.6 }}>{chosen.description}</div>
                 <div style={{ display:'flex', gap:'1rem', flexWrap:'wrap', alignItems:'center' }}>
-                  {[`👤 ${chosen.leader}`, `👥 ${(chosen.population/1e6).toFixed(1)} M hab.`, `😊 Satisfaction ${chosen.satisfaction}%`].map(t => (
+                  {[`👤 ${typeof chosen.leader === 'string' ? chosen.leader : (chosen.leader?.nom || chosen.leader?.name || '')}`, `👥 ${(chosen.population/1e6).toFixed(1)} M hab.`, `😊 Satisfaction ${chosen.satisfaction}%`].map(t => (
                     <span key={t} style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.50)' }}>{t}</span>
                   ))}
                   {(() => {
@@ -2326,7 +2394,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 <div>
                   <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>NOM</div>
                   <input
-                    style={{ ...INPUT_STYLE, fontSize:'0.54rem', borderColor:'rgba(58,191,122,0.25)' }}
+                    style={{ ...INPUT_STYLE, fontSize:'0.54rem', border:'1px solid rgba(58,191,122,0.25)' }}
                     value={defautNom}
                     onChange={e => setDefautNom(e.target.value)}
                     placeholder="Ex : Arvalia, Morvaine, Zephoria…"
@@ -2337,13 +2405,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                   <div>
                     <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('TERRAIN',lang)}</div>
                     <select style={SELECT_STYLE} value={newFictifTerrain} onChange={e => setNewFictifTerrain(e.target.value)}>
-                      {Object.entries(TERRAIN_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                      {Object.entries(getTerrainLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                   </div>
                   <div>
                     <div style={{ ...labelStyle('0.43rem'), marginBottom:'0.3rem' }}>{t('REGIME',lang)}</div>
                     <select style={SELECT_STYLE} value={newFictifRegime} onChange={e => setNewFictifRegime(e.target.value)}>
-                      {Object.entries(REGIME_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+                      {Object.entries(getRegimeLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                   </div>
                 </div>
@@ -2426,7 +2494,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             return (
               <button style={{ ...BTN_PRIMARY, opacity: canGen ? 1 : 0.40, cursor: canGen ? 'pointer' : 'not-allowed' }}
                 disabled={!canGen}
-                title={canGen ? '' : `Vérifiez : ${unvalidated.map(c=>c.nom||'?').join(', ')}`}
+                title={canGen ? '' : lang==='en'?`Check: ${unvalidated.map(c=>c.nom||'?').join(', ')}`:`Vérifiez : ${unvalidated.map(c=>c.nom||'?').join(', ')}`}
                 onClick={() => {
                   if (!canGen) return;
                   const filled = countries.map((c, i) => ({

@@ -6,7 +6,7 @@
 //    <span>{t('WORLD_NAME', lang)}</span>
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useState, useCallback, createContext, useContext } from 'react';
+import { useState, useCallback, useEffect, createContext, useContext } from 'react';
 
 // ── Clé locale persistée ──────────────────────────────────────────────────
 const LS_LANG = 'aria_lang';
@@ -181,6 +181,84 @@ export const TRANSLATIONS = {
   NEW_COUNTRY:         { fr: 'NOUVEAU PAYS',           en: 'NEW COUNTRY'        },
   CYCLE_STATS:         { fr: 'STATS CYCLE',            en: 'CYCLE STATS'        },
 
+
+  // ── App.jsx ───────────────────────────────────────────────────────────
+  NOTIF_KEY_ADDED:     { fr: '🔑 Clé API ajoutée — redémarrez une partie pour activer le mode IA.', en: '🔑 API key added — restart a game to enable AI mode.' },
+  NOTIF_KEY_REMOVED:   { fr: "🔑 Clé API supprimée — les délibérations restent actives jusqu'à la fin de la partie.", en: '🔑 API key removed — deliberations remain active until end of current game.' },
+  TOPBAR_SUBTITLE:     { fr: 'DÉMOCRATIE HOLISTIQUE',  en: 'HOLISTIC DEMOCRACY'    },
+  TOPBAR_LEGITIMITE:   { fr: 'Rapport de Légitimité Globale — ARIA', en: 'Global Legitimacy Report — ARIA' },
+  BTN_NEW_GAME:        { fr: 'Nouvelle partie',         en: 'New game'              },
+  BTN_CONFIG:          { fr: 'Configuration ARIA',      en: 'ARIA settings'         },
+
+  // ── LLMCouncil.jsx ────────────────────────────────────────────────────
+  COUNCIL_PHASE_MINISTRE:    { fr: 'MINISTÈRE',                    en: 'MINISTRY'                      },
+  COUNCIL_PHASE_CERCLE:      { fr: 'CERCLE MINISTÉRIEL',           en: 'MINISTERIAL CIRCLE'            },
+  COUNCIL_PHASE_PRESIDENCE:  { fr: 'PRÉSIDENCE',                   en: 'PRESIDENCY'                    },
+  COUNCIL_PHASE_RESULT:      { fr: 'RÉSULTAT',                     en: 'RESULT'                        },
+  COUNCIL_SYNTH_LOADING:     { fr: 'SYNTHÈSE EN COURS…',           en: 'SYNTHESIS IN PROGRESS…'        },
+  COUNCIL_DELIB_LABEL:       { fr: 'DÉLIBÉRATION MINISTÉRIELLE',   en: 'MINISTERIAL DELIBERATION'      },
+  COUNCIL_DELIB_LOADING:     { fr: 'DÉLIBÉRATION EN COURS…',       en: 'DELIBERATION IN PROGRESS…'     },
+  COUNCIL_ADHESION:          { fr: 'ADHÉSION ARIA',                en: 'ARIA SUPPORT'                  },
+  COUNCIL_INSTANCE:          { fr: 'INSTANCE DE COORDINATION INTERMINISTÉRIELLE', en: 'INTER-MINISTERIAL COORDINATION BODY' },
+  COUNCIL_NO_QUESTION:       { fr: "Aucune question n'a été soumise au Conseil. Le cycle avancera sans qu'une délibération ait eu lieu.", en: 'No question was submitted to the Council. The cycle will advance without deliberation.' },
+
+  // ── ChronologView.jsx ─────────────────────────────────────────────────
+  CHRON_SECESSION:     { fr: 'Sécession',               en: 'Secession'             },
+  CHRON_PRESIDENCE:    { fr: 'PRÉSIDENCE',              en: 'PRESIDENCY'            },
+  CHRON_RESUME:        { fr: 'résumé',                  en: 'summary'               },
+  CHRON_COMPLET:       { fr: 'complet',                 en: 'complete'              },
+  CHRON_MODIFIE:       { fr: 'modifié',                 en: 'modified'              },
+  CHRON_MODIFIE_P:     { fr: 'modifiés',                en: 'modified'              },
+
+  // ── Dashboard_p3.jsx ─────────────────────────────────────────────────
+  DASH_NO_QUESTION:    { fr: "Aucune question soumise au Conseil ce cycle.", en: 'No question submitted to the Council this cycle.' },
+  DASH_REGIME_LABEL:   { fr: 'RÉGIME',                  en: 'REGIME'                },
+  DASH_REGIME_POLITIQUE: { fr: 'RÉGIME POLITIQUE',      en: 'POLITICAL REGIME'      },
+  DASH_COUNCIL_TOOLTIP:{ fr: 'Ouvrir le Conseil de délibération', en: 'Open deliberation Council' },
+  DASH_SECESSION_TOOLTIP: { fr: 'Sécession',            en: 'Secession'             },
+  DASH_GEN_WORLD:      { fr: 'GÉNÉRATION DU MONDE EN COURS…', en: 'WORLD GENERATION IN PROGRESS…' },
+  DASH_GEN_ARCHIVES:   { fr: 'CONSULTATION DES ARCHIVES MONDIALES…', en: 'CONSULTING WORLD ARCHIVES…' },
+  DASH_MAP_GENERATING: { fr: 'GÉNÉRATION DU MONDE…',    en: 'GENERATING WORLD…'     },
+
+  // ── ConstitutionModal.jsx ─────────────────────────────────────────────
+  CONST_CTX_INHERIT_HINT: { fr: 'Laissez sur "Hérite" pour suivre le réglage global (Settings).', en: 'Leave on "Inherit" to follow the global setting (Settings).' },
+  CONST_CTX_OFF_HINT:     { fr: 'Aucun contexte — délibération aveugle pour ce pays', en: 'No context — blind deliberation for this country' },
+  CONST_CHANCE_HINT:      { fr: 'Active le 7e ministère pour la gestion des urgences.', en: 'Activates the 7th ministry for emergency management.' },
+  CONST_PRESIDENCY_HINT:  { fr: 'Activez / désactivez chaque figure. Sans présidence → mode collégial.', en: 'Enable / disable each figure. No presidency → collegial mode.' },
+  CONST_COLLEGIAL_WARN:   { fr: '⚠ Mode collégial — délibération sans arbitrage présidentiel', en: '⚠ Collegial mode — deliberation without presidential arbitration' },
+  CONST_ROLE_HINT:        { fr: '— rôle spécifique de chaque ministre dans ce ministère', en: '— specific role of each minister in this ministry' },
+  CONST_ANNOT_HINT:       { fr: '— question posée lors des annotations inter-ministérielles', en: '— question asked during inter-ministerial annotations' },
+  CONST_CREATE:           { fr: 'Créer →',              en: 'Create →'              },
+  CONST_ADD_MINISTRY_BTN: { fr: '+ Nouveau ministère',  en: '+ New ministry'        },
+  CONST_NEW_MINISTRY:     { fr: '+ NOUVEAU MINISTÈRE',  en: '+ NEW MINISTRY'        },
+  CONST_ESSENCE_PH:       { fr: 'Essence — rôle et vision…', en: 'Essence — role and vision…' },
+  CONST_ANGLE_ANNOT:      { fr: "ANGLE D'ANNOTATION",   en: 'ANNOTATION ANGLE'      },
+
+  // ── Settings.jsx ──────────────────────────────────────────────────────
+  SETTINGS_SYNTH_MIN_LABEL: { fr: 'Synthèse ministérielle', en: 'Ministry synthesis' },
+  SETTINGS_SAVED:      { fr: '✓ Sauvegardé',            en: '✓ Saved'               },
+  SETTINGS_VOICE_HINT: { fr: "Voix, ton, façon d'argumenter", en: 'Voice, tone, argumentation style' },
+  SETTINGS_MISSION_HINT: { fr: "Définit l'objectif et les valeurs du ministère", en: "Defines the ministry's objective and values" },
+  SETTINGS_COMM_HINT:  { fr: "Comment ce ministre parle depuis l'angle de ce ministère", en: 'How this minister speaks from the ministry angle' },
+  SETTINGS_DUAL_MODE:  { fr: 'Duale — Phare + Boussole (défaut ARIA)', en: 'Dual — Lighthouse + Compass (ARIA default)' },
+  SETTINGS_COLLEGIAL_MODE: { fr: 'Collégiale — Vote des 12 ministres', en: 'Collegial — Vote of 12 ministers' },
+  SETTINGS_ANNOT_QUESTION: { fr: "La question qu'il pose systématiquement sur les synthèses des autres ministères.", en: "The question it systematically asks about other ministries' syntheses." },
+  SETTINGS_LANG_LABEL: { fr: 'Interface en français',   en: 'Interface in English'  },
+
+  // ── InitScreen.jsx ────────────────────────────────────────────────────
+  INIT_VERIF:          { fr: 'VÉRIFICATION',             en: 'VERIFICATION'          },
+  INIT_VERIF_LOADING:  { fr: '⟳ vérification…',          en: '⟳ verifying…'          },
+  INIT_LOCAL_RESPONSES:{ fr: 'RÉPONSES LOCALES PRÉ-ÉCRITES', en: 'PRE-WRITTEN LOCAL RESPONSES' },
+  INIT_SOLO_LABEL:     { fr: 'SOLO — 1 modèle, rôles tournants', en: 'SOLO — 1 model, rotating roles' },
+  INIT_CUSTOM_LABEL:   { fr: 'CUSTOM — Rôles libres',    en: 'CUSTOM — Free roles'   },
+  INIT_SYNTH_MIN:      { fr: 'Synthèse min.',             en: 'Ministry synth.'       },
+  INIT_SYNTH_PRES:     { fr: 'Synthèse prés.',            en: 'Presidential synth.'   },
+  INIT_MODEL_LABEL:    { fr: 'Modèle',                   en: 'Model'                 },
+  INIT_AI_WILL_GEN:    { fr: "⚡ L'IA génèrera",          en: '⚡ AI will generate'    },
+  INIT_MODE_REAL_AI:   { fr: '🗺 Pays réel (IA)',          en: '🗺 Real country (AI)'   },
+  INIT_MODE_REAL:      { fr: '🗺 Pays réel',               en: '🗺 Real country'        },
+  INIT_NATION_PREDEFINED: { fr: 'NATION PRÉDÉFINIE',      en: 'PRESET NATION'         },
+
   // ── Settings ─────────────────────────────────────────────────────────
   SETTINGS:            { fr: 'CONFIGURATION ARIA',     en: 'ARIA SETTINGS'      },
   CLOSE:               { fr: 'FERMER',                 en: 'CLOSE'              },
@@ -198,10 +276,16 @@ export function t(key, lang = 'fr') {
 export function useLocale() {
   const [lang, setLangState] = useState(() => loadLang());
 
+  // Réagir aux changements de langue émis par n'importe quel composant
+  useEffect(() => {
+    const handler = (e) => setLangState(e.detail || loadLang());
+    window.addEventListener('aria-lang-change', handler);
+    return () => window.removeEventListener('aria-lang-change', handler);
+  }, []);
+
   const setLang = useCallback((l) => {
     saveLang(l);
     setLangState(l);
-    // Notifie tous les composants qui écoutent (Dashboard_p3, CountryPanel, etc.)
     try { window.dispatchEvent(new CustomEvent('aria-lang-change', { detail: l })); } catch {}
   }, []);
 

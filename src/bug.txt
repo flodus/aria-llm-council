@@ -1,23 +1,28 @@
 
-important :
-- Partie en ligne personnalisée : pays réel : quand on saisi un pays il faut vérifié qu'il existe en vrai pas dans nos real_countries (canada existe mais n'est pas dans nos real_countries)
-- Partie en ligne personnalisée : nouveau pays fictif ou liste des fictifs, pays réels dans la liste ou pays réel pas dans la liste ça change rien, l'ia crée que des pays fictifs : j'ai testé en ligne : fictif liste : République de Valoria, fictif pas dans la liste : tutu, réel dans la liste : france, réel pas dans liste : canada >> ça m'a généré 4 pays complétement aléatoire  >> maintenant ça n'affiche plus aucun pays sur la carte
+-- Pbs communs
+- bouton pour couper le son
+- pour le changement de cycle on sait les impacts qu'il va y avoir mais il manque la fluctuation du nb d'habitants...
+- les pays sont forcément collés sur la carte ? j'ai l'impression que c'est le cas à chaque fois
+- dans settings est ce que board game mode est encore nécessaire si y a le mode off dans mode ia ? Je pense que le mieux serait de déplacer BOARD GAME MOD à la place de OFF, en faisant une tuile cliquable, je pense que c'est là sa place, par contre je garde le nom board game mode j'aime bien à la place de off. donc on garde : BOARD GAME MODE Force local texts
+Even with valid API keys, use pre-written responses from ariaData.js mais on le met à la place de off
+- theocratie n'a pas d'icone ?
+- dans init custom constitution on peut pas choisir les gouvernements par pays ? si je désactive un president ministère ou ministre ça le désactive pour tous les autres pays
+- init -> constitution -> ajouter ministre ou ministère il faudrait le mettre en haut, car là faut aller tout en bas et si on sait pas que c'est possible on descend pas. Peut être en icone + dans la box "12 ministres", d'ailleurs faudrait aussi faire une box " 7ministères" et insérer + ajouter dedans. Faut penser à pouvoir rajouter 1 président aussi (peut être plus tard mais faudrait faire un todo.md avec tous les trucs a faire plus tard). (==> En fait faudrait faire les mêmes box que dans la popup gouvernement)
+- in game :  nouveau pays fictif liste déroulante terrain et régime trop moche car toute blanche
+sidepanel (mapgride, council, chronolog : une toute petite flèche discrète à coté du nom du pays pour changer de pays ?)
 
+-- PB de traduction :
+- init : les fenêtres sont encore avec des titres et champ fr : default : nation de depart, nation fictive, jouer, pays reel, chosir un pays, jouer. custom : ajouter, générer le monde, choisir pour real country, sous titre de deliberation context, sous titre de auto, stats seules et son sous titre, tous actifs, inactif, tous, tout activer, ministres actifs.
+- dashboard : Nom des pays fictifs sur la carte et dans le side panel
+- fenetre changement de cycle : le titre.
+- llm council : deliberation des ministres du ministere concerné, deliberation et synthese présidentielle, titre "synthèse...", convergence, divergence, les options, VOTE DU PEUPLE ☉ Adopter une position ferme sur cet enjeu pour maintenir la cohérence de la trajectoire ARIA. ☽ Consulter les parties prenantes et prévoir un mécanisme de révision à court terme. PROPOSITION SOUMISE AU VOTE Option A — Adopter une position ferme sur cet enjeu pour maintenir la cohérence de la trajectoire ARIA. Option B — Consulter les parties prenantes et prévoir un mécanisme de révision à court terme. OUI — ADOPTER NON — REJETER, result décision du peuple. Fenêtre résultat du conseil.
+- ecran principal du chronolog
+- fenetre rapport de légitimité
+- info bulles survol de certaines icones (gouvernement, avancer de 5 ans ...)
+- fenetre diplomatie
+- fenetre gouvernement : actif, tous actifs, clic = ouvrir · reclic = désactive, ministres : essence, STYLE DE COMMUNICATION, angles d'annotations, + nouveau ministre
+- settings : RESOURCES BY TERRAIN je veux bien des icônesà côté des terrains comme Coastal
 
-on verra plus tard :
-Hors ligne :
-    Par défaut : Nation Fictive : toujours pas possible de créer un nouveau pays
-Partie personnalisée pays fictif (local_countries) je veux les infos dans le topo du pays (habitants pib satisfaction terrain acceptation aria)
-
-En ligne par défaut pays fictif je veux les mêmes infos dans le topo du pays  (habitants pib satisfaction terrain acceptation aria)
-Il faudrait pour les pays réels (real_countries) et pour ceux en ia que les alliances soient renseignés (même si modifiable par la suite in game)
-
-options : interface : Affichage carte ZEE et légende ça change rien qu'on coche ou décoche
-
-#### V2
-Faudrait penser à faire "colonisation ou un truc inverse de sécession"
-
-rappel de la question juste après vote du peuple et avant les avis des présidents
-cacher les icônes de la fenêtre principale dans la vue llm council (on voit pas les réponses de la synthèse présidentielle)
-pas de jauge
-pour les questions à l'ia pour les pays existants il faudrait mettre en contexte le pays lui même : la même question posée en france ou en chine n'aura pas le même impact sur les décisions ministérielles. Par contre ça sera plus objectif pour les questions aux pays fictifs
+####
+COUNTRY CONTEXT IN DELIBERATIONS
+####

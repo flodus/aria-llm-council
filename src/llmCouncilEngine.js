@@ -287,22 +287,24 @@ Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases argumentées", "mot_cle
 
   // ── Synthèse ministère ───────────────────────────────────────────────────
   const keys = getApiKeys();
+  const _iaMode = (() => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}').ia_mode||'aria'; } catch { return 'aria'; } })();
+  const _useAI = _iaMode !== 'none' && (keys.claude || keys.gemini || keys.grok || keys.openai);
 
   let resA = null, resB = null;
-  if (keys.claude || keys.gemini) {
+  if (_useAI) {
     [resA, resB] = await Promise.all([
       callAI(pA, 'council_ministre').catch(() => null),
       callAI(pB, 'council_ministre').catch(() => null),
     ]);
   }
 
-  // Fallback local si IA indisponible
+  // Fallback local si IA indisponible ou mode offline
   if (!resA) resA = localMinisterFallback(idA, question);
   if (!resB) resB = localMinisterFallback(idB, question);
 
   // Synthèse
   let synthese = null;
-  if (keys.claude || keys.gemini) {
+  if (_useAI) {
     const pSynth = buildSyntheseMinisterePrompt(ministry, resA, resB, question, ctx);
     synthese = await callAI(pSynth, 'council_synthese_min').catch(() => null);
   }
@@ -336,7 +338,7 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
       ministryName:  m.name,
       ministryEmoji: m.emoji,
       ministryColor: m.color,
-      annotation:    FALLBACK_RESPONSES.cercleAnnotations[m.id] || `Le ministère ${m.name} prend note de la requête.`,
+      annotation:    FALLBACK_RESPONSES.cercleAnnotations[m.id] || ((() => { try { return localStorage.getItem('aria_lang') === 'en'; } catch { return false; } })() ? `The ${m.name} ministry takes note of the request.` : `Le ministère ${m.name} prend note de la requête.`),
     }));
   }
 
@@ -351,7 +353,8 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
       const annotation = minister1?.annotation || `Analyse la question du point de vue de ${m.name}.`;
 
       let result = null;
-      if (keys.claude || keys.gemini) {
+      const _iaMode3 = (() => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}').ia_mode||'aria'; } catch { return 'aria'; } })();
+      if (_iaMode3 !== 'none' && (keys.claude || keys.gemini || keys.grok || keys.openai)) {
         const p = `${langPrefix()}Tu représentes le ministère "${m.name}" (${m.emoji}) du gouvernement ARIA.
 ${ctx}
 Question traitée : "${question}"
@@ -729,16 +732,29 @@ function localMinisterFallback(ministerId, question) {
 }
 
 function localSyntheseFallback(ministry, resA, resB) {
+  const isEn = ((() => { try { return localStorage.getItem('aria_lang'); } catch { return 'fr'; } })()) === 'en';
   return {
     convergence: true,
-    synthese: `Le ministère ${ministry.name} a délibéré sur la question soumise. Les deux ministres ont exposé leurs analyses respectives. Une position commune sera présentée au Cercle Ministériel.`,
+    synthese: isEn
+      ? `The ${ministry.name} ministry has deliberated on the submitted question. Both ministers have presented their analyses. A common position will be submitted to the Ministerial Circle.`
+      : `Le ministère ${ministry.name} a délibéré sur la question soumise. Les deux ministres ont exposé leurs analyses respectives. Une position commune sera présentée au Cercle Ministériel.`,
     tension_residuelle: null,
-    recommandation: `Le ministère recommande une approche progressive et concertée.`,
+    recommandation: isEn
+      ? 'The ministry recommends a progressive and concerted approach.'
+      : 'Le ministère recommande une approche progressive et concertée.',
   };
 }
 
 function localAnnotationFallback(ministry, question) {
-  const annotations = {
+  const isEn = ((() => { try { return localStorage.getItem('aria_lang'); } catch { return 'fr'; } })()) === 'en';
+  const annotations = isEn ? {
+    justice:   'The legal dimension of this question deserves particular attention.',
+    economie:  'Budgetary impact must be assessed before any decision.',
+    defense:   'The security implications have been examined.',
+    sante:     'The well-being of the population is our central concern.',
+    education: 'The impact on future generations has been taken into account.',
+    ecologie:  'The environmental sustainability of this decision is questionable.',
+  } : {
     justice:   'La dimension juridique de cette question mérite une attention particulière.',
     economie:  'L\'impact budgétaire doit être évalué avant toute décision.',
     defense:   'Les implications sécuritaires ont été examinées.',
@@ -746,5 +762,7 @@ function localAnnotationFallback(ministry, question) {
     education: 'L\'impact sur les générations futures a été pris en compte.',
     ecologie:  'La soutenabilité environnementale de cette décision est questionnable.',
   };
-  return annotations[ministry.id] || `Le ministère ${ministry.name} note l\'importance de cette question.`;
+  return annotations[ministry.id] || (isEn
+    ? `The ${ministry.name} ministry notes the importance of this question.`
+    : `Le ministère ${ministry.name} note l\'importance de cette question.`);
 }

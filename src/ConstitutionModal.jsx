@@ -9,7 +9,7 @@ import { REGIMES, getStats, getOptions, DEFAULT_OPTIONS } from './Dashboard_p1';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './ariaData';
 import BASE_AGENTS    from '../templates/base_agents.json';
 import BASE_AGENTS_EN from '../templates/base_agents_en.json';
-import { loadLang, useLocale } from './ariaI18n';
+import { loadLang, useLocale, t } from './ariaI18n';
 
 // ─── Primitives UI ───────────────────────────────────────────────────────────
 const FONT  = "'JetBrains Mono', monospace";
@@ -64,26 +64,26 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     secLeader:    isEn ? 'HEAD OF STATE'            : 'CHEF D\'ÉTAT',
     secContext:   isEn ? 'CONTEXT IN DELIBERATIONS' : 'CONTEXTE DANS LES DÉLIBÉRATIONS',
     contextHint:  isEn ? 'Leave on "Inherit" to follow the global setting (Settings).'
-                       : 'Laissez sur "Hérite" pour suivre le réglage global (Settings).',
+                       : t('CONST_CTX_INHERIT_HINT', lang),
     ctxInherit:   isEn ? '⚙️ Inherit global'        : '⚙️ Hérite du global',
     ctxInheritH:  isEn ? 'Follows the Settings rule': 'Suit le réglage de Settings',
     ctxAuto:      isEn ? '🤖 Auto'                  : '🤖 Auto',
     ctxRich:      isEn ? '📖 Enriched'              : '📖 Enrichi',
     ctxRichH:     isEn ? 'Full context — prompts AI to reason historically'
-                       : 'Contexte complet — incite l\'IA à raisonner historiquement',
+                       : lang==='en'?'Full context — prompts AI to reason historically':'Contexte complet — incite l\'IA à raisonner historiquement',
     ctxStats:     isEn ? '📊 Stats only'            : '📊 Stats seules',
     ctxStatsH:    isEn ? 'Numbers only — neutral, fewer hallucinations'
                        : 'Chiffres uniquement — neutre, moins d\'hallucinations',
     ctxOff:       isEn ? '🚫 Disabled'              : '🚫 Désactivé',
     ctxOffH:      isEn ? 'No context — blind deliberation for this country'
-                       : 'Aucun contexte — délibération aveugle pour ce pays',
+                       : t('CONST_CTX_OFF_HINT', lang),
     secCustomCtx: isEn ? 'CUSTOM CONTEXT'           : 'CONTEXTE PERSONNALISÉ',
     secPres:      isEn ? 'PRESIDENCY'               : 'PRÉSIDENCE',
     secMins:      isEn ? 'MINISTRIES'               : 'MINISTÈRES',
     crisisTitle:  isEn ? 'CRISIS MANAGEMENT'        : 'GESTION DE CRISE',
     crisisLabel:  isEn ? '🎲 Ministry of Chance & Crises' : '🎲 Ministère de la Chance & Crises',
     crisisDesc:   isEn ? 'Activates the 7th ministry for emergency management.'
-                       : 'Active le 7e ministère pour la gestion des urgences.',
+                       : t('CONST_CHANCE_HINT', lang),
     assignedMins: isEn ? 'ASSIGNED MINISTERS'       : 'MINISTRES ASSIGNÉS',
     secMinisters: isEn ? 'MINISTERS'                : 'MINISTRES',
     cancel:       isEn ? 'Cancel'                   : 'Annuler',
@@ -101,6 +101,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
   // présidence actives (array de keys)
   const [activePres, setActivePres] = useState(() => {
+    // Priorité : par pays (governanceOverride), puis override global, puis défaut
+    if (country?.governanceOverride?.active_presidency) return country.governanceOverride.active_presidency;
     const ov = readOv();
     if (ov?.active_presidency) return ov.active_presidency;
     const p = current.presidency || 'duale';
@@ -112,6 +114,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
   // ministères actifs
   const [activeMins, setActiveMins] = useState(() => {
+    if (country?.governanceOverride?.active_ministries) return country.governanceOverride.active_ministries;
     const ov = readOv();
     if (ov?.active_ministries) return ov.active_ministries;
     return current.ministries || globalGov.ministries || BASE_IDS;
@@ -119,6 +122,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
   // formulaires ajout
   const [activeMinsters, setActiveMinsters] = useState(() => {
+    if (country?.governanceOverride?.active_ministers !== undefined) return country.governanceOverride.active_ministers;
     const ov = readOv();
     return ov?.active_ministers || null; // null = tous actifs
   });
@@ -200,7 +204,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
       leader:leader||null,
       context_mode:     contextMode     || undefined,
       contextOverride:  contextOverride || undefined,
-      governanceOverride:{ presidency:presStr, active_presidency:activePres, ministries:activeMins, crisis_ministry:activeMins.includes('chance') },
+      governanceOverride:{ presidency:presStr, active_presidency:activePres, ministries:activeMins, active_ministers:activeMinsters, crisis_ministry:activeMins.includes('chance') },
       _constitutionDiff:diff });
     onClose();
   };
@@ -249,7 +253,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
               </section>
               <section style={S.sec}>
                 <h3 style={S.secTitle}>{tr.secLeader}</h3>
-                <input style={INPUT} value={leader} onChange={e=>setLeader(e.target.value)} placeholder="Nom du dirigeant…"/>
+                <input style={INPUT} value={leader} onChange={e=>setLeader(e.target.value)} placeholder={isEn ? "Head of state name…" : "Nom du dirigeant…"}/>
               </section>
 
               {/* ── CONTEXTE PAYS ─────────────────────────────────── */}
@@ -290,19 +294,25 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
               <section style={S.sec}>
                 <h3 style={S.secTitle}>{tr.secCustomCtx}</h3>
                 <p style={S.hint}>
-                  Texte libre injecté tel quel dans chaque délibération de ce pays.
-                  Si renseigné, remplace <em>entièrement</em> le contexte auto/enrichi.
-                  Idéal pour ancrer un pays fictif dans une lore précise.
+                  {isEn
+                    ? 'Free text injected as-is into each deliberation for this country. If set, it '
+                    : 'Texte libre injecté tel quel dans chaque délibération de ce pays. Si renseigné, il '}
+                  <em>{isEn?'entirely replaces':'remplace entièrement'}</em>
+                  {isEn
+                    ? ' the auto/enriched context. Ideal for anchoring a fictional country in a precise lore.'
+                    : ' le contexte auto/enrichi. Idéal pour ancrer un pays fictif dans une lore précise.'}
                 </p>
                 <textarea style={{...INPUT,minHeight:'80px',resize:'vertical',lineHeight:1.55,fontFamily:FONT}}
                   value={contextOverride}
                   onChange={e=>setContextOverride(e.target.value)}
-                  placeholder={`Ex : ${country?.nom||'Ce pays'} est une théocratie insulaire dont la constitution date de 1847. Le conseil délibère en tenant compte de la tradition des Anciens et des tensions avec la République voisine de Valmoria…`}
+                  placeholder={isEn
+                    ? `E.g. ${country?.nom||'This country'} is an island theocracy whose constitution dates from 1847. The council deliberates according to the tradition of the Elders and tensions with the neighboring Republic of Valmoria…`
+                    : `Ex : ${country?.nom||'Ce pays'} est une théocratie insulaire dont la constitution date de 1847. Le conseil délibère en tenant compte de la tradition des Anciens et des tensions avec la République voisine de Valmoria…`}
                 />
                 {contextOverride && (
                   <button style={{...BTN_S,alignSelf:'flex-end',fontSize:'0.42rem',
-                    color:'rgba(200,80,80,0.50)',borderColor:'rgba(200,80,80,0.20)'}}
-                    onClick={()=>setContextOverride('')}>✕ Effacer</button>
+                    color:'rgba(200,80,80,0.50)',border:'1px solid rgba(200,80,80,0.20)'}}
+                    onClick={()=>setContextOverride('')}>{isEn?'✕ Clear':'✕ Effacer'}</button>
                 )}
               </section>
             </>)}
@@ -311,7 +321,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             {tab==='presidency' && (<>
               <section style={S.sec}>
                 <h3 style={S.secTitle}>FIGURES ACTIVES</h3>
-                <p style={S.hint}>Activez / désactivez chaque figure. Sans présidence → mode collégial (ministres votent).</p>
+                <p style={S.hint}>{t('CONST_PRESIDENCY_HINT', lang)}</p>
                 <div style={{display:'flex',flexDirection:'column',gap:'0.45rem'}}>
                   {Object.entries(agents.presidency||{}).map(([key,p])=>{
                     const on=activePres.includes(key);
@@ -327,7 +337,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                     );
                   })}
                 </div>
-                {activePres.length===0 && <div style={S.warn}>⚠ Mode collégial — délibération sans arbitrage présidentiel.</div>}
+                {activePres.length===0 && <div style={S.warn}>{t('CONST_COLLEGIAL_WARN', lang)}</div>}
               </section>
 
               {Object.entries(agents.presidency||{}).map(([key,p])=>(
@@ -340,7 +350,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                   <textarea style={{...INPUT,minHeight:'52px',resize:'vertical',lineHeight:1.55,fontFamily:FONT}}
                     value={p.essence||''}
                     onChange={e=>setAgents(a=>({...a,presidency:{...a.presidency,[key]:{...a.presidency[key],essence:e.target.value}}}))} />
-                  <div style={{...S.label,marginTop:'0.35rem'}}>RÔLE ÉTENDU</div>
+                  <div style={{...S.label,marginTop:'0.35rem'}}>{t('EXTENDED_ROLE', lang)}</div>
                   <textarea style={{...INPUT,minHeight:'52px',resize:'vertical',lineHeight:1.55,fontFamily:FONT}}
                     value={p.role_long||''}
                     onChange={e=>setAgents(a=>({...a,presidency:{...a.presidency,[key]:{...a.presidency[key],role_long:e.target.value}}}))} />
@@ -434,7 +444,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                         <div style={{fontFamily:FONT,fontSize:'0.52rem',color:m.color+'DD',letterSpacing:'0.08em',textTransform:'uppercase'}}>{m.name}</div>
                       </div>
                       <button style={{...BTN_S,fontSize:'0.38rem',padding:'0.12rem 0.42rem',
-                        ...(on?{borderColor:m.color+'55',color:m.color+'CC',background:m.color+'10'}:{})}}
+                        ...(on?{border:'1px solid '+m.color+'55',color:m.color+'CC',background:m.color+'10'}:{})}}
                         onClick={()=>toggleMin(m.id)}>
                         {on?'● ACTIF':'○ INACTIF'}
                       </button>
@@ -482,7 +492,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                       <>
                         <div style={{...S.label,marginBottom:'0.28rem'}}>
                           PROMPTS MINISTÉRIELS
-                          <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0',marginLeft:'0.5rem'}}>— rôle spécifique de chaque ministre dans ce ministère</span>
+                          <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0',marginLeft:'0.5rem'}}>{t('CONST_ROLE_HINT', lang)}</span>
                         </div>
                         {assignedKeys.map(mk=>{
                           const min = agents.ministers[mk];
@@ -496,7 +506,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                               </div>
                               <textarea style={{...INPUT,minHeight:'30px',resize:'vertical',lineHeight:1.5,fontFamily:FONT}}
                                 value={promptVal}
-                                placeholder={`Rôle de ${min.name} dans ${m.name}…`}
+                                placeholder={lang==='en'?`Role of ${min.name} in ${m.name}…`:`Rôle de ${min.name} dans ${m.name}…`}
                                 onChange={e=>{
                                   const prompts = {...(m.ministerPrompts || m.minister_prompts || {}), [mk]:e.target.value};
                                   setAgents(a=>({...a,ministries:a.ministries.map((x,i)=>i===mi?{...x,ministerPrompts:prompts}:x)}));
@@ -513,24 +523,24 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
               {/* ── Nouveau ministère ── */}
               {showNewMinistry ? (
                 <section style={{...S.sec,border:'1px solid rgba(100,160,255,0.22)',borderRadius:'2px',padding:'0.7rem'}}>
-                  <h3 style={{...S.secTitle,color:'rgba(100,160,255,0.65)'}}>+ NOUVEAU MINISTÈRE</h3>
+                  <h3 style={{...S.secTitle,color:'rgba(100,160,255,0.65)'}}>{t('CONST_NEW_MINISTRY', lang)}</h3>
                   <div style={{display:'grid',gridTemplateColumns:'auto 1fr 1fr',gap:'0.38rem',marginBottom:'0.32rem'}}>
                     <input style={{...INPUT,width:'2.1rem',textAlign:'center',fontSize:'1rem',padding:'0.16rem'}} value={nMinistryD.emoji} onChange={e=>setNMinistryD(d=>({...d,emoji:e.target.value}))} placeholder="🏛️"/>
-                    <input style={INPUT} value={nMinistryD.name} onChange={e=>setNMinistryD(d=>({...d,name:e.target.value}))} placeholder="Nom du ministère"/>
+                    <input style={INPUT} value={nMinistryD.name} onChange={e=>setNMinistryD(d=>({...d,name:e.target.value}))} placeholder={t('MINISTRY_NAME', lang)}/>
                     <input style={INPUT} value={nMinistryD.id}   onChange={e=>setNMinistryD(d=>({...d,id:e.target.value}))} placeholder="id_unique"/>
                   </div>
                   <div style={{display:'flex',alignItems:'center',gap:'0.45rem',marginBottom:'0.32rem'}}>
                     <span style={{fontFamily:FONT,fontSize:'0.43rem',color:DIM}}>Couleur</span>
                     <input type="color" value={nMinistryD.color} style={{width:'1.9rem',height:'1.5rem',border:'none',background:'none',cursor:'pointer'}} onChange={e=>setNMinistryD(d=>({...d,color:e.target.value}))}/>
                   </div>
-                  <textarea style={{...INPUT,minHeight:'34px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.38rem'}} value={nMinistryD.mission} onChange={e=>setNMinistryD(d=>({...d,mission:e.target.value}))} placeholder="Mission du ministère…"/>
+                  <textarea style={{...INPUT,minHeight:'34px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.38rem'}} value={nMinistryD.mission} onChange={e=>setNMinistryD(d=>({...d,mission:e.target.value}))} placeholder={t('MINISTRY_MISSION', lang)}/>
                   <div style={{display:'flex',gap:'0.38rem',justifyContent:'flex-end'}}>
                     <button style={BTN_S} onClick={()=>setShowNewMinistry(false)}>{tr.cancel}</button>
-                    <button style={{...BTN_P,opacity:nMinistryD.name&&nMinistryD.id?1:0.35}} disabled={!nMinistryD.name||!nMinistryD.id} onClick={addMinistry}>Créer →</button>
+                    <button style={{...BTN_P,opacity:nMinistryD.name&&nMinistryD.id?1:0.35}} disabled={!nMinistryD.name||!nMinistryD.id} onClick={addMinistry}>{t('CONST_CREATE', lang)}</button>
                   </div>
                 </section>
               ) : (
-                <button style={{...BTN_S,alignSelf:'center',color:'rgba(100,160,255,0.55)',borderColor:'rgba(100,160,255,0.22)'}} onClick={()=>setShowNewMinistry(true)}>+ Nouveau ministère</button>
+                <button style={{...BTN_S,alignSelf:'center',color:'rgba(100,160,255,0.55)',border:'1px solid rgba(100,160,255,0.22)'}} onClick={()=>setShowNewMinistry(true)}>{t('CONST_ADD_MINISTRY_BTN', lang)}</button>
               )}
             </>)}
 
@@ -549,9 +559,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 {Object.entries(agents.ministers).map(([key,min])=>{
                   if (!min) return null;
                   // Grisé si ministre inactif OU si son ministère est inactif
-                  const ministryOfMin = agents.ministries?.find(m=>(m.ministers||[]).includes(key));
-                  const ministryActive = !ministryOfMin || activeMins.includes(ministryOfMin.id);
-                  const on     = ministryActive && (activeMinsters===null || activeMinsters.includes(key));
+                  const ministryActive = agents.ministries?.some(m=>activeMins.includes(m.id)&&(m.ministers||[]).includes(key));
+                  const on     = activeMinsters===null || activeMinsters.includes(key);
                   const isOpen = openMin === key;
                   return (
                     <button key={key}
@@ -559,8 +568,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                         padding:'0.45rem 0.55rem',borderRadius:'4px',cursor:'pointer',
                         background: isOpen ? min.color+'18' : on ? min.color+'0A' : 'rgba(255,255,255,0.015)',
                         border:`1px solid ${isOpen ? min.color+'66' : on ? min.color+'33' : 'rgba(255,255,255,0.07)'}`,
-                        opacity: on ? 1 : 0.28,
-                        filter: on ? 'none' : 'grayscale(0.7)',
+                        opacity: on ? (ministryActive ? 1 : 0.70) : 0.28,
+                        filter: on ? (ministryActive ? 'none' : 'brightness(0.7)') : 'grayscale(0.7)',
                         minWidth:'3.2rem', transition:'all 0.12s'}}
                       onClick={()=>{
                         const isCurrentlyOpen = openMin === key;
@@ -590,6 +599,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
               {openMin && agents.ministers[openMin] && (() => {
                 const key = openMin;
                 const min = agents.ministers[key];
+                const minActive = agents.ministries?.some(m=>activeMins.includes(m.id)&&(m.ministers||[]).includes(key));
                 const on  = activeMinsters===null || activeMinsters.includes(key);
                 return (
                   <section style={{...S.sec,
@@ -605,12 +615,16 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                         <div style={{fontFamily:FONT,fontSize:'0.52rem',color:min.color+'EE',letterSpacing:'0.08em'}}>{min.name}</div>
                         <div style={{fontSize:'0.38rem',color:'rgba(140,160,200,0.45)',marginTop:'0.08rem'}}>{min.sign||''}</div>
                       </div>
-                      {/* Toggle actif */}
+                      {/* Toggle actif — toujours cliquable, ministère inactif = indicateur */}
                       <button style={{...BTN_S,fontSize:'0.38rem',padding:'0.12rem 0.42rem',
-                        ...(on?{borderColor:min.color+'55',color:min.color+'CC',background:min.color+'10'}:{})}}
-                        onClick={e=>{e.stopPropagation();toggleMinster(key);}}>
-                        {on?'● ACTIF':'○ INACTIF'}
-                      </button>
+                          ...(on?{border:'1px solid '+min.color+'55',color:min.color+'CC',background:min.color+'10'}:{})}}
+                          onClick={e=>{e.stopPropagation();toggleMinster(key);}}>
+                          {on ? '● ACTIF' : '○ INACTIF'}
+                        </button>
+                      {on && !minActive && (
+                        <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(200,164,74,0.45)',
+                          letterSpacing:'0.04em'}}>⚠ {isEn?'no active ministry':'sans ministère actif'}</span>
+                      )}
                       {min.sign==='Custom'&&(
                         <button style={{background:'none',border:'none',cursor:'pointer',
                           color:'rgba(200,80,80,0.55)',fontSize:'0.70rem',padding:'0 0.2rem',lineHeight:1}}
@@ -635,7 +649,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                       value={min.comm||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],comm:e.target.value}}}))}/>
                     <div style={{...S.label,display:'flex',alignItems:'center',gap:'0.4rem',flexWrap:'wrap'}}>
                       ANGLE D'ANNOTATION
-                      <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0'}}>— question posée lors des annotations inter-ministérielles</span>
+                      <span style={{fontFamily:FONT,fontSize:'0.36rem',color:'rgba(140,160,200,0.28)',fontWeight:'normal',letterSpacing:'0'}}>{t('CONST_ANNOT_HINT', lang)}</span>
                     </div>
                     <textarea style={{...INPUT,minHeight:'30px',resize:'vertical',lineHeight:1.5,fontFamily:FONT}}
                       value={min.annotation||''} onChange={e=>setAgents(a=>({...a,ministers:{...a.ministers,[key]:{...a.ministers[key],annotation:e.target.value}}}))}/>
@@ -653,9 +667,9 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                     <input style={INPUT} value={nMinD.id}   onChange={e=>setNMinD(d=>({...d,id:e.target.value}))} placeholder="id_unique"/>
                     <input type="color" value={nMinD.color} style={{width:'1.9rem',height:'1.8rem',border:'none',background:'none',cursor:'pointer'}} onChange={e=>setNMinD(d=>({...d,color:e.target.value}))}/>
                   </div>
-                  <textarea style={{...INPUT,minHeight:'34px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.28rem'}} value={nMinD.essence} onChange={e=>setNMinD(d=>({...d,essence:e.target.value}))} placeholder="Essence — rôle et vision…"/>
+                  <textarea style={{...INPUT,minHeight:'34px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.28rem'}} value={nMinD.essence} onChange={e=>setNMinD(d=>({...d,essence:e.target.value}))} placeholder={t('CONST_ESSENCE_PH', lang)}/>
                   <textarea style={{...INPUT,minHeight:'26px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.28rem'}} value={nMinD.comm} onChange={e=>setNMinD(d=>({...d,comm:e.target.value}))} placeholder="Style de communication…"/>
-                  <div style={{...S.label,marginBottom:'0.12rem'}}>ANGLE D'ANNOTATION <span style={{fontWeight:'normal',color:'rgba(90,110,150,0.35)'}}>— question posée lors des annotations inter-ministérielles</span></div>
+                  <div style={{...S.label,marginBottom:'0.12rem'}}>{t('CONST_ANGLE_ANNOT', lang)} <span style={{fontWeight:'normal',color:'rgba(90,110,150,0.35)'}}>— question posée lors des annotations inter-ministérielles</span></div>
                   <textarea style={{...INPUT,minHeight:'26px',resize:'vertical',lineHeight:1.5,fontFamily:FONT,marginBottom:'0.38rem'}} value={nMinD.annotation} onChange={e=>setNMinD(d=>({...d,annotation:e.target.value}))} placeholder="Ex : Quelle est la position du ministre sur…"/>
                   <div style={{display:'flex',gap:'0.38rem',justifyContent:'flex-end'}}>
                     <button style={BTN_S} onClick={()=>setShowNewMin(false)}>{tr.cancel}</button>
@@ -663,7 +677,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                   </div>
                 </section>
               ) : (
-                <button style={{...BTN_S,alignSelf:'center',color:'rgba(100,200,120,0.55)',borderColor:'rgba(100,200,120,0.22)'}} onClick={()=>setShowNewMin(true)}>+ Nouveau ministre</button>
+                <button style={{...BTN_S,alignSelf:'center',color:'rgba(100,200,120,0.55)',border:'1px solid rgba(100,200,120,0.22)'}} onClick={()=>setShowNewMin(true)}>+ Nouveau ministre</button>
               )}
             </>)}
 

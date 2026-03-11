@@ -869,7 +869,7 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   const hasKeys = !!(keys.claude || keys.gemini);
 
   // 1. Priorité au mode hors-ligne forcé, Board Game, ou absence de clés
-  if (!hasKeys || opts.force_local || (opts.gameplay && opts.gameplay.mode_board_game)) {
+  if (!hasKeys || opts.force_local || opts.ia_mode === 'none' || (opts.gameplay && opts.gameplay.mode_board_game)) {
     return getLocalResponse(type, context);
   }
 

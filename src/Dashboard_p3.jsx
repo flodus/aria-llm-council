@@ -11,7 +11,7 @@
 //    ConstitutionModal → modale gouvernance par pays
 // ═══════════════════════════════════════════════════════════════════════════════
 import { REAL_COUNTRIES_DATA_EN } from './ariaData';
-import { loadLang, t } from './ariaI18n';
+import { loadLang, t, useLocale } from './ariaI18n';
 
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
@@ -34,6 +34,7 @@ import ChronologView   from './ChronologView';
 //  Affiche : question · choix · jauge · impacts · conséquences
 // ─────────────────────────────────────────────────────────────────────────────
 function VoteResultModal({ session, onClose }) {
+  const { lang: uiLang } = useLocale();
   const { question, voteResult, presidence } = session || {};
   if (!voteResult) return null;
 
@@ -175,6 +176,7 @@ function VoteResultModal({ session, onClose }) {
 //  C) Normal → liste les décisions prises ce cycle
 // ─────────────────────────────────────────────────────────────────────────────
 function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
+  const { lang: uiLang } = useLocale();
   const MONO  = "'JetBrains Mono', monospace";
   const SERIF = "'Cinzel', serif";
 
@@ -213,10 +215,10 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
               borderRadius: '2px',
             }}>
               <div style={{ fontFamily: MONO, fontSize: '0.40rem', letterSpacing: '0.16em', color: 'rgba(200,120,48,0.75)', marginBottom: '0.3rem' }}>
-                ⚠ AUCUN CONSEIL CE CYCLE
+                {uiLang==='en'?'⚠ NO COUNCIL THIS CYCLE':'⚠ AUCUN CONSEIL CE CYCLE'}
               </div>
               <p style={{ fontFamily: MONO, fontSize: '0.50rem', color: 'rgba(200,215,240,0.70)', lineHeight: 1.6, margin: 0 }}>
-                Aucune question n'a été soumise au Conseil. Le cycle avancera sans qu'aucune décision collective n'ait été prise.
+                {uiLang==='en'?"No question was submitted to the Council. The cycle will advance without any collective decision.":"Aucune question n'a été soumise au Conseil. Le cycle avancera sans qu'aucune décision collective n'ait été prise."}
               </p>
             </div>
           )}
@@ -229,7 +231,7 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
               borderRadius: '2px',
             }}>
               <div style={{ fontFamily: MONO, fontSize: '0.40rem', letterSpacing: '0.16em', color: 'rgba(200,120,48,0.70)', marginBottom: '0.4rem' }}>
-                ⚠ PAYS SANS DÉLIBÉRATION
+                {uiLang==='en'?'⚠ COUNTRIES WITHOUT DELIBERATION':'⚠ PAYS SANS DÉLIBÉRATION'}
               </div>
               {uncounselled.map(c => (
                 <div key={c.id} style={{
@@ -239,20 +241,23 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
                 }}>
                   <span>{c.emoji}</span>
                   <span style={{ color: 'rgba(200,215,240,0.75)' }}>{getLocalizedNom(c, uiLang)}</span>
-                  <span style={{ marginLeft: 'auto', color: 'rgba(140,160,200,0.40)', fontSize: '0.42rem' }}>aucun conseil ce cycle</span>
+                  <span style={{ marginLeft: 'auto', color: 'rgba(140,160,200,0.40)', fontSize: '0.42rem' }}>{uiLang==='en'?'no council this cycle':'aucun conseil ce cycle'}</span>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Décisions prises */}
+          {/* Décisions + impacts par pays */}
           {withCouncil.length > 0 && (
             <div>
               <div style={{ fontFamily: MONO, fontSize: '0.38rem', letterSpacing: '0.18em', color: 'rgba(200,164,74,0.45)', marginBottom: '0.5rem' }}>
-                DÉCISIONS PRISES CE CYCLE
+                {uiLang==='en'?'DECISIONS THIS CYCLE':'DÉCISIONS PRISES CE CYCLE'}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {withCouncil.map((h, i) => (
+                {withCouncil.map((h, i) => {
+                  const sat = h.impacts?.satisfaction;
+                  const aria = h.impacts?.aria_delta;
+                  return (
                   <div key={i} style={{
                     padding: '0.55rem 0.75rem',
                     background: 'rgba(14,20,36,0.55)', border: '1px solid rgba(200,164,74,0.10)',
@@ -270,33 +275,54 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
                         border: `1px solid ${h.vote === 'oui' ? 'rgba(58,191,122,0.30)' : 'rgba(200,80,80,0.28)'}`,
                         color: h.vote === 'oui' ? 'rgba(58,191,122,0.85)' : 'rgba(200,80,80,0.80)',
                       }}>
-                        {h.vote === 'oui' ? '✓ OUI' : '✕ NON'}
+                        {h.vote === 'oui' ? (uiLang==='en'?'✓ YES':'✓ OUI') : (uiLang==='en'?'✕ NO':'✕ NON')}
                       </span>
                     </div>
-                    <p style={{ fontFamily: MONO, fontSize: '0.46rem', color: 'rgba(180,200,230,0.60)', lineHeight: 1.55, margin: '0 0 0.2rem', fontStyle: 'italic' }}>
+                    <p style={{ fontFamily: MONO, fontSize: '0.46rem', color: 'rgba(180,200,230,0.60)', lineHeight: 1.55, margin: '0 0 0.25rem', fontStyle: 'italic' }}>
                       « {h.question} »
                     </p>
                     {h.label && (
-                      <p style={{ fontFamily: MONO, fontSize: '0.44rem', color: 'rgba(140,160,200,0.50)', lineHeight: 1.5, margin: 0 }}>
+                      <p style={{ fontFamily: MONO, fontSize: '0.44rem', color: 'rgba(140,160,200,0.50)', lineHeight: 1.5, margin: '0 0 0.25rem' }}>
                         → {h.label}
                       </p>
                     )}
+                    {(sat !== undefined || aria !== undefined) && (
+                      <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap', marginTop:'0.15rem' }}>
+                        {sat !== undefined && sat !== 0 && (
+                          <span style={{ fontFamily:MONO, fontSize:'0.38rem', padding:'0.08rem 0.35rem', borderRadius:'2px',
+                            background: sat > 0 ? 'rgba(58,191,122,0.08)' : 'rgba(200,80,80,0.08)',
+                            border:`1px solid ${sat > 0 ? 'rgba(58,191,122,0.22)' : 'rgba(200,80,80,0.22)'}`,
+                            color: sat > 0 ? 'rgba(58,191,122,0.80)' : 'rgba(200,80,80,0.75)' }}>
+                            {uiLang==='en'?'SAT':'SAT'} {sat > 0 ? '+' : ''}{sat}%
+                          </span>
+                        )}
+                        {aria !== undefined && aria !== 0 && (
+                          <span style={{ fontFamily:MONO, fontSize:'0.38rem', padding:'0.08rem 0.35rem', borderRadius:'2px',
+                            background: aria > 0 ? 'rgba(58,191,122,0.08)' : 'rgba(200,80,80,0.08)',
+                            border:`1px solid ${aria > 0 ? 'rgba(58,191,122,0.22)' : 'rgba(200,80,80,0.22)'}`,
+                            color: aria > 0 ? 'rgba(58,191,122,0.80)' : 'rgba(200,80,80,0.75)' }}>
+                            ARIA {aria > 0 ? '+' : ''}{Math.round(aria)}%
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
 
           {/* Question confirmation */}
           <p style={{ fontFamily: MONO, fontSize: '0.50rem', color: 'rgba(200,215,240,0.55)', lineHeight: 1.6, margin: 0 }}>
-            Confirmer le passage au cycle suivant ?
+            {uiLang==='en'?'Confirm advancement to the next cycle?':'Confirmer le passage au cycle suivant ?'}
           </p>
 
         </div>
 
         <div style={S.modalFooter}>
-          <button style={S.cancelBtn} onClick={onClose}>ANNULER</button>
-          <button style={S.saveBtn} onClick={onConfirm}>CONFIRMER LE CYCLE ⏭</button>
+          <button style={S.cancelBtn} onClick={onClose}>{uiLang==='en'?'CANCEL':'ANNULER'}</button>
+          <button style={S.saveBtn} onClick={onConfirm}>{uiLang==='en'?'CONFIRM CYCLE ⏭':'CONFIRMER LE CYCLE ⏭'}</button>
         </div>
       </div>
     </div>
@@ -307,6 +333,7 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
 //  POPUP AJOUT PAYS FICTIF
 // ─────────────────────────────────────────────────────────────────────────────
 function AddCountryModal({ onConfirm, onClose }) {
+  const { lang: uiLang } = useLocale();
   const MONO  = "'JetBrains Mono', monospace";
   const [nom,     setNom]     = useState('');
   const [terrain, setTerrain] = useState('coastal');
@@ -383,7 +410,7 @@ function AddCountryModal({ onConfirm, onClose }) {
         </div>
 
         <div style={S.modalFooter}>
-          <button style={S.cancelBtn} onClick={onClose}>ANNULER</button>
+          <button style={S.cancelBtn} onClick={onClose}>{uiLang==='en'?'CANCEL':'ANNULER'}</button>
           <button
             style={{ ...S.saveBtn, opacity: nom.trim() ? 1 : 0.35, color: 'rgba(58,191,122,0.88)', borderColor: 'rgba(58,191,122,0.40)', background: nom.trim() ? 'rgba(58,191,122,0.10)' : 'transparent' }}
             disabled={!nom.trim()}
@@ -485,6 +512,7 @@ function Toast({ notification }) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function SecessionModal({ parent, onConfirm, onClose }) {
+  const { lang: uiLang } = useLocale();
   const [nom,      setNom]      = useState('');
   const [relation, setRelation] = useState('Tension');
   const [regime,   setRegime]   = useState(parent?.regime || 'republique_federale');
@@ -498,15 +526,14 @@ function SecessionModal({ parent, onConfirm, onClose }) {
     <div style={S.overlay} onClick={onClose}>
       <div style={S.modal} onClick={e => e.stopPropagation()}>
         <div style={S.modalHeader}>
-          <span style={S.modalTitle}>✂️ SÉCESSION — {parent?.nom}</span>
+          <span style={S.modalTitle}>{uiLang==='en'?`✂️ SECESSION — ${parent?.nom}`:`✂️ SÉCESSION — ${parent?.nom}`}</span>
           <button style={S.closeBtn} onClick={onClose}>✕</button>
         </div>
         <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
           <p style={S.modalHint}>
-            Le nouveau pays hérite de 25% de la population et des ressources.
-            {parent?.nom} perd 25% de sa population et 12% de sa taille.
+            {uiLang==='en'?`The new country inherits 25% of the population and resources. ${parent?.nom} loses 25% of its population and 12% of its size.`:`Le nouveau pays hérite de 25% de la population et des ressources. ${parent?.nom} perd 25% de sa population et 12% de sa taille.`}
           </p>
-          <label style={S.fieldLabel}>NOM DU NOUVEAU PAYS</label>
+          <label style={S.fieldLabel}>{uiLang==='en'?'NEW COUNTRY NAME':'NOM DU NOUVEAU PAYS'}</label>
           <input
             style={S.fieldInput}
             value={nom}
@@ -528,7 +555,7 @@ function SecessionModal({ parent, onConfirm, onClose }) {
           >
             {REGIME_LIST.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
           </select>
-          <label style={S.fieldLabel}>RELATION INITIALE AVEC {parent?.nom?.toUpperCase()}</label>
+          <label style={S.fieldLabel}>{uiLang==='en'?`INITIAL RELATION WITH ${parent?.nom?.toUpperCase()}`:`RELATION INITIALE AVEC ${parent?.nom?.toUpperCase()}`}</label>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {['Alliance', 'Tension', 'Neutre'].map(r => (
               <button
@@ -536,19 +563,19 @@ function SecessionModal({ parent, onConfirm, onClose }) {
                 style={{ ...S.relBtn, ...(relation === r ? S.relBtnActive : {}) }}
                 onClick={() => setRelation(r)}
               >
-                {r === 'Alliance' ? '🤝' : r === 'Tension' ? '⚡' : '○'} {r}
+                {r === 'Alliance' ? (uiLang==='en'?'🤝 Alliance':'🤝 Alliance') : r === 'Tension' ? (uiLang==='en'?'⚡ Tension':'⚡ Tension') : (uiLang==='en'?'○ Neutral':'○ Neutre')}
               </button>
             ))}
           </div>
         </div>
         <div style={S.modalFooter}>
-          <button style={S.cancelBtn} onClick={onClose}>Annuler</button>
+          <button style={S.cancelBtn} onClick={onClose}>{uiLang==='en'?'Cancel':'Annuler'}</button>
           <button
             style={{ ...S.saveBtn, opacity: nom.trim() ? 1 : 0.4 }}
             disabled={!nom.trim()}
             onClick={() => onConfirm(nom.trim(), relation, regime)}
           >
-            ✂ Déclarer la sécession
+            {uiLang==='en'?'✂ Declare secession':'✂ Déclarer la sécession'}
           </button>
         </div>
       </div>
@@ -795,8 +822,8 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
 
     if (hasChange) {
       const parts = [];
-      if (diff.regimeAvant !== diff.regimeApres)       parts.push(`Régime → ${diff.regimeApres.replace(/_/g,' ')}`);
-      if (diff.presidenceAvant !== diff.presidenceApres) parts.push(`Présidence → ${diff.presidenceApres}`);
+      if (diff.regimeAvant !== diff.regimeApres)       parts.push(`${uiLang==='en'?'Regime':'Régime'} → ${diff.regimeApres.replace(/_/g,' ')}`);
+      if (diff.presidenceAvant !== diff.presidenceApres) parts.push(`${uiLang==='en'?'Presidency':'Présidence'} → ${diff.presidenceApres}`);
       if (diff.leaderAvant !== diff.leaderApres && diff.leaderApres) parts.push(`Chef d'État → ${diff.leaderApres}`);
       if (diff.ministresDiff?.ajoutes?.length)  parts.push(`+${diff.ministresDiff.ajoutes.join(',')}`);
       if (diff.ministresDiff?.retires?.length)  parts.push(`-${diff.ministresDiff.retires.join(',')}`);

@@ -13,6 +13,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from 'react';
 import { HexGrid } from './HexGrid';
 import { generateWorld, placeCountries, strToSeed, MAP_W, MAP_H } from './WorldEngine';
+import { loadLang, t } from './ariaI18n';
 
 // ── Génération asynchrone (évite de bloquer le thread principal) ──────────
 // Le monde (~3300 hex + FBM) prend ~20–60ms selon le device.
@@ -123,7 +124,7 @@ export function MapSVG({
                 fontFamily:"'Cinzel',serif", fontSize:'12px',
                 letterSpacing:'0.30em', color:'rgba(200,164,74,0.40)',
             }}>
-            GÉNÉRATION DU MONDE…
+            {t('DASH_MAP_GENERATING', loadLang())}
             </div>
         )}
 

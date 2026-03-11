@@ -12,24 +12,24 @@ import './App.css';
 import Dashboard        from './Dashboard_p3';
 import Settings         from './Settings';
 import InitScreen       from './InitScreen';
-import CountryPanel     from './CountryPanel';
+import CountryPanel, { EmptyPanel } from './CountryPanel';
 import LegitimiteOverlay from './LegitimiteOverlay';
-import { EmptyPanel }   from './CountryPanel';
 import { FONT, COLOR }  from './ariaTheme';
-import { loadLang } from './ariaI18n';
+import { loadLang, t, useLocale } from './ariaI18n';
 
-const TABS_FR = [
-  { id: 'map',      label: '🗺 MAP-GRID'    },
-  { id: 'council',  label: '⚖ LLM COUNCIL' },
-  { id: 'timeline', label: '📜 CHRONOLOG'   },
-];
-const TABS_EN = TABS_FR; // same labels
-function getTabs() { return TABS_FR; }
+function getTabs() {
+  return [
+    { id: 'map',      label: '🗺 MAP-GRID'    },
+    { id: 'council',  label: '⚖ LLM COUNCIL' },
+    { id: 'timeline', label: '📜 CHRONOLOG'   },
+  ];
+}
 
 export default function App() {
   // ── États globaux ─────────────────────────────────────────────────────
 
 
+  const { lang } = useLocale();
   const [worldGenerated,  setWorldGenerated]  = useState(() => {
     try {
       const active = localStorage.getItem('aria_session_active');
@@ -61,9 +61,14 @@ export default function App() {
   const crisisRef    = useRef(null);
   const fadeTimerRef = useRef(null);
   const audioStarted = useRef(false);
+  // GEMINI
+  const SOUND_ENABLED = false; // Passe à true pour réactiver
 
   // ── Audio ─────────────────────────────────────────────────────────────
   useEffect(() => {
+    // GEMINI Si le son est désactivé, on arrête tout immédiatement
+    if (!SOUND_ENABLED) return;
+    // Code Claude
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const ambient = new Audio(`${base}/assets/audio/ambient_flow.mp3`);
     const crisis  = new Audio(`${base}/assets/audio/emergency_protocol.mp3`);
@@ -192,8 +197,8 @@ export default function App() {
       if (worldGenerated && nowHasKeys !== hadKeys) {
         ariaRef.current?.pushNotif?.(
           nowHasKeys
-            ? '🔑 Clé API ajoutée — redémarrez une partie pour activer le mode IA.'
-            : "🔑 Clé API supprimée — les délibérations restent actives jusqu'à la fin de la partie.",
+            ? t('NOTIF_KEY_ADDED', loadLang())
+            : t('NOTIF_KEY_REMOVED', loadLang()),
           'info', 6000
         );
       }
@@ -203,7 +208,7 @@ export default function App() {
 
   // ── Année + cycle pour le header ──────────────────────────────────────
   const yearLabel = currentYear
-    ? `AN ${currentYear} · Cycle ${currentCycle}`
+    ? (lang==='en' ? `YEAR ${currentYear} · Cycle ${currentCycle}` : `AN ${currentYear} · Cycle ${currentCycle}`)
     : null;
 
   // ── Rendu ─────────────────────────────────────────────────────────────
@@ -238,9 +243,9 @@ export default function App() {
       <header className="topbar" style={{ visibility: page === 'settings' ? 'hidden' : 'visible' }}>
         <div className="topbar-logo"
           onClick={() => setShowLegitimite(true)}
-          title="Rapport de Légitimité Globale — ARIA"
+          title={t('TOPBAR_LEGITIMITE', loadLang())}
           style={{ cursor:'pointer' }}>
-          ARIA<small>DÉMOCRATIE HOLISTIQUE</small>
+          ARIA<small>{t('TOPBAR_SUBTITLE', loadLang())}</small>
         </div>
 
         <nav className="topbar-tabs">
@@ -272,17 +277,17 @@ export default function App() {
               color: COLOR.red, border:'1px solid rgba(255,58,58,0.32)',
               padding:'0.22rem 0.55rem', animation:'pulse 1s ease-in-out infinite',
             }}>
-              ⚠ CRISE
+              {t('CRISIS', loadLang())}
             </span>
           )}
           {worldGenerated && (
             <button className="btn-icon" onClick={handleReset}
-              title="Nouvelle partie"
+              title={t('BTN_NEW_GAME', loadLang())}
               style={{ fontSize:'0.75rem', opacity:0.55, letterSpacing:'0.05em' }}>
               ↺
             </button>
           )}
-          <button className="btn-icon" onClick={() => setPage('settings')} title="Configuration ARIA">⚙</button>
+          <button className="btn-icon" onClick={() => setPage('settings')} title={t('BTN_CONFIG', loadLang())}>⚙</button>
         </div>
       </header>
 

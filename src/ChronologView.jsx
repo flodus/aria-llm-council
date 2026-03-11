@@ -4,6 +4,7 @@
 //  Accordéons Cycle → (groupe pays) → Événement → Détails
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { loadLang, t, useLocale } from './ariaI18n';
 import { useState, useEffect } from 'react';
 
 const MONO   = "'JetBrains Mono', monospace";
@@ -24,10 +25,10 @@ const C = {
 
 const TYPE_META = {
   vote:         { icon: '🗳',  label: 'Vote',          color: C.gold   },
-  secession:    { icon: '✂️',  label: 'Sécession',     color: C.red    },
+  secession:    { icon: '✂️',  get label() { return t('CHRON_SECESSION', loadLang()); }, color: C.red },
   constitution: { icon: '📜',  label: 'Constitution',  color: C.purple },
   new_country:  { icon: '🌍',  label: 'Nouveau pays',  color: C.green  },
-  cycle_stats:  { icon: '📊',  label: 'Stats cycle',   color: C.teal   },
+  cycle_stats:  { icon: '📊',  get label() { return loadLang()==='en'?'Cycle stats':'Stats cycle'; },   color: C.teal   },
 };
 
 const LS_KEY = 'aria_chronolog_cycles';
@@ -66,21 +67,21 @@ function EventDetail({ ev, isSummary }) {
         )}
         {ev.voteCounts && (
           <div style={{ display:'flex', gap:'0.8rem' }}>
-            <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:'rgba(58,191,122,0.50)' }}>OUI {Math.round((ev.voteCounts.oui||0)/1000)} k</span>
-            <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:'rgba(200,80,80,0.50)'  }}>NON {Math.round((ev.voteCounts.non||0)/1000)} k</span>
+            <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:'rgba(58,191,122,0.50)' }}>{loadLang()==='en'?'YES':'OUI'} {Math.round((ev.voteCounts.oui||0)/1000)} k</span>
+            <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:'rgba(200,80,80,0.50)'  }}>{loadLang()==='en'?'NO':'NON'} {Math.round((ev.voteCounts.non||0)/1000)} k</span>
           </div>
         )}
         {!isSummary && (ev.syntheseMinistere || ev.synthesePresidence) && (
           <div style={{ display:'flex', flexDirection:'column', gap:'0.35rem', marginTop:'0.2rem' }}>
             {ev.syntheseMinistere && (
               <div style={{ borderLeft:`2px solid ${C.blue}30`, paddingLeft:'0.55rem' }}>
-                <div style={{ fontFamily:MONO, fontSize:'0.36rem', letterSpacing:'0.14em', color:C.blue, marginBottom:'0.15rem' }}>MINISTÈRE — {ev.ministereNom||ev.ministereId}</div>
+                <div style={{ fontFamily:MONO, fontSize:'0.36rem', letterSpacing:'0.14em', color:C.blue, marginBottom:'0.15rem' }}>{loadLang()==='en'?'MINISTRY':'MINISTÈRE'} — {ev.ministereNom||ev.ministereId}</div>
                 <p style={{ fontFamily:MONO, fontSize:'0.40rem', color:C.muted, lineHeight:1.65, margin:0 }}>{ev.syntheseMinistere}</p>
               </div>
             )}
             {ev.synthesePresidence && (
               <div style={{ borderLeft:`2px solid ${C.gold}30`, paddingLeft:'0.55rem' }}>
-                <div style={{ fontFamily:MONO, fontSize:'0.36rem', letterSpacing:'0.14em', color:C.goldDim, marginBottom:'0.15rem' }}>PRÉSIDENCE</div>
+                <div style={{ fontFamily:MONO, fontSize:'0.36rem', letterSpacing:'0.14em', color:C.goldDim, marginBottom:'0.15rem' }}>{t('CHRON_PRESIDENCE', loadLang())}</div>
                 <p style={{ fontFamily:MONO, fontSize:'0.40rem', color:C.muted, lineHeight:1.65, margin:0 }}>{ev.synthesePresidence}</p>
               </div>
             )}
@@ -102,7 +103,7 @@ function EventDetail({ ev, isSummary }) {
             border:`1px solid ${ev.relation==='Alliance' ? 'rgba(58,191,122,0.25)' : ev.relation==='Tension' ? 'rgba(200,80,80,0.25)' : 'rgba(140,160,200,0.20)'}`,
           }}>{ev.relation}</span>
           {ev.popTransmise && (
-            <span style={{ fontFamily:MONO, fontSize:'0.37rem', color:C.dimmed }}>Pop. transmise ~{ev.popTransmise}%</span>
+            <span style={{ fontFamily:MONO, fontSize:'0.37rem', color:C.dimmed }}>{loadLang()==='en'?`Pop. transferred ~${ev.popTransmise}%`:`Pop. transmise ~${ev.popTransmise}%`}</span>
           )}
         </div>
         {ev.narratif && (
@@ -120,12 +121,12 @@ function EventDetail({ ev, isSummary }) {
         <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap' }}>
           {ev.regimeAvant !== ev.regimeApres && (
             <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:C.purple }}>
-              Régime : {ev.regimeAvant} → {ev.regimeApres}
+              {loadLang()==='en'?'Regime':'Régime'} : {ev.regimeAvant} → {ev.regimeApres}
             </span>
           )}
           {ev.presidenceAvant !== ev.presidenceApres && (
             <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:C.purple }}>
-              Présidence : {ev.presidenceAvant} → {ev.presidenceApres}
+              {loadLang()==='en'?'Presidency':'Présidence'} : {ev.presidenceAvant} → {ev.presidenceApres}
             </span>
           )}
           {ev.ministresDiff?.ajoutes?.length > 0 && (
@@ -140,7 +141,7 @@ function EventDetail({ ev, isSummary }) {
           )}
           {ev.promptsModifies > 0 && (
             <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:C.muted }}>
-              {ev.promptsModifies} prompt{ev.promptsModifies>1?'s':''} modifié{ev.promptsModifies>1?'s':''}
+              {ev.promptsModifies} prompt{ev.promptsModifies>1?'s':''} {ev.promptsModifies>1?t('CHRON_MODIFIE_P',loadLang()):t('CHRON_MODIFIE',loadLang())}
             </span>
           )}
         </div>
@@ -157,7 +158,7 @@ function EventDetail({ ev, isSummary }) {
     return (
       <div style={{ padding:'0.45rem 0.7rem 0.55rem' }}>
         <span style={{ fontFamily:MONO, fontSize:'0.40rem', color:C.muted }}>
-          {ev.emoji} {ev.nom} · {ev.terrain} · {ev.regime?.replace(/_/g,' ')} · An {ev.annee}
+          {ev.emoji} {ev.nom} · {ev.terrain} · {ev.regime?.replace(/_/g,' ')} · {loadLang()==='en'?'Year':'An'} {ev.annee}
         </span>
       </div>
     );
@@ -171,7 +172,7 @@ function EventDetail({ ev, isSummary }) {
             <span style={{ fontFamily:MONO, fontSize:'0.40rem', color:C.muted, minWidth:'6rem' }}>
               {s.emoji} {s.nom}
             </span>
-            <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:C.dimmed }}>Sat {s.satisfaction}%</span>
+            <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:C.dimmed }}>{loadLang()==='en'?'Sat':'Sat'} {s.satisfaction}%</span>
             <Pill label="SAT"  delta={s.satDelta}  />
             <span style={{ fontFamily:MONO, fontSize:'0.38rem', color:C.dimmed }}>ARIA {s.aria_current}%</span>
             <Pill label="ARIA" delta={s.ariaDelta} />
@@ -197,7 +198,7 @@ function EventRow({ ev, isSummary, defaultOpen = false }) {
     if (ev.type === 'vote') return ev.question?.slice(0,80) + (ev.question?.length>80?'…':'');
     if (ev.type === 'secession')    return `${ev.parentNom} → ${ev.childNom}`;
     if (ev.type === 'constitution') return `${ev.countryNom} — amendement`;
-    if (ev.type === 'new_country')  return `${ev.emoji} ${ev.nom} fondée`;
+    if (ev.type === 'new_country')  return `${ev.emoji} ${ev.nom} ${loadLang()==='en'?'founded':'fondée'}`;
     if (ev.type === 'cycle_stats')  return `${(ev.snapshot||[]).length} pays — snapshot`;
     return '';
   })();
@@ -301,6 +302,8 @@ function CountryBlock({ countryId, countryNom, countryEmoji, events, isSummary, 
 
 // ── Bloc cycle ────────────────────────────────────────────────────────────────
 function CycleBlock({ cycle, filterCountryId, defaultOpen, isCurrent }) {
+  const lang = loadLang();
+  const isEn = lang === 'en';
   const [open, setOpen] = useState(defaultOpen);
 
   // Grouper les événements par pays
@@ -343,10 +346,10 @@ function CycleBlock({ cycle, filterCountryId, defaultOpen, isCurrent }) {
         )}
         <span style={{ fontFamily:CINZEL, fontSize:'0.52rem', letterSpacing:'0.18em',
           color: isCurrent ? C.green : C.gold, flex:1 }}>
-          CYCLE {cycle.cycleNum} — An {cycle.annee}
+          CYCLE {cycle.cycleNum} — {isEn?'Year':'An'} {cycle.annee}
         </span>
         <span style={{ fontFamily:MONO, fontSize:'0.37rem', color:C.dimmed }}>
-          {totalEvs} év. {cycle._summary ? '· résumé' : '· complet'}
+          {totalEvs} év. {cycle._summary ? `· ${t('CHRON_RESUME',loadLang())}` : `· ${t('CHRON_COMPLET',loadLang())}`}
         </span>
         <span style={{ color:C.dimmed, fontSize:'0.45rem',
           transform: open ? 'rotate(90deg)' : 'none', transition:'transform 0.15s' }}>▶</span>
@@ -378,6 +381,8 @@ export default function ChronologView({
   currentCycleAnnee,
   currentEvents = [],   // événements live du cycle en cours
 }) {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
   const [view,           setView]           = useState('world');
   const [filterCountry,  setFilterCountry]  = useState(null);
   const [cycles,         setCycles]         = useState([]);
@@ -405,7 +410,7 @@ export default function ChronologView({
   if (allCycles.length === 0) return (
     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flex:1, gap:'0.6rem', opacity:0.35 }}>
       <div style={{ fontSize:'2rem' }}>📜</div>
-      <div style={{ fontFamily:MONO, fontSize:'0.45rem', letterSpacing:'0.16em', color:C.muted }}>CHRONOLOG VIDE</div>
+      <div style={{ fontFamily:MONO, fontSize:'0.45rem', letterSpacing:'0.16em', color:C.muted }}>{loadLang()==='en'?'CHRONOLOG EMPTY':'CHRONOLOG VIDE'}</div>
       <p style={{ fontFamily:MONO, fontSize:'0.40rem', color:C.dimmed, textAlign:'center', maxWidth:'240px', lineHeight:1.7 }}>
         Soumettez une question au Conseil et votez pour commencer l'historique.
       </p>
@@ -450,7 +455,7 @@ export default function ChronologView({
         )}
 
         <div style={{ marginLeft:'auto', fontFamily:MONO, fontSize:'0.37rem', color:C.dimmed }}>
-          {allCycles.length} cycle{allCycles.length>1?'s':''} · {totalEvs} événements
+          {allCycles.length} cycle{allCycles.length>1?'s':''} · {totalEvs} {isEn?'events':'événements'}
         </div>
       </div>
 

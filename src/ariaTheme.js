@@ -1,6 +1,10 @@
 // ═══════════════════════════════════════════════════════════════════════════
 //  ariaTheme.js — Tokens de design, helpers visuels, constantes UI
 //  Aucun JSX. Importé par tous les composants.
+//
+//  I18N : TERRAIN_LABELS, REGIME_LABELS, RESOURCE_DEFS sont bilingues {fr,en}
+//  Utiliser getTerrainLabel(key, lang), getRegimeLabel(key, lang),
+//  getResourceLabel(key, lang) pour obtenir le bon label selon la langue.
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const COLOR = {
@@ -73,43 +77,81 @@ export const BTN_SECONDARY = {
     fontSize: '0.52rem', letterSpacing: '0.14em', cursor: 'pointer',
 };
 
-// Utilitaires purs
+// ── Utilitaires purs ─────────────────────────────────────────────────────
+
 export const satisfColor = (p) =>
-p >= 70 ? '#3ABF7A' : p >= 45 ? '#C8A44A' : p >= 25 ? '#C05050' : '#8A2020';
+    p >= 70 ? '#3ABF7A' : p >= 45 ? '#C8A44A' : p >= 25 ? '#C05050' : '#8A2020';
 
-export const fmtPop = (n) =>
-n >= 1e9 ? (n/1e9).toFixed(1)+' Md'
-: n >= 1e6 ? (n/1e6).toFixed(1)+' M'
-: n >= 1e3 ? Math.round(n/1e3)+' k'
-: String(n);
+// lang optionnel : 'fr' → Md/M/k, 'en' → Bn/M/k
+export const fmtPop = (n, lang = 'fr') =>
+    n >= 1e9 ? (n/1e9).toFixed(1) + (lang === 'en' ? ' Bn' : ' Md')
+    : n >= 1e6 ? (n/1e6).toFixed(1) + ' M'
+    : n >= 1e3 ? Math.round(n/1e3) + ' k'
+    : String(n);
 
+// ── Labels bilingues — données ────────────────────────────────────────────
+
+// Structure : { clé: { fr: '...', en: '...' } }
 export const TERRAIN_LABELS = {
-    coastal:'Côtier 🌊', inland:'Continental 🏔', island:'Insulaire 🏝',
-    archipelago:'Archipel ⛵', highland:'Montagneux ⛰',
+    coastal:     { fr: 'Côtier 🌊',      en: 'Coastal 🌊'      },
+    inland:      { fr: 'Continental 🏔',  en: 'Landlocked 🏔'   },
+    island:      { fr: 'Insulaire 🏝',    en: 'Island 🏝'       },
+    archipelago: { fr: 'Archipel ⛵',     en: 'Archipelago ⛵'  },
+    highland:    { fr: 'Montagneux ⛰',   en: 'Highland ⛰'     },
+    desert:      { fr: 'Désert 🏜',       en: 'Desert 🏜'       },
+    foret:       { fr: 'Forêt 🌲',        en: 'Forest 🌲'       },
+    tropical:    { fr: 'Tropical 🌴',     en: 'Tropical 🌴'     },
+    toundra:     { fr: 'Toundra ❄',       en: 'Tundra ❄'       },
 };
 
 export const REGIME_LABELS = {
-    democratie_liberale:         'Démocratie libérale 🗳️',
-    republique_federale:         'République fédérale 🏛️',
-    monarchie_constitutionnelle: 'Monarchie constitutionnelle 👑',
-    monarchie_absolue:           'Monarchie absolue 👑',
-    technocratie_ia:             'Technocratie IA 🤖',
-    oligarchie:                  'Oligarchie 💼',
-    junte_militaire:             'Junte militaire 🎖️',
-    regime_autoritaire:          'Régime autoritaire 🔒',
-    theocracie:                  'Théocratie 🕌',
-    communisme:                  'Parti communiste ☭',
-    nationalisme_autoritaire:    'Nationalisme autoritaire ⚡',
+    democratie_liberale:         { fr: 'Démocratie libérale 🗳️',          en: 'Liberal Democracy 🗳️'          },
+    republique_federale:         { fr: 'République fédérale 🏛️',           en: 'Federal Republic 🏛️'           },
+    monarchie_constitutionnelle: { fr: 'Monarchie constitutionnelle 👑',   en: 'Constitutional Monarchy 👑'    },
+    monarchie_absolue:           { fr: 'Monarchie absolue 👑',             en: 'Absolute Monarchy 👑'          },
+    technocratie_ia:             { fr: 'Technocratie IA 🤖',               en: 'ARIA Technocracy 🤖'           },
+    oligarchie:                  { fr: 'Oligarchie 💼',                    en: 'Oligarchy 💼'                  },
+    junte_militaire:             { fr: 'Junte militaire 🎖️',               en: 'Military Junta 🎖️'             },
+    regime_autoritaire:          { fr: 'Régime autoritaire 🔒',            en: 'Authoritarian Regime 🔒'       },
+    theocracie:                  { fr: 'Théocratie 🕌',                    en: 'Theocracy 🕌'                  },
+    communisme:                  { fr: 'Parti communiste ☭',               en: 'Communist Party ☭'             },
+    nationalisme_autoritaire:    { fr: 'Nationalisme autoritaire ⚡',      en: 'Authoritarian Nationalism ⚡'  },
+    democratie_directe:          { fr: 'Démocratie directe 🗳️',            en: 'Direct Democracy 🗳️'           },
 };
 
 export const RESOURCE_DEFS = [
-    { key: 'agriculture', icon: '🌾', label: 'AGRICULTURE' },
-    { key: 'bois',        icon: '🪵', label: 'BOIS'        },
-    { key: 'eau',         icon: '💧', label: 'EAU DOUCE'   },
-    { key: 'energie',     icon: '⚡', label: 'ÉNERGIE'     },
-    { key: 'mineraux',    icon: '💎', label: 'MINÉRAUX'    },
-    { key: 'peche',       icon: '🐟', label: 'PÊCHE'       },
-    { key: 'petrole',     icon: '🛢️', label: 'PÉTROLE'     },
+    { key: 'agriculture', icon: '🌾', label: { fr: 'AGRICULTURE', en: 'AGRICULTURE' } },
+    { key: 'bois',        icon: '🪵', label: { fr: 'BOIS',        en: 'TIMBER'       } },
+    { key: 'eau',         icon: '💧', label: { fr: 'EAU DOUCE',   en: 'FRESH WATER'  } },
+    { key: 'energie',     icon: '⚡', label: { fr: 'ÉNERGIE',     en: 'ENERGY'       } },
+    { key: 'mineraux',    icon: '💎', label: { fr: 'MINÉRAUX',    en: 'MINERALS'     } },
+    { key: 'peche',       icon: '🐟', label: { fr: 'PÊCHE',       en: 'FISHING'      } },
+    { key: 'petrole',     icon: '🛢️', label: { fr: 'PÉTROLE',     en: 'OIL'          } },
 ];
+
+// ── Getters i18n ──────────────────────────────────────────────────────────
+
+// Usage : getTerrainLabel('coastal', 'en') → 'Coastal 🌊'
+export const getTerrainLabel = (key, lang = 'fr') =>
+    TERRAIN_LABELS[key]?.[lang] ?? TERRAIN_LABELS[key]?.fr ?? key;
+
+// Usage : getRegimeLabel('democratie_liberale', 'en') → 'Liberal Democracy 🗳️'
+export const getRegimeLabel = (key, lang = 'fr') =>
+    REGIME_LABELS[key]?.[lang] ?? REGIME_LABELS[key]?.fr ?? key;
+
+// Usage : getResourceLabel('energie', 'en') → 'ENERGY'
+export const getResourceLabel = (key, lang = 'fr') => {
+    const def = RESOURCE_DEFS.find(r => r.key === key);
+    if (!def) return key.toUpperCase();
+    return typeof def.label === 'object' ? (def.label[lang] ?? def.label.fr) : def.label;
+};
+
+// Rétro-compatibilité : retourne l'objet {key,icon,label(string)} selon lang
+// Usage : getResourceDefs('en') → [{key,icon,label:'ENERGY'},…]
+export const getResourceDefs = (lang = 'fr') =>
+    RESOURCE_DEFS.map(r => ({
+        ...r,
+        label: typeof r.label === 'object' ? (r.label[lang] ?? r.label.fr) : r.label,
+    }));
 
 export const MARITIME = new Set(['coastal', 'island', 'archipelago']);

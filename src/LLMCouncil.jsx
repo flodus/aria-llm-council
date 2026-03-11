@@ -16,6 +16,7 @@
 //   isRunning    {boolean}      — IA en cours
 // ═══════════════════════════════════════════════════════════════════════════════
 
+import { loadLang, t, useLocale } from './ariaI18n';
 import { useState, useEffect, useRef } from 'react';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -49,11 +50,11 @@ const C = {
 const PHASES = {
   IDLE:        { order: 0 },
   PEUPLE_IN:   { order: 1, label: 'PEUPLE',            icon: '🌐', color: C.blue   },
-  MINISTERE:   { order: 2, label: 'MINISTÈRE',         icon: '🏛️', color: C.gold   },
-  CERCLE:      { order: 3, label: 'CERCLE MINISTÉRIEL',icon: '◎',  color: C.goldDim},
-  PRESIDENCE:  { order: 4, label: 'PRÉSIDENCE',        icon: '☉',  color: C.purple },
+  MINISTERE:   { order: 2, get label() { return t('COUNCIL_PHASE_MINISTRE',   loadLang()); },         icon: '🏛️', color: C.gold   },
+  CERCLE:      { order: 3, get label() { return t('COUNCIL_PHASE_CERCLE',      loadLang()); },icon: '◎',  color: C.goldDim},
+  PRESIDENCE:  { order: 4, get label() { return t('COUNCIL_PHASE_PRESIDENCE',  loadLang()); },        icon: '☉',  color: C.purple },
   PEUPLE_VOTE: { order: 5, label: 'VOTE DU PEUPLE',    icon: '🗳️', color: C.blue   },
-  RESULT:      { order: 6, label: 'RÉSULTAT',          icon: '✦',  color: C.green  },
+  RESULT:      { order: 6, get label() { return t('COUNCIL_PHASE_RESULT',       loadLang()); },          icon: '✦',  color: C.green  },
 };
 
 const PHASE_ORDER = ['PEUPLE_IN','MINISTERE','CERCLE','PRESIDENCE','PEUPLE_VOTE','RESULT'];
@@ -188,7 +189,7 @@ function MinistereSyntheseBlock({ synthese, ministry }) {
     }}>
       <div style={sectionTitle(conv ? C.green : C.gold)}>
         <span>{ministry?.emoji}</span>
-        SYNTHÈSE DU MINISTÈRE
+        {loadLang()==='en'?'MINISTRY SYNTHESIS':'SYNTHÈSE DU MINISTÈRE'}
         <span style={{ margin: '0 0.5rem', color: 'rgba(150,170,210,0.18)', fontSize:'0.44rem' }}>—</span>
         <span style={{
           padding: '0.15rem 0.55rem',
@@ -309,6 +310,7 @@ function VoteJauge({ oui, non }) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function LLMCouncil({ session, onVote, isRunning }) {
+  const { lang } = useLocale();
   const scrollRef = useRef(null);
 
   // Phases actives — dérivées directement de la session (pas de state async)
@@ -401,8 +403,8 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
           <PhaseBlock
             phase="MINISTERE"
             label={ministere.isOrphan
-              ? 'INSTANCE DE COORDINATION INTERMINISTÉRIELLE'
-              : `MINISTÈRE — ${ministere.ministryName}`}
+              ? t('COUNCIL_INSTANCE', loadLang())
+              : `${loadLang()==='en'?'MINISTRY':'MINISTÈRE'} — ${ministere.ministryName}`}
             icon={ministere.ministryEmoji}
             accentColor={ministere.isOrphan ? 'rgba(90,106,138,0.7)' : (ministere.ministryColor || C.gold)}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
@@ -416,16 +418,16 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
                 border: '1px solid rgba(90,110,160,0.15)',
                 borderRadius: '2px',
               }}>
-                ⚠ QUESTION NON ROUTÉE — MODE BUREAUCRATIQUE ACTIVÉ
+                {loadLang()==='en'?'⚠ UNROUTED QUESTION — BUREAUCRATIC MODE ACTIVE':'⚠ QUESTION NON ROUTÉE — MODE BUREAUCRATIQUE ACTIVÉ'}
               </div>
             )}
             <div style={sectionTitle(ministere.ministryColor || C.gold)}>
-              <span>DÉLIBÉRATION MINISTÉRIELLE</span>
+              <span>{t('COUNCIL_DELIB_LABEL', loadLang())}</span>
             </div>
             <MinisterBlock minister={ministere.ministerA} />
             <MinisterBlock minister={ministere.ministerB} />
             {isRunning && !ministere.synthese && (
-              <LoadingPulse label="SYNTHÈSE EN COURS…" />
+              <LoadingPulse label={t('COUNCIL_SYNTH_LOADING', loadLang())} />
             )}
             {ministere.synthese && (
               <MinistereSyntheseBlock synthese={ministere.synthese} ministry={ministere} />
@@ -437,13 +439,13 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
         {show.CERCLE && cercle && (
           <PhaseBlock
             phase="CERCLE"
-            label="CERCLE MINISTÉRIEL"
+            label={t('COUNCIL_PHASE_CERCLE', loadLang())}
             icon="◎"
             accentColor={C.goldDim}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
             <div style={sectionTitle(C.goldDim)}>
-              ANNOTATIONS DES MINISTÈRES
+              {loadLang()==='en'?'MINISTRY ANNOTATIONS':'ANNOTATIONS DES MINISTÈRES'}
             </div>
             {cercle.map((a, i) => (
               <CercleAnnotation key={a.ministryId} annotation={a} index={i} />
@@ -455,7 +457,7 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
         {show.PRESIDENCE && presidence && (
           <PhaseBlock
             phase="PRESIDENCE"
-            label="PRÉSIDENCE"
+            label={t('COUNCIL_PHASE_PRESIDENCE', loadLang())}
             icon="☉"
             accentColor={C.purple}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
@@ -545,7 +547,7 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
         {show.RESULT && voteResult && (
           <PhaseBlock
             phase="RESULT"
-            label="RÉSULTAT"
+            label={t('COUNCIL_PHASE_RESULT', loadLang())}
             icon="✦"
             accentColor={C.green}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
@@ -567,7 +569,7 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
               marginTop: '0.8rem', display: 'flex', gap: '0.6rem', flexWrap: 'wrap',
             }}>
               <StatImpact label="SATISFACTION" delta={voteResult.impact?.satisfaction} />
-              <StatImpact label="ADHÉSION ARIA" delta={voteResult.impact?.aria_current_delta} />
+              <StatImpact label={t('COUNCIL_ADHESION', loadLang())} delta={voteResult.impact?.aria_current_delta} />
             </div>
           </PhaseBlock>
         )}
@@ -575,7 +577,7 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
         {/* Loading interphase */}
         {isRunning && !show.RESULT && (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
-            <LoadingPulse label="DÉLIBÉRATION EN COURS…" />
+            <LoadingPulse label={t('COUNCIL_DELIB_LOADING', loadLang())} />
           </div>
         )}
 
