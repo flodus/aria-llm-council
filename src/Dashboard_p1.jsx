@@ -1241,6 +1241,8 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
       return {
         ...c,
         aria_irl: irl, aria_current: irl,
+        ...(def?.context_mode      ? { context_mode:      def.context_mode      } : {}),
+        ...(def?.contextOverride   ? { contextOverride:   def.contextOverride   } : {}),
         ...(def?.governanceOverride ? { governanceOverride: def.governanceOverride } : {}),
       };
     });
@@ -1282,7 +1284,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
           const irl = irlAI ?? calcAriaIRL(c);
           // Le nom validé par l'utilisateur est prioritaire sur le nom généré par l'IA
           const finalNom = def.nom || c.nom;
-          built.push({ ...c, nom: finalNom, aria_irl: irl, aria_current: irl, _fallback: false, ...(def.context_mode ? { context_mode: def.context_mode } : {}), ...(def.governanceOverride ? { governanceOverride: def.governanceOverride } : {}) });
+          built.push({ ...c, nom: finalNom, aria_irl: irl, aria_current: irl, _fallback: false, ...(def.context_mode ? { context_mode: def.context_mode } : {}), ...(def.contextOverride ? { contextOverride: def.contextOverride } : {}), ...(def.governanceOverride ? { governanceOverride: def.governanceOverride } : {}) });
         } else {
           // Fallback : si le pays a un realData → construction locale fidèle
           // sinon → pays local générique
@@ -1296,7 +1298,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
             );
           }
           const irl = calcAriaIRL(fallback);
-          built.push({ ...fallback, aria_irl: irl, aria_current: irl, _fallback: true, _errorCode: aiData?.code, ...(def.context_mode ? { context_mode: def.context_mode } : {}), ...(def.governanceOverride ? { governanceOverride: def.governanceOverride } : {}) });
+          built.push({ ...fallback, aria_irl: irl, aria_current: irl, _fallback: true, _errorCode: aiData?.code, ...(def.context_mode ? { context_mode: def.context_mode } : {}), ...(def.contextOverride ? { contextOverride: def.contextOverride } : {}), ...(def.governanceOverride ? { governanceOverride: def.governanceOverride } : {}) });
         }
       } catch (e) {
         console.warn('[ARIA] startWithAI error:', e);
@@ -1542,6 +1544,68 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
     }
   }, [countries, pushNotif]);
 
+  // ── Ajout d'un pays fictif en cours de partie ────────────────────────────
+  const addFictionalCountry = useCallback((def) => {
+    if (!worldDataRef.current) return;
+
+    const { nom, terrain, regime, realData, type: defType } = def;
+    const seed     = strToSeed(nom + Date.now());
+    const rand     = seededRand(seed);
+
+    const regimeObj = getStats().regimes?.[regime] || getStats().regimes?.republique_federale || {};
+    const spawn     = findSpawnPoint(worldDataRef.current, countries);
+    const { cx, cy } = spawn;
+    const size = 55 + rand() * 30;
+
+    // Couleur unique (hue aléatoire depuis seed, évite les couleurs trop proches des existants)
+    const hue     = Math.floor(rand() * 360);
+    const couleur = `hsl(${hue}, 52%, 34%)`;
+
+    const ressources = calcRessources(terrain, seed);
+
+    const basePopulation = realData?.population || Math.round(1_000_000 + rand() * 9_000_000);
+    const regimeFinal    = realData?.regime || regime;
+    const terrainFinal   = realData?.terrain || terrain;
+    const regimeObjFinal = getStats().regimes?.[regimeFinal] || regimeObj;
+    const newCountry = {
+      id:           nom.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-') + '-' + Date.now(),
+      nom,
+      emoji:        realData?.flag || regimeObjFinal.emoji || '🌍',
+      couleur,
+      regime:       regimeFinal,
+      regimeName:   regimeObjFinal.name || regimeFinal,
+      regimeEmoji:  regimeObjFinal.emoji || '🏛️',
+      terrain:      terrainFinal,
+      terrainName:  terrainFinal,
+      coastal:      terrainFinal === 'coastal' || terrainFinal === 'island' || terrainFinal === 'archipelago',
+      description:  realData ? `Pays réel — intégré en cours de simulation.` : `Nation émergente — fondée par décret.`,
+      leader:       null,
+      annee:        countries[0]?.annee || 2026,
+      population:   basePopulation,
+      tauxNatalite: 10 + Math.round(rand() * 8),
+      tauxMortalite: 7 + Math.round(rand() * 5),
+      satisfaction: 55,
+      humeur:       getHumeur(55).label,
+      humeur_color: getHumeur(55).color,
+      popularite:   50,
+      ressources,
+      coefficients: getStats().terrains?.[terrain]?.coefficients || {},
+      cx, cy, size, seed,
+      svgPath:      genOrganicPath(cx, cy, size, seed, 9, 0.28),
+      influenceRadius: calcInfluenceRadius(Math.round(1_000_000 + rand() * 9_000_000), terrain === 'coastal', ressources),
+      relations:    {},
+      chronolog:    [],
+      economie:     60 + Math.round(rand() * 30),
+      aria_irl:     realData?.aria_acceptance_irl ?? 40,
+      aria_current: realData?.aria_acceptance_irl ?? 40,
+      isLocal:      false,
+      realData:     realData || null,
+    };
+
+    setCountries(prev => [...prev, newCountry]);
+    pushNotif(`🌍 ${nom} rejoint le monde.`, 'ok', 4000);
+  }, [countries, pushNotif]);
+
   // ── Reset complet ─────────────────────────────────────────────────────────
   const resetWorld = useCallback(() => {
     // IMPORTANT : vider le localStorage EN PREMIER pour que App.jsx
@@ -1571,7 +1635,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
     // Setters directs
     setCountries, setViewport,
     // Actions
-    startLocal, startWithAI, advanceCycle, doSecession, setRelation, resetWorld, pushNotif,
+    startLocal, startWithAI, advanceCycle, doSecession, addFictionalCountry, setRelation, resetWorld, pushNotif,
     // Getters pour App
     getYear, getCycle, getCountries,
   };

@@ -48,6 +48,9 @@ export default function App() {
   const [currentYear,     setCurrentYear]     = useState(null);
   const [currentCycle,    setCurrentCycle]    = useState(0);
   const [liveCountries,   setLiveCountries]   = useState([]);
+  const countryIndex = selectedCountry
+    ? liveCountries.findIndex(c => c.id === selectedCountry.id)
+    : -1;
   const [chronologKey,    setChronologKey]    = useState(0);
   const [resetKey,        setResetKey]        = useState(0);
   const [hasApiKeys,      setHasApiKeys]      = useState(() => {
@@ -334,7 +337,19 @@ export default function App() {
               onConstitution={() => ariaRef.current?.openConstitution?.()}
               onSubmitQuestion={(q, mid) => ariaRef.current?.submitQuestion?.(q, mid)}
               onAddFictionalCountry={() => ariaRef.current?.addFictionalCountry?.()}
-            />
+              countryIndex={countryIndex}
+              countryTotal={liveCountries.length}
+              onPrevCountry={() => {
+                if (liveCountries.length < 2) return;
+                const prev = (countryIndex - 1 + liveCountries.length) % liveCountries.length;
+                setSelectedCountry(liveCountries[prev]);
+              }}
+              onNextCountry={() => {
+                if (liveCountries.length < 2) return;
+                const next = (countryIndex + 1) % liveCountries.length;
+                setSelectedCountry(liveCountries[next]);
+              }}
+          />
         }
       </aside>
     </div>

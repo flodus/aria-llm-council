@@ -83,8 +83,23 @@ Afficher à chaque fin d'échange :
 
 - **`TODO.md`** — Outil quotidien : bugs, prochaines étapes. Mettre à jour à chaque fin d'étape.
 - **`ROADMAP.md`** + **`ROADMAP.fr.md`** — Vision globale GitHub. Modifier uniquement à la validation d'une étape majeure.
+- **`REFLEXIONS.md`** — Capture des idées de fond, questions de design, directions futures. Ne pas implémenter sans Assess complet.
+
+### Règles REFLEXIONS.md
+- Réorganiser les idées pour qu'elles soient cohérentes et lisibles
+- Signaler avec ⚠️ ATTENTION si une idée contredit quelque chose d'existant
+- Signaler avec 🔁 REDONDANT si l'idée est déjà couverte ailleurs
+- Signaler avec ❓ À PRÉCISER si l'idée est trop vague pour être actionnée
+- Fusionner les idées similaires plutôt que les dupliquer
 
 ---
+
+## Git
+
+À chaque fin d'étape validée :
+1. `git add` sur les fichiers modifiés
+2. Commit avec message conventionnel (`feat:`, `fix:`, `chore:`, `refactor:`, etc.)
+3. `git push` — sans attendre une demande explicite
 
 ## Règles de livraison
 

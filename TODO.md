@@ -24,6 +24,11 @@ _Dernière mise à jour : 2026-03-11_
   (Init PreLaunchScreen · Settings in-game · popup ConstitutionModal in-game)
 - [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
   (satisfaction détaillée, décisions clés, événements notables)
+- [ ] **U5 — Récap contexte au lancement** : afficher `context_mode` et `contextOverride` de chaque pays
+  dans la boîte de dialogue de confirmation "Créer le monde" (InitScreen)
+- [ ] **U4 — Contexte pays dans la Constitution** : déplacer/dupliquer `context_mode` et `contextOverride`
+  depuis les options système (Settings) vers la ConstitutionModal par pays
+  — logique : le contexte de délibération est une propriété du pays, pas un réglage global
 
 ---
 
@@ -47,6 +52,12 @@ _(bloqué sur refonte carte V1)_
 - [ ] **V4 — Présidence 1 à 3 présidents** : config Init/Settings, mode collégial
 - [ ] **V5 — Refactor arborescence** : src/components/ · src/engine/ · src/lib/
   (session dédiée, aucun risque fonctionnel mais beaucoup d'imports à mettre à jour)
+- [ ] **V6 — Enrichir les prompts de délibération avec la philosophie ADD** :
+  - Phare → posture Assess/Decide (vision, exploration des possibilités)
+  - Boussole → posture Do/mémoire (ancrage, ce qui a été décidé)
+  - Synthèse présidentielle → transition Decide→Do (transformer le débat en décision)
+  - Concerne : Settings.jsx (prompts éditables) + llmCouncilEngine.js (synthèses)
+  - Nécessite un Assess complet avant implémentation
 
 ---
 
