@@ -454,7 +454,7 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
   return {
     id:           aiData.nom.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-'),
     nom:          aiData.nom,
-    emoji:        aiData.emoji || '🌍',
+    emoji:        aiData.emoji || regime.emoji || '🌍',
     couleur:      aiData.couleur || '#4A7EC8',
     regime:       aiData.regime || 'republique_federale',
     regimeName:   regime.name,
@@ -1217,7 +1217,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
             return {
               id:           (d.nom || 'nation').toLowerCase().replace(/[^a-z0-9]/g, '-'),
               nom:          d.nom || 'Nation Inconnue',
-              emoji:        '🌍',
+              emoji:        getStats().regimes?.[d.regime || 'republique_federale']?.emoji || '🌍',
               couleur:      '#4A7EC8',
               regime:       d.regime || 'republique_federale',
               terrain:      d.terrain || 'coastal',

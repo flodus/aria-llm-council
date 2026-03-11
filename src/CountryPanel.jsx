@@ -25,6 +25,17 @@ import { REAL_COUNTRIES_DATA_EN } from './ariaData';
 import { loadLang, useLocale } from './ariaI18n';
 import { getStats } from './Dashboard_p1';
 
+function getCountryEmoji(country) {
+  if (country?.emoji) return country.emoji;
+  const regime = country?.regime;
+  if (regime) {
+    const stats = getStats();
+    const r = stats?.regimes?.[regime];
+    if (r?.emoji) return r.emoji;
+  }
+  return '🌍';
+}
+
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
   if (loadLang() !== 'en') return country?.nom || '';
@@ -79,7 +90,7 @@ export function EmptyPanel({ activeTab, liveCountries = [], onSelectCountry }) {
                   borderRadius:'2px', padding:'0.45rem 0.6rem', marginBottom:'0.28rem',
                   cursor:'pointer', textAlign:'left', transition:'all 0.12s',
                   fontFamily:"'JetBrains Mono',monospace" }}>
-                <span style={{ fontSize:'1.1rem' }}>{c.emoji||'🌍'}</span>
+                  <span style={{ fontSize:'1.1rem' }}>{getCountryEmoji(c)}</span>
                 <div>
                   <div style={{ fontSize:'0.50rem', color:'rgba(200,215,240,0.78)', letterSpacing:'0.06em' }}>
                     {c.nom}
@@ -124,7 +135,7 @@ export function EmptyPanel({ activeTab, liveCountries = [], onSelectCountry }) {
                   borderRadius:'2px', padding:'0.45rem 0.6rem', marginBottom:'0.28rem',
                   cursor:'pointer', textAlign:'left', transition:'all 0.12s',
                   fontFamily:"'JetBrains Mono',monospace" }}>
-                <span style={{ fontSize:'1.1rem' }}>{c.emoji||'🌍'}</span>
+                <span style={{ fontSize:'1.1rem' }}>{getCountryEmoji(c)}</span>
                 <div>
                   <div style={{ fontSize:'0.50rem', color:'rgba(200,215,240,0.78)', letterSpacing:'0.06em' }}>{c.nom}</div>
                   <div style={{ fontSize:'0.40rem', color:'rgba(100,120,160,0.45)', marginTop:'0.1rem' }}>
@@ -200,7 +211,7 @@ export default function CountryPanel({
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div className="panel-header">
-          <span className="panel-header-emoji">{emoji}</span>
+          <span className="panel-header-emoji">{getCountryEmoji(country)}</span>
           <div style={{ flex: 1 }}>
             <div className="panel-header-title">{getLocalizedNom(country) || nom}</div>
             <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.40)', letterSpacing: '0.10em' }}>

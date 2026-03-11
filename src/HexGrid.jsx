@@ -26,6 +26,17 @@
 import { useCallback, useState, useMemo, memo } from 'react';
 import { BIOME, BIOME_COLOR, MAP_W, MAP_H, HEX_R, hexPointsStr } from './WorldEngine';
 
+const REGIME_EMOJI_FALLBACK = {
+  democratie_liberale:'🗳️', republique_federale:'🏛️', monarchie_constitutionnelle:'👑',
+  monarchie_absolue:'👑', technocratie_ia:'🤖', oligarchie:'💼', junte_militaire:'🎖️',
+  regime_autoritaire:'🔒', theocracie:'🕌', theocratie:'🕌', communisme:'☭',
+  nationalisme_autoritaire:'⚡',
+};
+function getCountryEmoji(country) {
+  if (country?.emoji) return country.emoji;
+  return REGIME_EMOJI_FALLBACK[country?.regime] || '🌍';
+}
+
 // ── Helpers couleur ───────────────────────────────────────────────────────
 const IS_HEX6 = /^#[0-9A-Fa-f]{6}$/;
 
@@ -351,7 +362,7 @@ function HexGridInner({
                     textAnchor="middle" fontSize="10"
                     fill={neon}
                     fontFamily="'Cinzel',serif" letterSpacing="0.07em">
-                    {country.emoji} {country.nom}
+                    {getCountryEmoji(country)} {country.nom}
                   </text>
                 </g>
               )}
@@ -441,7 +452,7 @@ function HexGridInner({
                   textAnchor="middle" fontSize="11.5"
                   fill="rgba(220,230,248,0.96)"
                   fontFamily="'Cinzel',serif" letterSpacing="0.07em">
-                  {country.emoji} {country.nom}
+                  {getCountryEmoji(country)} {country.nom}
                 </text>
 
                 {/* Barre satisfaction */}
