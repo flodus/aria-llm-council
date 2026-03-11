@@ -1079,6 +1079,8 @@ function clearSession() {
     localStorage.removeItem('aria_session_world');
     localStorage.removeItem('aria_session_countries');
     localStorage.removeItem('aria_session_alliances');
+    const _o = JSON.parse(localStorage.getItem('aria_options') || '{}');
+    if (_o.gameplay) { _o.gameplay.context_mode = 'auto'; localStorage.setItem('aria_options', JSON.stringify(_o)); }
   } catch {}
 }
 
