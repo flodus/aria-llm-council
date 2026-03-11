@@ -4,7 +4,7 @@
 
 ```text
 ================================================================================
-  ARIA STRATEGIC ROADMAP  —  v7.5 baseline
+  ARIA STRATEGIC ROADMAP  —  v8.0
   Last updated: 2026-03
 ================================================================================
 
@@ -30,80 +30,88 @@
  ├─[✓] Pre-launch Constitution .. [Edit before world gen] ........... ■ 100%
  └─[✓] LLM Registry ............. [Gist-hosted JSON + fallback] ..... ■ 100%
 
+ [ CONSTITUTION PER COUNTRY ] ..................................... STATUS: ✅ DONE
+ ├─[✓] Per-country gov override . [Independent constitution fork] ... ■ 100%
+ │      └─> Each nation can have its own ministers, ministries, presidency
+ ├─[✓] Council engine routing ... [getAgentsFor(country)] ........... ■ 100%
+ │      └─> Council always uses the correct constitution per country
+ ├─[✓] Init UI polish ........... [Glow, dark cards, emoji flags] ... ■ 100%
+ │      └─> Minister/ministry glow style · fictional country tags
+ └─[✓] World recap dialog ....... [Accordion: pres/min/ministers] ... ■ 100%
+
  ████████████████████████████████████████  NEXT  ████████████████████████████████
 
- [ PHASE V1 : WORLD MAP ] ......................................... STATUS: PLANNED
+ [ PHASE B0 : STABILITY ] ......................................... STATUS: 🔴 NOW
  │
- │  ⚠ CONCEPT CHANGE: Hex-Grid replaced by Procedural Low-Poly SVG
- │  The original hex-grid approach (Phases V1/V4) has been superseded.
- │  New direction: layered SVG world map with PRNG terrain generation,
- │  country polygon assignment, and optional WebGL globe projection.
- │  Hex logic (ZEE, border friction) will be reinterpreted as polygon
- │  adjacency and naval zone overlays — same design goals, better fit
- │  for ARIA's aesthetic and React-native rendering.
+ │  Pre-requisite before any new feature. Two known open issues.
  │
- ├─[01] Procedural SVG Map ...... [PRNG polygon world gen] .......... ⬡ 0%
- │      └─> Country shapes assigned from world territory pool
- ├─[02] Globe Projection ........ [Robinson / WebGL sphere] ......... ⬡ 0%
- │      └─> Toggle between flat planisphere and 3D globe
- ├─[03] Dynamic Zoom ............ [Detail level scaling x1-x5] ...... ⬡ 0%
- ├─[04] Maritime Zones .......... [Naval adjacency overlay] ......... ⬡ 0%
- └─[05] Terrain Biomes .......... [Papercraf-layered elevation] ..... ⬡ 0%
-        └─> Visual style: low-poly papercraft with color-coded strata
+ ├─[B1] Add-country bug ......... [Console error on in-game add] .... ⬡ 0%
+ │      └─> F12 investigation needed — likely a state mutation issue
+ └─[B2] Country Context pipeline  [Init → in-game deliberation] .... ⬡ 0%
+        └─> Context mode + override not reliably reaching council prompts
+
+ [ PHASE U1 : UX POLISH ] ........................................ STATUS: QUEUED
+ ├─[U1] Regime icons ............ [Dropdowns in Init + in-game] ..... ⬡ 0%
+ ├─[U2] Tuile harmonization ..... [Init ↔ Settings ↔ in-game popup] . ⬡ 0%
+ │      └─> Same minister/ministry tile style across all 3 contexts
+ └─[U3] Chronolog enriched ....... [Last 5 cycles detail view] ....... ⬡ 0%
+
+ [ PHASE V1 : WORLD MAP — FULL REWORK ] .......................... STATUS: PLANNED
+ │
+ │  ⚠ FULL REWORK: The entire procedural generation is being rebuilt.
+ │  Current hex-grid approach is superseded. New direction TBD by owner.
+ │  The council engine and country data model are map-agnostic and will
+ │  survive the rework unchanged.
+ │
+ ├─[01] New procedural engine ... [Architecture TBD] ................ ⬡ 0%
+ ├─[02] Country polygon assign .. [Territory pool → nation shapes] ... ⬡ 0%
+ ├─[03] Globe projection ........ [Flat / WebGL sphere toggle] ....... ⬡ 0%
+ ├─[04] Dynamic zoom ............ [Detail level scaling x1-x5] ....... ⬡ 0%
+ ├─[05] Maritime zones .......... [Naval adjacency overlay] .......... ⬡ 0%
+ └─[06] Terrain biomes .......... [Papercraft-layered elevation] ..... ⬡ 0%
+
+ [ PHASE F1 : MULTI-COUNTRY FEATURES ] ........................... STATUS: QUEUED
+ │
+ │  Blocked on V1 map rework — country interactions depend on geography.
+ │
+ ├─[F1] Min 2 countries custom .. [Custom mode currently allows 1] ... ⬡ 0%
+ ├─[F2] Duplicate blocking ...... [Real country picked once only] .... ⬡ 0%
+ └─[F3] Settings multi-country .. [Common vs per-country config] ..... ⬡ 0%
 
  [ PHASE V2 : SYSTEMIC TRIGGERS ] ................................ STATUS: QUEUED
- ├─[06] Global Repercussions .... [Cross-country policy effects] .... ⬡ 0%
+ ├─[V6] Global repercussions .... [Cross-country policy effects] .... ⬡ 0%
  │      └─> "If Country A taxes AI → Country B gains Trade,
  │           loses Diplomacy. Propagated through council context."
- ├─[07] Crisis Protocol ......... [Emergency referendums] ........... ⬡ 0%
- ├─[08] Scenarios Hub ........... [Historical & Sandbox presets] .... ⬡ 0%
- └─[09] i18n Support ............ [FR/EN switch at startup] ......... ⬡ 0%
+ ├─[V7] Crisis protocol ......... [Emergency referendums] ........... ⬡ 0%
+ ├─[V8] Scenarios hub ........... [Historical & Sandbox presets] .... ⬡ 0%
+ └─[V9] i18n support ............ [FR/EN switch at startup] ......... ⬡ 0%
 
  [ PHASE V3 : LLM INFRASTRUCTURE ] .............................. STATUS: QUEUED
- │
- │  Architecture decided: Gist-hosted registry (llm-registry.json)
- │  as public source of truth. localStorage as personal override layer.
- │  Both merge at startup. No server, no token, no redeployment needed.
- │  Gist edited in 2 clicks to publish new models to all users.
- │
- ├─[10] Dynamic Model Discovery . [Post-key API enumeration] ........ ⬡ 0%
- │      └─> After key entry in Init, query provider /models endpoint
- │           to enrich registry with actually-available model IDs.
- │           ★ marker on recommended default preserved in all modes.
- ├─[11] Registry Editor UI ...... [In-app Gist-sync manager] ........ ⬡ 0%
- └─[12] Open-Source Prompts ..... [Public agent prompt library] ..... ⬡ 0%
+ ├─[V10] Dynamic model discovery  [Post-key API enumeration] ........ ⬡ 0%
+ ├─[V11] Registry editor UI ..... [In-app Gist-sync manager] ........ ⬡ 0%
+ └─[V12] Open-source prompts .... [Public agent prompt library] ..... ⬡ 0%
 
  [ PHASE V4 : MULTIPLAYER ] ...................................... STATUS: DISTANT
  │
  │  Design principle (agreed 2026-03):
- │  Each player governs one nation in a shared world. Players do NOT
- │  share the same screen — each has their own council session and
- │  votes independently. Cross-player effects propagate through the
- │  systemic trigger layer (Phase V2). No real-time sync required:
- │  turns resolve asynchronously, world state merges on cycle close.
+ │  Each player governs one nation in a shared world. Async turns,
+ │  nation-isolated council sessions, client-side API keys.
  │
- │  populationWeight already stubbed in handleVote():
- │    total = population / 1_000_000 × 10 × 10_000
- │  Will be exposed cleanly when server architecture is decided.
- │
- │  Likely stack: lightweight Node.js relay + shared world JSON,
- │  or serverless (Supabase / PocketBase) for world state sync.
- │  API keys remain client-side — never touch the server.
- │
- ├─[13] Shared World State ...... [Server or P2P world JSON] ........ ⬡ 0%
- ├─[14] Async Turn Resolution ... [Cycle-close world merge] ......... ⬡ 0%
- ├─[15] Player Nation Isolation . [Each player = 1 council] ......... ⬡ 0%
- ├─[16] Cross-Nation Events ..... [Secession, War, Alliance] ........ ⬡ 0%
- └─[17] World Save / Import ..... [Portable world snapshots] ........ ⬡ 0%
+ ├─[V13] Shared world state ..... [Server or P2P world JSON] ........ ⬡ 0%
+ ├─[V14] Async turn resolution .. [Cycle-close world merge] ......... ⬡ 0%
+ ├─[V15] Player nation isolation  [Each player = 1 council] ......... ⬡ 0%
+ ├─[V16] Cross-nation events .... [Secession, War, Alliance] ........ ⬡ 0%
+ └─[V17] World save / import .... [Portable world snapshots] ........ ⬡ 0%
 
  [ PHASE V5 : WAR & GEOPOLITICS ] ............................... STATUS: DISTANT
- ├─[18] Border Friction ......... [Conflict at polygon edges] ........ ⬡ 0%
- ├─[19] The Great Splitting ..... [Secession with map rip] .......... ⬡ 0%
- └─[20] Resource Depletion ...... [Territory-based yields] .......... ⬡ 0%
+ ├─[V18] Border friction ........ [Conflict at polygon edges] ........ ⬡ 0%
+ ├─[V19] The Great Splitting .... [Secession with map rip] .......... ⬡ 0%
+ └─[V20] Resource depletion ..... [Territory-based yields] .......... ⬡ 0%
 
 ================================================================================
- PROGRESS: [████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~12%
- BASELINE: Core deliberation engine complete. Map & multiplayer pending.
+ PROGRESS: [█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~16%
+ BASELINE: Core engine + per-country constitution complete.
+           2 bugs to fix · Map full rework incoming.
 ================================================================================
 ```
 
@@ -111,28 +119,25 @@
 
 ## Architecture Decisions Log
 
+### Per-Country Constitution (2026-03)
+**Decision:** Each country carries its own `governanceOverride` object, merged at council call time via `getAgentsFor(country)`.
+
+The naive approach (one global constitution for all countries) was superseded when multi-country worlds required independent governance. The adopted pattern is: `InitScreen` forks the common constitution per country → `Dashboard_p1` injects `governanceOverride` into each country object at world build time → `llmCouncilEngine` resolves the effective constitution at call time, falling back to global localStorage if no override exists. This keeps the engine stateless and the country object self-contained.
+
 ### LLM Registry (2026-03)
 **Decision:** Gist-hosted `llm-registry.json` as shared source of truth, `localStorage` as personal override layer.
-
-The standard pattern (Option A: localStorage only / Option B: download JSON → git push) both have drawbacks. The adopted architecture merges both cleanly:
 
 - `llm-registry.json` on a public Gist = what all users see by default
 - `localStorage` = personal overrides, survive across sessions, cleared intentionally
 - Merge on startup: Gist wins for shared keys, localStorage wins for personal additions
 - To publish a new model to all users: edit the Gist in 2 clicks, no redeployment
-- Fallback hardcoded in bundle if Gist is unreachable (network failure resilience)
+- Fallback hardcoded in bundle if Gist is unreachable
 
-**Future improvement:** after API key entry in Init, query each provider's `/models` endpoint to discover actually-available model IDs. Registry then becomes a curated default layer, not a constraint.
-
-### World Map (2026-03)
-**Decision:** Hex-grid concept (original V1/V4) replaced by procedural low-poly SVG.
-
-Hex grids are geometrically clean but fight against React's SVG rendering model and ARIA's existing aesthetic (PRNG polygon globe, papercraft layering). The new direction preserves all original design goals (ZEE logic → polygon adjacency, terrain biomes → elevation strata, border friction → edge conflict detection) while staying native to the existing renderer.
+### World Map (2026-03 → revised)
+**Decision:** Full procedural generation rework. Previous hex-grid and low-poly SVG directions both superseded. New architecture TBD by project owner. Council engine and country data model are deliberately map-agnostic and will not be impacted.
 
 ### Multiplayer (2026-03)
-**Decision:** Async, nation-isolated, client-side LLM keys.
-
-Real-time sync between council sessions is unnecessary and expensive. Each player runs their own full council locally; only world-state deltas (vote outcomes, territory changes, diplomatic events) are shared. API keys never leave the client — the server is a thin world-state relay, not an AI proxy.
+**Decision:** Async, nation-isolated, client-side LLM keys. Server is a thin world-state relay only — API keys never touch it.
 
 ---
 

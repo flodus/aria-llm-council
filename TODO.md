@@ -4,126 +4,51 @@ _Dernière mise à jour : 2026-03-11_
 
 ---
 
-## ✅ COMPLÉTÉ cette session
+## 🔴 BUGS ACTIFS — À traiter en priorité
 
-- [x] governanceOverride lu par llmCouncilEngine (getAgentsFor + 3 helpers For)
-- [x] Badges pays plus visibles dans Init (flag grand, nom lisible)
-- [x] Bouton "Personnaliser" à gauche au-dessus des onglets
-- [x] Bandeau statut inline : "CONSTITUTION INDÉPENDANTE — NOM" après les onglets
+- [ ] **B1 — Ajout pays in-game** : erreur console lors de l'ajout d'un pays depuis le dashboard
+  - Ouvrir F12, reproduire l'erreur, capturer le stack trace complet
+  - Probablement une mutation d'état dans Dashboard_p3 (handleAddCountry)
 
----
-
-## 🔴 BUGS ACTIFS
-
-### B1 — Création pays depuis dashboard map grid (F12)
-- [ ] Investiguer l'erreur console lors de l'ajout d'un pays in-game
-
-### B2 — Country Context in Deliberations
-- [ ] Auditer buildCountryContext() : contenu, format, réception LLM
-- [ ] Vérifier injection stats (régime, terrain, satisfaction, ressources)
+- [ ] **B2 — Country Context pipeline** : le mode contexte + override défini dans Init
+  n'atteint pas fiablement les prompts de délibération in-game
+  - Vérifier que `context_mode` et `contextOverride` survivent à `saveAndLaunch` → `onLaunch` → `startLocal/startWithAI`
+  - Vérifier que `buildCountryContext()` dans llmCouncilEngine les lit bien
 
 ---
 
 ## 🟡 UX COURT TERME
 
-### U1 — Icônes régimes dans listes déroulantes
-- [ ] Init création monde fictif + ajout pays in-game
-
-### U2 — Résumé constitution : ligne signes zodiacaux redondante
-- [ ] Décider : supprimer ou remplacer par noms des ministres actifs
-
-### U3 — Harmonisation tuiles Init ↔ Settings ↔ popup in-game
-- [ ] Même style tuiles ministres/ministères dans les 3 contextes
-
-### U4 — Chronolog enrichi (5 derniers cycles)
-- [ ] Satisfaction détaillée, décisions clés, événements par cycle
+- [ ] **U1 — Icônes régimes** : dans les listes déroulantes Init (création pays) et in-game (settings)
+- [ ] **U2 — Harmonisation tuiles** : même style glow ministres/ministères dans les 3 contextes
+  (Init PreLaunchScreen · Settings in-game · popup ConstitutionModal in-game)
+- [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
+  (satisfaction détaillée, décisions clés, événements notables)
 
 ---
 
 ## 🟠 FONCTIONNEL MOYEN TERME
+_(bloqué sur refonte carte V1)_
 
-### F1 — Minimum 2 pays en mode custom
-- [ ] Forcer min 2 nations à la création (mode custom)
-
-### F2 — Settings gouvernement : repenser avec multi-pays
-- [ ] Clarifier rôle : constitution commune par défaut ou supprimer
-
-### F3 — Custom multi-pays : bloquer doublons pays réels
-- [ ] Griser pays déjà sélectionnés dans le picker
-
-### F4 — Révision constitutionnelle tous les +5 cycles
-- [ ] Pop-up de rappel : "Réviser la constitution ?"
-
-### F5 — Contexte historique dans délibérations
-- [ ] Vérifier si chronolog est injecté dans les prompts LLM
+- [ ] **F1 — Minimum 2 pays en mode custom** : actuellement limité à 1 seul pays custom
+- [ ] **F2 — Bloquer doublons pays réels** : griser un pays réel déjà sélectionné dans un autre slot
+- [ ] **F3 — Settings gouvernement multi-pays** : repenser l'écran Settings in-game
+  avec gestion constitution commune vs par pays
 
 ---
 
-## 🔵 GAMEPLAY LONG TERME
+## 🔵 VISION / LONG TERME
 
-### G1 — Crises aléatoires (protocole 6.2)
-- [ ] Déclenchement auto tous les N cycles (N aléatoire)
-- [ ] 3 ministres validateurs + 3 ministres de sortie
-- [ ] Critères : impact systémique / risque irréversible / délai / effondrement vital
-
-### G2 — Bouton "Simuler une crise" : clarifier ou implémenter
-- [ ] Audit de l'état actuel + décision
-
-### G3 — Sécession assistée : protocole complet
-- [ ] Délai négociation + traité non-agression avant sécession
-
-### G4 — Présidence 1 à 3 présidents
-- [ ] Config 1/2/3 présidents en Init et Settings
-- [ ] Mode collégial (synthèse 3 voix) + affichage council adapté
-
----
-
-## 🟣 VISION / À DISCUTER
-
-### V1 — Décret vs référendum + Charte constitutionnelle
-### V2 — Ministère du Culte (délibération ARIA interne)
-
----
-
-## PROCHAINE ÉTAPE TECHNIQUE
-
-### ÉTAPE 7 — WorldEngine.js
-- [ ] Distance minimum entre centroïdes (MIN_CENTROID_DIST = HEX_R × 8)
-- [ ] Retry seed si overlap
+- [ ] **V1 — Refonte génération procédurale** : toute la carte est à reconstruire
+  (architecture nouvelle définie par l'architecte — moteur conseil agnostique, pas impacté)
+- [ ] **V2 — Crises aléatoires** : protocole 6.2 du document ARIA
+  (3 ministres validateurs · 3 ministres de sortie · critères systémiques)
+- [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
+- [ ] **V4 — Présidence 1 à 3 présidents** : config Init/Settings, mode collégial
+- [ ] **V5 — Refactor arborescence** : src/components/ · src/engine/ · src/lib/
+  (session dédiée, aucun risque fonctionnel mais beaucoup d'imports à mettre à jour)
 
 ---
 
 ## 📁 Fichiers actifs
-`InitScreen.jsx` · `llmCouncilEngine.js` · `WorldEngine.js`
-
-##########################################################################################
-
-# ARIA — TODO.md
-_Dernière mise à jour : 2026-03-11_
-
----
-
-## ✅ COMPLÉTÉ cette session
-
-- [x] MC cards nations prédéfinies : fond sombre (rgba 8,14,26)
-- [x] Tag "🌐 FICTIF" dans header CountryConfig
-- [x] Icônes ministres : effet glow actif / grisé inactif
-- [x] Dialog récap : accordéon par pays (Présidence / Ministères / Ministres)
-- [x] Fix selectedCountry sync dans App.jsx (governanceOverride in-game)
-
----
-
-## 🔴 À VALIDER
-
-- [ ] Tester dialog récap avec 2 pays dont 1 avec constitution indépendante
-- [ ] Vérifier que perGov est bien lu dans RecapAccordion (effAgents peut être null si BASE pas encore chargée)
-
----
-
-## PROCHAINE ÉTAPE
-
-### ÉTAPE 7 — WorldEngine.js
-- [ ] Distance minimum entre centroïdes (MIN_CENTROID_DIST = HEX_R × 8)
-
-### REFACTOR ARBORESCENCE (session dédiée)
-- [ ] src/components/, src/engine/, src/lib/
+`InitScreen.jsx` · `Dashboard_p1.jsx` · `Dashboard_p3.jsx` · `App.jsx` · `llmCouncilEngine.js`

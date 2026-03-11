@@ -4,7 +4,7 @@
 
 ```text
 ================================================================================
-  ARIA FEUILLE DE ROUTE STRATÉGIQUE  —  base v7.5
+  ARIA FEUILLE DE ROUTE STRATÉGIQUE  —  v8.0
   Dernière mise à jour : 2026-03
 ================================================================================
 
@@ -30,82 +30,90 @@
  ├─[✓] Constitution pré-lancement [Édition avant génération] ........ ■ 100%
  └─[✓] Registry LLM ............. [JSON Gist + fallback local] ...... ■ 100%
 
+ [ CONSTITUTION PAR PAYS ] ........................................ STATUT: ✅ FAIT
+ ├─[✓] Override gouvernance ...... [Fork constitution indépendante] .. ■ 100%
+ │      └─> Chaque nation peut avoir ses propres ministres, ministères, présidence
+ ├─[✓] Routage moteur conseil ... [getAgentsFor(country)] ........... ■ 100%
+ │      └─> Le conseil utilise toujours la bonne constitution par pays
+ ├─[✓] UI Init peaufinée ........ [Glow, cartes sombres, emojis] .... ■ 100%
+ │      └─> Style glow ministres/ministères · tags pays fictifs · accordéon récap
+ └─[✓] Dialog récap monde ....... [Accordéon : prés/min/ministres] .. ■ 100%
+
  ████████████████████████████████████████  À VENIR  ██████████████████████████
 
- [ PHASE V1 : CARTE DU MONDE ] .................................... STATUT: PLANIFIÉ
+ [ PHASE B0 : STABILISATION ] .................................... STATUT: 🔴 MAINTENANT
  │
- │  ⚠ CHANGEMENT DE CONCEPT : Hex-Grid remplacé par SVG procédural low-poly
- │  L'approche hex-grid originale (Phases V1/V4) a été abandonnée.
- │  Nouvelle direction : carte SVG par couches avec génération PRNG du terrain,
- │  assignation de polygones aux pays, et projection WebGL globe optionnelle.
- │  La logique hex (ZEE, friction frontalière) sera réinterprétée en
- │  adjacence de polygones et superpositions de zones navales — mêmes objectifs,
- │  meilleure compatibilité avec l'esthétique ARIA et le rendu React natif.
+ │  Prérequis avant toute nouvelle fonctionnalité. Deux bugs ouverts connus.
  │
- ├─[01] Carte SVG procédurale ... [Génération PRNG polygones] ....... ⬡ 0%
- │      └─> Formes des pays assignées depuis un pool de territoires
- ├─[02] Projection globe ........ [Robinson / sphère WebGL] ......... ⬡ 0%
- │      └─> Bascule entre planisphère plat et globe 3D
- ├─[03] Zoom dynamique .......... [Niveaux de détail x1-x5] ......... ⬡ 0%
- ├─[04] Zones maritimes ......... [Superposition adjacence navale] ... ⬡ 0%
- └─[05] Biomes de terrain ....... [Élévation style paper-craft] ..... ⬡ 0%
-        └─> Style visuel : low-poly papier découpé, strates colorées
+ ├─[B1] Bug ajout pays in-game .. [Erreur console à investiguer] .... ⬡ 0%
+ │      └─> F12 nécessaire — probablement une mutation d'état
+ └─[B2] Pipeline Country Context  [Init → délibérations in-game] ... ⬡ 0%
+        └─> Mode contexte + override n'atteignent pas fiablement les prompts
+
+ [ PHASE U1 : POLISH UX ] ........................................ STATUT: EN FILE
+ ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ⬡ 0%
+ ├─[U2] Harmonisation tuiles .... [Init ↔ Settings ↔ popup in-game] . ⬡ 0%
+ │      └─> Même style tuiles ministres/ministères dans les 3 contextes
+ └─[U3] Chronolog enrichi ........ [Détail 5 derniers cycles] ........ ⬡ 0%
+
+ [ PHASE V1 : CARTE DU MONDE — REFONTE COMPLÈTE ] ................ STATUT: PLANIFIÉ
+ │
+ │  ⚠ REFONTE TOTALE : toute la génération procédurale est à reconstruire.
+ │  L'approche hex-grid est abandonnée. La nouvelle direction est définie
+ │  par l'architecte du projet. Le moteur de conseil et le modèle de données
+ │  pays sont agnostiques à la carte et ne seront pas impactés.
+ │
+ ├─[01] Nouveau moteur procédural  [Architecture à définir] ......... ⬡ 0%
+ ├─[02] Assignation polygones .... [Pool territoires → formes pays] .. ⬡ 0%
+ ├─[03] Projection globe ......... [Planisphère / sphère WebGL] ...... ⬡ 0%
+ ├─[04] Zoom dynamique ........... [Niveaux de détail x1-x5] ......... ⬡ 0%
+ ├─[05] Zones maritimes .......... [Superposition adjacence navale] ... ⬡ 0%
+ └─[06] Biomes de terrain ........ [Élévation style paper-craft] ..... ⬡ 0%
+
+ [ PHASE F1 : FONCTIONNALITÉS MULTI-PAYS ] ....................... STATUT: EN FILE
+ │
+ │  Bloqué sur la refonte V1 — les interactions entre pays dépendent
+ │  de la géographie.
+ │
+ ├─[F1] Min. 2 pays en custom .... [Mode custom limité à 1 actuellement] ⬡ 0%
+ ├─[F2] Blocage doublons ......... [Pays réel sélectionnable une fois] ⬡ 0%
+ └─[F3] Settings multi-pays ...... [Config commune vs par pays] ....... ⬡ 0%
 
  [ PHASE V2 : DÉCLENCHEURS SYSTÉMIQUES ] ......................... STATUT: EN FILE
- ├─[06] Répercussions mondiales . [Effets croisés entre pays] ....... ⬡ 0%
+ ├─[V6] Répercussions mondiales .. [Effets croisés entre pays] ....... ⬡ 0%
  │      └─> "Si le Pays A taxe l'IA → le Pays B gagne en Commerce,
  │           perd en Diplomatie. Propagé dans le contexte du conseil."
- ├─[07] Protocole de crise ...... [Référendums d'urgence] ........... ⬡ 0%
- ├─[08] Hub de scénarios ........ [Présets historiques & sandbox] ... ⬡ 0%
- └─[09] Support i18n ............ [Bascule FR/EN au démarrage] ...... ⬡ 0%
+ ├─[V7] Protocole de crise ....... [Référendums d'urgence] ........... ⬡ 0%
+ ├─[V8] Hub de scénarios ......... [Présets historiques & sandbox] ... ⬡ 0%
+ └─[V9] Support i18n ............. [Bascule FR/EN au démarrage] ...... ⬡ 0%
 
  [ PHASE V3 : INFRASTRUCTURE LLM ] ............................... STATUT: EN FILE
- │
- │  Architecture décidée : registry hébergé sur Gist (llm-registry.json)
- │  comme source de vérité publique. localStorage comme couche de surcharge
- │  personnelle. Les deux fusionnent au démarrage. Aucun serveur, aucun token,
- │  aucun redéploiement nécessaire. Le Gist s'édite en 2 clics pour publier
- │  de nouveaux modèles à tous les utilisateurs.
- │
- ├─[10] Découverte dynamique .... [Énumération API après clé] ....... ⬡ 0%
- │      └─> Après saisie de clé dans Init, interroger le endpoint
- │           /models du provider pour enrichir le registry avec les
- │           IDs réellement disponibles. Marqueur ★ préservé sur défaut.
- ├─[11] Interface registry ...... [Gestionnaire sync Gist in-app] ... ⬡ 0%
- └─[12] Prompts open-source ..... [Bibliothèque publique d'agents] .. ⬡ 0%
+ ├─[V10] Découverte dynamique .... [Énumération API après clé] ....... ⬡ 0%
+ ├─[V11] Interface registry ...... [Gestionnaire sync Gist in-app] ... ⬡ 0%
+ └─[V12] Prompts open-source ..... [Bibliothèque publique d'agents] .. ⬡ 0%
 
  [ PHASE V4 : MULTIJOUEUR ] ...................................... STATUT: DISTANT
  │
  │  Principe de design (décidé 2026-03) :
- │  Chaque joueur gouverne une nation dans un monde partagé. Les joueurs
- │  NE partagent PAS le même écran — chacun a sa propre session de conseil
- │  et vote indépendamment. Les effets croisés se propagent via la couche
- │  de déclencheurs systémiques (Phase V2). Aucune synchronisation en temps
- │  réel n'est nécessaire : les tours se résolvent de manière asynchrone,
- │  l'état du monde fusionne à la clôture du cycle.
+ │  Chaque joueur gouverne une nation dans un monde partagé.
+ │  Tours asynchrones, sessions de conseil isolées par nation,
+ │  clés API côté client uniquement.
  │
- │  populationWeight déjà câblé dans handleVote() :
- │    total = population / 1_000_000 × 10 × 10_000
- │  Sera exposé proprement quand l'architecture serveur sera décidée.
- │
- │  Stack probable : relais Node.js léger + JSON monde partagé,
- │  ou serverless (Supabase / PocketBase) pour la sync d'état monde.
- │  Les clés API restent côté client — elles ne touchent jamais le serveur.
- │
- ├─[13] État monde partagé ...... [Serveur ou P2P world JSON] ....... ⬡ 0%
- ├─[14] Résolution tours async .. [Fusion monde à clôture cycle] .... ⬡ 0%
- ├─[15] Isolation nation joueur . [Chaque joueur = 1 conseil] ........ ⬡ 0%
- ├─[16] Événements inter-nations  [Sécession, Guerre, Alliance] ..... ⬡ 0%
- └─[17] Sauvegarde / Import ..... [Snapshots monde portables] ....... ⬡ 0%
+ ├─[V13] État monde partagé ...... [Serveur ou P2P world JSON] ....... ⬡ 0%
+ ├─[V14] Résolution tours async .. [Fusion monde à clôture cycle] .... ⬡ 0%
+ ├─[V15] Isolation nation joueur . [Chaque joueur = 1 conseil] ........ ⬡ 0%
+ ├─[V16] Événements inter-nations  [Sécession, Guerre, Alliance] ..... ⬡ 0%
+ └─[V17] Sauvegarde / Import ..... [Snapshots monde portables] ....... ⬡ 0%
 
  [ PHASE V5 : GUERRE & GÉOPOLITIQUE ] ........................... STATUT: DISTANT
- ├─[18] Friction frontalière .... [Conflit aux bords des polygones] .. ⬡ 0%
- ├─[19] La Grande Scission ...... [Sécession avec déchirement carte] . ⬡ 0%
- └─[20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
+ ├─[V18] Friction frontalière .... [Conflit aux bords des polygones] .. ⬡ 0%
+ ├─[V19] La Grande Scission ...... [Sécession avec déchirement carte] . ⬡ 0%
+ └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~12%
- BASE : Moteur de délibération complet. Carte & multijoueur en attente.
+ PROGRESSION : [█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~16%
+ BASE : Moteur + constitution par pays complets.
+        2 bugs à corriger · Refonte carte en approche.
 ================================================================================
 ```
 
@@ -113,28 +121,25 @@
 
 ## Journal des décisions d'architecture
 
+### Constitution par pays (2026-03)
+**Décision :** Chaque pays porte son propre objet `governanceOverride`, résolu au moment de l'appel au conseil via `getAgentsFor(country)`.
+
+L'approche naïve (une constitution globale pour tous les pays) a été dépassée dès que les mondes multi-pays ont nécessité une gouvernance indépendante. Le pattern adopté : `InitScreen` forke la constitution commune par pays → `Dashboard_p1` injecte `governanceOverride` dans chaque objet pays à la construction du monde → `llmCouncilEngine` résout la constitution effective à l'appel, avec fallback sur le localStorage global si aucun override n'existe. Cela maintient le moteur sans état et l'objet pays autonome.
+
 ### Registry LLM (2026-03)
 **Décision :** `llm-registry.json` hébergé sur Gist public comme source de vérité partagée, `localStorage` comme couche de surcharge personnelle.
 
-Les approches standard (Option A : localStorage seul / Option B : télécharger JSON → git push) ont toutes deux des défauts. L'architecture adoptée fusionne les deux proprement :
+- Gist public = ce que tous les utilisateurs voient par défaut
+- `localStorage` = surcharges personnelles, persistantes entre sessions
+- Fusion au démarrage : le Gist gagne sur les clés partagées, localStorage sur les ajouts personnels
+- Publier un nouveau modèle : éditer le Gist en 2 clics, aucun redéploiement
+- Fallback codé en dur si le Gist est inaccessible
 
-- `llm-registry.json` sur un Gist public = ce que tous les utilisateurs voient par défaut
-- `localStorage` = surcharges personnelles, persistantes entre sessions, effaçables intentionnellement
-- Fusion au démarrage : le Gist gagne sur les clés partagées, localStorage gagne sur les ajouts personnels
-- Pour publier un nouveau modèle à tous les utilisateurs : éditer le Gist en 2 clics, aucun redéploiement
-- Fallback codé en dur dans le bundle si le Gist est inaccessible (résilience aux pannes réseau)
-
-**Amélioration future :** après saisie de la clé API dans Init, interroger l'endpoint `/models` de chaque provider pour découvrir les IDs de modèles réellement disponibles. Le registry devient alors une couche de défauts curatés, pas une contrainte.
-
-### Carte du monde (2026-03)
-**Décision :** Concept hex-grid (V1/V4 original) remplacé par SVG low-poly procédural.
-
-Les hex-grids sont géométriquement élégants mais se heurtent au modèle de rendu SVG de React et à l'esthétique existante d'ARIA (globe PRNG polygonal, superposition paper-craft). La nouvelle direction préserve tous les objectifs de design originaux (logique ZEE → adjacence polygonale, biomes de terrain → strates d'élévation, friction frontalière → détection de conflit sur les arêtes) tout en restant natif au renderer existant.
+### Carte du monde (2026-03 → révisé)
+**Décision :** Refonte complète de la génération procédurale. Les directions hex-grid et SVG low-poly sont toutes deux abandonnées. La nouvelle architecture est définie par l'architecte du projet. Le moteur de conseil et le modèle de données pays sont délibérément agnostiques à la carte et ne seront pas impactés par la refonte.
 
 ### Multijoueur (2026-03)
-**Décision :** Asynchrone, isolation par nation, clés LLM côté client.
-
-La synchronisation en temps réel entre sessions de conseil est inutile et coûteuse. Chaque joueur exécute localement son conseil complet ; seuls les deltas d'état du monde (résultats de votes, changements territoriaux, événements diplomatiques) sont partagés. Les clés API ne quittent jamais le client — le serveur est un relais d'état monde léger, pas un proxy IA.
+**Décision :** Asynchrone, isolation par nation, clés LLM côté client. Le serveur est un relais d'état monde léger uniquement — les clés API ne le traversent jamais.
 
 ---
 
