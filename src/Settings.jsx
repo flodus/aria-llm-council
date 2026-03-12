@@ -146,14 +146,33 @@ function Field({ label, hint, children }) {
 }
 
 function TextInput({ value, onChange, password, placeholder, mono }) {
-  return (
+  const [show, setShow] = useState(false);
+  if (!password) return (
     <input
-      type={password ? 'password' : 'text'}
+      type="text"
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder || ''}
       className={`settings-input${mono ? ' mono' : ''}`}
     />
+  );
+  return (
+    <div style={{ position:'relative', flex:1, display:'flex' }}>
+      <input
+        type={show ? 'text' : 'password'}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder || ''}
+        className={`settings-input${mono ? ' mono' : ''}`}
+        style={{ flex:1, paddingRight:'2rem' }}
+      />
+      <button onClick={() => setShow(p => !p)}
+        style={{ position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
+          background:'none', border:'none', cursor:'pointer', padding:'0.1rem', lineHeight:1,
+          color: show ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)', fontSize:'0.9rem' }}>
+        <span className={show ? 'mdi mdi-eye-lock-open' : 'mdi mdi-eye-lock'} />
+      </button>
+    </div>
   );
 }
 

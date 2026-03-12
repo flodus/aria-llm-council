@@ -67,6 +67,28 @@ export default function App() {
   // GEMINI
   const SOUND_ENABLED = false; // Passe à true pour réactiver
 
+  const [audioMuted, setAudioMuted] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('aria_audio_muted') ?? 'true'); }
+    catch { return true; }
+  });
+  const toggleAudio = useCallback(() => {
+    setAudioMuted(prev => {
+      const next = !prev;
+      localStorage.setItem('aria_audio_muted', JSON.stringify(next));
+      if (next) {
+        ambientRef.current?.pause();
+        crisisRef.current?.pause();
+      } else {
+        if (!audioStarted.current && ambientRef.current) {
+          audioStarted.current = true;
+          ambientRef.current.volume = 1;
+          ambientRef.current.play().catch(() => {});
+        }
+      }
+      return next;
+    });
+  }, []);
+
   // ── Audio ─────────────────────────────────────────────────────────────
   useEffect(() => {
     // GEMINI Si le son est désactivé, on arrête tout immédiatement
@@ -301,6 +323,14 @@ export default function App() {
               ↺
             </button>
           )}
+          <button className="btn-icon" onClick={toggleAudio}
+            title={audioMuted ? t('BTN_SOUND_ON', loadLang()) : t('BTN_SOUND_OFF', loadLang())}
+            style={{ fontSize:'1rem', opacity: audioMuted ? 0.35 : 0.80, color: 'white' }}>
+            {audioMuted
+              ? <span className="mdi mdi-volume-off" />
+              : <span className="mdi mdi-volume-high" />
+            }
+          </button>
           <button className="btn-icon" onClick={() => setPage('settings')} title={t('BTN_CONFIG', loadLang())}>⚙</button>
         </div>
       </header>
