@@ -86,6 +86,25 @@ Flux technique envisagé :
 
 ---
 
+## Sauvegarde & Checkpoints
+
+Idée : permettre au joueur de sauvegarder l'état complet d'une partie
+à un moment précis et de le recharger plus tard.
+
+- Checkpoint manuel : bouton "Sauvegarder ce moment" dans le dashboard
+- Checkpoint auto : sauvegarde automatique à chaque fin de cycle
+- Chargement : liste des checkpoints avec date, cycle, nom du monde
+- Contenu d'un checkpoint : seed + état pays + chronolog + constitution + alliances
+- Lien avec "Recommencer l'histoire" : un checkpoint cycle 0 = état initial
+
+Briques existantes : seed déterministe ✅ · aria_session_world ✅
+Manque : UI sauvegarde/chargement · format checkpoint · gestion multi-slots
+Complexité : moyenne-haute
+
+⚠️ ATTENTION : ne pas implémenter avant Assess dédié
+
+---
+
 ## Droits fondamentaux / Constitution humaine
 
 _(à développer)_
