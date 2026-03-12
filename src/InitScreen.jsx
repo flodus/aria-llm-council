@@ -1298,7 +1298,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 <button style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
                   padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}
                   onClick={() => setPlCtxOpen(p => p!=null ? null : 0)}>
-                  <span style={{ fontSize:'0.75rem' }}>{plCtxOpen!=null ? '▾' : '▸'}</span>
+                  <span style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.60)' }}>{plCtxOpen!=null ? '▾' : '▸'}</span>
                   <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
                     color: plCtxOpen!=null ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>
                     {t('CONTEXT', lang)}
@@ -1426,22 +1426,23 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
               },
             ].map(acc => (
               <div key={acc.id} style={{ width:'100%', borderRadius:'2px',
-                border:'1px solid rgba(200,164,74,0.22)', overflow:'hidden' }}>
+                border:`1px solid ${cfgOpen===acc.id ? 'rgba(200,164,74,0.35)' : 'rgba(200,164,74,0.22)'}`,
+                background: cfgOpen===acc.id ? 'rgba(200,164,74,0.05)' : COLOR.bgCard,
+                overflow:'hidden' }}>
                 <button
-                  style={{ width:'100%', background: cfgOpen===acc.id ? 'rgba(200,164,74,0.06)' : 'rgba(200,164,74,0.03)',
+                  style={{ width:'100%', background:'none',
                     border:'none', padding:'0.45rem 0.7rem', cursor:'pointer', textAlign:'left',
                     display:'flex', alignItems:'center', justifyContent:'space-between' }}
                   onClick={() => setCfgOpen(p => p===acc.id ? '' : acc.id)}>
                   <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.10em',
-                    color:'rgba(200,164,74,0.75)' }}>{acc.label}</span>
+                    color:'rgba(200,164,74,0.88)' }}>{acc.label}</span>
                   <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
                     {acc.badge && (
                       <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.10em',
                         color:'rgba(200,164,74,0.55)', border:'1px solid rgba(200,164,74,0.22)',
                         padding:'0.1rem 0.35rem', borderRadius:'2px' }}>{acc.badge}</span>
                     )}
-                    <span style={{ fontFamily:FONT.mono, fontSize:'0.48rem',
-                      color:'rgba(200,164,74,0.40)' }}>{cfgOpen===acc.id ? '▲' : '▼'}</span>
+                    <span style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.60)' }}>{cfgOpen===acc.id ? '▾' : '▸'}</span>
                   </div>
                 </button>
                 {cfgOpen===acc.id && (
