@@ -14,6 +14,10 @@ _Dernière mise à jour : 2026-03-12_
 
 ## 🟡 UX COURT TERME
 
+- [ ] **U5 — Confirmation nouvelle partie** : boîte de dialogue à valider avant le bouton ↺ (nouvelle partie) dans la topbar — éviter les missclicks en cours de partie
+  - Composant : `App.jsx` · bouton `handleReset`
+  - UI : modale légère "Nouvelle partie ? La session en cours sera perdue." + Confirmer / Annuler
+
 - [ ] **T1 — Multi-clés par provider** : permettre plusieurs clés API par provider (Init + Settings)
   - Structure cible `aria_api_keys` : `{ claude: [{key, model, default:true}, {key, model}], gemini: [...] }`
   - UI : bouton "+ Ajouter une clé" par provider, select modèle par clé, étoile clé par défaut, bouton supprimer
