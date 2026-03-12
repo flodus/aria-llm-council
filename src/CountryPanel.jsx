@@ -41,24 +41,24 @@ function CountryNavArrows({ countryIndex, countryTotal, onPrevCountry, onNextCou
     <div style={{ display:'flex', alignItems:'center', gap:'0.25rem' }}>
     <button onClick={onPrevCountry} style={{
       background:'none', border:'none', cursor:'pointer', padding:'0.1rem 0.2rem',
-      color:'rgba(140,160,200,0.40)', fontSize:'0.85rem', lineHeight:1,
+      color:'rgba(140,160,200,0.75)', fontSize:'0.85rem', lineHeight:1,
           transition:'color 0.15s',
     }}
-    onMouseEnter={e => e.target.style.color='rgba(200,164,74,0.70)'}
-    onMouseLeave={e => e.target.style.color='rgba(140,160,200,0.40)'}>
+    onMouseEnter={e => e.target.style.color='rgba(200,164,74,1.0)'}
+    onMouseLeave={e => e.target.style.color='rgba(140,160,200,0.75)'}>
     <span className="mdi mdi-chevron-left" />
     </button>
     <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
-      color:'rgba(140,160,200,0.30)', letterSpacing:'0.08em', userSelect:'none' }}>
+      color:'rgba(140,160,200,0.60)', letterSpacing:'0.08em', userSelect:'none' }}>
       {countryIndex + 1}/{countryTotal}
       </span>
       <button onClick={onNextCountry} style={{
         background:'none', border:'none', cursor:'pointer', padding:'0.1rem 0.2rem',
-        color:'rgba(140,160,200,0.40)', fontSize:'0.85rem', lineHeight:1,
+        color:'rgba(140,160,200,0.75)', fontSize:'0.85rem', lineHeight:1,
           transition:'color 0.15s',
       }}
-      onMouseEnter={e => e.target.style.color='rgba(200,164,74,0.70)'}
-      onMouseLeave={e => e.target.style.color='rgba(140,160,200,0.40)'}>
+      onMouseEnter={e => e.target.style.color='rgba(200,164,74,1.0)'}
+      onMouseLeave={e => e.target.style.color='rgba(140,160,200,0.75)'}>
       <span className="mdi mdi-chevron-right" />
       </button>
       </div>
@@ -101,7 +101,7 @@ export function EmptyPanel({ activeTab, liveCountries = [], onSelectCountry }) {
           <span className="panel-header-emoji">⚖</span>
           <div style={{ flex:1 }}>
             <div className="panel-header-title">{isEn?'LLM COUNCIL':'LLM CONSEIL'}</div>
-            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.40)', letterSpacing:'0.10em' }}>
+            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.75)', letterSpacing:'0.10em' }}>
               {isEn?'SELECT A COUNTRY':'SÉLECTIONNEZ UN PAYS'}
             </div>
           </div>
@@ -146,7 +146,7 @@ export function EmptyPanel({ activeTab, liveCountries = [], onSelectCountry }) {
           <span className="panel-header-emoji">📜</span>
           <div style={{ flex:1 }}>
             <div className="panel-header-title">CHRONOLOG</div>
-            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.40)', letterSpacing:'0.10em' }}>
+            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.75)', letterSpacing:'0.10em' }}>
               {isEn?'SELECT A COUNTRY':'SÉLECTIONNEZ UN PAYS'}
             </div>
           </div>
@@ -241,7 +241,7 @@ export default function CountryPanel({
         <span className="panel-header-emoji">{getCountryEmoji(country)}</span>
         <div style={{ flex: 1 }}>
           <div className="panel-header-title">{getLocalizedNom(country) || nom}</div>
-          <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.40)', letterSpacing: '0.10em' }}>
+          <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.75)', letterSpacing: '0.10em' }}>
             {isEn?'DELIBERATION COUNCIL':'CONSEIL DE DÉLIBÉRATION'}
           </div>
         </div>
@@ -317,7 +317,7 @@ export default function CountryPanel({
 
                   {isOpen && (
                     <div style={{ padding: '0 0.6rem 0.6rem' }}>
-                      <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.12em', color: 'rgba(140,160,200,0.40)', marginBottom: '0.35rem' }}>
+                      <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.12em', color: 'rgba(140,160,200,0.75)', marginBottom: '0.35rem' }}>
                         {isEn ? 'FREQUENT QUESTIONS' : 'QUESTIONS FRÉQUENTES'}
                       </div>
                       {(m.questions || []).map((q, i) => (
@@ -336,7 +336,7 @@ export default function CountryPanel({
                       ))}
 
                       <div style={{ marginTop: '0.4rem' }}>
-                        <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.12em', color: 'rgba(140,160,200,0.40)', marginBottom: '0.28rem' }}>
+                        <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.12em', color: 'rgba(140,160,200,0.75)', marginBottom: '0.28rem' }}>
                           {isEn ? 'CITIZEN QUESTION' : 'QUESTION DU PEUPLE'}
                         </div>
                         <textarea value={customQ} onChange={e => setCustomQ(e.target.value)}
@@ -373,7 +373,7 @@ export default function CountryPanel({
 
             <div style={{ height: '1px', background: 'rgba(90,110,160,0.10)', margin: '0.7rem 0' }} />
 
-            <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.16em', color: 'rgba(140,160,200,0.40)', marginBottom: '0.4rem' }}>
+            <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.16em', color: 'rgba(140,160,200,0.75)', marginBottom: '0.4rem' }}>
               {isEn ? 'FREE QUESTION' : 'QUESTION LIBRE'}
             </div>
             <div style={{ fontFamily: FONT.mono, fontSize: '0.41rem', color: 'rgba(100,120,160,0.45)', lineHeight: 1.5, marginBottom: '0.45rem', fontStyle: 'italic' }}>
@@ -416,7 +416,7 @@ export default function CountryPanel({
           flexShrink: 0,
         }}>
           {[
-            { icon: '⏭', label: isEn?'Cycle +5 yrs':'Cycle +5 ans',  fn: onNextCycle,    color: 'rgba(200,164,74,0.70)' },
+            { icon: '⏭', label: isEn?'Cycle +5 yrs':'Cycle +5 ans',  fn: onNextCycle,    color: 'rgba(200,164,74,1.0)' },
             { icon: '🏛️', label: 'Gouvernement', fn: onConstitution, color: 'rgba(140,100,220,0.70)' },
             { icon: '✂️', label: isEn?'Secession':'Sécession',     fn: onSecession,    color: 'rgba(200,80,80,0.70)'  },
           ].map(({ icon, label, fn, color }) => (
