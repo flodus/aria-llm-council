@@ -149,8 +149,9 @@ mechanisms for resolving future conflicts
 
 
 
-- demander confirmation au clic sur "nouvelle partie" sur les dashboard
-
+2 trucs :
+j'ai les idées mais je suis un piètre développeur donc hésite pas à me conseiller sur la structure de l'app, comme l'arborescence dont on parlait tout à l'heure, ou détacher les trad vers un fichier à part... là par exemple toutes les mécaniques qui se ressemblent on devrait pas les mettre dans un fichier avec des imports ?
+ça demander confirmation au clic sur "nouvelle partie" sur les dashboard ça serait facile et pas long ? pour éviter un miss click accidentel
 
 
 
