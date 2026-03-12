@@ -868,8 +868,8 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   const roles = opts.ia_roles;
   const hasKeys = !!(keys.claude || keys.gemini);
 
-  // 1. Priorité au mode hors-ligne forcé, Board Game, ou absence de clés
-  if (!hasKeys || opts.force_local || opts.ia_mode === 'none' || (opts.gameplay && opts.gameplay.mode_board_game)) {
+  // 1. Priorité au mode hors-ligne forcé, Board Game (ia_mode:'none'), ou absence de clés
+  if (!hasKeys || opts.force_local || opts.ia_mode === 'none') {
     return getLocalResponse(type, context);
   }
 
@@ -922,7 +922,6 @@ export const DEFAULT_OPTIONS = {
     events_ia:       true,
     show_legend:     true,
     show_zee:        true,
-    mode_board_game: true,
   },
   world: { nb_pays_defaut: 3 },
   defaultGovernance: {

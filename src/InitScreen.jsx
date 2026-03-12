@@ -1034,7 +1034,6 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const [modelReg,    setModelReg]    = useState(ARIA_FALLBACK_MODELS);
   const [regStatus,   setRegStatus]   = useState('idle');
   const [ariaMode,    setAriaMode]    = useState(() => loadOpts().ia_mode || 'aria');
-  const [boardGame,   setBoardGame]   = useState(() => !!(loadOpts().gameplay?.mode_board_game));
   const apiKeys = loadKeys();
   const availProviders = ['openrouter','claude','gemini','grok','openai'].filter(id => {
     const v = apiKeys[id];
@@ -1112,7 +1111,6 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
     try {
       const opts = loadOpts();
       opts.ia_mode = ariaMode;
-      opts.gameplay = { ...(opts.gameplay||{}), mode_board_game: boardGame };
       opts.ia_roles = roles;
       localStorage.setItem('aria_options', JSON.stringify(opts));
       localStorage.setItem('aria_preferred_models', JSON.stringify(
@@ -1324,6 +1322,119 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
               </div>
             )}
 
+            {/* ── MODE IA (accordéon) ──────────────────────────────────── */}
+            {[
+              { id:'ia', label:'⚡ MODE IA',
+                badge: ariaMode === 'none' ? 'BOARD GAME' : ariaMode === 'solo' ? 'SOLO' : ariaMode === 'custom' ? 'CUSTOM' : 'ARIA',
+                content: (
+                  <div style={{ padding:'0.5rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem' }}>
+                    <div style={{ display:'flex', gap:'0.35rem' }}>
+                      {[
+                        { id:'aria',   label:'ARIA — Multi-agent complet' },
+                        { id:'solo',   label: t('INIT_SOLO_LABEL', lang) },
+                        { id:'custom', label: t('INIT_CUSTOM_LABEL', lang) },
+                        { id:'none',   label:'🎲 Board Game' },
+                      ].map(m => (
+                        <button key={m.id}
+                          style={{ ...BTN_SECONDARY, flex:1, fontSize:'0.40rem', padding:'0.28rem 0.4rem',
+                            ...(ariaMode===m.id ? { border:'1px solid rgba(200,164,74,0.50)',
+                              color:'rgba(200,164,74,0.90)', background:'rgba(200,164,74,0.08)' } : {}) }}
+                          onClick={() => setAriaMode(m.id)}>
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
+                    {ariaMode === 'none' && (
+                      <div style={{ fontSize:'0.40rem', color:'rgba(140,160,200,0.40)',
+                        fontFamily:FONT.mono, padding:'0.10rem 0.1rem', lineHeight:1.5 }}>
+                        {lang==='en'
+                          ? 'Pre-written local responses — no API key needed'
+                          : 'Réponses locales pré-écrites — sans clé API'}
+                      </div>
+                    )}
+                    {(ariaMode === 'aria' || ariaMode === 'custom') && (
+                      <div style={{ display:'flex', flexDirection:'column', gap:'0.3rem' }}>
+                        {[
+                          { provKey:'ministre_provider',  modelKey:'ministre_model',  label:'Ministre' },
+                          { provKey:'synthese_min_prov',  modelKey:'synthese_min_model', label: t('INIT_SYNTH_MIN', lang) },
+                          { provKey:'phare_provider',     modelKey:'phare_model',     label:'Phare ☉' },
+                          { provKey:'boussole_provider',  modelKey:'boussole_model',  label:'Boussole ☽' },
+                          { provKey:'synthese_pres_prov', modelKey:'synthese_pres_model', label: t('INIT_SYNTH_PRES', lang) },
+                        ].map(({ provKey, modelKey, label }) => {
+                          const prov = roles[provKey] || availProviders[0] || 'openrouter';
+                          const models = modelReg[prov] || ARIA_FALLBACK_MODELS[prov] || [];
+                          return (
+                            <div key={provKey} style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr', gap:'0.3rem', alignItems:'center' }}>
+                              <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.50)' }}>{label}</span>
+                              <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                                value={prov}
+                                onChange={e => setRoles(r => ({ ...r, [provKey]: e.target.value,
+                                  [modelKey]: modelReg[e.target.value]?.[0]?.id || '' }))}>
+                                {availProviders.map(p => <option key={p} value={p}>{PROV_LABELS[p]||p}</option>)}
+                              </select>
+                              <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                                value={roles[modelKey] || ''}
+                                onChange={e => setRoles(r => ({ ...r, [modelKey]: e.target.value }))}>
+                                {models.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                              </select>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {ariaMode === 'solo' && (
+                      <div style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr', gap:'0.3rem', alignItems:'center' }}>
+                        <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.50)' }}>{t('INIT_MODEL_LABEL', lang)}</span>
+                        <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                          value={roles.ministre_provider || availProviders[0] || 'openrouter'}
+                          onChange={e => setRoles(r => ({ ...r,
+                            ministre_provider: e.target.value, synthese_min_prov: e.target.value,
+                            phare_provider: e.target.value, boussole_provider: e.target.value, synthese_pres_prov: e.target.value,
+                            ministre_model: modelReg[e.target.value]?.[0]?.id || '',
+                          }))}>
+                          {availProviders.map(p => <option key={p} value={p}>{PROV_LABELS[p]||p}</option>)}
+                        </select>
+                        <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                          value={roles.ministre_model || ''}
+                          onChange={e => setRoles(r => ({ ...r,
+                            ministre_model: e.target.value, synthese_min_model: e.target.value,
+                            phare_model: e.target.value, boussole_model: e.target.value, synthese_pres_model: e.target.value,
+                          }))}>
+                          {(modelReg[roles.ministre_provider] || []).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )
+              },
+            ].map(acc => (
+              <div key={acc.id} style={{ width:'100%', borderRadius:'2px',
+                border:'1px solid rgba(200,164,74,0.12)', overflow:'hidden' }}>
+                <button
+                  style={{ width:'100%', background: cfgOpen===acc.id ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.015)',
+                    border:'none', padding:'0.45rem 0.7rem', cursor:'pointer', textAlign:'left',
+                    display:'flex', alignItems:'center', justifyContent:'space-between' }}
+                  onClick={() => setCfgOpen(p => p===acc.id ? '' : acc.id)}>
+                  <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.10em',
+                    color:'rgba(200,164,74,0.75)' }}>{acc.label}</span>
+                  <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                    {acc.badge && (
+                      <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.10em',
+                        color:'rgba(200,164,74,0.55)', border:'1px solid rgba(200,164,74,0.22)',
+                        padding:'0.1rem 0.35rem', borderRadius:'2px' }}>{acc.badge}</span>
+                    )}
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.48rem',
+                      color:'rgba(200,164,74,0.40)' }}>{cfgOpen===acc.id ? '▲' : '▼'}</span>
+                  </div>
+                </button>
+                {cfgOpen===acc.id && (
+                  <div style={{ borderTop:'1px solid rgba(200,164,74,0.08)' }}>
+                    {acc.content}
+                  </div>
+                )}
+              </div>
+            ))}
+
             {/* Présidence active */}
             <div style={{ ...CARD_STYLE }}>
               <div style={{ ...labelStyle('0.42rem'), marginBottom:'0.5rem' }}>{t('ACTIVE_PRESIDENCY',lang)}</div>
@@ -1415,129 +1526,6 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 })}
               </div>
             </div>
-
-            {/* ── CONFIG IA + BOARD GAME (accordéons) ──────────────────── */}
-            {[
-              { id:'boardgame', label:`🎲 ${t('BOARD_GAME',lang)}`, badge: boardGame ? 'ACTIF' : null,
-                content: (
-                  <div style={{ padding:'0.5rem 0.6rem', display:'flex', alignItems:'flex-start', gap:'0.7rem' }}>
-                    <input type="checkbox" id="bg-chk-resume" checked={boardGame}
-                      onChange={e => setBoardGame(e.target.checked)}
-                      style={{ marginTop:'0.15rem', accentColor:'#C8A44A', cursor:'pointer', flexShrink:0 }} />
-                    <label htmlFor="bg-chk-resume" style={{ cursor:'pointer' }}>
-                      <div style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.10em',
-                        color:'rgba(200,164,74,0.70)' }}>RÉPONSES LOCALES PRÉ-ÉCRITES</div>
-                      <div style={{ fontSize:'0.43rem', color:'rgba(140,160,200,0.40)', marginTop:'0.2rem', lineHeight:1.5 }}>
-                        Utilise les textes pré-écrits même avec une clé API active. Idéal pour tester sans frais.
-                      </div>
-                    </label>
-                  </div>
-                )
-              },
-              { id:'ia', label:'⚡ MODE IA',
-                badge: ariaMode === 'none' ? 'OFFLINE' : ariaMode === 'solo' ? 'SOLO' : ariaMode === 'custom' ? 'CUSTOM' : 'ARIA',
-                content: (
-                  <div style={{ padding:'0.5rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem' }}>
-                    {/* Mode selector */}
-                    <div style={{ display:'flex', gap:'0.35rem' }}>
-                      {[
-                        { id:'aria',   label:'ARIA — Multi-agent complet' },
-                        { id:'solo',   label: t('INIT_SOLO_LABEL', lang) },
-                        { id:'custom', label: t('INIT_CUSTOM_LABEL', lang) },
-                        { id:'none',   label: lang==='en' ? '🚫 NONE (offline)' : '🚫 AUCUN (offline)' },
-                      ].map(m => (
-                        <button key={m.id}
-                          style={{ ...BTN_SECONDARY, flex:1, fontSize:'0.40rem', padding:'0.28rem 0.4rem',
-                            ...(ariaMode===m.id ? { border:'1px solid rgba(200,164,74,0.50)',
-                              color:'rgba(200,164,74,0.90)', background:'rgba(200,164,74,0.08)' } : {}) }}
-                          onClick={() => setAriaMode(m.id)}>
-                          {m.label}
-                        </button>
-                      ))}
-                    </div>
-                    {/* Role rows for ARIA / CUSTOM */}
-                    {(ariaMode === 'aria' || ariaMode === 'custom') && (
-                      <div style={{ display:'flex', flexDirection:'column', gap:'0.3rem' }}>
-                        {[
-                          { provKey:'ministre_provider',  modelKey:'ministre_model',  label:'Ministre' },
-                          { provKey:'synthese_min_prov',  modelKey:'synthese_min_model', label: t('INIT_SYNTH_MIN', lang) },
-                          { provKey:'phare_provider',     modelKey:'phare_model',     label:'Phare ☉' },
-                          { provKey:'boussole_provider',  modelKey:'boussole_model',  label:'Boussole ☽' },
-                          { provKey:'synthese_pres_prov', modelKey:'synthese_pres_model', label: t('INIT_SYNTH_PRES', lang) },
-                        ].map(({ provKey, modelKey, label }) => {
-                          const prov = roles[provKey] || availProviders[0] || 'openrouter';
-                          const models = modelReg[prov] || ARIA_FALLBACK_MODELS[prov] || [];
-                          return (
-                            <div key={provKey} style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr', gap:'0.3rem', alignItems:'center' }}>
-                              <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.50)' }}>{label}</span>
-                              <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
-                                value={prov}
-                                onChange={e => setRoles(r => ({ ...r, [provKey]: e.target.value,
-                                  [modelKey]: modelReg[e.target.value]?.[0]?.id || '' }))}>
-                                {availProviders.map(p => <option key={p} value={p}>{PROV_LABELS[p]||p}</option>)}
-                              </select>
-                              <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
-                                value={roles[modelKey] || ''}
-                                onChange={e => setRoles(r => ({ ...r, [modelKey]: e.target.value }))}>
-                                {models.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                              </select>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    {ariaMode === 'solo' && (
-                      <div style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr', gap:'0.3rem', alignItems:'center' }}>
-                        <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.50)' }}>{t('INIT_MODEL_LABEL', lang)}</span>
-                        <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
-                          value={roles.ministre_provider || availProviders[0] || 'openrouter'}
-                          onChange={e => setRoles(r => ({ ...r,
-                            ministre_provider: e.target.value, synthese_min_prov: e.target.value,
-                            phare_provider: e.target.value, boussole_provider: e.target.value, synthese_pres_prov: e.target.value,
-                            ministre_model: modelReg[e.target.value]?.[0]?.id || '',
-                          }))}>
-                          {availProviders.map(p => <option key={p} value={p}>{PROV_LABELS[p]||p}</option>)}
-                        </select>
-                        <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
-                          value={roles.ministre_model || ''}
-                          onChange={e => setRoles(r => ({ ...r,
-                            ministre_model: e.target.value, synthese_min_model: e.target.value,
-                            phare_model: e.target.value, boussole_model: e.target.value, synthese_pres_model: e.target.value,
-                          }))}>
-                          {(modelReg[roles.ministre_provider] || []).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                        </select>
-                      </div>
-                    )}
-                  </div>
-                )
-              },
-            ].map(acc => (
-              <div key={acc.id} style={{ width:'100%', borderRadius:'2px',
-                border:'1px solid rgba(200,164,74,0.12)', overflow:'hidden' }}>
-                <button
-                  style={{ width:'100%', background: cfgOpen===acc.id ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.015)',
-                    border:'none', padding:'0.45rem 0.7rem', cursor:'pointer', textAlign:'left',
-                    display:'flex', alignItems:'center', justifyContent:'space-between' }}
-                  onClick={() => setCfgOpen(p => p===acc.id ? '' : acc.id)}>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.10em',
-                    color:'rgba(200,164,74,0.75)' }}>{acc.label}</span>
-                  <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
-                    {acc.badge && (
-                      <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.10em',
-                        color:'rgba(200,164,74,0.55)', border:'1px solid rgba(200,164,74,0.22)',
-                        padding:'0.1rem 0.35rem', borderRadius:'2px' }}>{acc.badge}</span>
-                    )}
-                    <span style={{ fontFamily:FONT.mono, fontSize:'0.48rem',
-                      color:'rgba(200,164,74,0.40)' }}>{cfgOpen===acc.id ? '▲' : '▼'}</span>
-                  </div>
-                </button>
-                {cfgOpen===acc.id && (
-                  <div style={{ borderTop:'1px solid rgba(200,164,74,0.08)' }}>
-                    {acc.content}
-                  </div>
-                )}
-              </div>
-            ))}
 
             <div style={{ fontSize:'0.40rem', color:'rgba(140,160,200,0.28)',
               fontFamily:FONT.mono, textAlign:'center' }}>
@@ -2217,10 +2205,6 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   };
   const [newFictifTerrain,  setNewFictifTerrain]  = useState('coastal');
   const [newFictifRegime,   setNewFictifRegime]   = useState('democratie_liberale');
-  const [boardGame,         setBoardGame]         = useState(() => {
-    try { return !!(JSON.parse(localStorage.getItem('aria_options')||'{}').gameplay?.mode_board_game); }
-    catch { return false; }
-  });
 
   const resetDefaut = () => { setDefautType(null); setDefautFictif(null); setDefautReel(''); setDefautNom(''); };
 
@@ -2236,7 +2220,6 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   const launch = (usePreset, customDefs = null) => {
     try {
       const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
-      opts.gameplay = { ...(opts.gameplay || {}), mode_board_game: boardGame };
       localStorage.setItem('aria_options', JSON.stringify(opts));
     } catch {}
     setStep('generating');
@@ -2419,34 +2402,6 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             <McSub t={t('PRESET_CUSTOM_DESC',lang)} />
           </MC>
         </div>
-        {mode === 'ai' && (
-        /* Toggle Board Game — pleine largeur */
-        <div style={{ display:'flex', alignItems:'center', gap:'0.7rem', padding:'0.55rem 0.9rem',
-          background: boardGame ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.02)',
-          border: `1px solid ${boardGame ? 'rgba(200,164,74,0.30)' : 'rgba(255,255,255,0.07)'}`,
-          borderRadius:'3px', cursor:'pointer', width:'100%', boxSizing:'border-box',
-          transition:'all 0.15s' }}
-          onClick={() => setBoardGame(v => !v)}>
-          <span style={{ fontSize:'1.1rem' }}>🎲</span>
-          <div style={{ flex:1 }}>
-            <div style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.12em',
-              color: boardGame ? 'rgba(200,164,74,0.85)' : 'rgba(170,185,210,0.45)' }}>
-              MODE BOARD GAME
-            </div>
-            <div style={{ fontSize:'0.40rem', color:'rgba(130,150,185,0.38)', marginTop:'0.08rem', lineHeight:1.4 }}>
-              {t('BOARD_GAME_DESC',lang)}
-            </div>
-          </div>
-          <div style={{ width:'2rem', height:'1.1rem', borderRadius:'0.55rem', transition:'all 0.2s', flexShrink:0,
-            background: boardGame ? 'rgba(200,164,74,0.65)' : 'rgba(70,82,105,0.50)',
-            position:'relative' }}>
-            <div style={{ position:'absolute', top:'0.12rem', transition:'all 0.2s',
-              left: boardGame ? '1.0rem' : '0.12rem',
-              width:'0.86rem', height:'0.86rem', borderRadius:'50%',
-              background: boardGame ? '#C8A44A' : 'rgba(150,165,195,0.55)' }} />
-          </div>
-        </div>
-        )}
         {BK(() => setStep('mode'))}
       </div>
     );
