@@ -531,9 +531,9 @@ function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
       const nom = ai.displayName;
       let flag = '🌐', population = 5_000_000, region = '';
       try {
-        const rc = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(ai.canonicalName||nom)}?fields=name,flags,population,region`)
+        const rc = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(ai.canonicalName||nom)}?fields=name,flag,population,region`)
           .then(r => r.ok ? r.json() : []);
-        if (rc[0]) { flag = rc[0].flags?.emoji || '🌐'; population = rc[0].population || 5_000_000; region = rc[0].region || ''; }
+        if (rc[0]) { flag = rc[0].flag || '🌐'; population = rc[0].population || 5_000_000; region = rc[0].region || ''; }
       } catch(_) {}
       const synth = {
         id: nom.toLowerCase().replace(/[^a-z0-9]/g,'-'),
@@ -1426,7 +1426,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
               },
             ].map(acc => (
               <div key={acc.id} style={{ width:'100%', borderRadius:'2px',
-                border:'1px solid rgba(200,164,74,0.12)', overflow:'hidden' }}>
+                border:'1px solid rgba(200,164,74,0.22)', overflow:'hidden' }}>
                 <button
                   style={{ width:'100%', background: cfgOpen===acc.id ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.015)',
                     border:'none', padding:'0.45rem 0.7rem', cursor:'pointer', textAlign:'left',
@@ -2189,6 +2189,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
   const [defautNom,         setDefautNom]         = useState('');    // nom libre
   // Validation pays réel défaut — état unique pour éviter les race conditions
   const [rcDefaut, setRcDefaut] = useState({ status: null, suggestion: null, canonical: '' });
+  const [rcDefautData, setRcDefautData] = useState(null); // { flag, population, region } récupérés depuis restcountries
   const rcDefautTimer = useRef(null);
   const rcDefautQueryRef = useRef(''); // query en cours — pour ignorer les réponses obsolètes
   const searchDefautCountry = async (query) => {
@@ -2214,6 +2215,18 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
         const canonical = ai.displayName || query;
         setRcDefaut({ status: 'found', suggestion: null, canonical });
         setDefautNom(canonical);
+        // Fetch drapeau + population depuis restcountries
+        try {
+          const rc = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(ai.canonicalName||canonical)}?fields=name,flag,population,region`)
+            .then(r => r.ok ? r.json() : []);
+          if (rc[0]) setRcDefautData({
+            id: canonical.toLowerCase().replace(/[^a-z0-9]/g,'-'),
+            nom: canonical, flag: rc[0].flag || '🌐',
+            regime: 'democratie_liberale', terrain: 'coastal',
+            population: rc[0].population || 5_000_000,
+            region: rc[0].region || '', _fromApi: true,
+          });
+        } catch(_) {}
       }
     } catch(_) {
       if (rcDefautQueryRef.current === query)
@@ -2673,6 +2686,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                     setDefautReel('');
                     rcDefautQueryRef.current = ''; // invalide les réponses en vol
                     setRcDefaut({ status: null, suggestion: null, canonical: '' });
+                    setRcDefautData(null);
                     clearTimeout(rcDefautTimer.current);
                     rcDefautTimer.current = setTimeout(() => searchDefautCountry(e.target.value), 700);
                   }}
@@ -2692,7 +2706,7 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
                 disabled={!canLaunch}
                 onClick={() => {
                   const nom = knownReel?.nom || rcDefaut.canonical || defautNom;
-                  preLaunch('defaut_ai', [{ type:'reel', nom, realData: knownReel || null }]);
+                  preLaunch('defaut_ai', [{ type:'reel', nom, realData: knownReel || rcDefautData || null }]);
                 }}>
                 {t('GENERATE_SHORT',lang)}
               </button>

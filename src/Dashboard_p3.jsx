@@ -636,9 +636,9 @@ function AddCountryModal({ onConfirm, onClose }) {
       const nomFinal = ai.displayName;
       let flag='🌐', population=5_000_000;
       try {
-        const rc = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(ai.canonicalName||nomFinal)}?fields=name,flags,population`)
+        const rc = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(ai.canonicalName||nomFinal)}?fields=name,flag,population`)
           .then(r => r.ok ? r.json() : []);
-        if (rc[0]) { flag=rc[0].flags?.emoji||'🌐'; population=rc[0].population||5_000_000; }
+        if (rc[0]) { flag=rc[0].flag||'🌐'; population=rc[0].population||5_000_000; }
       } catch(_) {}
       setRcRealData({ id:nomFinal.toLowerCase().replace(/[^a-z0-9]/g,'-'), nom:nomFinal, flag, regime:'democratie_liberale', terrain:'coastal', population, _fromApi:true });
       setRcStatus('found');
