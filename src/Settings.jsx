@@ -246,7 +246,8 @@ function SectionSysteme({ onHardReset }) {
   const isEn = lang === 'en';
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
-  const [openAcc, setOpenAcc] = useState(null);
+  const [openAcc, setOpenAcc]       = useState(null);
+  const [openProvAcc, setOpenProvAcc] = useState(null);
   const [status, setStatus] = useState(() => {
     try {
       const s = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
@@ -462,65 +463,74 @@ function SectionSysteme({ onHardReset }) {
         {PROVIDERS.map(prov => {
           const hasKey = !!opts.api_keys[prov.id];
           const stat   = status[prov.id];
+          const isOpen = openProvAcc === prov.id;
+          const statIcon = stat==='ok' ? '✅' : stat==='error' ? '❌' : stat==='testing' ? '⏳' : hasKey ? '🔑' : '—';
+          const SUB      = { border:`1px solid ${hasKey ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`, borderRadius:'2px', overflow:'hidden', marginBottom:'0.45rem', background: hasKey ? 'rgba(200,164,74,0.02)' : 'rgba(255,255,255,0.01)' };
+          const SUB_BODY = { padding:'0.5rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.5rem', borderTop:`1px solid ${hasKey ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.05)'}` };
           return (
-            <div key={prov.id} style={{
-              marginBottom:'0.9rem', padding:'0.65rem 0.8rem',
-              background: hasKey ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
-              border:`1px solid ${hasKey ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
-              borderRadius:'2px',
-            }}>
-              {/* Header provider */}
-              <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.55rem' }}>
-                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.50rem',
-                  letterSpacing:'0.12em', color:'rgba(200,215,240,0.80)', flex:1 }}>
+            <div key={prov.id} style={SUB}>
+              <button onClick={() => setOpenProvAcc(p => p === prov.id ? null : prov.id)}
+                style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
+                  padding:'0.38rem 0.6rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
+                <span style={{ fontSize:'0.65rem', color:'rgba(200,164,74,0.50)' }}>{isOpen?'▾':'▸'}</span>
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', letterSpacing:'0.10em',
+                  color: isOpen ? 'rgba(200,164,74,0.88)' : 'rgba(200,215,240,0.70)', flex:1 }}>
                   {prov.label}
                 </span>
-                {prov.hint && (
-                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                    color:'rgba(100,120,160,0.45)' }}>{prov.hint}</span>
+                {prov.hint && !isOpen && (
+                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
+                    color:'rgba(100,120,160,0.40)' }}>{prov.hint}</span>
                 )}
-              </div>
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                  color: stat==='ok' ? 'rgba(58,191,122,0.80)' : stat==='error' ? 'rgba(200,58,58,0.80)' : 'rgba(140,160,200,0.35)',
+                  marginLeft:'0.4rem' }}>{statIcon}</span>
+              </button>
 
-              {/* Clé API */}
-              <div className="settings-row" style={{ marginBottom: hasKey ? '0.5rem' : 0 }}>
-                <TextInput password
-                  value={opts.api_keys[prov.id] || ''}
-                  onChange={v => update(`api_keys.${prov.id}`, v)}
-                  placeholder={prov.placeholder}
-                />
-                <button className="settings-btn-test" onClick={() => testKey(prov.id)}>
-                  {isEn?'Test':'Tester'}
-                </button>
-                <span className={`settings-status ${stat}`}>{statusLabel(stat)}</span>
-                {hasKey && (
-                  <button title={isEn?`Delete key for ${prov.label}`:`Supprimer la clé ${prov.label}`}
-                    onClick={() => { update(`api_keys.${prov.id}`, ''); setStatus(s => ({ ...s, [prov.id]: null })); }}
-                    style={{ background:'none', border:'none', cursor:'pointer',
-                      fontSize:'0.85rem', opacity:0.40, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
-                )}
-              </div>
-
-              {/* Sélecteur modèle — grisé si pas de clé */}
-              <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', opacity: hasKey ? 1 : 0.35 }}>
-                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
-                  color:'rgba(140,160,200,0.50)', minWidth:'4rem' }}>{isEn?"Model":"Modèle"}</span>
-                <select
-                  disabled={!hasKey}
-                  value={opts.ia_models?.[prov.id] || prov.models[0].value}
-                  onChange={e => update(`ia_models.${prov.id}`, e.target.value)}
-                  className="settings-select"
-                  style={{ cursor: hasKey ? 'pointer' : 'not-allowed', flex:1,
-                    fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem' }}
-                >
-                  {prov.models.map(m => (
-                    <option key={m.value} value={m.value}>{m.value}   ({m.label.split('—')[1]?.trim() || ''})</option>
-                  ))}
-                </select>
-                {!hasKey && (
-                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                    color:'rgba(200,80,80,0.55)' }}>{isEn?'⚠ missing key':'⚠ clé manquante'}</span>
-                )}
-              </div>
+              {isOpen && (
+                <div style={SUB_BODY}>
+                  {prov.hint && (
+                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                      color:'rgba(100,120,160,0.50)', marginBottom:'0.2rem' }}>{prov.hint}</div>
+                  )}
+                  <div className="settings-row">
+                    <TextInput password
+                      value={opts.api_keys[prov.id] || ''}
+                      onChange={v => update(`api_keys.${prov.id}`, v)}
+                      placeholder={prov.placeholder}
+                    />
+                    <button className="settings-btn-test" onClick={() => testKey(prov.id)}>
+                      {isEn?'Test':'Tester'}
+                    </button>
+                    <span className={`settings-status ${stat}`}>{statusLabel(stat)}</span>
+                    {hasKey && (
+                      <button title={isEn?`Delete key for ${prov.label}`:`Supprimer la clé ${prov.label}`}
+                        onClick={() => { update(`api_keys.${prov.id}`, ''); setStatus(s => ({ ...s, [prov.id]: null })); }}
+                        style={{ background:'none', border:'none', cursor:'pointer',
+                          fontSize:'0.85rem', opacity:0.40, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
+                    )}
+                  </div>
+                  <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', opacity: hasKey ? 1 : 0.35 }}>
+                    <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
+                      color:'rgba(140,160,200,0.50)', minWidth:'4rem' }}>{isEn?"Model":"Modèle"}</span>
+                    <select
+                      disabled={!hasKey}
+                      value={opts.ia_models?.[prov.id] || prov.models[0].value}
+                      onChange={e => update(`ia_models.${prov.id}`, e.target.value)}
+                      className="settings-select"
+                      style={{ cursor: hasKey ? 'pointer' : 'not-allowed', flex:1,
+                        fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem' }}
+                    >
+                      {prov.models.map(m => (
+                        <option key={m.value} value={m.value}>{m.value}   ({m.label.split('—')[1]?.trim() || ''})</option>
+                      ))}
+                    </select>
+                    {!hasKey && (
+                      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                        color:'rgba(200,80,80,0.55)' }}>{isEn?'⚠ missing key':'⚠ clé manquante'}</span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
