@@ -8,6 +8,18 @@ _Dernière mise à jour : 2026-03-12_
 
 - [x] **B1 — Ajout pays in-game** : corrigé — `addFictionalCountry` dans `Dashboard_p1.jsx`
 
+- [ ] **B3 — Accordéons invisibles InitScreen RÉSUMÉ** 🔴 URGENT
+  - Accordéons CONTEXTE DÉLIBÉRATIONS et MODE IA absents visuellement dans l'onglet RÉSUMÉ de PreLaunchScreen
+  - Migration inline → `.aria-accordion` CSS class effectuée mais n'a pas résolu le problème
+  - Cause probable : conflit spécificité CSS avec `button { background-color: #1a1a1a }` dans `index.css`
+    ou problème de largeur dans le conteneur flex (le conteneur scrollRef)
+  - Fichiers : `src/index.css` (classe `.aria-accordion`) · `src/InitScreen.jsx` (lignes ~1293-1454)
+
+- [ ] **B4 — Jauge LLM Council mal affichée** 🟡
+  - La jauge de satisfaction s'affiche en bas de page après le résultat du vote du peuple
+  - Contexte : fin de délibération, phase RESULT — la jauge sort du layout normal
+  - Fichier : `src/LLMCouncil.jsx` (section phase RESULT / rendu jauge)
+
 ---
 
 ## 🟡 UX COURT TERME
