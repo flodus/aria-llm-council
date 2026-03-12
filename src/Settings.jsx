@@ -51,7 +51,6 @@ function getSections(isEn) {
     { id: 'constitution', icon: '📜',  label: isEn ? 'CONSTITUTION' : 'CONSTITUTION' },
     { id: 'conseil',      icon: '🏛️', label: isEn ? 'GOVERNMENT'   : 'GOUVERNEMENT' },
     { id: 'simulation',   icon: '🎲',  label: isEn ? 'SIMULATION'   : 'SIMULATION'   },
-    { id: 'interface',    icon: '🖥️', label: isEn ? 'INTERFACE'    : 'INTERFACE'    },
     { id: 'apropos',      icon: '✦',   label: isEn ? 'ABOUT'        : 'À PROPOS'     },
   ];
 }
@@ -236,11 +235,12 @@ function DangerButton({ label, onClick, confirm: confirmMsg }) {
 //  SECTION 1 — SYSTÈME
 // ─────────────────────────────────────────────────────────────────────────────
 
-function SectionSysteme() {
-  const { lang } = useLocale();
+function SectionSysteme({ onHardReset }) {
+  const { lang, setLang } = useLocale();
   const isEn = lang === 'en';
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
+  const [openAcc, setOpenAcc] = useState(null);
   const [status, setStatus] = useState(() => {
     try {
       const s = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
@@ -267,6 +267,66 @@ function SectionSysteme() {
   };
 
   const save = () => { saveOptions(opts); setSaved(true); };
+  const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
+
+  const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
+  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
+  const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
+  const HDR = (key, label, badge) => (
+    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
+      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
+      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key?'▾':'▸'}</span>
+      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
+        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
+      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
+        color:'rgba(140,160,200,0.40)', marginLeft:'auto', letterSpacing:'0.10em' }}>{badge}</span>}
+    </button>
+  );
+
+  const exportConfig = () => {
+    const config = {
+      options:  getOptions(),
+      prompts:  getPrompts(),
+      agents:   getAgentOverrides(),
+      sim:      getSimOverrides(),
+      exported: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `aria-config-${Date.now()}.json`;
+    a.click();
+  };
+
+  const exportWorld = () => {
+    try {
+      const world    = JSON.parse(localStorage.getItem('aria_world')     || 'null');
+      const countries = JSON.parse(localStorage.getItem('aria_countries') || 'null');
+      if (!world && !countries) { alert(isEn?'No active world.':'Aucun monde en cours.'); return; }
+      const blob = new Blob([JSON.stringify({ world, countries, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `aria-world-${Date.now()}.json`;
+      a.click();
+    } catch { alert(isEn?'World export error.':'Erreur export monde.'); }
+  };
+
+  const importConfig = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const config = JSON.parse(ev.target.result);
+        if (config.options)  saveOptions(config.options);
+        if (config.prompts)  savePrompts(config.prompts);
+        if (config.agents)   saveAgentOverrides(config.agents);
+        if (config.sim)      saveSimOverrides(config.sim);
+        alert(isEn?'Configuration imported. Reload page to apply.':'Configuration importée. Rechargez la page pour appliquer.');
+      } catch { alert(isEn?'Invalid file.':'Fichier invalide.'); }
+    };
+    reader.readAsText(file);
+  };
 
   // ── Test de connexion par provider ────────────────────────────────────────
   const testKey = async (provider) => {
@@ -454,6 +514,126 @@ function SectionSysteme() {
             </div>
           );
         })}
+      </div>
+
+      {/* ▸ LANGUE */}
+      <div style={openAcc==='lang' ? ACC_OPEN : ACC}>
+        {HDR('lang', 'LANGUE / LANGUAGE')}
+        {openAcc==='lang' && (
+          <div style={BODY}>
+            <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', padding:'0.3rem 0' }}>
+              {['fr','en'].map(l => (
+                <button key={l} onClick={() => {
+                  setLang(l);
+                  try {
+                    const BASE_NEW = l === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
+                    const BASE_OLD = l === 'en' ? BASE_AGENTS    : BASE_AGENTS_EN;
+                    const cur = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
+                    const merged = JSON.parse(JSON.stringify(BASE_NEW));
+                    if (cur) {
+                      if (Array.isArray(merged.ministries) && Array.isArray(cur.ministries)) {
+                        merged.ministries = merged.ministries.map(m => {
+                          const curM  = cur.ministries.find(c => c.id === m.id);
+                          const oldBM = (Array.isArray(BASE_OLD.ministries) ? BASE_OLD.ministries : []).find(c => c.id === m.id);
+                          if (!curM) return m;
+                          const missionCustom = curM.mission && curM.mission !== (oldBM?.mission||'') && curM.mission !== m.mission;
+                          const promptsCustom = curM.ministerPrompts && JSON.stringify(curM.ministerPrompts) !== JSON.stringify(oldBM?.ministerPrompts||{}) && JSON.stringify(curM.ministerPrompts) !== JSON.stringify(m.ministerPrompts||{});
+                          return { ...m, mission: missionCustom ? curM.mission : m.mission, ministerPrompts: promptsCustom ? curM.ministerPrompts : m.ministerPrompts };
+                        });
+                      }
+                      if (merged.ministers && cur.ministers) {
+                        Object.keys(merged.ministers).forEach(k => {
+                          const curMin = cur.ministers[k];
+                          const oldBMin = BASE_OLD.ministers?.[k] || {};
+                          if (!curMin) return;
+                          const isCustom = (field) => curMin[field] && curMin[field] !== (oldBMin[field]||'') && curMin[field] !== merged.ministers[k][field];
+                          merged.ministers[k] = { ...merged.ministers[k], essence: isCustom('essence') ? curMin.essence : merged.ministers[k].essence, comm: isCustom('comm') ? curMin.comm : merged.ministers[k].comm, annotation: isCustom('annotation') ? curMin.annotation : merged.ministers[k].annotation };
+                        });
+                      }
+                      if (merged.presidency && cur.presidency) {
+                        ['phare','boussole'].forEach(role => {
+                          if (!cur.presidency[role]) return;
+                          const oldBP = BASE_OLD.presidency?.[role] || {};
+                          const isCustomP = (field) => cur.presidency[role][field] && cur.presidency[role][field] !== (oldBP[field]||'') && cur.presidency[role][field] !== merged.presidency[role][field];
+                          merged.presidency[role] = { ...merged.presidency[role], role_long: isCustomP('role_long') ? cur.presidency[role].role_long : merged.presidency[role].role_long, essence: isCustomP('essence') ? cur.presidency[role].essence : merged.presidency[role].essence };
+                        });
+                      }
+                      merged.active_ministries = cur.active_ministries;
+                      merged.active_presidency = cur.active_presidency;
+                      merged.active_ministers  = cur.active_ministers;
+                    }
+                    localStorage.setItem('aria_agents_override', JSON.stringify(merged));
+                  } catch(e) { console.warn('lang switch override failed', e); }
+                }} style={{
+                  background: lang===l ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.03)',
+                  border:`1px solid ${lang===l ? 'rgba(200,164,74,0.50)' : 'rgba(255,255,255,0.10)'}`,
+                  borderRadius:'2px', padding:'0.30rem 0.9rem',
+                  color: lang===l ? 'rgba(200,164,74,0.92)' : 'rgba(150,170,205,0.40)',
+                  fontFamily:"'JetBrains Mono', monospace", fontSize:'0.50rem',
+                  letterSpacing:'0.16em', cursor:'pointer', transition:'all 0.15s',
+                }}>{l === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN'}</button>
+              ))}
+              <span style={{ fontFamily:"'JetBrains Mono', monospace", fontSize:'0.42rem',
+                color:'rgba(120,140,175,0.40)', marginLeft:'0.5rem' }}>
+                {t('SETTINGS_LANG_LABEL', lang)}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ▸ AFFICHAGE CARTE */}
+      <div style={openAcc==='display' ? ACC_OPEN : ACC}>
+        {HDR('display', isEn?'MAP DISPLAY':'AFFICHAGE CARTE')}
+        {openAcc==='display' && (
+          <div style={BODY}>
+            <Field label={isEn?"Show EEZ (exclusive economic zones)":"Afficher les ZEE (zones économiques exclusives)"}>
+              <Toggle value={opts.gameplay?.show_zee} onChange={v => update('gameplay.show_zee', v)}
+                label={opts.gameplay?.show_zee ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
+            </Field>
+            <Field label={isEn?"Show legend":"Afficher la légende"}>
+              <Toggle value={opts.gameplay?.show_legend} onChange={v => update('gameplay.show_legend', v)}
+                label={opts.gameplay?.show_legend ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
+            </Field>
+          </div>
+        )}
+      </div>
+
+      {/* ▸ EXPORT / IMPORT */}
+      <div style={openAcc==='export' ? ACC_OPEN : ACC}>
+        {HDR('export', 'EXPORT / IMPORT')}
+        {openAcc==='export' && (
+          <div style={BODY}>
+            <div className="settings-export-row">
+              <button className="settings-export-btn" onClick={exportConfig}>
+                {isEn?'↓ Export configuration':'↓ Exporter la configuration'}
+              </button>
+              <button className="settings-export-btn" onClick={exportWorld}>
+                {isEn?'↓ Export current world':'↓ Exporter le monde actuel'}
+              </button>
+              <label className="settings-export-btn import">
+                {isEn?'↑ Import configuration':'↑ Importer une configuration'}
+                <input type="file" accept=".json" onChange={importConfig} style={{ display: 'none' }} />
+              </label>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Hard Reset — toujours visible */}
+      <div className="settings-group">
+        <div className="settings-group-title">{isEn?"RESET":"RÉINITIALISATION"}</div>
+        <div className="settings-danger-zone">
+          <div className="settings-danger-desc">
+            {isEn?"Hard Reset erases":"Le Hard Reset efface"} <strong>{isEn?"all":"toutes"}</strong> {isEn?"data: API keys, custom prompts,":"les données : clés API, prompts personnalisés,"}
+            {isEn?" modified coefficients, current world. Irreversible.":" coefficients modifiés, monde en cours. Irréversible."}
+          </div>
+          <DangerButton
+            label={isEn?"☢ Hard Reset — Erase everything":"☢ Hard Reset — Tout effacer"}
+            confirm={isEn?"Confirm total destruction?":"Confirmer la destruction totale ?"}
+            onClick={onHardReset}
+          />
+        </div>
       </div>
 
       <div className="settings-footer">
@@ -1321,237 +1501,11 @@ function SectionSimulation() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  SECTION 5 — INTERFACE & MAINTENANCE
+//  SECTION 5 — À PROPOS  (ancien INTERFACE fusionné dans SYSTÈME)
 // ─────────────────────────────────────────────────────────────────────────────
 
-function SectionInterface({ onHardReset }) {
-  const { lang, setLang } = useLocale();
-  const isEn = lang === 'en';
-  const [opts, setOpts] = useState(() => getOptions());
-  const [saved, setSaved] = useState(false);
-  const [openAcc, setOpenAcc] = useState(null);
-
-  const update = (key, val) => {
-    setOpts(prev => ({ ...prev, gameplay: { ...prev.gameplay, [key]: val } }));
-    setSaved(false);
-  };
-  const save = () => { saveOptions(opts); setSaved(true); };
-  const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
-
-  const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
-  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
-  const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
-  const HDR = (key, label, badge) => (
-    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
-      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
-      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key?'▾':'▸'}</span>
-      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
-        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
-      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
-        color:'rgba(140,160,200,0.40)', marginLeft:'auto', letterSpacing:'0.10em' }}>{badge}</span>}
-    </button>
-  );
-
-  const exportConfig = () => {
-    const config = {
-      options:  getOptions(),
-      prompts:  getPrompts(),
-      agents:   getAgentOverrides(),
-      sim:      getSimOverrides(),
-      exported: new Date().toISOString(),
-    };
-    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `aria-config-${Date.now()}.json`;
-    a.click();
-  };
-
-  const exportWorld = () => {
-    try {
-      const world = JSON.parse(localStorage.getItem('aria_world') || 'null');
-      const countries = JSON.parse(localStorage.getItem('aria_countries') || 'null');
-      if (!world && !countries) { alert(isEn?'No active world.':'Aucun monde en cours.'); return; }
-      const blob = new Blob([JSON.stringify({ world, countries, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `aria-world-${Date.now()}.json`;
-      a.click();
-    } catch { alert(isEn?'World export error.':'Erreur export monde.'); }
-  };
-
-  const importConfig = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        const config = JSON.parse(ev.target.result);
-        if (config.options)  saveOptions(config.options);
-        if (config.prompts)  savePrompts(config.prompts);
-        if (config.agents)   saveAgentOverrides(config.agents);
-        if (config.sim)      saveSimOverrides(config.sim);
-        alert(isEn?'Configuration imported. Reload page to apply.':'Configuration importée. Rechargez la page pour appliquer.');
-      } catch { alert(isEn?'Invalid file.':'Fichier invalide.'); }
-    };
-    reader.readAsText(file);
-  };
-
-  return (
-    <div className="settings-section-body">
-      <SectionTitle icon="🖥️" label="INTERFACE & MAINTENANCE" sub={isEn?"Display, export/import, reset":"Affichage, export/import, réinitialisation"} />
-
-      {/* ▸ LANGUE */}
-      <div style={openAcc==='lang' ? ACC_OPEN : ACC}>
-        {HDR('lang', 'LANGUE / LANGUAGE')}
-        {openAcc==='lang' && (
-        <div style={BODY}>
-        <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', padding:'0.3rem 0' }}>
-          {['fr','en'].map(l => (
-            <button key={l} onClick={() => {
-              setLang(l);
-              // Réécrire aria_agents_override avec la bonne base localisée
-              // Seuls les champs VRAIMENT customisés (différents des deux bases) sont préservés
-              try {
-                const BASE_NEW = l === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
-                const BASE_OLD = l === 'en' ? BASE_AGENTS    : BASE_AGENTS_EN;
-                const cur = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
-                const merged = JSON.parse(JSON.stringify(BASE_NEW));
-                if (cur) {
-                  // Ministères : préserver mission/ministerPrompts seulement si custom (≠ base FR et ≠ base EN)
-                  if (Array.isArray(merged.ministries) && Array.isArray(cur.ministries)) {
-                    merged.ministries = merged.ministries.map(m => {
-                      const curM  = cur.ministries.find(c => c.id === m.id);
-                      const oldBM = (Array.isArray(BASE_OLD.ministries) ? BASE_OLD.ministries : []).find(c => c.id === m.id);
-                      if (!curM) return m;
-                      const missionCustom = curM.mission && curM.mission !== (oldBM?.mission||'') && curM.mission !== m.mission;
-                      const promptsCustom = curM.ministerPrompts && JSON.stringify(curM.ministerPrompts) !== JSON.stringify(oldBM?.ministerPrompts||{}) && JSON.stringify(curM.ministerPrompts) !== JSON.stringify(m.ministerPrompts||{});
-                      return {
-                        ...m,
-                        mission:         missionCustom  ? curM.mission         : m.mission,
-                        ministerPrompts: promptsCustom  ? curM.ministerPrompts : m.ministerPrompts,
-                      };
-                    });
-                  }
-                  // Ministres : préserver essence/comm/annotation seulement si custom
-                  if (merged.ministers && cur.ministers) {
-                    Object.keys(merged.ministers).forEach(k => {
-                      const curMin  = cur.ministers[k];
-                      const oldBMin = BASE_OLD.ministers?.[k] || {};
-                      if (!curMin) return;
-                      const isCustom = (field) =>
-                        curMin[field] && curMin[field] !== (oldBMin[field]||'') && curMin[field] !== merged.ministers[k][field];
-                      merged.ministers[k] = {
-                        ...merged.ministers[k],
-                        essence:    isCustom('essence')    ? curMin.essence    : merged.ministers[k].essence,
-                        comm:       isCustom('comm')       ? curMin.comm       : merged.ministers[k].comm,
-                        annotation: isCustom('annotation') ? curMin.annotation : merged.ministers[k].annotation,
-                      };
-                    });
-                  }
-                  // Présidence : préserver role/essence seulement si custom
-                  if (merged.presidency && cur.presidency) {
-                    ['phare','boussole'].forEach(role => {
-                      if (!cur.presidency[role]) return;
-                      const oldBP = BASE_OLD.presidency?.[role] || {};
-                      const isCustomP = (field) =>
-                        cur.presidency[role][field] && cur.presidency[role][field] !== (oldBP[field]||'') && cur.presidency[role][field] !== merged.presidency[role][field];
-                      merged.presidency[role] = {
-                        ...merged.presidency[role],
-                        role_long: isCustomP('role_long') ? cur.presidency[role].role_long : merged.presidency[role].role_long,
-                        essence:   isCustomP('essence')   ? cur.presidency[role].essence   : merged.presidency[role].essence,
-                      };
-                    });
-                  }
-                  // Préserver les sélections actives
-                  merged.active_ministries = cur.active_ministries;
-                  merged.active_presidency = cur.active_presidency;
-                  merged.active_ministers  = cur.active_ministers;
-                }
-                localStorage.setItem('aria_agents_override', JSON.stringify(merged));
-              } catch(e) { console.warn('lang switch override failed', e); }
-            }} style={{
-              background: lang===l ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.03)',
-              border:`1px solid ${lang===l ? 'rgba(200,164,74,0.50)' : 'rgba(255,255,255,0.10)'}`,
-              borderRadius:'2px', padding:'0.30rem 0.9rem',
-              color: lang===l ? 'rgba(200,164,74,0.92)' : 'rgba(150,170,205,0.40)',
-              fontFamily:"'JetBrains Mono', monospace", fontSize:'0.50rem',
-              letterSpacing:'0.16em', cursor:'pointer', transition:'all 0.15s',
-            }}>{l === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN'}</button>
-          ))}
-          <span style={{ fontFamily:"'JetBrains Mono', monospace", fontSize:'0.42rem',
-            color:'rgba(120,140,175,0.40)', marginLeft:'0.5rem' }}>
-            {t('SETTINGS_LANG_LABEL', lang)}
-          </span>
-        </div>
-        </div>
-        )}
-      </div>
-
-      {/* ▸ AFFICHAGE CARTE */}
-      <div style={openAcc==='display' ? ACC_OPEN : ACC}>
-        {HDR('display', isEn?'MAP DISPLAY':'AFFICHAGE CARTE')}
-        {openAcc==='display' && (
-          <div style={BODY}>
-            <Field label={isEn?"Show EEZ (exclusive economic zones)":"Afficher les ZEE (zones économiques exclusives)"}>
-              <Toggle value={opts.gameplay.show_zee} onChange={v => update('show_zee', v)}
-                label={opts.gameplay.show_zee ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
-            </Field>
-            <Field label={isEn?"Show legend":"Afficher la légende"}>
-              <Toggle value={opts.gameplay.show_legend} onChange={v => update('show_legend', v)}
-                label={opts.gameplay.show_legend ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
-            </Field>
-          </div>
-        )}
-      </div>
-
-      {/* ▸ EXPORT / IMPORT */}
-      <div style={openAcc==='export' ? ACC_OPEN : ACC}>
-        {HDR('export', 'EXPORT / IMPORT')}
-        {openAcc==='export' && (
-          <div style={BODY}>
-            <div className="settings-export-row">
-              <button className="settings-export-btn" onClick={exportConfig}>
-                {isEn?'↓ Export configuration':'↓ Exporter la configuration'}
-              </button>
-              <button className="settings-export-btn" onClick={exportWorld}>
-                {isEn?'↓ Export current world':'↓ Exporter le monde actuel'}
-              </button>
-              <label className="settings-export-btn import">
-                {isEn?'↑ Import configuration':'↑ Importer une configuration'}
-                <input type="file" accept=".json" onChange={importConfig} style={{ display: 'none' }} />
-              </label>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Hard Reset — toujours visible */}
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"RESET":"RÉINITIALISATION"}</div>
-        <div className="settings-danger-zone">
-          <div className="settings-danger-desc">
-            {isEn?"Hard Reset erases":"Le Hard Reset efface"} <strong>{isEn?"all":"toutes"}</strong> {isEn?"data: API keys, custom prompts,":"les données : clés API, prompts personnalisés,"}
-            {isEn?"modified coefficients, current world. Irreversible.":"coefficients modifiés, monde en cours. Irréversible."}
-          </div>
-          <DangerButton
-            label={isEn?"☢ Hard Reset — Erase everything":"☢ Hard Reset — Tout effacer"}
-            confirm={isEn?"Confirm total destruction?":"Confirmer la destruction totale ?"}
-            onClick={onHardReset}
-          />
-        </div>
-      </div>
-
-      <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>{isEn?"Save display settings":"Sauvegarder l'affichage"}</button>
-        <SaveBadge saved={saved} />
-      </div>
-    </div>
-  );
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
-//  SECTION 6 — À PROPOS
+//  SECTION 5 — À PROPOS
 // ─────────────────────────────────────────────────────────────────────────────
 
 
@@ -1784,11 +1738,10 @@ export default function Settings({ onClose }) {
         {/* ── Contenu ── */}
         <main className="settings-main">
           <SectionErrorBoundary key={activeSection}>
-            {activeSection === 'systeme'      && <SectionSysteme />}
+            {activeSection === 'systeme'      && <SectionSysteme onHardReset={hardReset} />}
             {activeSection === 'constitution' && <SectionConstitution />}
             {activeSection === 'conseil'      && <SectionConseil />}
             {activeSection === 'simulation'   && <SectionSimulation />}
-            {activeSection === 'interface'    && <SectionInterface onHardReset={hardReset} />}
             {activeSection === 'apropos'      && <SectionAPropos />}
           </SectionErrorBoundary>
         </main>
