@@ -48,6 +48,24 @@ function getLocalizedNom(country) {
 }
 
 
+// Pastille colorée affichant un delta (+N / -N) pour les impacts de vote
+function ImpactPill({ label, delta }) {
+  const pos = delta > 0;
+  const col = pos ? 'rgba(58,191,122,0.85)' : 'rgba(200,80,80,0.85)';
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
+      background: pos ? 'rgba(58,191,122,0.10)' : 'rgba(200,80,80,0.10)',
+      border: `1px solid ${pos ? 'rgba(58,191,122,0.30)' : 'rgba(200,80,80,0.30)'}`,
+      borderRadius: '2px', padding: '0.15rem 0.5rem',
+      fontFamily: "'JetBrains Mono',monospace", fontSize: '0.42rem', letterSpacing: '0.10em',
+      color: col,
+    }}>
+      {label} {pos ? '+' : ''}{delta}
+    </span>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  POPUP RÉSULTAT DE VOTE
 //  Apparaît immédiatement après que le joueur a voté.
