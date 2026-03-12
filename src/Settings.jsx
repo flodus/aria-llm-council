@@ -158,12 +158,18 @@ function TextInput({ value, onChange, password, placeholder, mono }) {
 }
 
 function TextArea({ value, onChange, rows = 4, mono }) {
+  const ref = useRef(null);
+  const resize = (el) => { if (!el) return; el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; };
+  useEffect(() => { resize(ref.current); }, [value]);
   return (
     <textarea
+      ref={ref}
       value={value}
       onChange={e => onChange(e.target.value)}
+      onInput={e => resize(e.target)}
       rows={rows}
       className={`settings-textarea${mono ? ' mono' : ''}`}
+      style={{ overflow:'hidden', minHeight:'60px', resize:'none' }}
     />
   );
 }
