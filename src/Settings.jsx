@@ -312,17 +312,11 @@ function SectionSysteme({ onHardReset }) {
   const save = () => { saveOptions(opts); setSaved(true); };
   const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
 
-  const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
-  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
-  const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
   const HDR = (key, label, badge) => (
-    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
-      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
-      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key?'▾':'▸'}</span>
-      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
-        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
-      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
-        color:'rgba(140,160,200,0.40)', marginLeft:'auto', letterSpacing:'0.10em' }}>{badge}</span>}
+    <button className="aria-accordion__hdr" onClick={() => toggleAcc(key)}>
+      <span className="aria-accordion__arrow">{openAcc===key?'▾':'▸'}</span>
+      <span className="aria-accordion__label">{label}</span>
+      {badge && <span className="aria-accordion__badge">{badge}</span>}
     </button>
   );
 
@@ -485,12 +479,12 @@ function SectionSysteme({ onHardReset }) {
       <SectionTitle icon="⚙️" label={isEn?"SYSTEM":"SYSTÈME"} sub={isEn?"API Keys · Models · Deliberation architecture":"Clés API · Modèles · Architecture de délibération"} />
 
       {/* ▸ CLÉS API + MODÈLES */}
-      <div style={openAcc==='keys' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='keys' ? ' open' : ''}`}>
         {HDR('keys', isEn?'API KEYS & MODELS':'CLÉS API & MODÈLES',
           `${[opts.api_keys?.claude,opts.api_keys?.gemini,opts.api_keys?.grok,opts.api_keys?.openai].filter(Boolean).length}/4 ${isEn?'keys':'clés'}${Object.values(status).some(s=>s==='ok') ? ' ✅' : ''}`
         )}
         {openAcc==='keys' && (
-        <div style={BODY}>
+        <div className="aria-accordion__body">
         <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem',
           color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
           {isEn?"Keys are stored locally (localStorage). Only your browser has access.":"Les clés sont stockées localement (localStorage). Seul votre navigateur y a accès."}
@@ -575,10 +569,10 @@ function SectionSysteme({ onHardReset }) {
       </div>
 
       {/* ▸ LANGUE */}
-      <div style={openAcc==='lang' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='lang' ? ' open' : ''}`}>
         {HDR('lang', 'LANGUE / LANGUAGE')}
         {openAcc==='lang' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', padding:'0.3rem 0' }}>
               {['fr','en'].map(l => (
                 <button key={l} onClick={() => {
@@ -641,10 +635,10 @@ function SectionSysteme({ onHardReset }) {
       </div>
 
       {/* ▸ AFFICHAGE CARTE */}
-      <div style={openAcc==='display' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='display' ? ' open' : ''}`}>
         {HDR('display', isEn?'MAP DISPLAY':'AFFICHAGE CARTE')}
         {openAcc==='display' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <Field label={isEn?"Show EEZ (exclusive economic zones)":"Afficher les ZEE (zones économiques exclusives)"}>
               <Toggle value={opts.gameplay?.show_zee} onChange={v => update('gameplay.show_zee', v)}
                 label={opts.gameplay?.show_zee ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
@@ -658,10 +652,10 @@ function SectionSysteme({ onHardReset }) {
       </div>
 
       {/* ▸ EXPORT / IMPORT */}
-      <div style={openAcc==='export' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='export' ? ' open' : ''}`}>
         {HDR('export', 'EXPORT / IMPORT')}
         {openAcc==='export' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <div className="settings-export-row">
               <button className="settings-export-btn" onClick={exportConfig}>
                 {isEn?'↓ Export configuration':'↓ Exporter la configuration'}
@@ -752,17 +746,11 @@ function SectionConstitution() {
       hint: isEn?'Verifies narrative event consistency with real country statistics':'Vérifie la cohérence des événements narratifs avec les statistiques réelles du pays' },
   ];
 
-  const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
-  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
-  const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
   const HDR = (key, label, badge) => (
-    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
-      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
-      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key?'▾':'▸'}</span>
-      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
-        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
-      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
-        color:'rgba(140,160,200,0.40)', marginLeft:'auto', letterSpacing:'0.10em' }}>{badge}</span>}
+    <button className="aria-accordion__hdr" onClick={() => toggleAcc(key)}>
+      <span className="aria-accordion__arrow">{openAcc===key?'▾':'▸'}</span>
+      <span className="aria-accordion__label">{label}</span>
+      {badge && <span className="aria-accordion__badge">{badge}</span>}
     </button>
   );
 
@@ -771,10 +759,10 @@ function SectionConstitution() {
       <SectionTitle icon="📜" label={isEn?"CONSTITUTION":"CONSTITUTION"} sub={isEn?"Deliberation architecture · DNA · Synthesis prompts":"Architecture de délibération · ADN · Prompts de synthèse"} />
 
       {/* ▸ ARCHITECTURE DE DÉLIBÉRATION */}
-      <div style={openAcc==='arch' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='arch' ? ' open' : ''}`}>
         {HDR('arch', isEn?'DELIBERATION ARCHITECTURE':'ARCHITECTURE DE DÉLIBÉRATION')}
         {openAcc==='arch' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <Field label="Mode IA">
               {!anyKey ? (
                 <div style={{ padding:'0.65rem 0.9rem', background:'rgba(200,164,74,0.04)',
@@ -862,10 +850,10 @@ function SectionConstitution() {
       </div>
 
       {/* ▸ ADN GLOBAL */}
-      <div style={openAcc==='adn' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='adn' ? ' open' : ''}`}>
         {HDR('adn', isEn?'GLOBAL DNA':'ADN GLOBAL')}
         {openAcc==='adn' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <Field label={isEn?"Global system prompt":"Prompt système global"} hint={isEn?"Injected as preamble to every AI call — defines ARIA's mission":"Injecté en préambule de chaque appel IA — définit la mission d'ARIA"}>
               <TextArea value={prompts.global_system} onChange={v => update('global_system', v)} />
               <button className="settings-btn-reset" onClick={() => reset('global_system')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
@@ -883,10 +871,10 @@ function SectionConstitution() {
       </div>
 
       {/* ▸ PROMPTS ARIA — SYNTHÈSE */}
-      <div style={openAcc==='prompts' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='prompts' ? ' open' : ''}`}>
         {HDR('prompts', isEn?'ARIA PROMPTS — SYNTHESIS':'PROMPTS ARIA — SYNTHÈSE', isEn?'READ ONLY':'LECTURE SEULE')}
         {openAcc==='prompts' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             {isEn && (
               <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
                 color:'rgba(200,164,74,0.55)', background:'rgba(200,164,74,0.04)',
@@ -1182,9 +1170,6 @@ function SectionConseil() {
       )}
 
       {tab === 'presidence' && (() => {
-        const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
-        const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
-        const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
         const [openP, setOpenP] = [presOpenAcc, setPresOpenAcc];
         const toggleP = (key) => setOpenP(p => p === key ? null : key);
         const HDR_P = (key, agent) => {
@@ -1192,23 +1177,22 @@ function SectionConseil() {
           const name   = agent?.name   || key;
           const sub    = agent?.subtitle || '';
           return (
-            <button onClick={() => toggleP(key)} style={{ width:'100%', display:'flex', alignItems:'center',
-              gap:'0.55rem', padding:'0.45rem 0.7rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
+            <button className="aria-accordion__hdr" onClick={() => toggleP(key)}>
               <span style={{ fontSize:'1.1rem', lineHeight:1, opacity:0.80 }}>{symbol}</span>
               <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', letterSpacing:'0.12em',
                 color: openP===key ? 'rgba(200,164,74,0.92)' : 'rgba(200,215,240,0.70)', flex:1 }}>{name}</span>
               {sub && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
                 color:'rgba(140,160,200,0.35)', letterSpacing:'0.08em' }}>{sub}</span>}
-              <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.45)', marginLeft:'0.4rem' }}>{openP===key?'▾':'▸'}</span>
+              <span className="aria-accordion__arrow">{openP===key?'▾':'▸'}</span>
             </button>
           );
         };
         return (
           <div>
-            <div style={openP==='phare' ? ACC_OPEN : ACC}>
+            <div className={`aria-accordion${openP==='phare' ? ' open' : ''}`}>
               {HDR_P('phare', liveAgents.presidency?.phare)}
               {openP==='phare' && (
-                <div style={BODY}>
+                <div className="aria-accordion__body">
                   <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.phare?.subtitle || ''}>
                     <TextArea value={getVal('presidency.phare.role', liveAgents.presidency?.phare?.role_long || PRESIDENCY?.phare?.role_long || '')}
                       onChange={v => updateAgent('presidency.phare.role', v)}
@@ -1223,10 +1207,10 @@ function SectionConseil() {
               )}
             </div>
 
-            <div style={openP==='boussole' ? ACC_OPEN : ACC}>
+            <div className={`aria-accordion${openP==='boussole' ? ' open' : ''}`}>
               {HDR_P('boussole', liveAgents.presidency?.boussole)}
               {openP==='boussole' && (
-                <div style={BODY}>
+                <div className="aria-accordion__body">
                   <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.boussole?.subtitle || ''}>
                     <TextArea value={getVal('presidency.boussole.role', liveAgents.presidency?.boussole?.role_long || PRESIDENCY?.boussole?.role_long || '')}
                       onChange={v => updateAgent('presidency.boussole.role', v)}
@@ -1313,29 +1297,22 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
     setGov('ministries', [...current]);
   };
 
-  const ACC = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden' };
-  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
   const HDR = (key, label, badge) => (
-    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
-      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
-      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key ? '▾' : '▸'}</span>
-      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
-        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
-      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
-        color:'rgba(200,164,74,0.45)', marginLeft:'auto' }}>{badge}</span>}
+    <button className="aria-accordion__hdr" onClick={() => toggleAcc(key)}>
+      <span className="aria-accordion__arrow">{openAcc===key ? '▾' : '▸'}</span>
+      <span className="aria-accordion__label">{label}</span>
+      {badge && <span className="aria-accordion__badge">{badge}</span>}
     </button>
   );
-  const BODY = { padding:'0.4rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.5rem',
-    borderTop:'1px solid rgba(200,164,74,0.08)' };
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
 
       {/* ▸ PRÉSIDENCE */}
-      <div style={openAcc==='pres' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='pres' ? ' open' : ''}`}>
         {HDR('pres', isEn ? 'DEFAULT PRESIDENCY' : 'PRÉSIDENCE PAR DÉFAUT')}
         {openAcc==='pres' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <div>
               <div style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.7)', letterSpacing:'0.10em', marginBottom:'0.6rem', textTransform:'uppercase' }}>
                 {isEn ? 'Presidency type' : 'Type de présidence'}
@@ -1399,11 +1376,11 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
       </div>
 
       {/* ▸ MINISTÈRES */}
-      <div style={openAcc==='mins' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='mins' ? ' open' : ''}`}>
         {HDR('mins', isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT',
           `${(gov.ministries||[]).length}/${ALL_MINISTRY_IDS.length}`)}
         {openAcc==='mins' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             {ALL_MINISTRY_IDS.map(id => {
               const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
               const active = (gov.ministries||[]).includes(id);
@@ -1427,10 +1404,10 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
       </div>
 
       {/* ▸ GESTION DE CRISE */}
-      <div style={openAcc==='crise' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='crise' ? ' open' : ''}`}>
         {HDR('crise', isEn ? 'CRISIS MANAGEMENT' : 'GESTION DE CRISE')}
         {openAcc==='crise' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <Field label={isEn ? "Ministry of Chance & Crises" : "Ministère de la Chance & Crises"}
               hint={isEn ? "Activates the 7th ministry for emergency management" : "Active le 7e ministère pour la gestion des urgences"}>
               <Toggle value={gov.crisis_ministry !== false} onChange={v => setGov('crisis_ministry', v)}
@@ -1441,10 +1418,10 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
       </div>
 
       {/* ▸ CONTEXTE PAYS */}
-      <div style={openAcc==='ctx' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='ctx' ? ' open' : ''}`}>
         {HDR('ctx', isEn ? 'COUNTRY CONTEXT IN DELIBERATIONS' : 'CONTEXTE PAYS DANS LES DÉLIBÉRATIONS')}
         {openAcc==='ctx' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <div style={{ fontSize:'0.44rem', color:'rgba(140,160,200,0.45)', lineHeight:1.5 }}>
               {isEn ? "Controls what country info is injected into each deliberation prompt. Overridable per country in the Constitution."
                      : "Contrôle quelles infos sur le pays sont injectées dans chaque prompt. Surchargeable par pays dans la Constitution."}
@@ -1520,17 +1497,11 @@ function SectionSimulation() {
   };
   const [openAcc, setOpenAcc] = useState(null);
   const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
-  const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
-  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
-  const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
   const HDR = (key, label, badge) => (
-    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
-      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
-      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key?'▾':'▸'}</span>
-      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
-        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
-      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
-        color:'rgba(140,160,200,0.40)', marginLeft:'auto', letterSpacing:'0.10em' }}>{badge}</span>}
+    <button className="aria-accordion__hdr" onClick={() => toggleAcc(key)}>
+      <span className="aria-accordion__arrow">{openAcc===key?'▾':'▸'}</span>
+      <span className="aria-accordion__label">{label}</span>
+      {badge && <span className="aria-accordion__badge">{badge}</span>}
     </button>
   );
 
@@ -1539,10 +1510,10 @@ function SectionSimulation() {
       <SectionTitle icon="🎲" label={isEn?"SIMULATION":"SIMULATION"} sub={isEn?"Regimes, critical thresholds, cycle speed, resources":"Régimes, seuils critiques, vitesse des cycles, ressources"} />
 
       {/* ▸ SEUILS CRITIQUES */}
-      <div style={openAcc==='seuils' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='seuils' ? ' open' : ''}`}>
         {HDR('seuils', isEn?'CRITICAL THRESHOLDS':'SEUILS CRITIQUES')}
         {openAcc==='seuils' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             <Field label={isEn?"Revolt threshold (satisfaction %)":"Seuil de révolte (satisfaction %)"}
               hint={isEn?"Below this threshold, a revolt is triggered":"En dessous de ce seuil, une révolte est déclenchée"}>
               <NumberInput value={getSeuil('seuil_revolte')}
@@ -1569,10 +1540,10 @@ function SectionSimulation() {
       </div>
 
       {/* ▸ COEFFICIENTS DES RÉGIMES */}
-      <div style={openAcc==='regimes' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='regimes' ? ' open' : ''}`}>
         {HDR('regimes', isEn?'REGIME COEFFICIENTS':'COEFFICIENTS DES RÉGIMES', `${REGIME_LABEL_KEYS.length}`)}
         {openAcc==='regimes' && (
-        <div style={BODY}>
+        <div className="aria-accordion__body">
         {REGIME_LABEL_KEYS.map(rk => {
           const coeff_sat  = getReg(rk, 'coeff_satisfaction');
           const coeff_cro  = getReg(rk, 'coeff_croissance');
@@ -1646,11 +1617,11 @@ function SectionSimulation() {
       </div>
 
       {/* ▸ RESSOURCES PAR TERRAIN */}
-      <div style={openAcc==='terrains' ? ACC_OPEN : ACC}>
+      <div className={`aria-accordion${openAcc==='terrains' ? ' open' : ''}`}>
         {HDR('terrains', isEn?'RESOURCES BY TERRAIN':'RESSOURCES PAR TERRAIN',
           `${Object.keys(dynTerrains || TERRAINS || {}).length}`)}
         {openAcc==='terrains' && (
-          <div style={BODY}>
+          <div className="aria-accordion__body">
             {Object.entries(dynTerrains || TERRAINS || {}).map(([tk, tv]) => (
               <div key={tk} className="settings-terrain-block">
                 <div className="settings-terrain-name">{getTerrainLabel(tk, lang)}</div>

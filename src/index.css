@@ -66,3 +66,54 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* ── ARIA Accordion — classe unifiée ─────────────────────────────────────── */
+.aria-accordion {
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+.aria-accordion.open {
+  border-color: rgba(200,164,74,0.18);
+  background: rgba(200,164,74,0.02);
+}
+.aria-accordion__hdr {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.65rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+.aria-accordion__arrow {
+  font-size: 0.70rem;
+  color: rgba(200,164,74,0.55);
+  flex-shrink: 0;
+}
+.aria-accordion__label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.44rem;
+  letter-spacing: 0.12em;
+  color: rgba(140,160,200,0.55);
+}
+.aria-accordion.open .aria-accordion__label {
+  color: rgba(200,164,74,0.88);
+}
+.aria-accordion__badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.36rem;
+  color: rgba(140,160,200,0.40);
+  margin-left: auto;
+  letter-spacing: 0.10em;
+}
+.aria-accordion__body {
+  padding: 0.5rem 0.65rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-top: 1px solid rgba(200,164,74,0.08);
+}

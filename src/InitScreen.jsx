@@ -1291,20 +1291,13 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
           {plTab === 'resume' && (<>
             {/* Contexte délibérations — 1 accordéon groupé */}
             {(pendingDefs||[]).length > 0 && (
-              <div style={{ width:'100%', borderRadius:'2px',
-                border:`1px solid ${plCtxOpen!=null ? 'rgba(200,164,74,0.22)' : 'rgba(255,255,255,0.07)'}`,
-                background: plCtxOpen!=null ? 'rgba(200,164,74,0.03)' : 'transparent' }}>
+              <div className={`aria-accordion${plCtxOpen!=null ? ' open' : ''}`}>
                 {/* Header groupe */}
-                <button style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
-                  padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}
+                <button className="aria-accordion__hdr"
                   onClick={() => setPlCtxOpen(p => p!=null ? null : 0)}>
-                  <span style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.60)' }}>{plCtxOpen!=null ? '▾' : '▸'}</span>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
-                    color: plCtxOpen!=null ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>
-                    {t('CONTEXT', lang)}
-                  </span>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.35)',
-                    marginLeft:'auto' }}>{pendingDefs.length} {lang==='en'?'countries':'pays'}</span>
+                  <span className="aria-accordion__arrow">{plCtxOpen!=null ? '▾' : '▸'}</span>
+                  <span className="aria-accordion__label">{t('CONTEXT', lang)}</span>
+                  <span className="aria-accordion__badge">{pendingDefs.length} {lang==='en'?'countries':'pays'}</span>
                 </button>
                 {/* Onglets pays + contenu */}
                 {plCtxOpen != null && (
@@ -1425,28 +1418,15 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 )
               },
             ].map(acc => (
-              <div key={acc.id} style={{ width:'100%', borderRadius:'2px',
-                border:`1px solid ${cfgOpen===acc.id ? 'rgba(200,164,74,0.35)' : 'rgba(200,164,74,0.22)'}`,
-                background: cfgOpen===acc.id ? 'rgba(200,164,74,0.05)' : COLOR.bgCard,
-                overflow:'hidden' }}>
-                <button
-                  style={{ width:'100%', background:'none',
-                    border:'none', padding:'0.45rem 0.7rem', cursor:'pointer', textAlign:'left',
-                    display:'flex', alignItems:'center', justifyContent:'space-between' }}
+              <div key={acc.id} className={`aria-accordion${cfgOpen===acc.id ? ' open' : ''}`}>
+                <button className="aria-accordion__hdr"
                   onClick={() => setCfgOpen(p => p===acc.id ? '' : acc.id)}>
-                  <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.10em',
-                    color:'rgba(200,164,74,0.88)' }}>{acc.label}</span>
-                  <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
-                    {acc.badge && (
-                      <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', letterSpacing:'0.10em',
-                        color:'rgba(200,164,74,0.55)', border:'1px solid rgba(200,164,74,0.22)',
-                        padding:'0.1rem 0.35rem', borderRadius:'2px' }}>{acc.badge}</span>
-                    )}
-                    <span style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.60)' }}>{cfgOpen===acc.id ? '▾' : '▸'}</span>
-                  </div>
+                  <span className="aria-accordion__arrow">{cfgOpen===acc.id ? '▾' : '▸'}</span>
+                  <span className="aria-accordion__label">{acc.label}</span>
+                  {acc.badge && <span className="aria-accordion__badge">{acc.badge}</span>}
                 </button>
                 {cfgOpen===acc.id && (
-                  <div style={{ borderTop:'1px solid rgba(200,164,74,0.08)' }}>
+                  <div className="aria-accordion__body">
                     {acc.content}
                   </div>
                 )}
