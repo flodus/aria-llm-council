@@ -850,15 +850,15 @@ function SectionConstitution() {
         {openAcc==='adn' && (
           <div style={BODY}>
             <Field label={isEn?"Global system prompt":"Prompt système global"} hint={isEn?"Injected as preamble to every AI call — defines ARIA's mission":"Injecté en préambule de chaque appel IA — définit la mission d'ARIA"}>
-              <TextArea rows={4} value={prompts.global_system} onChange={v => update('global_system', v)} />
+              <TextArea value={prompts.global_system} onChange={v => update('global_system', v)} />
               <button className="settings-btn-reset" onClick={() => reset('global_system')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
             </Field>
             <Field label={isEn?"Synthesis tone":"Ton de synthèse"} hint={isEn?"Voice style for ministry and presidential syntheses":"Style de voix pour les synthèses ministérielles et présidentielles"}>
-              <TextArea rows={2} value={prompts.ton_synthese} onChange={v => update('ton_synthese', v)} />
+              <TextArea value={prompts.ton_synthese} onChange={v => update('ton_synthese', v)} />
               <button className="settings-btn-reset" onClick={() => reset('ton_synthese')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
             </Field>
             <Field label={isEn?"Global geopolitical context":"Contexte géopolitique mondial"} hint={isEn?"World state description injected into each deliberation":"Description de l'état du monde injectée dans chaque délibération"}>
-              <TextArea rows={3} value={prompts.contexte_mondial} onChange={v => update('contexte_mondial', v)} />
+              <TextArea value={prompts.contexte_mondial} onChange={v => update('contexte_mondial', v)} />
               <button className="settings-btn-reset" onClick={() => reset('contexte_mondial')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
             </Field>
           </div>
@@ -1091,22 +1091,19 @@ function SectionConseil() {
           </div>
 
           <Field label="Essence" hint={trC.essence_hint}>
-            <TextArea rows={4}
-              value={getVal(`ministers.${selectedMin}.essence`, minFallback('essence'))}
+            <TextArea value={getVal(`ministers.${selectedMin}.essence`, minFallback('essence'))}
               onChange={v => updateAgent(`ministers.${selectedMin}.essence`, v)}
             />
           </Field>
 
           <Field label="Communication" hint={trC.comm_hint}>
-            <TextArea rows={3}
-              value={getVal(`ministers.${selectedMin}.comm`, minFallback('comm'))}
+            <TextArea value={getVal(`ministers.${selectedMin}.comm`, minFallback('comm'))}
               onChange={v => updateAgent(`ministers.${selectedMin}.comm`, v)}
             />
           </Field>
 
           <Field label={trC.annot_label} hint={trC.annot_hint}>
-            <TextArea rows={3}
-              value={getVal(`ministers.${selectedMin}.annotation`, minFallback('annotation'))}
+            <TextArea value={getVal(`ministers.${selectedMin}.annotation`, minFallback('annotation'))}
               onChange={v => updateAgent(`ministers.${selectedMin}.annotation`, v)}
             />
           </Field>
@@ -1124,8 +1121,7 @@ function SectionConseil() {
           </Field>
 
           <Field label={trC.missionLabel} hint={trC.missionHint}>
-            <TextArea rows={3}
-              value={getVal(`ministries.${selectedMin2}.mission`, ministryFallback('mission'))}
+            <TextArea value={getVal(`ministries.${selectedMin2}.mission`, ministryFallback('mission'))}
               onChange={v => updateAgent(`ministries.${selectedMin2}.mission`, v)}
             />
           </Field>
@@ -1134,8 +1130,7 @@ function SectionConseil() {
           {(ministryData.ministers || []).map(mKey => (
             <Field key={mKey} label={`${trC.rolePrefix} — ${ministerLabels[mKey]?.split(' (')[0] || mKey}`}
               hint={trC.roleHint}>
-              <TextArea rows={3}
-                value={getVal(`ministries.${selectedMin2}.${mKey}`,
+              <TextArea value={getVal(`ministries.${selectedMin2}.${mKey}`,
                   ministryData.ministerPrompts?.[mKey] || '')}
                 onChange={v => updateAgent(`ministries.${selectedMin2}.${mKey}`, v)}
               />
@@ -1173,14 +1168,12 @@ function SectionConseil() {
               {openP==='phare' && (
                 <div style={BODY}>
                   <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.phare?.subtitle || ''}>
-                    <TextArea rows={4}
-                      value={getVal('presidency.phare.role', liveAgents.presidency?.phare?.role_long || PRESIDENCY?.phare?.role_long || '')}
+                    <TextArea value={getVal('presidency.phare.role', liveAgents.presidency?.phare?.role_long || PRESIDENCY?.phare?.role_long || '')}
                       onChange={v => updateAgent('presidency.phare.role', v)}
                     />
                   </Field>
                   <Field label="Essence">
-                    <TextArea rows={3}
-                      value={getVal('presidency.phare.essence', liveAgents.presidency?.phare?.essence || PRESIDENCY?.phare?.essence || '')}
+                    <TextArea value={getVal('presidency.phare.essence', liveAgents.presidency?.phare?.essence || PRESIDENCY?.phare?.essence || '')}
                       onChange={v => updateAgent('presidency.phare.essence', v)}
                     />
                   </Field>
@@ -1193,14 +1186,12 @@ function SectionConseil() {
               {openP==='boussole' && (
                 <div style={BODY}>
                   <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.boussole?.subtitle || ''}>
-                    <TextArea rows={4}
-                      value={getVal('presidency.boussole.role', liveAgents.presidency?.boussole?.role_long || PRESIDENCY?.boussole?.role_long || '')}
+                    <TextArea value={getVal('presidency.boussole.role', liveAgents.presidency?.boussole?.role_long || PRESIDENCY?.boussole?.role_long || '')}
                       onChange={v => updateAgent('presidency.boussole.role', v)}
                     />
                   </Field>
                   <Field label="Essence">
-                    <TextArea rows={3}
-                      value={getVal('presidency.boussole.essence', liveAgents.presidency?.boussole?.essence || PRESIDENCY?.boussole?.essence || '')}
+                    <TextArea value={getVal('presidency.boussole.essence', liveAgents.presidency?.boussole?.essence || PRESIDENCY?.boussole?.essence || '')}
                       onChange={v => updateAgent('presidency.boussole.essence', v)}
                     />
                   </Field>
