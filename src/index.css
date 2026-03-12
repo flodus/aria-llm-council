@@ -69,25 +69,41 @@ button:focus-visible {
 
 /* ── ARIA Accordion — classe unifiée ─────────────────────────────────────── */
 .aria-accordion {
-  border: 1px solid rgba(255,255,255,0.07);
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.09);
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 0.5rem;
 }
 .aria-accordion.open {
-  border-color: rgba(200,164,74,0.18);
-  background: rgba(200,164,74,0.02);
+  border-color: rgba(200,164,74,0.20);
+  background: rgba(200,164,74,0.025);
 }
-.aria-accordion__hdr {
+button.aria-accordion__hdr {
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.42rem 0.65rem;
-  background: none;
+  background-color: transparent;
+  background-image: none;
   border: none;
+  border-radius: 0;
+  font-size: inherit;
+  font-weight: normal;
   cursor: pointer;
   text-align: left;
+  transition: none;
+}
+button.aria-accordion__hdr:hover {
+  border-color: transparent;
+  background-color: rgba(200,164,74,0.04);
+}
+button.aria-accordion__hdr:focus,
+button.aria-accordion__hdr:focus-visible {
+  outline: none;
 }
 .aria-accordion__arrow {
   font-size: 0.70rem;
