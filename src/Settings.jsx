@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════════════
 //  Settings.jsx — Page de configuration complète ARIA
-//  6 sections : SYSTÈME · CONSTITUTION · GOUVERNEMENT · SIMULATION · INTERFACE · À PROPOS
+//  5 sections : SYSTÈME · CONSTITUTION · GOUVERNEMENT · SIMULATION · À PROPOS
 //  Usage : <Settings onClose={() => setPage('dashboard')} />
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1508,7 +1508,7 @@ function SectionSimulation() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  SECTION 5 — À PROPOS  (ancien INTERFACE fusionné dans SYSTÈME)
+//  SECTION 5 — À PROPOS
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────────────────────
