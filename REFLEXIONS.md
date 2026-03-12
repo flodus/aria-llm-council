@@ -62,11 +62,27 @@ Idée : proposer des questions réelles et actuelles comme sujets de délibérat
   l'objet d'un conseil dans la partie en cours (vérification via chronolog)
 
 Briques existantes : chronolog ✅ · triple_combo / contextOverride ✅ · callAI() ✅
-Manque : source de données questions parlementaires (API ou scraping) ·
-  moteur de suggestion · filtre chronolog
+Manque : source de données questions parlementaires · moteur de suggestion · filtre chronolog
 Complexité : haute — dépend d'une source de données externe fiable
 
-⚠️ ATTENTION : Assess dédié requis — source de données à identifier en premier
+Sources RSS identifiées :
+- 🇫🇷 Assemblée Nationale → feeds.assemblee-nationale.fr
+- 🇪🇺 Parlement Européen → flux RSS officiel
+- 🇬🇧 UK Parliament → feeds.parliament.uk
+- 🇩🇪 Bundestag → flux RSS disponible
+- 🇨🇦 Parlement canadien → flux RSS disponible
+
+Flux technique envisagé :
+1. Au lancement conseil → fetch(flux_RSS_pays)
+2. Parser XML → extraire titres/sujets questions récentes
+3. Envoyer à l'IA → reformuler en questions de délibération ARIA
+4. Filtrer via chronolog → exclure questions déjà débattues
+5. Proposer au joueur
+
+⚠️ Limite CORS : flux RSS pas toujours accessibles depuis navigateur directement
+→ server.js comme proxy naturel — raison supplémentaire de le conserver
+
+⚠️ ATTENTION : Assess dédié requis — source de données + proxy à identifier en premier
 
 ---
 
