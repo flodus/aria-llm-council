@@ -1340,33 +1340,55 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
               <div style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.7)', letterSpacing:'0.10em', marginBottom:'0.6rem', textTransform:'uppercase' }}>
                 {isEn ? 'Presidency type' : 'Type de présidence'}
               </div>
-              <div style={{ display:'flex', flexWrap:'wrap', gap:'0.5rem' }}>
-                {[
-                  { value:'solaire',    icon:'☉',   iconSize:'1.6rem', ls:'normal', label: isEn?'Phare':'Phare',      tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
-                  { value:'lunaire',    icon:'☽',   iconSize:'1.6rem', ls:'normal', label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
-                  { value:'duale',      icon:'☉☽',  iconSize:'1.0rem', ls:'-0.05em',label: isEn?'Dual':'Duale',       tooltip: isEn?'Phare + Boussole — ARIA':'Phare + Boussole — ARIA' },
-                  { value:'collegiale', icon:null,  iconSize:'1.6rem', ls:'normal', label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Vote of 12 ministers — Constitutional Synthesis':'Vote des 12 ministres — Synthèse Constitutionnelle' },
-                ].map(({ value, icon, iconSize, ls, label, tooltip }) => {
-                  const isSel = (gov.presidency || 'duale') === value;
+              <div style={{ display:'flex', gap:'1rem', alignItems:'flex-start' }}>
+                {/* Grille tuiles */}
+                <div style={{ display:'flex', flexWrap:'wrap', gap:'0.5rem' }}>
+                  {[
+                    { value:'solaire',    icon:'☉',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
+                    { value:'lunaire',    icon:'☽',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
+                    { value:'duale',      icon:'☉☽', iconSize:'1.2rem', ls:'-0.05em',  label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
+                    { value:'collegiale', icon:null, iconSize:'1.6rem', ls:'normal',   label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
+                  ].map(({ value, icon, iconSize, ls, label, tooltip }) => {
+                    const isSel = (gov.presidency || 'duale') === value;
+                    return (
+                      <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
+                        style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'0.2rem',
+                          padding:'0.6rem 0.7rem', borderRadius:'6px', cursor:'pointer', minWidth:'3.5rem',
+                          background: isSel ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
+                          border: `1px solid ${isSel ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                          transition:'all 0.12s' }}>
+                        <span style={{ height:'2rem', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                          {icon
+                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{icon}</span>
+                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)' }} />
+                          }
+                        </span>
+                        <span style={{ fontSize:'0.52rem', color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
+                          letterSpacing:'0.03em', textAlign:'center', maxWidth:'4rem',
+                          overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', lineHeight:1.3 }}>
+                          {label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {/* Description sélection */}
+                {(() => {
+                  const sel = gov.presidency || 'duale';
+                  const desc = {
+                    solaire:    isEn ? '☉ The Phare\npresides alone\nThe Will'                           : '☉ Le Phare\npréside seul\nLa Volonté',
+                    lunaire:    isEn ? '☽ The Boussole\npresides alone\nThe Soul'                        : '☽ La Boussole\npréside seule\nL\'Âme',
+                    duale:      isEn ? '☉☽ The Phare and the Boussole\ndeliberate equally\nARIA mode'    : '☉☽ Le Phare et La Boussole\ndélibèrent à égalité\nMode ARIA',
+                    collegiale: isEn ? '✡ Vote of 12 ministers\nConstitutional Synthesis'                : '✡ Vote des 12 ministres\nSynthèse Constitutionnelle',
+                  }[sel] || '';
                   return (
-                    <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
-                      style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'0.2rem',
-                        padding:'0.6rem 0.7rem', borderRadius:'6px', cursor:'pointer', minWidth:'3.5rem',
-                        background: isSel ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                        border: `1px solid ${isSel ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                        transition:'all 0.12s' }}>
-                      {icon
-                        ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{icon}</span>
-                        : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)' }} />
-                      }
-                      <span style={{ fontSize:'0.52rem', color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
-                        letterSpacing:'0.03em', textAlign:'center', maxWidth:'4rem',
-                        overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', lineHeight:1.3 }}>
-                        {label}
-                      </span>
-                    </button>
+                    <div style={{ borderLeft:'2px solid rgba(200,164,74,0.2)', paddingLeft:'1rem',
+                      fontStyle:'italic', color:'rgba(200,164,74,0.7)', fontSize:'0.52rem',
+                      lineHeight:1.7, whiteSpace:'pre-line', alignSelf:'center' }}>
+                      {desc}
+                    </div>
                   );
-                })}
+                })()}
               </div>
               <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.35)', marginTop:'0.5rem', letterSpacing:'0.06em' }}>
                 {isEn ? 'Applied to all new countries unless overridden' : 'Appliqué à tous les nouveaux pays sauf override'}
