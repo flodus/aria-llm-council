@@ -1378,11 +1378,6 @@ function SectionSimulation() {
               onChange={v => updateOpts('cycles_interval', v)} min={5} max={300} step={5} />
           </Field>
         )}
-        <Field label={isEn?"AI narrative events":"Événements narratifs IA"}>
-          <Toggle value={opts.gameplay.events_ia}
-            onChange={v => updateOpts('events_ia', v)}
-            label={opts.gameplay.events_ia ? (isEn?'Enabled':'Activés') : (isEn?'Disabled':'Désactivés')} />
-        </Field>
       </div>
 
       <div className="settings-group">
@@ -1401,6 +1396,12 @@ function SectionSimulation() {
           hint={isEn?"Random amplitude in each cycle":"Amplitude du hasard dans chaque cycle"}>
           <NumberInput value={getSeuil('bruit_max')}
             onChange={v => updateSim('seuils.bruit_max', v)} min={0} max={10} />
+        </Field>
+        <Field label={isEn?"AI narrative events":"Événements narratifs IA"}
+          hint={isEn?"AI narrates each critical threshold breach":"L'IA génère un récit à chaque événement critique"}>
+          <Toggle value={opts.gameplay.events_ia}
+            onChange={v => updateOpts('events_ia', v)}
+            label={opts.gameplay.events_ia ? (isEn?'Enabled':'Activés') : (isEn?'Disabled':'Désactivés')} />
         </Field>
       </div>
 
