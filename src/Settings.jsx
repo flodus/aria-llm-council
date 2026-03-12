@@ -169,7 +169,7 @@ function TextArea({ value, onChange, rows = 1, mono }) {
       onInput={e => resize(e.target)}
       rows={rows}
       className={`settings-textarea${mono ? ' mono' : ''}`}
-      style={{ overflow:'hidden', minHeight:'60px', resize:'none' }}
+      style={{ overflow:'hidden', resize:'none' }}
     />
   );
 }
