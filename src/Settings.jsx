@@ -441,9 +441,13 @@ function SectionSysteme({ onHardReset }) {
     <div className="settings-section-body">
       <SectionTitle icon="⚙️" label={isEn?"SYSTEM":"SYSTÈME"} sub={isEn?"API Keys · Models · Deliberation architecture":"Clés API · Modèles · Architecture de délibération"} />
 
-      {/* ── CLÉS API + MODÈLES ── */}
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"API KEYS & MODELS":"CLÉS API & MODÈLES"}</div>
+      {/* ▸ CLÉS API + MODÈLES */}
+      <div style={openAcc==='keys' ? ACC_OPEN : ACC}>
+        {HDR('keys', isEn?'API KEYS & MODELS':'CLÉS API & MODÈLES',
+          `${[opts.api_keys?.claude,opts.api_keys?.gemini,opts.api_keys?.grok,opts.api_keys?.openai].filter(Boolean).length}/4 ${isEn?'keys':'clés'}`
+        )}
+        {openAcc==='keys' && (
+        <div style={BODY}>
         <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem',
           color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
           {isEn?"Keys are stored locally (localStorage). Only your browser has access.":"Les clés sont stockées localement (localStorage). Seul votre navigateur y a accès."}
@@ -514,6 +518,8 @@ function SectionSysteme({ onHardReset }) {
             </div>
           );
         })}
+        </div>
+        )}
       </div>
 
       {/* ▸ LANGUE */}
