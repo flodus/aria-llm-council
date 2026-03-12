@@ -1329,12 +1329,28 @@ function SectionInterface({ onHardReset }) {
   const isEn = lang === 'en';
   const [opts, setOpts] = useState(() => getOptions());
   const [saved, setSaved] = useState(false);
+  const [openAcc, setOpenAcc] = useState(null);
 
   const update = (key, val) => {
     setOpts(prev => ({ ...prev, gameplay: { ...prev.gameplay, [key]: val } }));
     setSaved(false);
   };
   const save = () => { saveOptions(opts); setSaved(true); };
+  const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
+
+  const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
+  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
+  const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
+  const HDR = (key, label, badge) => (
+    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
+      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
+      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key?'▾':'▸'}</span>
+      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
+        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
+      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
+        color:'rgba(140,160,200,0.40)', marginLeft:'auto', letterSpacing:'0.10em' }}>{badge}</span>}
+    </button>
+  );
 
   const exportConfig = () => {
     const config = {
@@ -1383,10 +1399,13 @@ function SectionInterface({ onHardReset }) {
 
   return (
     <div className="settings-section-body">
-      <SectionTitle icon="🖥️" label={isEn?"INTERFACE & MAINTENANCE":"INTERFACE & MAINTENANCE"} sub={isEn?"Display, export/import, reset":"Affichage, export/import, réinitialisation"} />
+      <SectionTitle icon="🖥️" label="INTERFACE & MAINTENANCE" sub={isEn?"Display, export/import, reset":"Affichage, export/import, réinitialisation"} />
 
-      <div className="settings-group">
-        <div className="settings-group-title">LANGUE / LANGUAGE</div>
+      {/* ▸ LANGUE */}
+      <div style={openAcc==='lang' ? ACC_OPEN : ACC}>
+        {HDR('lang', 'LANGUE / LANGUAGE')}
+        {openAcc==='lang' && (
+        <div style={BODY}>
         <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', padding:'0.3rem 0' }}>
           {['fr','en'].map(l => (
             <button key={l} onClick={() => {
@@ -1465,36 +1484,49 @@ function SectionInterface({ onHardReset }) {
             {t('SETTINGS_LANG_LABEL', lang)}
           </span>
         </div>
-      </div>
-
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"MAP DISPLAY":"AFFICHAGE CARTE"}</div>
-        <Field label={isEn?"Show EEZ (exclusive economic zones)":"Afficher les ZEE (zones économiques exclusives)"}>
-          <Toggle value={opts.gameplay.show_zee} onChange={v => update('show_zee', v)}
-            label={opts.gameplay.show_zee ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
-        </Field>
-        <Field label={isEn?"Show legend":"Afficher la légende"}>
-          <Toggle value={opts.gameplay.show_legend} onChange={v => update('show_legend', v)}
-            label={opts.gameplay.show_legend ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
-        </Field>
-      </div>
-
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"EXPORT / IMPORT":"EXPORT / IMPORT"}</div>
-        <div className="settings-export-row">
-          <button className="settings-export-btn" onClick={exportConfig}>
-            {isEn?'↓ Export configuration':'↓ Exporter la configuration'}
-          </button>
-          <button className="settings-export-btn" onClick={exportWorld}>
-            {isEn?'↓ Export current world':'↓ Exporter le monde actuel'}
-          </button>
-          <label className="settings-export-btn import">
-            {isEn?'↑ Import configuration':'↑ Importer une configuration'}
-            <input type="file" accept=".json" onChange={importConfig} style={{ display: 'none' }} />
-          </label>
         </div>
+        )}
       </div>
 
+      {/* ▸ AFFICHAGE CARTE */}
+      <div style={openAcc==='display' ? ACC_OPEN : ACC}>
+        {HDR('display', isEn?'MAP DISPLAY':'AFFICHAGE CARTE')}
+        {openAcc==='display' && (
+          <div style={BODY}>
+            <Field label={isEn?"Show EEZ (exclusive economic zones)":"Afficher les ZEE (zones économiques exclusives)"}>
+              <Toggle value={opts.gameplay.show_zee} onChange={v => update('show_zee', v)}
+                label={opts.gameplay.show_zee ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
+            </Field>
+            <Field label={isEn?"Show legend":"Afficher la légende"}>
+              <Toggle value={opts.gameplay.show_legend} onChange={v => update('show_legend', v)}
+                label={opts.gameplay.show_legend ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
+            </Field>
+          </div>
+        )}
+      </div>
+
+      {/* ▸ EXPORT / IMPORT */}
+      <div style={openAcc==='export' ? ACC_OPEN : ACC}>
+        {HDR('export', 'EXPORT / IMPORT')}
+        {openAcc==='export' && (
+          <div style={BODY}>
+            <div className="settings-export-row">
+              <button className="settings-export-btn" onClick={exportConfig}>
+                {isEn?'↓ Export configuration':'↓ Exporter la configuration'}
+              </button>
+              <button className="settings-export-btn" onClick={exportWorld}>
+                {isEn?'↓ Export current world':'↓ Exporter le monde actuel'}
+              </button>
+              <label className="settings-export-btn import">
+                {isEn?'↑ Import configuration':'↑ Importer une configuration'}
+                <input type="file" accept=".json" onChange={importConfig} style={{ display: 'none' }} />
+              </label>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Hard Reset — toujours visible */}
       <div className="settings-group">
         <div className="settings-group-title">{isEn?"RESET":"RÉINITIALISATION"}</div>
         <div className="settings-danger-zone">
