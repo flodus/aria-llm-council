@@ -1393,35 +1393,6 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
               )}
             </div>
 
-            {/* Ministères + Ministres résumé avec toggles */}
-            <div style={{ ...CARD_STYLE }}>
-              <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'0.35rem' }}>
-                <button style={{ ...BTN_SECONDARY, fontSize:'0.38rem', padding:'0.14rem 0.38rem' }}
-                  onClick={() => { setActiveMins(null); setActiveMinsters(null); }}>Tout activer</button>
-              </div>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(155px,1fr))', gap:'0.32rem' }}>
-                {plAgents.ministries.map(m => {
-                  const on = activeMins === null || activeMins.includes(m.id);
-                  return (
-                    <div key={m.id} style={{ padding:'0.38rem 0.48rem',
-                      background: on ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.005)',
-                      borderRadius:'2px', border:`1px solid ${on ? m.color+'33' : 'rgba(255,255,255,0.04)'}`,
-                      opacity: on ? 1 : 0.4 }}>
-                      <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem',
-                        color: on ? m.color+'CC' : 'rgba(140,160,200,0.35)', marginBottom:'0.12rem' }}>
-                        {m.emoji} {m.name}
-                      </div>
-                      <div style={{ fontSize:'0.37rem', color:'rgba(140,160,200,0.35)', lineHeight:1.35 }}>
-                        {m.ministers.map(mk => {
-                          const min = plAgents.ministers[mk];
-                          return min ? `${min.emoji}` : '';
-                        }).join(' ')||'—'}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
             {/* Ministres toggleables dans résumé */}
             <div style={{ ...CARD_STYLE }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.40rem' }}>
