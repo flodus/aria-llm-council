@@ -309,10 +309,54 @@ function VoteJauge({ oui, non }) {
 //  COMPOSANT PRINCIPAL
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function LLMCouncil({ session, onVote, isRunning }) {
+export default function LLMCouncil({ session, onVote, isRunning, countryContext, countryNom, ctxMode }) {
   const { lang } = useLocale();
   const scrollRef = useRef(null);
   const [openCtx, setOpenCtx] = useState(false);
+
+  // Accordéon contexte — visible même en IDLE
+  const ctxText = session?.countryContext || countryContext || '';
+  const ctxNom  = session?.countryNom     || countryNom     || '';
+  const renderCtxAccordion = () => ctxText ? (
+    <div style={{
+      border: `1px solid ${openCtx ? 'rgba(200,164,74,0.22)' : 'rgba(200,164,74,0.10)'}`,
+      borderRadius: '2px', marginBottom: '0.8rem', overflow: 'hidden',
+      background: openCtx ? 'rgba(200,164,74,0.03)' : 'transparent',
+      transition: 'background 0.2s',
+    }}>
+      <button onClick={() => setOpenCtx(v => !v)} style={{
+        width: '100%', display: 'flex', alignItems: 'center', gap: '0.5rem',
+        padding: '0.38rem 0.65rem', background: 'none', border: 'none',
+        cursor: 'pointer', textAlign: 'left',
+      }}>
+        <span style={{ fontFamily: MONO, fontSize: '0.65rem', color: 'rgba(200,164,74,0.45)' }}>
+          {openCtx ? '▾' : '▸'}
+        </span>
+        <span style={{ fontFamily: MONO, fontSize: '0.42rem', letterSpacing: '0.12em',
+          color: openCtx ? 'rgba(200,164,74,0.75)' : 'rgba(140,160,200,0.50)', flex: 1 }}>
+          🌍 {lang === 'en' ? 'Geopolitical context' : 'Contexte géopolitique'}
+          {ctxNom ? ` — ${ctxNom}` : ''}
+        </span>
+        {ctxMode && (
+          <span style={{ fontFamily: MONO, fontSize: '0.38rem', color: 'rgba(140,160,200,0.45)',
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '2px', padding: '0.08rem 0.35rem', whiteSpace: 'nowrap' }}>
+            {ctxMode.icon} {ctxMode.label}
+          </span>
+        )}
+      </button>
+      {openCtx && (
+        <div style={{
+          padding: '0.5rem 0.85rem 0.65rem',
+          borderTop: '1px solid rgba(200,164,74,0.08)',
+          fontFamily: MONO, fontSize: '0.42rem', lineHeight: 1.7,
+          color: 'rgba(140,160,200,0.60)', whiteSpace: 'pre-wrap',
+        }}>
+          {ctxText}
+        </div>
+      )}
+    </div>
+  ) : null;
 
   // Phases actives — dérivées directement de la session (pas de state async)
   const show = {
@@ -343,19 +387,16 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
   // ── IDLE ──────────────────────────────────────────────────────────────────
   if (!session || currentPhase === 'IDLE') {
     return (
-      <div style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-        justifyContent: 'center', height: '100%', gap: '1rem',
-        color: C.textFaint, fontFamily: MONO,
-      }}>
-        <div style={{ fontSize: '2.5rem', opacity: 0.12 }}>⚖️</div>
-        <div style={{ fontSize: '0.52rem', letterSpacing: '0.18em', opacity: 0.4 }}>
-          CONSEIL EN ATTENTE
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '0.8rem 1.2rem', overflow: 'hidden' }}>
+        {renderCtxAccordion()}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: C.textFaint, fontFamily: MONO }}>
+          <div style={{ fontSize: '2.5rem', opacity: 0.12 }}>⚖️</div>
+          <div style={{ fontSize: '0.52rem', letterSpacing: '0.18em', opacity: 0.4 }}>CONSEIL EN ATTENTE</div>
+          <p style={{ fontSize: '0.44rem', color: C.textFaint, textAlign: 'center', maxWidth: '320px', lineHeight: 1.6 }}>
+            Sélectionnez un pays, choisissez un ministère dans le panneau latéral
+            et soumettez une question pour lancer la délibération.
+          </p>
         </div>
-        <p style={{ fontSize: '0.44rem', color: C.textFaint, textAlign: 'center', maxWidth: '320px', lineHeight: 1.6 }}>
-          Sélectionnez un pays, choisissez un ministère dans le panneau latéral
-          et soumettez une question pour lancer la délibération.
-        </p>
       </div>
     );
   }
@@ -379,40 +420,7 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
         scrollbarWidth: 'thin', scrollbarColor: `${C.border} transparent`,
       }}>
 
-        {/* ── CONTEXTE GÉOPOLITIQUE (accordéon discret, replié par défaut) ── */}
-        {session?.countryContext && (
-          <div style={{
-            border: `1px solid ${openCtx ? 'rgba(200,164,74,0.22)' : 'rgba(200,164,74,0.10)'}`,
-            borderRadius: '2px', marginBottom: '0.8rem', overflow: 'hidden',
-            background: openCtx ? 'rgba(200,164,74,0.03)' : 'transparent',
-            transition: 'background 0.2s',
-          }}>
-            <button onClick={() => setOpenCtx(v => !v)} style={{
-              width: '100%', display: 'flex', alignItems: 'center', gap: '0.5rem',
-              padding: '0.38rem 0.65rem', background: 'none', border: 'none',
-              cursor: 'pointer', textAlign: 'left',
-            }}>
-              <span style={{ fontFamily: MONO, fontSize: '0.65rem', color: 'rgba(200,164,74,0.45)' }}>
-                {openCtx ? '▾' : '▸'}
-              </span>
-              <span style={{ fontFamily: MONO, fontSize: '0.42rem', letterSpacing: '0.12em',
-                color: openCtx ? 'rgba(200,164,74,0.75)' : 'rgba(140,160,200,0.50)', flex: 1 }}>
-                🌍 {lang === 'en' ? 'Geopolitical context' : 'Contexte géopolitique'}
-                {session.countryNom ? ` — ${session.countryNom}` : ''}
-              </span>
-            </button>
-            {openCtx && (
-              <div style={{
-                padding: '0.5rem 0.85rem 0.65rem',
-                borderTop: '1px solid rgba(200,164,74,0.08)',
-                fontFamily: MONO, fontSize: '0.42rem', lineHeight: 1.7,
-                color: 'rgba(140,160,200,0.60)', whiteSpace: 'pre-wrap',
-              }}>
-                {session.countryContext}
-              </div>
-            )}
-          </div>
-        )}
+        {renderCtxAccordion()}
 
         {/* ── PHASE 1 : PEUPLE IN ──────────────────────────────────────────── */}
         {show.PEUPLE_IN && (

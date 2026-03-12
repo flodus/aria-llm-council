@@ -454,7 +454,7 @@ function SectionSysteme({ onHardReset }) {
     },
     {
       id: 'grok', label: 'xAI — Grok', placeholder: 'xai-...',
-      hint: isEn?'Alternative provider (OpenAI-compatible)':'Provider alternatif compatible OpenAI',
+      hint: isEn?'Alternative LLM (OpenAI-compatible)':'LLM alternatif compatible OpenAI',
       models: [
         { value:'grok-3',      label:`grok-3 — ${isEn?'Powerful':'Puissant'}` },
         { value:'grok-3-mini', label:`grok-3-mini — ${isEn?'Default · Fast':'Défaut · Rapide'}` },
@@ -462,7 +462,7 @@ function SectionSysteme({ onHardReset }) {
     },
     {
       id: 'openai', label: 'OpenAI — GPT', placeholder: 'sk-...',
-      hint: isEn?'Alternative provider':'Provider alternatif',
+      hint: isEn?'Alternative LLM':'LLM alternatif',
       models: [
         { value:'gpt-4.1',      label:`gpt-4.1 — ${isEn?'Powerful':'Puissant'}` },
         { value:'gpt-4.1-mini', label:`gpt-4.1-mini — ${isEn?'Default · Fast':'Défaut · Rapide'}` },
@@ -788,8 +788,8 @@ function SectionConstitution() {
                 <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
                   <div className="settings-radio-group">
                     {[
-                      { value:'aria',   label:'ARIA',               desc:isEn?'Multi-provider architecture (default)':'Architecture multi-providers (défaut)' },
-                      { value:'solo',   label:'Solo',                desc:isEn?'All roles on a single provider':'Tous les rôles sur un seul provider' },
+                      { value:'aria',   label:'ARIA',               desc:isEn?'Multi-LLM architecture (default)':'Architecture multi-LLM (défaut)' },
+                      { value:'solo',   label:'Solo',                desc:isEn?'All roles on a single LLM':'Tous les rôles sur un seul LLM' },
                       { value:'custom', label:isEn?'Custom':'Personnalisé', desc:isEn?'Role-by-role assignment':'Assignation rôle par rôle' },
                       { value:'none',   label:'🎲 Board Game',       desc:isEn?'Force local pre-written responses':'Force les réponses pré-écrites locales' },
                     ].map(m => (
@@ -802,7 +802,7 @@ function SectionConstitution() {
                   </div>
                   {iaMode === 'solo' && (
                     <div style={{ paddingLeft:'0.8rem' }}>
-                      <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"SOLO PROVIDER":"PROVIDER SOLO"}</div>
+                      <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"SOLO LLM":"LLM SOLO"}</div>
                       <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
                         {PROVIDERS.map(p => {
                           const disabled = !opts.api_keys?.[p.id];

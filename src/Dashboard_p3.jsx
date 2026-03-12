@@ -1423,6 +1423,15 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
           session={councilSession}
           onVote={handleVote}
           isRunning={councilRunning}
+          countryContext={selectedCountry ? buildCountryContext(selectedCountry) : ''}
+          countryNom={selectedCountry?.nom || ''}
+          ctxMode={(() => {
+            const c = selectedCountry;
+            if (!c) return null;
+            if (c.contextOverride?.trim()) return { icon:'✎', label:'Custom' };
+            const m = c.context_mode || 'auto';
+            return { auto:{icon:'🤖',label:'Auto'}, rich:{icon:'📖',label:'Enrichi'}, stats_only:{icon:'📊',label:'Stats'}, off:{icon:'🚫',label:'Off'} }[m] || {icon:'🤖',label:'Auto'};
+          })()}
         />
       );
     }

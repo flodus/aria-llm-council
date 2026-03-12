@@ -1073,7 +1073,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   };
   const [roles, setRoles] = useState(initRoles);
   // Accordéons CONFIG
-  const [cfgOpen, setCfgOpen] = useState('ia'); // MODE IA ouvert par défaut
+  const [cfgOpen, setCfgOpen] = useState(''); // '' = fermé par défaut
   // Registry fetch on mount
   useEffect(() => {
     if (ARIA_REGISTRY_URL.includes('REPLACE_WITH')) { setRegStatus('error'); return; }
@@ -1428,7 +1428,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
               <div key={acc.id} style={{ width:'100%', borderRadius:'2px',
                 border:'1px solid rgba(200,164,74,0.22)', overflow:'hidden' }}>
                 <button
-                  style={{ width:'100%', background: cfgOpen===acc.id ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.015)',
+                  style={{ width:'100%', background: cfgOpen===acc.id ? 'rgba(200,164,74,0.06)' : 'rgba(200,164,74,0.03)',
                     border:'none', padding:'0.45rem 0.7rem', cursor:'pointer', textAlign:'left',
                     display:'flex', alignItems:'center', justifyContent:'space-between' }}
                   onClick={() => setCfgOpen(p => p===acc.id ? '' : acc.id)}>
