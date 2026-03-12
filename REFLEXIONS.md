@@ -21,6 +21,28 @@ Ne pas implémenter sans Assess complet.
 
 ---
 
+## Mode Démo / Attracteur
+
+Idée : un mode autonome pour les démos et présentations.
+- Cycles automatiques avec intervalle configurable
+- Questions de délibération générées automatiquement
+- Vote aléatoire ou pondéré selon la satisfaction du pays
+- Récap fin de cycle qui se valide automatiquement après X secondes (countdown visible)
+- Événements narratifs IA actifs
+- Pas d'interaction requise — le monde tourne tout seul
+
+Briques existantes : `aria_options.gameplay.cycles_auto` + `cycles_interval` + `events_ia` + `doCycle()` + modal récap
+Manque : auto-question, auto-vote, auto-validation récap, accélération animations
+Complexité : moyenne — s'appuie sur l'infrastructure existante
+
+Emplacement dans Settings : à définir lors de la refonte — candidat naturel
+une section "MODES D'EXPÉRIENCE" qui regroupe Board Game Mode + Mode Démo
+(les deux changent fondamentalement l'interaction avec ARIA)
+
+⚠️ ATTENTION : ne pas implémenter avant que la refonte Settings soit validée
+
+---
+
 ## Droits fondamentaux / Constitution humaine
 
 _(à développer)_
