@@ -78,6 +78,21 @@ function getMinistryLabels() {
   const mins = Array.isArray(ag.ministries) ? ag.ministries : Object.values(ag.ministries || {});
   return Object.fromEntries(mins.map(m => [m.id, `${m.emoji||''} ${m.name}`]));
 }
+function getMinistryEmojis() {
+  const ag = getAgents();
+  const mins = Array.isArray(ag.ministries) ? ag.ministries : Object.values(ag.ministries || {});
+  return Object.fromEntries(mins.map(m => [m.id, m.emoji || '🏛️']));
+}
+const MINISTRY_KEYS = ['justice','economie','defense','sante','education','ecologie','chance'];
+const TOOLTIP_MINISTERES = {
+  justice:   'Ministère de la Justice et de la Vérité',
+  economie:  "Ministère de l'Économie et des Ressources",
+  defense:   'Ministère de la Défense et de la Souveraineté',
+  sante:     'Ministère de la Santé et de la Protection Sociale',
+  education: "Ministère de l'Éducation et de l'Élévation",
+  ecologie:  'Ministère de la Transition Écologique',
+  chance:    "Ministère de la Chance et de l'Imprévu",
+};
 
 // REGIME_LABELS → getRegimeLabel(key, lang) depuis ariaTheme
 const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocracie'];
@@ -1042,6 +1057,7 @@ function SectionConseil() {
   const ministerLabels  = getMinisterLabels();
   const ministerEmojis  = getMinisterEmojis();
   const ministryLabels  = getMinistryLabels();
+  const ministryEmojis  = getMinistryEmojis();
 
   return (
     <div className="settings-section-body">
@@ -1073,6 +1089,7 @@ function SectionConseil() {
                 const isSelected = selectedMin === k;
                 return (
                   <button key={k}
+                    title={ministerLabels[k] || k}
                     onClick={() => setSelectedMin(k)}
                     style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem',
                       padding:'0.6rem 0.7rem',borderRadius:'6px',cursor:'pointer',minWidth:'3.5rem',
@@ -1083,7 +1100,7 @@ function SectionConseil() {
                     <span style={{fontSize:'0.52rem',color:isSelected?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
                       letterSpacing:'0.03em',textAlign:'center',maxWidth:'4rem',
                       overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3}}>
-                      {ministerLabels[k]?.split(' (')[0] || k}
+                      {(ministerLabels[k]?.split(' (')[0] || k).replace(/^(Le |La |L')/, '')}
                     </span>
                   </button>
                 );
@@ -1113,13 +1130,36 @@ function SectionConseil() {
 
       {tab === 'ministeres' && (
         <div>
-          <Field label={trC.selMin}>
-            <Select
-              value={selectedMin2}
-              onChange={setSelectedMin2}
-              options={Object.entries(ministryLabels).map(([k, v]) => ({ value: k, label: v }))}
-            />
-          </Field>
+          {/* Grille tuiles ministères */}
+          <div style={{marginBottom:'1.2rem'}}>
+            <div style={{fontSize:'0.75rem',color:'rgba(200,164,74,0.7)',letterSpacing:'0.10em',marginBottom:'0.6rem',textTransform:'uppercase'}}>
+              {isEn ? 'Select a ministry' : 'Sélectionner un ministère'}
+            </div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
+              {MINISTRY_KEYS.map(k => {
+                const isSelected = selectedMin2 === k;
+                const fullLabel = ministryLabels[k] || k;
+                const name = fullLabel.split(' ').slice(1).join(' ') || k;
+                return (
+                  <button key={k}
+                    title={TOOLTIP_MINISTERES[k] || fullLabel}
+                    onClick={() => setSelectedMin2(k)}
+                    style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem',
+                      padding:'0.6rem 0.7rem',borderRadius:'6px',cursor:'pointer',minWidth:'3.5rem',
+                      background: isSelected ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
+                      border: `1px solid ${isSelected ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                      transition:'all 0.12s'}}>
+                    <span style={{fontSize:'1.2rem',lineHeight:1}}>{ministryEmojis[k]}</span>
+                    <span style={{fontSize:'0.52rem',color:isSelected?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
+                      letterSpacing:'0.03em',textAlign:'center',maxWidth:'4rem',
+                      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3}}>
+                      {name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <Field label={trC.missionLabel} hint={trC.missionHint}>
             <TextArea value={getVal(`ministries.${selectedMin2}.mission`, ministryFallback('mission'))}
@@ -1129,7 +1169,7 @@ function SectionConseil() {
 
           {/* Prompts spécifiques des 2 ministres dans ce ministère */}
           {(ministryData.ministers || []).map(mKey => (
-            <Field key={mKey} label={`${trC.rolePrefix} — ${ministerLabels[mKey]?.split(' (')[0] || mKey}`}
+            <Field key={mKey} label={`${trC.rolePrefix} — ${(ministerLabels[mKey]?.split(' (')[0] || mKey).replace(/^(Le |La |L')/, '')}`}
               hint={trC.roleHint}>
               <TextArea value={getVal(`ministries.${selectedMin2}.${mKey}`,
                   ministryData.ministerPrompts?.[mKey] || '')}
