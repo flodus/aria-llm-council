@@ -51,14 +51,27 @@ _(bloqué sur refonte carte V1)_
   (3 ministres validateurs · 3 ministres de sortie · critères systémiques)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
 - [ ] **V4 — Présidence 1 à 3 présidents** : config Init/Settings, mode collégial
-- [ ] **V5 — Refactor arborescence** : src/components/ · src/engine/ · src/lib/
-  (session dédiée, aucun risque fonctionnel mais beaucoup d'imports à mettre à jour)
+- [ ] **V5 — Refactor arborescence** : réorganiser src/ en 3 dossiers
+  - `src/components/` → UI (Dashboard_p3, CountryPanel, ConstitutionModal, Settings...)
+  - `src/engine/`     → moteur (Dashboard_p1, llmCouncilEngine, ariaData, ariaTheme...)
+  - `src/lib/`        → utilitaires (ariaI18n, helpers, types...)
+  - Session dédiée — beaucoup d'imports à mettre à jour, aucun risque fonctionnel
 - [ ] **V6 — Enrichir les prompts de délibération avec la philosophie ADD** :
   - Phare → posture Assess/Decide (vision, exploration des possibilités)
   - Boussole → posture Do/mémoire (ancrage, ce qui a été décidé)
   - Synthèse présidentielle → transition Decide→Do (transformer le débat en décision)
   - Concerne : Settings.jsx (prompts éditables) + llmCouncilEngine.js (synthèses)
   - Nécessite un Assess complet avant implémentation
+
+- [ ] **V7 — Audit i18n** : centraliser toutes les chaînes `isEn ? '...' : '...'` inline
+  vers `ariaI18n.js` — concerne Settings.jsx, Dashboard_p3.jsx, InitScreen.jsx, ConstitutionModal.jsx
+  Améliore la maintenabilité sans toucher aux mécaniques
+
+- [ ] **V8 — Optimisation moteur** : session Assess dédiée
+  - Profiler les re-renders React
+  - Vérifier useCallback/useMemo manquants
+  - Identifier les appels IA redondants
+  - Ne pas implémenter sans Assess complet
 
 ---
 
