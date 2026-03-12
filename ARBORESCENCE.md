@@ -110,7 +110,7 @@ aria/
 ├── vite.config.js                    ← Config Vite (base: '/aria-llm-council/')
 ├── eslint.config.js                  ← Config ESLint
 ├── package.json                      ← Dépendances npm
-├── server.js                         ← Serveur dev local (optionnel)
+├── server.js                         ← Non utilisé en prod GitHub Pages — base pour V5 multijoueur
 │
 ├── .add-session-history.md           ← Historique réflexions ADD (local)
 ├── .add-status                       ← État ADD courant (local)
