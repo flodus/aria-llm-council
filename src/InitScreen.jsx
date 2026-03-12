@@ -2329,8 +2329,8 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
             {hasApiKeys ? `${lang==='en'?'🔑 API KEYS':'🔑 CLÉS API'} ✓` : (lang==='en'?'🔑 API KEYS':'🔑 CLÉS API')}
           </button>
           <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(200,100,74,0.55)',
-            flex:1, visibility: hasApiKeys ? 'hidden' : 'visible' }}>
-            {lang==='en' ? '⚠ No key — offline mode only' : '⚠ Pas de clé — mode hors ligne uniquement'}
+            flex:1, textAlign:'center', lineHeight:1.6, visibility: hasApiKeys ? 'hidden' : 'visible' }}>
+            {lang==='en' ? <>⚠ No key<br/>offline mode only</> : <>⚠ Pas de clé<br/>mode hors ligne uniquement</>}
           </span>
           <button style={{ ...BTN_PRIMARY, opacity: worldName.trim() ? 1 : 0.35, flexShrink:0, minWidth:'8rem', textAlign:'center' }}
             disabled={!worldName.trim()} onClick={() => setStep('mode')}>
