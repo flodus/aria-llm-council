@@ -29,6 +29,12 @@ _Dernière mise à jour : 2026-03-12_
   depuis les options système (Settings) vers la ConstitutionModal par pays
   — logique : le contexte de délibération est une propriété du pays, pas un réglage global
 
+- [ ] **U7 — Emoji picker pays** : permettre au joueur de choisir l'emoji de son pays
+  - À la création (InitScreen) : après génération IA, proposer de changer l'emoji suggéré
+  - In-game (ConstitutionModal) : champ emoji modifiable dans l'onglet Gouvernance ou Résumé
+  - UI : grille d'emojis thématiques (drapeaux, animaux, symboles) ou champ libre
+  - Les pays réels et fictifs sont tous concernés
+
 ---
 
 ## 🟠 FONCTIONNEL MOYEN TERME
