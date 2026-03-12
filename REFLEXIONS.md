@@ -49,6 +49,27 @@ une section "MODES D'EXPÉRIENCE" qui regroupe Board Game Mode + Mode Démo
 
 ---
 
+## Questions de délibération contextualisées (mode en ligne)
+
+Idée : proposer des questions réelles et actuelles comme sujets de délibération.
+
+- Pays réel : puiser dans les questions récentes de l'assemblée/parlement
+  du pays concerné (ex: France → Assemblée Nationale, questions des
+  dernières semaines)
+- Pays fictif : melting pot de questions issues de plusieurs pays réels,
+  mélangées et reformulées pour un contexte fictif
+- Filtre anti-doublon : ne jamais reproposer une question qui a déjà fait
+  l'objet d'un conseil dans la partie en cours (vérification via chronolog)
+
+Briques existantes : chronolog ✅ · triple_combo / contextOverride ✅ · callAI() ✅
+Manque : source de données questions parlementaires (API ou scraping) ·
+  moteur de suggestion · filtre chronolog
+Complexité : haute — dépend d'une source de données externe fiable
+
+⚠️ ATTENTION : Assess dédié requis — source de données à identifier en premier
+
+---
+
 ## Droits fondamentaux / Constitution humaine
 
 _(à développer)_
