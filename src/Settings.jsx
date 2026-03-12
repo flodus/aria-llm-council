@@ -179,6 +179,7 @@ function TextInput({ value, onChange, password, placeholder, mono }) {
 function TextArea({ value, onChange, rows = 1, mono }) {
   const ref = useRef(null);
   const resize = (el) => { if (!el) return; el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; };
+  useEffect(() => { resize(ref.current); }, []);
   useEffect(() => { resize(ref.current); }, [value]);
   return (
     <textarea
