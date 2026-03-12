@@ -1267,7 +1267,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
         color:'rgba(200,164,74,0.50)', padding:'1.5rem', textAlign:'center' }}>{lang==='en'?'Loading…':'Chargement…'}</div>}
 
       {!plLoading && plAgents && (
-        <div ref={scrollRef} style={{ width:'100%', overflowY:'auto', maxHeight:'52vh',
+        <div ref={scrollRef} style={{ width:'100%', overflowY:'auto', maxHeight:'64vh',
           display:'flex', flexDirection:'column', gap:'0.55rem' }}>
 
           {/* ── RÉSUMÉ ──────────────────────────────────────────────── */}
@@ -2309,39 +2309,34 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
       {showKeys && <APIKeyInline onClose={() => { setShowKeys(false); onRefreshKeys?.(); }} />}
       <ARIAHeader showQuote={true} />
 
-      <div style={CARD_STYLE}>
+      <div style={{ ...CARD_STYLE, display:'flex', flexDirection:'column', gap:'0.75rem' }}>
         <div style={labelStyle()}>{t('WORLD_NAME',lang)}</div>
         <input style={INPUT_STYLE} value={worldName}
           onChange={e => setWorldName(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && worldName.trim() && setStep('mode')}
           {...{placeholder:t("WORLD_NAME_PH",lang)}} autoFocus />
-      </div>
-
-      <div style={{ display:'grid', gridTemplateColumns:'1fr auto 1fr', gap:'0.8rem', width:'100%', alignItems:'center' }}>
-        {/* Colonne gauche : bouton clé API */}
-        <button
-          style={{
-            background:'rgba(200,164,74,0.06)', border:'1px solid rgba(200,164,74,0.30)',
-            borderRadius:'2px', padding:'0.35rem 0.75rem', cursor:'pointer',
-            fontFamily:FONT.mono, fontSize:'0.48rem', letterSpacing:'0.12em',
-            color: hasApiKeys ? 'rgba(100,200,120,0.70)' : 'rgba(200,164,74,0.55)',
-            boxShadow: '0 0 8px rgba(200,164,74,0.08)', justifySelf:'start',
-            whiteSpace:'nowrap',
-          }}
-          onClick={() => setShowKeys(true)}
-          title={lang==='en'?'Configure API keys':'Configurer les clés API'}>
-          {hasApiKeys ? `${lang==='en'?'🔑 API KEYS':'🔑 CLÉS API'} ✓` : (lang==='en'?'🔑 API KEYS':'🔑 CLÉS API')}
-        </button>
-        {/* Colonne centre : message no key — occupe toujours la place même vide */}
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(200,100,74,0.55)',
-          textAlign:'center', visibility: hasApiKeys ? 'hidden' : 'visible' }}>
-          {lang==='en' ? '⚠ No key — offline mode only' : '⚠ Pas de clé — mode hors ligne uniquement'}
-        </span>
-        {/* Colonne droite : bouton continuer */}
-        <button style={{ ...BTN_PRIMARY, opacity: worldName.trim() ? 1 : 0.35, justifySelf:'end', minWidth:'9rem', textAlign:'center' }}
-          disabled={!worldName.trim()} onClick={() => setStep('mode')}>
-          {t('CONTINUE',lang)}
-        </button>
+        <div style={{ display:'flex', alignItems:'center', gap:'0.7rem' }}>
+          <button
+            style={{
+              background:'rgba(200,164,74,0.06)', border:'1px solid rgba(200,164,74,0.30)',
+              borderRadius:'2px', padding:'0.35rem 0.75rem', cursor:'pointer',
+              fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.12em',
+              color: hasApiKeys ? 'rgba(100,200,120,0.70)' : 'rgba(200,164,74,0.55)',
+              whiteSpace:'nowrap', flexShrink:0,
+            }}
+            onClick={() => setShowKeys(true)}
+            title={lang==='en'?'Configure API keys':'Configurer les clés API'}>
+            {hasApiKeys ? `${lang==='en'?'🔑 API KEYS':'🔑 CLÉS API'} ✓` : (lang==='en'?'🔑 API KEYS':'🔑 CLÉS API')}
+          </button>
+          <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(200,100,74,0.55)',
+            flex:1, visibility: hasApiKeys ? 'hidden' : 'visible' }}>
+            {lang==='en' ? '⚠ No key — offline mode only' : '⚠ Pas de clé — mode hors ligne uniquement'}
+          </span>
+          <button style={{ ...BTN_PRIMARY, opacity: worldName.trim() ? 1 : 0.35, flexShrink:0, minWidth:'8rem', textAlign:'center' }}
+            disabled={!worldName.trim()} onClick={() => setStep('mode')}>
+            {t('CONTINUE',lang)}
+          </button>
+        </div>
       </div>
     </div>
   );
