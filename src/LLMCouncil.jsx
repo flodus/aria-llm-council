@@ -312,6 +312,7 @@ function VoteJauge({ oui, non }) {
 export default function LLMCouncil({ session, onVote, isRunning }) {
   const { lang } = useLocale();
   const scrollRef = useRef(null);
+  const [openCtx, setOpenCtx] = useState(false);
 
   // Phases actives — dérivées directement de la session (pas de state async)
   const show = {
@@ -377,6 +378,41 @@ export default function LLMCouncil({ session, onVote, isRunning }) {
         flex: 1, overflowY: 'auto', padding: '0 1.2rem 1.2rem',
         scrollbarWidth: 'thin', scrollbarColor: `${C.border} transparent`,
       }}>
+
+        {/* ── CONTEXTE GÉOPOLITIQUE (accordéon discret, replié par défaut) ── */}
+        {session?.countryContext && (
+          <div style={{
+            border: `1px solid ${openCtx ? 'rgba(200,164,74,0.22)' : 'rgba(200,164,74,0.10)'}`,
+            borderRadius: '2px', marginBottom: '0.8rem', overflow: 'hidden',
+            background: openCtx ? 'rgba(200,164,74,0.03)' : 'transparent',
+            transition: 'background 0.2s',
+          }}>
+            <button onClick={() => setOpenCtx(v => !v)} style={{
+              width: '100%', display: 'flex', alignItems: 'center', gap: '0.5rem',
+              padding: '0.38rem 0.65rem', background: 'none', border: 'none',
+              cursor: 'pointer', textAlign: 'left',
+            }}>
+              <span style={{ fontFamily: MONO, fontSize: '0.65rem', color: 'rgba(200,164,74,0.45)' }}>
+                {openCtx ? '▾' : '▸'}
+              </span>
+              <span style={{ fontFamily: MONO, fontSize: '0.42rem', letterSpacing: '0.12em',
+                color: openCtx ? 'rgba(200,164,74,0.75)' : 'rgba(140,160,200,0.50)', flex: 1 }}>
+                🌍 {lang === 'en' ? 'Geopolitical context' : 'Contexte géopolitique'}
+                {session.countryNom ? ` — ${session.countryNom}` : ''}
+              </span>
+            </button>
+            {openCtx && (
+              <div style={{
+                padding: '0.5rem 0.85rem 0.65rem',
+                borderTop: '1px solid rgba(200,164,74,0.08)',
+                fontFamily: MONO, fontSize: '0.42rem', lineHeight: 1.7,
+                color: 'rgba(140,160,200,0.60)', whiteSpace: 'pre-wrap',
+              }}>
+                {session.countryContext}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ── PHASE 1 : PEUPLE IN ──────────────────────────────────────────── */}
         {show.PEUPLE_IN && (

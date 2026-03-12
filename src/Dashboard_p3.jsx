@@ -34,6 +34,7 @@ import {
   runCerclePhase,
   runPresidencePhase,
   computeVoteImpact,
+  buildCountryContext,
   MINISTRIES_LIST,
 } from './llmCouncilEngine';
 
@@ -1243,7 +1244,8 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     const ministry   = resolvedId ? MINISTRIES_LIST.find(m => m.id === resolvedId) : null;
 
     // Phase 0 : question visible immédiatement
-    setCouncilSession({ question, ministryId: resolvedId });
+    const countryContext = buildCountryContext(selectedCountry);
+    setCouncilSession({ question, ministryId: resolvedId, countryContext, countryNom: selectedCountry?.nom });
 
     try {
       // Phase 1 : ministère (ou fallback orphelin)

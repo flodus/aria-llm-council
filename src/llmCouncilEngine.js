@@ -627,7 +627,7 @@ export function computeVoteImpact(vote, presidence, country) {
  * country.contextOverride : string libre — remplace tout le bloc si défini
  * country.context_mode    : surcharge le mode global pour ce pays
  */
-function buildCountryContext(country) {
+export function buildCountryContext(country) {
   if (!country) return '';
   const en = loadLang() === 'en';
 
@@ -710,6 +710,10 @@ function buildCountryContext(country) {
     ctx += en
       ? `\n\nContext: Fictional country — objective analysis based on the provided statistics.`
       : `\n\nContexte : Pays fictif — approche objective basée sur les statistiques fournies.`;
+  }
+
+  if (mode === 'rich' || (country.description && country.description.trim()) || country.leader) {
+    console.log(`[ARIA context — ${country.nom}] mode:${mode}\n`, ctx);
   }
 
   return ctx;
