@@ -89,7 +89,12 @@
  ├─[V11] Registry editor UI ..... [In-app Gist-sync manager] ........ ⬡ 0%
  └─[V12] Open-source prompts .... [Public agent prompt library] ..... ⬡ 0%
 
- [ PHASE V4 : MULTIPLAYER ] ...................................... STATUS: DISTANT
+ [ PHASE V4 : QUALITY & MAINTAINABILITY ] ........................ STATUS: QUEUED
+ ├─[V5] Src refactor ............ [src/components · engine · lib] .... ⬡ 0%
+ ├─[V7] i18n audit .............. [Centralise inline strings → ariaI18n] ⬡ 0%
+ └─[V8] Engine optimisation ..... [Re-renders · useCallback · AI calls] ⬡ 0%
+
+ [ PHASE V5 : MULTIPLAYER ] ...................................... STATUS: DISTANT
  │
  │  Design principle (agreed 2026-03):
  │  Each player governs one nation in a shared world. Async turns,

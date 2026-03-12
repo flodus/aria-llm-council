@@ -90,7 +90,12 @@
  ├─[V11] Interface registry ...... [Gestionnaire sync Gist in-app] ... ⬡ 0%
  └─[V12] Prompts open-source ..... [Bibliothèque publique d'agents] .. ⬡ 0%
 
- [ PHASE V4 : MULTIJOUEUR ] ...................................... STATUT: DISTANT
+ [ PHASE V4 : QUALITÉ & MAINTENABILITÉ ] ......................... STATUT: EN FILE
+ ├─[V5] Refactor arborescence ... [src/components · engine · lib] .... ⬡ 0%
+ ├─[V7] Audit i18n .............. [Centraliser chaînes inline → ariaI18n] ⬡ 0%
+ └─[V8] Optimisation moteur ..... [Re-renders · useCallback · appels IA] ⬡ 0%
+
+ [ PHASE V5 : MULTIJOUEUR ] ...................................... STATUT: DISTANT
  │
  │  Principe de design (décidé 2026-03) :
  │  Chaque joueur gouverne une nation dans un monde partagé.
