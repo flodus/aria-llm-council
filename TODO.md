@@ -92,8 +92,10 @@ _(bloqué sur refonte carte V1)_
   accordéon déplacé sous Contexte délibérations, option `🎲 Board Game` dans sélecteur MODE IA
 - [x] **Accordéon MODE IA 64vh** : conteneur scrollable agrandi
 - [x] **Card NOM DU MONDE unifiée** : CLÉS API + CONTINUER fusionnés dans la même card
+- [x] **Accordéons providers InitScreen** : APIKeyInline — providers en accordéons (▸/▾, icône statut ✅/❌/⏳/🔑)
+- [x] **Badge ✅ Settings CLÉS API & MODÈLES** : coche verte dans l'en-tête si au moins une clé valide
 
 ---
 
 ## 📁 Fichiers actifs
-`InitScreen.jsx` · `Dashboard_p1.jsx` · `App.jsx`
+`InitScreen.jsx` · `Dashboard_p1.jsx` · `App.jsx` · `Settings.jsx`
