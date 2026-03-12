@@ -1396,54 +1396,82 @@ function SectionSimulation() {
     saveOptions(opts);
     setSaved(true);
   };
+  const [openAcc, setOpenAcc] = useState(null);
+  const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
+  const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
+  const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
+  const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
+  const HDR = (key, label, badge) => (
+    <button onClick={() => toggleAcc(key)} style={{ width:'100%', display:'flex', alignItems:'center',
+      gap:'0.5rem', padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
+      <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.55)' }}>{openAcc===key?'▾':'▸'}</span>
+      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem', letterSpacing:'0.12em',
+        color: openAcc===key ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)' }}>{label}</span>
+      {badge && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
+        color:'rgba(140,160,200,0.40)', marginLeft:'auto', letterSpacing:'0.10em' }}>{badge}</span>}
+    </button>
+  );
 
   return (
     <div className="settings-section-body">
       <SectionTitle icon="🎲" label={isEn?"SIMULATION":"SIMULATION"} sub={isEn?"Regimes, critical thresholds, cycle speed, resources":"Régimes, seuils critiques, vitesse des cycles, ressources"} />
 
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"SPEED & CYCLES":"VITESSE & CYCLES"}</div>
-        <Field label={isEn?"Automatic cycles":"Cycles automatiques"}>
-          <Toggle value={opts.gameplay.cycles_auto}
-            onChange={v => updateOpts('cycles_auto', v)}
-            label={opts.gameplay.cycles_auto ? (isEn?'Enabled':'Activé') : (isEn?'Disabled':'Désactivé')} />
-        </Field>
-        {opts.gameplay.cycles_auto && (
-          <Field label={isEn?"Interval between cycles (seconds)":"Intervalle entre cycles (secondes)"}>
-            <NumberInput value={opts.gameplay.cycles_interval}
-              onChange={v => updateOpts('cycles_interval', v)} min={5} max={300} step={5} />
-          </Field>
+      {/* ▸ VITESSE & CYCLES */}
+      <div style={openAcc==='cycles' ? ACC_OPEN : ACC}>
+        {HDR('cycles', isEn?'SPEED & CYCLES':'VITESSE & CYCLES',
+          opts.gameplay.cycles_auto ? (isEn?'auto':'auto') : null)}
+        {openAcc==='cycles' && (
+          <div style={BODY}>
+            <Field label={isEn?"Automatic cycles":"Cycles automatiques"}>
+              <Toggle value={opts.gameplay.cycles_auto}
+                onChange={v => updateOpts('cycles_auto', v)}
+                label={opts.gameplay.cycles_auto ? (isEn?'Enabled':'Activé') : (isEn?'Disabled':'Désactivé')} />
+            </Field>
+            {opts.gameplay.cycles_auto && (
+              <Field label={isEn?"Interval between cycles (seconds)":"Intervalle entre cycles (secondes)"}>
+                <NumberInput value={opts.gameplay.cycles_interval}
+                  onChange={v => updateOpts('cycles_interval', v)} min={5} max={300} step={5} />
+              </Field>
+            )}
+          </div>
         )}
       </div>
 
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"CRITICAL THRESHOLDS":"SEUILS CRITIQUES"}</div>
-        <Field label={isEn?"Revolt threshold (satisfaction %)":"Seuil de révolte (satisfaction %)"}
-          hint={isEn?"Below this threshold, a revolt is triggered":"En dessous de ce seuil, une révolte est déclenchée"}>
-          <NumberInput value={getSeuil('seuil_revolte')}
-            onChange={v => updateSim('seuils.seuil_revolte', v)} min={5} max={40} />
-        </Field>
-        <Field label={isEn?"Demographic explosion threshold (×%)":"Seuil explosion démographique (×%)"}
-          hint={isEn?"If population × factor / 100 in a cycle, crisis triggered":"Si la population × ce facteur / 100 en un cycle, crise déclenchée"}>
-          <NumberInput value={getSeuil('seuil_crise_demo')}
-            onChange={v => updateSim('seuils.seuil_crise_demo', v)} min={110} max={300} step={10} />
-        </Field>
-        <Field label={isEn?"Max random noise (satisfaction ±)":"Bruit aléatoire max (satisfaction ±)"}
-          hint={isEn?"Random amplitude in each cycle":"Amplitude du hasard dans chaque cycle"}>
-          <NumberInput value={getSeuil('bruit_max')}
-            onChange={v => updateSim('seuils.bruit_max', v)} min={0} max={10} />
-        </Field>
-        <Field label={isEn?"AI narrative events":"Événements narratifs IA"}
-          hint={isEn?"AI narrates each critical threshold breach":"L'IA génère un récit à chaque événement critique"}>
-          <Toggle value={opts.gameplay.events_ia}
-            onChange={v => updateOpts('events_ia', v)}
-            label={opts.gameplay.events_ia ? (isEn?'Enabled':'Activés') : (isEn?'Disabled':'Désactivés')} />
-        </Field>
+      {/* ▸ SEUILS CRITIQUES */}
+      <div style={openAcc==='seuils' ? ACC_OPEN : ACC}>
+        {HDR('seuils', isEn?'CRITICAL THRESHOLDS':'SEUILS CRITIQUES')}
+        {openAcc==='seuils' && (
+          <div style={BODY}>
+            <Field label={isEn?"Revolt threshold (satisfaction %)":"Seuil de révolte (satisfaction %)"}
+              hint={isEn?"Below this threshold, a revolt is triggered":"En dessous de ce seuil, une révolte est déclenchée"}>
+              <NumberInput value={getSeuil('seuil_revolte')}
+                onChange={v => updateSim('seuils.seuil_revolte', v)} min={5} max={40} />
+            </Field>
+            <Field label={isEn?"Demographic explosion threshold (×%)":"Seuil explosion démographique (×%)"}
+              hint={isEn?"If population × factor / 100 in a cycle, crisis triggered":"Si la population × ce facteur / 100 en un cycle, crise déclenchée"}>
+              <NumberInput value={getSeuil('seuil_crise_demo')}
+                onChange={v => updateSim('seuils.seuil_crise_demo', v)} min={110} max={300} step={10} />
+            </Field>
+            <Field label={isEn?"Max random noise (satisfaction ±)":"Bruit aléatoire max (satisfaction ±)"}
+              hint={isEn?"Random amplitude in each cycle":"Amplitude du hasard dans chaque cycle"}>
+              <NumberInput value={getSeuil('bruit_max')}
+                onChange={v => updateSim('seuils.bruit_max', v)} min={0} max={10} />
+            </Field>
+            <Field label={isEn?"AI narrative events":"Événements narratifs IA"}
+              hint={isEn?"AI narrates each critical threshold breach":"L'IA génère un récit à chaque événement critique"}>
+              <Toggle value={opts.gameplay.events_ia}
+                onChange={v => updateOpts('events_ia', v)}
+                label={opts.gameplay.events_ia ? (isEn?'Enabled':'Activés') : (isEn?'Disabled':'Désactivés')} />
+            </Field>
+          </div>
+        )}
       </div>
 
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"REGIME COEFFICIENTS":"COEFFICIENTS DES RÉGIMES"}</div>
-
+      {/* ▸ COEFFICIENTS DES RÉGIMES */}
+      <div style={openAcc==='regimes' ? ACC_OPEN : ACC}>
+        {HDR('regimes', isEn?'REGIME COEFFICIENTS':'COEFFICIENTS DES RÉGIMES', `${REGIME_LABEL_KEYS.length}`)}
+        {openAcc==='regimes' && (
+        <div style={BODY}>
         {REGIME_LABEL_KEYS.map(rk => {
           const coeff_sat  = getReg(rk, 'coeff_satisfaction');
           const coeff_cro  = getReg(rk, 'coeff_croissance');
@@ -1512,27 +1540,35 @@ function SectionSimulation() {
             </div>
           );
         })}
+        </div>
+        )}
       </div>
 
-      <div className="settings-group">
-        <div className="settings-group-title">{isEn?"RESOURCES BY TERRAIN":"RESSOURCES PAR TERRAIN"}</div>
-        {Object.entries(dynTerrains || TERRAINS || {}).map(([tk, tv]) => (
-          <div key={tk} className="settings-terrain-block">
-            <div className="settings-terrain-name">{getTerrainLabel(tk, lang)} </div>
-            <Field label={isEn?"Population modifier":"Modificateur population"}>
-              <NumberInput step={0.05}
-                value={getTerrain(tk, 'modificateur_pop')}
-                onChange={v => updateSim(`terrains.${tk}.modificateur_pop`, v)}
-                min={0.5} max={2.0} />
-            </Field>
-            <Field label={isEn?"Economy modifier":"Modificateur économie"}>
-              <NumberInput step={0.05}
-                value={getTerrain(tk, 'modificateur_eco')}
-                onChange={v => updateSim(`terrains.${tk}.modificateur_eco`, v)}
-                min={0.5} max={2.0} />
-            </Field>
+      {/* ▸ RESSOURCES PAR TERRAIN */}
+      <div style={openAcc==='terrains' ? ACC_OPEN : ACC}>
+        {HDR('terrains', isEn?'RESOURCES BY TERRAIN':'RESSOURCES PAR TERRAIN',
+          `${Object.keys(dynTerrains || TERRAINS || {}).length}`)}
+        {openAcc==='terrains' && (
+          <div style={BODY}>
+            {Object.entries(dynTerrains || TERRAINS || {}).map(([tk, tv]) => (
+              <div key={tk} className="settings-terrain-block">
+                <div className="settings-terrain-name">{getTerrainLabel(tk, lang)}</div>
+                <Field label={isEn?"Population modifier":"Modificateur population"}>
+                  <NumberInput step={0.05}
+                    value={getTerrain(tk, 'modificateur_pop')}
+                    onChange={v => updateSim(`terrains.${tk}.modificateur_pop`, v)}
+                    min={0.5} max={2.0} />
+                </Field>
+                <Field label={isEn?"Economy modifier":"Modificateur économie"}>
+                  <NumberInput step={0.05}
+                    value={getTerrain(tk, 'modificateur_eco')}
+                    onChange={v => updateSim(`terrains.${tk}.modificateur_eco`, v)}
+                    min={0.5} max={2.0} />
+                </Field>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
 
       <div className="settings-footer">
@@ -1542,10 +1578,6 @@ function SectionSimulation() {
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  SECTION 5 — À PROPOS
-// ─────────────────────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  SECTION 5 — À PROPOS
