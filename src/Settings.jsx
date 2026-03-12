@@ -929,7 +929,7 @@ function SectionConseil() {
   const [govOpts, setGovOpts] = useState(() => getOptions());
   const [selectedMin, setSelectedMin] = useState('initiateur');
   const [selectedMin2, setSelectedMin2] = useState('justice');
-  const [tab, setTab]     = useState('ministres'); // 'ministres' | 'ministeres' | 'presidence'
+  const [tab, setTab]     = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres'
   const [saved, setSaved]  = useState(false);
 
   const updateGovOpts = (path, val) => {
@@ -1012,10 +1012,10 @@ function SectionConseil() {
 
       <div className="settings-tabs">
         {[
-          { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'  },
-          { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères' },
-          { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence' },
           { id: 'gouvernance', label: isEn ? 'Governance' : 'Gouvernance' },
+          { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence' },
+          { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères' },
+          { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'  },
         ].map(t => (
           <button key={t.id}
             className={`settings-tab${tab === t.id ? ' active' : ''}`}
