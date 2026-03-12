@@ -52,6 +52,13 @@ _Dernière mise à jour : 2026-03-12_
 ## 🟠 FONCTIONNEL MOYEN TERME
 _(bloqué sur refonte carte V1)_
 
+- [ ] **N1 — normalizeCountry()** : harmoniser les structures d'objet pays
+  - Base : ANALYSE_STRUCTURE_PAYS.md (généré 2026-03-12)
+  - Interface cible définie dans le MD section 4
+  - Fichiers : ariaData.js · Dashboard_p1.jsx · InitScreen.jsx
+  - Patches individuels possibles en attendant (flag→emoji, natalite→tauxNatalite)
+  - Session dédiée — risque élevé, Assess complet requis
+
 - [ ] **F1 — Minimum 2 pays en mode custom** : actuellement limité à 1 seul pays custom
 - [ ] **F2 — Bloquer doublons pays réels** : griser un pays réel déjà sélectionné dans un autre slot
 - [ ] **F3 — Settings gouvernement multi-pays** : repenser l'écran Settings in-game
