@@ -189,6 +189,8 @@ export const TRANSLATIONS = {
   TOPBAR_LEGITIMITE:   { fr: 'Rapport de Légitimité Globale — ARIA', en: 'Global Legitimacy Report — ARIA' },
   BTN_NEW_GAME:        { fr: 'Nouvelle partie',         en: 'New game'              },
   BTN_CONFIG:          { fr: 'Configuration ARIA',      en: 'ARIA settings'         },
+  BTN_SOUND_ON:        { fr: 'Activer le son',          en: 'Unmute sound'          },
+  BTN_SOUND_OFF:       { fr: 'Couper le son',           en: 'Mute sound'            },
 
   // ── LLMCouncil.jsx ────────────────────────────────────────────────────
   COUNCIL_PHASE_MINISTRE:    { fr: 'MINISTÈRE',                    en: 'MINISTRY'                      },
