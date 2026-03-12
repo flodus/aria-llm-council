@@ -487,7 +487,7 @@ function SectionSysteme({ onHardReset }) {
       {/* ▸ CLÉS API + MODÈLES */}
       <div style={openAcc==='keys' ? ACC_OPEN : ACC}>
         {HDR('keys', isEn?'API KEYS & MODELS':'CLÉS API & MODÈLES',
-          `${[opts.api_keys?.claude,opts.api_keys?.gemini,opts.api_keys?.grok,opts.api_keys?.openai].filter(Boolean).length}/4 ${isEn?'keys':'clés'}`
+          `${[opts.api_keys?.claude,opts.api_keys?.gemini,opts.api_keys?.grok,opts.api_keys?.openai].filter(Boolean).length}/4 ${isEn?'keys':'clés'}${Object.values(status).some(s=>s==='ok') ? ' ✅' : ''}`
         )}
         {openAcc==='keys' && (
         <div style={BODY}>

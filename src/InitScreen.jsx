@@ -137,8 +137,9 @@ function APIKeyInline({ onClose }) {
   const loadModels = () => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); } catch { return {}; } };
   const [keys,   setKeys]   = useState(loadKeys);
   const [models, setModels] = useState(loadModels);
-  const [status, setStatus] = useState({ claude:null, gemini:null, grok:null, openai:null });
+  const [status,   setStatus]   = useState({ claude:null, gemini:null, grok:null, openai:null });
   const [showPass, setShowPass] = useState({ claude:false, gemini:false, grok:false, openai:false });
+  const [openProv, setOpenProv] = useState(null);
 
   const PROVIDERS = [
     { id:'claude', label:'CLAUDE',  sub:'Anthropic',  ph:'sk-ant-…',
@@ -233,55 +234,71 @@ function APIKeyInline({ onClose }) {
         </p>
 
         {PROVIDERS.map(prov => {
-          const val = keys[prov.id] || '';
-          const s   = status[prov.id];
+          const val    = keys[prov.id] || '';
+          const s      = status[prov.id];
+          const isOpen = openProv === prov.id;
+          const statIcon = s==='ok' ? '✅' : s==='error' ? '❌' : s==='testing' ? '⏳' : val ? '🔑' : '—';
           return (
-            <div key={prov.id} style={{ padding:'0.55rem 0.7rem',
-              background: val ? 'rgba(200,164,74,0.03)' : 'rgba(255,255,255,0.015)',
-              border:`1px solid ${s==='ok' ? 'rgba(58,191,122,0.28)' : val ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
-              borderRadius:'2px' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.4rem' }}>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.14em',
-                  color:'rgba(200,215,240,0.75)', flex:1 }}>{prov.label}</span>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem',
-                  color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
-              </div>
-              <div style={{ display:'flex', gap:'0.4rem', alignItems:'center', marginBottom:'0.3rem' }}>
-                <div style={{ position:'relative', flex:1 }}>
-                  <input style={{ ...INPUT_STYLE, fontSize:'0.48rem', paddingRight:'2rem' }}
-                    type={showPass[prov.id] ? 'text' : 'password'}
-                    value={val}
-                    onChange={e => { setKeys(k=>({...k,[prov.id]:e.target.value})); setStatus(s=>({...s,[prov.id]:null})); }}
-                    placeholder={prov.ph} />
-                  <button
-                    onClick={() => setShowPass(p=>({...p,[prov.id]:!p[prov.id]}))}
-                    style={{ position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
-                      background:'none', border:'none', cursor:'pointer', padding:'0.1rem',
-                      color: showPass[prov.id] ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)',
-                      fontSize:'0.75rem', lineHeight:1 }}
-                    title={showPass[prov.id] ? (lang==='en'?'Hide':'Masquer') : (lang==='en'?'Show':'Afficher')}>
-                    <span className={showPass[prov.id] ? 'mdi mdi-eye-lock-open' : 'mdi mdi-eye-lock'}
-                      style={{ fontSize:'1rem' }} />
-                  </button>
+            <div key={prov.id} style={{
+              border:`1px solid ${val ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
+              borderRadius:'2px', overflow:'hidden',
+              background: val ? 'rgba(200,164,74,0.02)' : 'rgba(255,255,255,0.01)' }}>
+              {/* Header accordéon */}
+              <button onClick={() => setOpenProv(p => p === prov.id ? null : prov.id)}
+                style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
+                  padding:'0.38rem 0.6rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
+                <span style={{ fontSize:'0.65rem', color:'rgba(200,164,74,0.50)' }}>{isOpen?'▾':'▸'}</span>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.10em',
+                  color: isOpen ? 'rgba(200,164,74,0.88)' : 'rgba(200,215,240,0.70)', flex:1 }}>
+                  {prov.label}
+                </span>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', marginLeft:'0.4rem',
+                  color: s==='ok' ? 'rgba(58,191,122,0.80)' : s==='error' ? 'rgba(200,58,58,0.80)' : 'rgba(140,160,200,0.35)' }}>
+                  {statIcon}
+                </span>
+              </button>
+              {/* Corps accordéon */}
+              {isOpen && (
+                <div style={{ padding:'0.5rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.5rem',
+                  borderTop:`1px solid ${val ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.05)'}` }}>
+                  <div style={{ display:'flex', gap:'0.4rem', alignItems:'center' }}>
+                    <div style={{ position:'relative', flex:1 }}>
+                      <input style={{ ...INPUT_STYLE, fontSize:'0.48rem', paddingRight:'2rem' }}
+                        type={showPass[prov.id] ? 'text' : 'password'}
+                        value={val}
+                        onChange={e => { setKeys(k=>({...k,[prov.id]:e.target.value})); setStatus(s=>({...s,[prov.id]:null})); }}
+                        placeholder={prov.ph} />
+                      <button
+                        onClick={() => setShowPass(p=>({...p,[prov.id]:!p[prov.id]}))}
+                        style={{ position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
+                          background:'none', border:'none', cursor:'pointer', padding:'0.1rem',
+                          color: showPass[prov.id] ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)',
+                          fontSize:'0.75rem', lineHeight:1 }}
+                        title={showPass[prov.id] ? (lang==='en'?'Hide':'Masquer') : (lang==='en'?'Show':'Afficher')}>
+                        <span className={showPass[prov.id] ? 'mdi mdi-eye-lock-open' : 'mdi mdi-eye-lock'}
+                          style={{ fontSize:'1rem' }} />
+                      </button>
+                    </div>
+                    <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.55rem', fontSize:'0.44rem', whiteSpace:'nowrap' }}
+                      disabled={!val} onClick={()=>testKey(prov.id)}>Test</button>
+                    {s && <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', minWidth:'1rem' }}>{stLabel(s)}</span>}
+                  </div>
+                  <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
+                    {prov.versions.map(v => {
+                      const chosen = (models[prov.id] || prov.versions.find(x=>x.label.includes('★'))?.id || prov.versions[0]?.id) === v.id;
+                      return (
+                        <button key={v.id}
+                          style={{ ...BTN_SECONDARY, padding:'0.18rem 0.45rem', fontSize:'0.40rem',
+                            ...(chosen ? { border:'1px solid rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : { opacity:0.55 }) }}
+                          onClick={() => setModels(m => ({...m, [prov.id]: v.id}))}>
+                          {v.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.55rem', fontSize:'0.44rem', whiteSpace:'nowrap' }}
-                  disabled={!val} onClick={()=>testKey(prov.id)}>Test</button>
-                {s && <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', minWidth:'1rem' }}>{stLabel(s)}</span>}
-              </div>
-              {/* Version selector */}
-              <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
-                {prov.versions.map(v => {
-                  const chosen = (models[prov.id] || prov.versions.find(x=>x.label.includes('★'))?.id || prov.versions[0]?.id) === v.id;
-                  return (
-                    <button key={v.id}
-                      style={{ ...BTN_SECONDARY, padding:'0.18rem 0.45rem', fontSize:'0.40rem',
-                        ...(chosen ? { border:'1px solid rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : { opacity:0.55 }) }}
-                      onClick={() => setModels(m => ({...m, [prov.id]: v.id}))}>
-                      {v.label}
-                    </button>
-                  );
-                })}
-              </div>
+              )}
             </div>
           );
         })}
