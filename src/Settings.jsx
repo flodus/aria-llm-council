@@ -929,7 +929,8 @@ function SectionConseil() {
   const [govOpts, setGovOpts] = useState(() => getOptions());
   const [selectedMin, setSelectedMin] = useState('initiateur');
   const [selectedMin2, setSelectedMin2] = useState('justice');
-  const [tab, setTab]     = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres'
+  const [tab, setTab]         = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres'
+  const [presOpenAcc, setPresOpenAcc] = useState(null);
   const [saved, setSaved]  = useState(false);
 
   const updateGovOpts = (path, val) => {
@@ -1108,37 +1109,72 @@ function SectionConseil() {
         </div>
       )}
 
-      {tab === 'presidence' && (
-        <div>
-          <Field label={liveAgents.presidency?.phare?.name || 'Le Phare'} hint={liveAgents.presidency?.phare?.subtitle || ''}>
-            <TextArea rows={4}
-              value={getVal('presidency.phare.role', liveAgents.presidency?.phare?.role_long || PRESIDENCY?.phare?.role_long || '')}
-              onChange={v => updateAgent('presidency.phare.role', v)}
-            />
-          </Field>
-          <Field label="Essence">
-            <TextArea rows={3}
-              value={getVal('presidency.phare.essence', liveAgents.presidency?.phare?.essence || PRESIDENCY?.phare?.essence || '')}
-              onChange={v => updateAgent('presidency.phare.essence', v)}
-            />
-          </Field>
+      {tab === 'presidence' && (() => {
+        const ACC      = { border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px', overflow:'hidden', marginBottom:'0.5rem' };
+        const ACC_OPEN = { ...ACC, border:'1px solid rgba(200,164,74,0.18)', background:'rgba(200,164,74,0.02)' };
+        const BODY     = { padding:'0.5rem 0.65rem 0.7rem', display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid rgba(200,164,74,0.08)' };
+        const [openP, setOpenP] = [presOpenAcc, setPresOpenAcc];
+        const toggleP = (key) => setOpenP(p => p === key ? null : key);
+        const HDR_P = (key, agent) => {
+          const symbol = agent?.symbol || '';
+          const name   = agent?.name   || key;
+          const sub    = agent?.subtitle || '';
+          return (
+            <button onClick={() => toggleP(key)} style={{ width:'100%', display:'flex', alignItems:'center',
+              gap:'0.55rem', padding:'0.45rem 0.7rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
+              <span style={{ fontSize:'1.1rem', lineHeight:1, opacity:0.80 }}>{symbol}</span>
+              <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', letterSpacing:'0.12em',
+                color: openP===key ? 'rgba(200,164,74,0.92)' : 'rgba(200,215,240,0.70)', flex:1 }}>{name}</span>
+              {sub && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+                color:'rgba(140,160,200,0.35)', letterSpacing:'0.08em' }}>{sub}</span>}
+              <span style={{ fontSize:'0.70rem', color:'rgba(200,164,74,0.45)', marginLeft:'0.4rem' }}>{openP===key?'▾':'▸'}</span>
+            </button>
+          );
+        };
+        return (
+          <div>
+            <div style={openP==='phare' ? ACC_OPEN : ACC}>
+              {HDR_P('phare', liveAgents.presidency?.phare)}
+              {openP==='phare' && (
+                <div style={BODY}>
+                  <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.phare?.subtitle || ''}>
+                    <TextArea rows={4}
+                      value={getVal('presidency.phare.role', liveAgents.presidency?.phare?.role_long || PRESIDENCY?.phare?.role_long || '')}
+                      onChange={v => updateAgent('presidency.phare.role', v)}
+                    />
+                  </Field>
+                  <Field label="Essence">
+                    <TextArea rows={3}
+                      value={getVal('presidency.phare.essence', liveAgents.presidency?.phare?.essence || PRESIDENCY?.phare?.essence || '')}
+                      onChange={v => updateAgent('presidency.phare.essence', v)}
+                    />
+                  </Field>
+                </div>
+              )}
+            </div>
 
-          <div style={{ borderTop: '1px solid rgba(200,164,74,0.15)', margin: '1.5rem 0' }} />
-
-          <Field label={liveAgents.presidency?.boussole?.name || 'La Boussole'} hint={liveAgents.presidency?.boussole?.subtitle || ''}>
-            <TextArea rows={4}
-              value={getVal('presidency.boussole.role', liveAgents.presidency?.boussole?.role_long || PRESIDENCY?.boussole?.role_long || '')}
-              onChange={v => updateAgent('presidency.boussole.role', v)}
-            />
-          </Field>
-          <Field label="Essence">
-            <TextArea rows={3}
-              value={getVal('presidency.boussole.essence', liveAgents.presidency?.boussole?.essence || PRESIDENCY?.boussole?.essence || '')}
-              onChange={v => updateAgent('presidency.boussole.essence', v)}
-            />
-          </Field>
-        </div>
-      )}
+            <div style={openP==='boussole' ? ACC_OPEN : ACC}>
+              {HDR_P('boussole', liveAgents.presidency?.boussole)}
+              {openP==='boussole' && (
+                <div style={BODY}>
+                  <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.boussole?.subtitle || ''}>
+                    <TextArea rows={4}
+                      value={getVal('presidency.boussole.role', liveAgents.presidency?.boussole?.role_long || PRESIDENCY?.boussole?.role_long || '')}
+                      onChange={v => updateAgent('presidency.boussole.role', v)}
+                    />
+                  </Field>
+                  <Field label="Essence">
+                    <TextArea rows={3}
+                      value={getVal('presidency.boussole.essence', liveAgents.presidency?.boussole?.essence || PRESIDENCY?.boussole?.essence || '')}
+                      onChange={v => updateAgent('presidency.boussole.essence', v)}
+                    />
+                  </Field>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {tab === 'gouvernance' && (
         <SectionGouvernanceDefaut opts={govOpts} setOpts={(v) => { setGovOpts(v); setSaved(false); }} />
