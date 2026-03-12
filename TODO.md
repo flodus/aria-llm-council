@@ -12,9 +12,7 @@ _Dernière mise à jour : 2026-03-12_
 
 ## 🟡 UX COURT TERME
 
-- [ ] **U5 — Confirmation nouvelle partie** : boîte de dialogue à valider avant le bouton ↺ (nouvelle partie) dans la topbar — éviter les missclicks en cours de partie
-  - Composant : `App.jsx` · bouton `handleReset`
-  - UI : modale légère "Nouvelle partie ? La session en cours sera perdue." + Confirmer / Annuler
+- [x] **U5 — Confirmation nouvelle partie** : modale légère avant ↺ — livré 2026-03-12
 
 - [ ] **T1 — Multi-clés par provider** : permettre plusieurs clés API par provider (Init + Settings)
   - Structure cible `aria_api_keys` : `{ claude: [{key, model, default:true}, {key, model}], gemini: [...] }`
@@ -88,8 +86,14 @@ _(bloqué sur refonte carte V1)_
   mais laissait `aria_options.gameplay.context_mode` à sa valeur précédente
 - [x] **Accordéon CONTEXTE DÉLIBÉRATIONS remonté** en tête du résumé Init (avant PRÉSIDENCE ACTIVE)
 - [x] **Récap création monde** : affichage du contexte délibérations (icône + label + override) par pays
+- [x] **U5 — Confirmation nouvelle partie** : modale ↺ dans App.jsx
+- [x] **InitScreen récap — grille ministères supprimée** : grille 7 cartes non lisible retirée
+- [x] **Board Game fusionné dans MODE IA** : suppression `mode_board_game` séparé,
+  accordéon déplacé sous Contexte délibérations, option `🎲 Board Game` dans sélecteur MODE IA
+- [x] **Accordéon MODE IA 64vh** : conteneur scrollable agrandi
+- [x] **Card NOM DU MONDE unifiée** : CLÉS API + CONTINUER fusionnés dans la même card
 
 ---
 
 ## 📁 Fichiers actifs
-`InitScreen.jsx` · `Dashboard_p1.jsx` · `Dashboard_p3.jsx` · `App.jsx` · `llmCouncilEngine.js` · `ConstitutionModal.jsx`
+`InitScreen.jsx` · `Dashboard_p1.jsx` · `App.jsx`
