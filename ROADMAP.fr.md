@@ -41,14 +41,12 @@
 
  ████████████████████████████████████████  À VENIR  ██████████████████████████
 
- [ PHASE B0 : STABILISATION ] .................................... STATUT: 🔴 MAINTENANT
+ [ PHASE B0 : STABILISATION ] .................................... STATUT: ✅ TERMINÉ
  │
- │  Prérequis avant toute nouvelle fonctionnalité. Deux bugs ouverts connus.
+ │  Les deux bugs connus sont résolus.
  │
- ├─[B1] Bug ajout pays in-game .. [Erreur console à investiguer] .... ⬡ 0%
- │      └─> F12 nécessaire — probablement une mutation d'état
- └─[B2] Pipeline Country Context  [Init → délibérations in-game] ... ⬡ 0%
-        └─> Mode contexte + override n'atteignent pas fiablement les prompts
+ ├─[B1] Bug ajout pays in-game .. [addFictionalCountry — Dashboard_p1] ✅ 100%
+ └─[B2] Pipeline Country Context  [Init → délibérations in-game] ..... ✅ 100%
 
  [ PHASE U1 : POLISH UX ] ........................................ STATUT: EN FILE
  ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ⬡ 0%

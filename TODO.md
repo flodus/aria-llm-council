@@ -6,9 +6,7 @@ _Dernière mise à jour : 2026-03-12_
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
-- [ ] **B1 — Ajout pays in-game** : erreur console lors de l'ajout d'un pays depuis le dashboard
-  - Ouvrir F12, reproduire l'erreur, capturer le stack trace complet
-  - Probablement une mutation d'état dans Dashboard_p3 (handleAddCountry)
+- [x] **B1 — Ajout pays in-game** : corrigé — `addFictionalCountry` dans `Dashboard_p1.jsx`
 
 ---
 

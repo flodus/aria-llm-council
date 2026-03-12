@@ -41,14 +41,12 @@
 
  ████████████████████████████████████████  NEXT  ████████████████████████████████
 
- [ PHASE B0 : STABILITY ] ......................................... STATUS: 🔴 NOW
+ [ PHASE B0 : STABILITY ] ......................................... STATUS: ✅ DONE
  │
- │  Pre-requisite before any new feature. Two known open issues.
+ │  Both known issues resolved.
  │
- ├─[B1] Add-country bug ......... [Console error on in-game add] .... ⬡ 0%
- │      └─> F12 investigation needed — likely a state mutation issue
- └─[B2] Country Context pipeline  [Init → in-game deliberation] .... ⬡ 0%
-        └─> Context mode + override not reliably reaching council prompts
+ ├─[B1] Add-country bug ......... [addFictionalCountry — Dashboard_p1] ✅ 100%
+ └─[B2] Country Context pipeline  [Init → in-game deliberation] ...... ✅ 100%
 
  [ PHASE U1 : UX POLISH ] ........................................ STATUS: QUEUED
  ├─[U1] Regime icons ............ [Dropdowns in Init + in-game] ..... ⬡ 0%
