@@ -53,6 +53,7 @@ export default function App() {
     : -1;
   const [chronologKey,    setChronologKey]    = useState(0);
   const [resetKey,        setResetKey]        = useState(0);
+  const [confirmReset,    setConfirmReset]    = useState(false);
   const [hasApiKeys,      setHasApiKeys]      = useState(() => {
     try { const k = JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); return !!(k.claude||k.gemini); }
     catch { return false; }
@@ -275,6 +276,50 @@ export default function App() {
         <LegitimiteOverlay liveCountries={liveCountries} onClose={() => setShowLegitimite(false)} />
       )}
 
+      {/* Confirmation nouvelle partie */}
+      {confirmReset && (
+        <div style={{
+          position:'fixed', inset:0, zIndex:9999,
+          background:'rgba(0,0,0,0.65)', backdropFilter:'blur(3px)',
+          display:'flex', alignItems:'center', justifyContent:'center',
+        }}>
+          <div style={{
+            background:'#0f1117', border:'1px solid rgba(200,164,74,0.35)',
+            borderRadius:8, padding:'2rem 2.5rem', maxWidth:360, textAlign:'center',
+            fontFamily: FONT.mono, color: COLOR.text,
+          }}>
+            <div style={{ fontSize:'1.1rem', marginBottom:'0.5rem', color: COLOR.gold }}>
+              {lang === 'en' ? 'New game?' : 'Nouvelle partie ?'}
+            </div>
+            <div style={{ fontSize:'0.78rem', opacity:0.65, marginBottom:'1.8rem' }}>
+              {lang === 'en'
+                ? 'The current session will be lost.'
+                : 'La session en cours sera perdue.'}
+            </div>
+            <div style={{ display:'flex', gap:'1rem', justifyContent:'center' }}>
+              <button
+                onClick={() => { setConfirmReset(false); handleReset(); }}
+                style={{
+                  fontFamily: FONT.mono, fontSize:'0.8rem', letterSpacing:'0.1em',
+                  background:'rgba(200,164,74,0.15)', border:'1px solid rgba(200,164,74,0.5)',
+                  color: COLOR.gold, borderRadius:4, padding:'0.5rem 1.2rem', cursor:'pointer',
+                }}>
+                {lang === 'en' ? 'Confirm' : 'Confirmer'}
+              </button>
+              <button
+                onClick={() => setConfirmReset(false)}
+                style={{
+                  fontFamily: FONT.mono, fontSize:'0.8rem', letterSpacing:'0.1em',
+                  background:'transparent', border:'1px solid rgba(255,255,255,0.15)',
+                  color:'rgba(255,255,255,0.5)', borderRadius:4, padding:'0.5rem 1.2rem', cursor:'pointer',
+                }}>
+                {lang === 'en' ? 'Cancel' : 'Annuler'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Topbar */}
       <header className="topbar" style={{ visibility: page === 'settings' ? 'hidden' : 'visible' }}>
         <div className="topbar-logo"
@@ -317,7 +362,7 @@ export default function App() {
             </span>
           )}
           {worldGenerated && (
-            <button className="btn-icon" onClick={handleReset}
+            <button className="btn-icon" onClick={() => setConfirmReset(true)}
               title={t('BTN_NEW_GAME', loadLang())}
               style={{ fontSize:'0.75rem', opacity:0.55, letterSpacing:'0.05em' }}>
               ↺
