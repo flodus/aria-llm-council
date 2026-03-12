@@ -41,6 +41,12 @@ une section "MODES D'EXPÉRIENCE" qui regroupe Board Game Mode + Mode Démo
 
 ⚠️ ATTENTION : ne pas implémenter avant que la refonte Settings soit validée
 
+**Compte à rebours** :
+- Settings : grande horloge/timer entre le bouton Sauvegarder et le bouton Mode Démo
+  (visible uniquement quand le mode démo est actif)
+- Header Dashboard : "⏱ Xs" à côté du numéro de cycle, décompte en live
+- État partagé : `aria_options.gameplay.cycles_interval`
+
 ---
 
 ## Droits fondamentaux / Constitution humaine

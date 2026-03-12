@@ -14,6 +14,12 @@ _Dernière mise à jour : 2026-03-12_
 
 ## 🟡 UX COURT TERME
 
+- [ ] **T1 — Multi-clés par provider** : permettre plusieurs clés API par provider (Init + Settings)
+  - Structure cible `aria_api_keys` : `{ claude: [{key, model, default:true}, {key, model}], gemini: [...] }`
+  - UI : bouton "+ Ajouter une clé" par provider, select modèle par clé, étoile clé par défaut, bouton supprimer
+  - Impacte : `aria_api_keys` localStorage · `callAI()` dans Dashboard_p1.jsx · InitScreen.jsx · Settings.jsx
+  - _À faire après refonte Settings terminée_
+
 - [ ] **U1 — Icônes régimes** : dans les listes déroulantes Init (création pays) et in-game (settings)
 - [ ] **U2 — Harmonisation tuiles** : même style glow ministres/ministères dans les 3 contextes
   (Init PreLaunchScreen · Settings in-game · popup ConstitutionModal in-game)

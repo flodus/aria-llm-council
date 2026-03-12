@@ -47,10 +47,10 @@ class SectionErrorBoundary extends Component {
 
 function getSections(isEn) {
   return [
-    { id: 'systeme',      icon: '⚙️',  label: isEn ? 'SYSTEM'       : 'SYSTÈME'      },
-    { id: 'constitution', icon: '📜',  label: isEn ? 'CONSTITUTION' : 'CONSTITUTION' },
     { id: 'conseil',      icon: '🏛️', label: isEn ? 'GOVERNMENT'   : 'GOUVERNEMENT' },
+    { id: 'constitution', icon: '📜',  label: isEn ? 'CONSTITUTION' : 'CONSTITUTION' },
     { id: 'simulation',   icon: '🎲',  label: isEn ? 'SIMULATION'   : 'SIMULATION'   },
+    { id: 'systeme',      icon: '⚙️',  label: isEn ? 'SYSTEM'       : 'SYSTÈME'      },
     { id: 'apropos',      icon: '✦',   label: isEn ? 'ABOUT'        : 'À PROPOS'     },
   ];
 }
@@ -237,7 +237,7 @@ function Select({ value, onChange, options }) {
   );
 }
 
-function NumberInput({ value, onChange, min, max, step = 1 }) {
+function NumberInput({ value, onChange, min, max, step = 1, style }) {
   return (
     <input
       type="number"
@@ -245,6 +245,7 @@ function NumberInput({ value, onChange, min, max, step = 1 }) {
       onChange={e => onChange(Number(e.target.value))}
       min={min} max={max} step={step}
       className="settings-input-number"
+      style={style}
     />
   );
 }
@@ -1335,10 +1336,42 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
         {HDR('pres', isEn ? 'DEFAULT PRESIDENCY' : 'PRÉSIDENCE PAR DÉFAUT')}
         {openAcc==='pres' && (
           <div style={BODY}>
-            <Field label={isEn ? "Presidency type" : "Type de présidence"}
-              hint={isEn ? "Applied to all new countries unless overridden" : "Appliqué à tous les nouveaux pays sauf override"}>
-              <Select value={gov.presidency || 'duale'} onChange={v => setGov('presidency', v)} options={getPresidencyOpts(isEn)} />
-            </Field>
+            <div>
+              <div style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.7)', letterSpacing:'0.10em', marginBottom:'0.6rem', textTransform:'uppercase' }}>
+                {isEn ? 'Presidency type' : 'Type de présidence'}
+              </div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:'0.5rem' }}>
+                {[
+                  { value:'solaire',    icon:'☉',   iconSize:'1.6rem', ls:'normal', label: isEn?'Phare':'Phare',      tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
+                  { value:'lunaire',    icon:'☽',   iconSize:'1.6rem', ls:'normal', label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
+                  { value:'duale',      icon:'☉☽',  iconSize:'1.0rem', ls:'-0.05em',label: isEn?'Dual':'Duale',       tooltip: isEn?'Phare + Boussole — ARIA':'Phare + Boussole — ARIA' },
+                  { value:'collegiale', icon:null,  iconSize:'1.6rem', ls:'normal', label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Vote of 12 ministers — Constitutional Synthesis':'Vote des 12 ministres — Synthèse Constitutionnelle' },
+                ].map(({ value, icon, iconSize, ls, label, tooltip }) => {
+                  const isSel = (gov.presidency || 'duale') === value;
+                  return (
+                    <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
+                      style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'0.2rem',
+                        padding:'0.6rem 0.7rem', borderRadius:'6px', cursor:'pointer', minWidth:'3.5rem',
+                        background: isSel ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
+                        border: `1px solid ${isSel ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                        transition:'all 0.12s' }}>
+                      {icon
+                        ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{icon}</span>
+                        : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)' }} />
+                      }
+                      <span style={{ fontSize:'0.52rem', color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
+                        letterSpacing:'0.03em', textAlign:'center', maxWidth:'4rem',
+                        overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', lineHeight:1.3 }}>
+                        {label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.35)', marginTop:'0.5rem', letterSpacing:'0.06em' }}>
+                {isEn ? 'Applied to all new countries unless overridden' : 'Appliqué à tous les nouveaux pays sauf override'}
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -1483,27 +1516,6 @@ function SectionSimulation() {
     <div className="settings-section-body">
       <SectionTitle icon="🎲" label={isEn?"SIMULATION":"SIMULATION"} sub={isEn?"Regimes, critical thresholds, cycle speed, resources":"Régimes, seuils critiques, vitesse des cycles, ressources"} />
 
-      {/* ▸ VITESSE & CYCLES */}
-      <div style={openAcc==='cycles' ? ACC_OPEN : ACC}>
-        {HDR('cycles', isEn?'SPEED & CYCLES':'VITESSE & CYCLES',
-          opts.gameplay.cycles_auto ? (isEn?'auto':'auto') : null)}
-        {openAcc==='cycles' && (
-          <div style={BODY}>
-            <Field label={isEn?"Automatic cycles":"Cycles automatiques"}>
-              <Toggle value={opts.gameplay.cycles_auto}
-                onChange={v => updateOpts('cycles_auto', v)}
-                label={opts.gameplay.cycles_auto ? (isEn?'Enabled':'Activé') : (isEn?'Disabled':'Désactivé')} />
-            </Field>
-            {opts.gameplay.cycles_auto && (
-              <Field label={isEn?"Interval between cycles (seconds)":"Intervalle entre cycles (secondes)"}>
-                <NumberInput value={opts.gameplay.cycles_interval}
-                  onChange={v => updateOpts('cycles_interval', v)} min={5} max={300} step={5} />
-              </Field>
-            )}
-          </div>
-        )}
-      </div>
-
       {/* ▸ SEUILS CRITIQUES */}
       <div style={openAcc==='seuils' ? ACC_OPEN : ACC}>
         {HDR('seuils', isEn?'CRITICAL THRESHOLDS':'SEUILS CRITIQUES')}
@@ -1641,7 +1653,32 @@ function SectionSimulation() {
       <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
         <SaveBadge saved={saved} />
+        <div style={{ flex:1 }} />
+        <span style={{ fontFamily:"'JetBrains Mono',monospace", display:'flex', flexDirection:'column', alignItems:'center', gap:'0.05rem' }}>
+          <span style={{ fontSize:'0.52rem', letterSpacing:'0.10em', color:'rgba(200,164,74,0.68)', textTransform:'uppercase' }}>DÉMO</span>
+          <span style={{ fontSize:'0.46rem', color:'rgba(140,160,200,0.65)', fontWeight:'normal', letterSpacing:'0.04em' }}>
+            {isEn ? "autonomous mode" : "mode autonome d'ARIA"}
+          </span>
+        </span>
+        <Toggle value={opts.gameplay.cycles_auto}
+          onChange={v => updateOpts('cycles_auto', v)} />
+        <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem',
+          color:'rgba(160,180,220,0.55)', letterSpacing:'0.06em',
+          minWidth:'5rem', display:'inline-block' }}>
+          {opts.gameplay.cycles_auto ? (isEn?'Enabled':'Activé') : (isEn?'Disabled':'Désactivé')}
+        </span>
       </div>
+      {opts.gameplay.cycles_auto && (
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'flex-end', gap:'0.5rem', padding:'0.3rem 0.65rem 0.5rem' }}>
+          <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem',
+            color:'rgba(140,160,200,0.65)', letterSpacing:'0.06em' }}>
+            {isEn ? "Interval between cycles (s)" : "Intervalle entre les cycles (s)"}
+          </span>
+          <NumberInput value={opts.gameplay.cycles_interval}
+            onChange={v => updateOpts('cycles_interval', v)} min={5} max={300} step={5}
+            style={{ width:`${String(opts.gameplay.cycles_interval ?? 30).length + 5}ch`, padding:'0.2rem 0.3rem' }} />
+        </div>
+      )}
     </div>
   );
 }
@@ -1828,7 +1865,7 @@ export default function Settings({ onClose }) {
   const { lang } = useLocale();
   const isEn = lang === 'en';
   const SECTIONS = getSections(isEn);
-  const [activeSection, setActiveSection] = useState('systeme');
+  const [activeSection, setActiveSection] = useState('conseil');
 
   const hardReset = useCallback(() => {
     [
