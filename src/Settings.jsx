@@ -5,7 +5,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { getRegimeLabel, getTerrainLabel } from './ariaTheme';
-import { useState, useCallback, Component } from 'react';
+import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
 import BASE_AGENTS    from '../templates/base_agents.json';
 import BASE_AGENTS_EN from '../templates/base_agents_en.json';
