@@ -712,10 +712,6 @@ export function buildCountryContext(country) {
       : `\n\nContexte : Pays fictif — approche objective basée sur les statistiques fournies.`;
   }
 
-  if (mode === 'rich' || (country.description && country.description.trim()) || country.leader) {
-    console.log(`[ARIA context — ${country.nom}] mode:${mode}\n`, ctx);
-  }
-
   return ctx;
 }
 

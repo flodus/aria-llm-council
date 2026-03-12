@@ -1073,7 +1073,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   };
   const [roles, setRoles] = useState(initRoles);
   // Accordéons CONFIG
-  const [cfgOpen, setCfgOpen] = useState(''); // 'ia'|'constitution'|'boardgame'|''
+  const [cfgOpen, setCfgOpen] = useState('ia'); // MODE IA ouvert par défaut
   // Registry fetch on mount
   useEffect(() => {
     if (ARIA_REGISTRY_URL.includes('REPLACE_WITH')) { setRegStatus('error'); return; }
