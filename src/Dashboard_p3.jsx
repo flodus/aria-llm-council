@@ -1448,10 +1448,6 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     }
 
     // Onglet MAP (défaut)
-    // DEBUG — retirer après correction du bug carte
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[ARIA MAP] worldData:', !!aria.worldData, '| seed:', aria.worldData?.seed, '| countries:', aria.countries?.length, '| aiRunning:', aria.aiRunning);
-    }
     return (
       <MapSVG
         worldData={aria.worldData}

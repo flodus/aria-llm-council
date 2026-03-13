@@ -251,8 +251,8 @@ function NumberInput({ value, onChange, min, max, step = 1, style }) {
 }
 
 function SaveBadge({ saved }) {
-  if (!saved) return null;
   const { lang: badgeLang } = useLocale();
+  if (!saved) return null;
   return <span className="settings-save-badge">{t('SETTINGS_SAVED', badgeLang)}</span>;
 }
 
