@@ -1,12 +1,22 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-12_
+_Dernière mise à jour : 2026-03-13_
 
 ---
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
 - [x] **B1 — Ajout pays in-game** : corrigé — `addFictionalCountry` dans `Dashboard_p1.jsx`
+
+- [ ] **B5 — Mode IA offline** : si hors ligne (pas de réseau détecté), ne proposer que Board Game
+  - Détecter `navigator.onLine` ou écouter `offline`/`online` events
+  - Masquer les options IA exactement comme pour 0 clé configurée
+  - Fichiers : `InitScreen.jsx` (PreLaunchScreen ariaMode init + filtre boutons)
+
+- [ ] **B6 — Corbeille suppression clé API** : bouton 🗑 pour effacer une clé dans `APIKeyInline`
+  - Icône corbeille à droite du champ input (à côté du bouton Test)
+  - Vide la clé + réinitialise le statut de validation du provider
+  - Fichier : `InitScreen.jsx` (composant `APIKeyInline`, lignes ~265-285)
 
 - [ ] **B3 — Accordéons invisibles InitScreen RÉSUMÉ** 🔴 URGENT
   - Accordéons CONTEXTE DÉLIBÉRATIONS et MODE IA absents visuellement dans l'onglet RÉSUMÉ de PreLaunchScreen
