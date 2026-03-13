@@ -464,6 +464,35 @@ const validateCountryWithAI = async (query, lang) => {
     return { status:bestStatus, displayName:rcDisplayName(bestRc,lang), canonicalName:bestRc.name?.common||query };
   }
 
+  // ── PASS 1b (FR) : endpoint /translation/ — pour les noms français ≠ anglais ──
+  // (ex: "Allemagne" → Germany, "Espagne" → Spain, "Royaume-Uni" → United Kingdom)
+  if (lang === 'fr' && !data.length) {
+    try {
+      const r2 = await fetch(
+        `https://restcountries.com/v3.1/translation/${encodeURIComponent(apiQuery)}?fields=name,flags,population,translations`,
+        { signal: AbortSignal.timeout(4000) }
+      );
+      if (r2.ok) {
+        const data2 = await r2.json();
+        let st2 = null, rc2 = null;
+        for (const rc of (Array.isArray(data2)?data2:[]).slice(0,8)) {
+          const names = [rc.name?.common,rc.name?.official,rc.translations?.fra?.common].filter(Boolean);
+          for (const name of names) {
+            const m = rcMatch(query, name);
+            if (m==='found') { st2='found'; rc2=rc; break; }
+            if (m==='suggestion' && st2!=='found') { st2='suggestion'; rc2=rc; }
+          }
+          if (st2==='found') break;
+        }
+        // Fallback : si l'endpoint a retourné un résultat sans match exact, on l'accepte comme trouvé
+        if (!st2 && data2[0]) { st2='found'; rc2=data2[0]; }
+        if (st2 && rc2) {
+          return { status:st2, displayName:rcDisplayName(rc2,lang), canonicalName:rc2.name?.common||query };
+        }
+      }
+    } catch(_) {} // silence — Pass 2 prend le relais
+  }
+
   // ── PASS 2 : fuzzy local sur /all (couvre les fautes non trouvées par l'API) ──
   const all = await getAllCountries();
   let bestScore = 99, best2Rc = null;
