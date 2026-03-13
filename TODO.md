@@ -48,6 +48,17 @@ _Dernière mise à jour : 2026-03-13_
   depuis les options système (Settings) vers la ConstitutionModal par pays
   — logique : le contexte de délibération est une propriété du pays, pas un réglage global
 
+- [ ] **U8 — Mécanique questions LLM Council**
+  - Questions déjà posées : grisées + déplacées en bas de liste + badge "✓ Cycle X" au hover
+  - Questions champ libre : ajoutées dans la liste avec badge "✏️ Personnalisée"
+    et insérées dans le ministère vers lequel elles ont été redirigées
+  - Routing champ libre :
+    - Mode IA : l'IA route vers le bon ministère selon le contenu
+    - Board Game : matching local via keywords (gemini.json) + correction manuelle possible
+    - Dans les deux cas le joueur peut corriger le ministère suggéré
+  - Lien : ariaQA.json (questions hardcodées) + chronolog (filtre cycle) + keywords (routing offline)
+  - Assess dédié requis — touche LLMCouncil.jsx + llmCouncilEngine.js + chronolog
+
 - [ ] **U7 — Emoji picker pays** : permettre au joueur de choisir l'emoji de son pays
   - À la création (InitScreen) : après génération IA, proposer de changer l'emoji suggéré
   - In-game (ConstitutionModal) : champ emoji modifiable dans l'onglet Gouvernance ou Résumé
