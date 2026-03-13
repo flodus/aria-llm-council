@@ -75,6 +75,7 @@ button:focus-visible {
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 0.5rem;
+  flex-shrink: 0; /* empêche flex de shrink à 0 quand overflow:hidden retire le min-height:auto */
 }
 .aria-accordion.open {
   border-color: rgba(200,164,74,0.20);
