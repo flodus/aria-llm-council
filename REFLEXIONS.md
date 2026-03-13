@@ -108,3 +108,29 @@ Complexité : moyenne-haute
 ## Droits fondamentaux / Constitution humaine
 
 _(à développer)_
+
+---
+
+## Restructuration ministères + Destinée du Monde
+
+### Changements ministères
+- Ministère "Chance et Imprévu" → remplacé par "Industrie et Infrastructures"
+  (⚙️ Capricorne–Verseau–Vierge · ministres : Stratège, Inventeur, Analyste)
+- Prompts normal/crise par ministre intégrés directement dans le JSON des ministères
+  (base dans gemini.json — à intégrer dans base_agents.json + base_agents_en.json)
+- Routage automatique par keywords : chaque ministère a sa liste de mots-clés
+  pour suggérer le bon ministère selon la question posée
+
+### Mode Destinée
+- Oracle (👁️) et Tisseur de Wyrd (🕸️) = deux agents philosophiques optionnels
+- Ne remplacent pas les 12 ministres — s'y ajoutent ponctuellement
+- Activés par les joueurs qui croient que le destin guide les nations
+- Pas un mode crise — un mode de jeu / posture philosophique
+- Comment l'intégrer ? À définir :
+  - Toggle "Croire au Destin" dans la Constitution ?
+  - Bouton ponctuel dans le dashboard ?
+  - Remplace le bouton "Gestion de Crise" ?
+- Questions Destinée : événements exceptionnels (pandémie, météorite, IA incontrôlée...)
+
+⚠️ Assess dédié requis avant implémentation
+Fichiers impactés : base_agents.json · llmCouncilEngine.js · Settings.jsx · ConstitutionModal.jsx
