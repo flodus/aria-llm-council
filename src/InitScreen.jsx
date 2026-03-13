@@ -1087,14 +1087,15 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   });
   const [ariaMode,    setAriaMode]    = useState(() => {
     const saved = loadOpts().ia_mode || 'aria';
-    // Si aucune clé configurée, forcer board game
     const keys = loadKeys();
-    const hasKey = ['openrouter','claude','gemini','grok','openai'].some(id => {
+    const provCount = ['openrouter','claude','gemini','grok','openai'].filter(id => {
       const v = keys[id];
       if (Array.isArray(v)) return v.some(k => typeof k === 'string' && k.trim().length > 0);
       return typeof v === 'string' && v.trim().length > 0;
-    });
-    return hasKey ? saved : 'none';
+    }).length;
+    if (provCount === 0) return 'none';
+    if (provCount === 1 && (saved === 'aria' || saved === 'custom')) return 'solo';
+    return saved;
   });
   const p0 = availProviders[0] || 'openrouter';
   const p1 = availProviders[1] || p0;
@@ -1391,7 +1392,11 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                         { id:'solo',   label: t('INIT_SOLO_LABEL', lang) },
                         { id:'custom', label: t('INIT_CUSTOM_LABEL', lang) },
                         { id:'none',   label:'🎲 Board Game' },
-                      ].filter(m => availProviders.length > 0 || m.id === 'none').map(m => (
+                      ].filter(m => {
+                        if (availProviders.length === 0) return m.id === 'none';
+                        if (availProviders.length === 1) return m.id === 'solo' || m.id === 'none';
+                        return true;
+                      }).map(m => (
                         <button key={m.id}
                           style={{ ...BTN_SECONDARY, flex:1, fontSize:'0.40rem', padding:'0.28rem 0.4rem',
                             ...(ariaMode===m.id ? { border:'1px solid rgba(200,164,74,0.50)',
@@ -1440,26 +1445,55 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                       </div>
                     )}
                     {ariaMode === 'solo' && (
-                      <div style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr', gap:'0.3rem', alignItems:'center' }}>
-                        <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.50)' }}>{t('INIT_MODEL_LABEL', lang)}</span>
-                        <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
-                          value={roles.ministre_provider || availProviders[0] || 'openrouter'}
-                          onChange={e => setRoles(r => ({ ...r,
-                            ministre_provider: e.target.value, synthese_min_prov: e.target.value,
-                            phare_provider: e.target.value, boussole_provider: e.target.value, synthese_pres_prov: e.target.value,
-                            ministre_model: modelReg[e.target.value]?.[0]?.id || '',
-                          }))}>
-                          {availProviders.map(p => <option key={p} value={p}>{PROV_LABELS[p]||p}</option>)}
-                        </select>
-                        <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
-                          value={roles.ministre_model || ''}
-                          onChange={e => setRoles(r => ({ ...r,
-                            ministre_model: e.target.value, synthese_min_model: e.target.value,
-                            phare_model: e.target.value, boussole_model: e.target.value, synthese_pres_model: e.target.value,
-                          }))}>
-                          {(modelReg[roles.ministre_provider] || []).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                        </select>
-                      </div>
+                      availProviders.length === 1 ? (
+                        // Un seul provider : cartouche provider + cartouche buttons modèle
+                        <div style={{ display:'flex', flexDirection:'column', gap:'0.25rem' }}>
+                          <div style={{ display:'flex', gap:'0.3rem', alignItems:'center', flexWrap:'wrap' }}>
+                            <span style={{ ...BTN_SECONDARY, display:'inline-block', padding:'0.18rem 0.55rem',
+                              fontSize:'0.40rem', border:'1px solid rgba(200,164,74,0.35)',
+                              color:'rgba(200,164,74,0.80)', background:'rgba(200,164,74,0.06)',
+                              cursor:'default', letterSpacing:'0.10em' }}>
+                              {PROV_LABELS[p0] || p0}
+                            </span>
+                            {(modelReg[p0] || []).map(m => {
+                              const chosen = (roles.ministre_model || '') === m.id;
+                              return (
+                                <button key={m.id}
+                                  style={{ ...BTN_SECONDARY, padding:'0.18rem 0.45rem', fontSize:'0.40rem',
+                                    ...(chosen ? { border:'1px solid rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : { opacity:0.50 }) }}
+                                  onClick={() => setRoles(r => ({ ...r,
+                                    ministre_model: m.id, synthese_min_model: m.id,
+                                    phare_model: m.id, boussole_model: m.id, synthese_pres_model: m.id,
+                                  }))}>
+                                  {m.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        // Multi-provider : selects provider + modèle
+                        <div style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr', gap:'0.3rem', alignItems:'center' }}>
+                          <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(140,160,200,0.50)' }}>{t('INIT_MODEL_LABEL', lang)}</span>
+                          <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                            value={roles.ministre_provider || availProviders[0] || 'openrouter'}
+                            onChange={e => setRoles(r => ({ ...r,
+                              ministre_provider: e.target.value, synthese_min_prov: e.target.value,
+                              phare_provider: e.target.value, boussole_provider: e.target.value, synthese_pres_prov: e.target.value,
+                              ministre_model: modelReg[e.target.value]?.[0]?.id || '',
+                            }))}>
+                            {availProviders.map(p => <option key={p} value={p}>{PROV_LABELS[p]||p}</option>)}
+                          </select>
+                          <select style={{ ...SELECT_STYLE, fontSize:'0.40rem', padding:'0.2rem 0.4rem' }}
+                            value={roles.ministre_model || ''}
+                            onChange={e => setRoles(r => ({ ...r,
+                              ministre_model: e.target.value, synthese_min_model: e.target.value,
+                              phare_model: e.target.value, boussole_model: e.target.value, synthese_pres_model: e.target.value,
+                            }))}>
+                            {(modelReg[roles.ministre_provider] || []).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                          </select>
+                        </div>
+                      )
                     )}
                   </div>
                 )

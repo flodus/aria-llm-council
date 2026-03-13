@@ -780,7 +780,11 @@ function SectionConstitution() {
                       { value:'solo',   label:'Solo',                desc:isEn?'All roles on a single LLM':'Tous les rôles sur un seul LLM' },
                       { value:'custom', label:isEn?'Custom':'Personnalisé', desc:isEn?'Role-by-role assignment':'Assignation rôle par rôle' },
                       { value:'none',   label:'🎲 Board Game',       desc:isEn?'Force local pre-written responses':'Force les réponses pré-écrites locales' },
-                    ].map(m => (
+                    ].filter(m => {
+                      if (availableProviders.length === 0) return m.value === 'none';
+                      if (availableProviders.length === 1) return m.value === 'solo' || m.value === 'none';
+                      return true;
+                    }).map(m => (
                       <label key={m.value} className={`settings-radio-card${iaMode===m.value?' selected':''}`} style={{ cursor:'pointer' }}>
                         <input type="radio" name="ia_mode" value={m.value} checked={iaMode===m.value} onChange={() => updateOpts('ia_mode', m.value)} />
                         <span className="settings-radio-label">{m.label}</span>
@@ -791,20 +795,31 @@ function SectionConstitution() {
                   {iaMode === 'solo' && (
                     <div style={{ paddingLeft:'0.8rem' }}>
                       <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"SOLO LLM":"LLM SOLO"}</div>
-                      <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
-                        {PROVIDERS.map(p => {
-                          const disabled = !opts.api_keys?.[p.id];
-                          return (
-                            <label key={p.id} className={`settings-radio-card${opts.solo_model===p.id?' selected':''}${disabled?' disabled':''}`}
-                              style={{ opacity:disabled?0.30:1, cursor:disabled?'not-allowed':'pointer', flex:'0 0 auto', padding:'0.3rem 0.8rem' }}>
-                              <input type="radio" name="solo_model" value={p.id} disabled={disabled}
-                                checked={opts.solo_model===p.id} onChange={() => !disabled && updateOpts('solo_model', p.id)} />
-                              <span className="settings-radio-label">{p.label.split('—')[1]?.trim() || p.id}</span>
-                              {disabled && <span style={{ fontSize:'0.36rem', color:'rgba(200,80,80,0.55)', marginLeft:'0.3rem' }}>⚠</span>}
-                            </label>
-                          );
-                        })}
-                      </div>
+                      {availableProviders.length === 1 ? (
+                        // Un seul provider : cartouche non-interactif
+                        <span style={{ display:'inline-block', fontFamily:"'JetBrains Mono',monospace",
+                          fontSize:'0.42rem', letterSpacing:'0.10em',
+                          padding:'0.20rem 0.6rem', borderRadius:'2px',
+                          border:'1px solid rgba(200,164,74,0.35)', color:'rgba(200,164,74,0.80)',
+                          background:'rgba(200,164,74,0.06)' }}>
+                          {PROVIDERS.find(p => p.id === availableProviders[0])?.label.split('—')[1]?.trim() || availableProviders[0]}
+                        </span>
+                      ) : (
+                        <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
+                          {PROVIDERS.map(p => {
+                            const disabled = !opts.api_keys?.[p.id];
+                            return (
+                              <label key={p.id} className={`settings-radio-card${opts.solo_model===p.id?' selected':''}${disabled?' disabled':''}`}
+                                style={{ opacity:disabled?0.30:1, cursor:disabled?'not-allowed':'pointer', flex:'0 0 auto', padding:'0.3rem 0.8rem' }}>
+                                <input type="radio" name="solo_model" value={p.id} disabled={disabled}
+                                  checked={opts.solo_model===p.id} onChange={() => !disabled && updateOpts('solo_model', p.id)} />
+                                <span className="settings-radio-label">{p.label.split('—')[1]?.trim() || p.id}</span>
+                                {disabled && <span style={{ fontSize:'0.36rem', color:'rgba(200,80,80,0.55)', marginLeft:'0.3rem' }}>⚠</span>}
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
                   {iaMode === 'aria' && (
