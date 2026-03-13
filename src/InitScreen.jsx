@@ -1410,6 +1410,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                         { id:'none',   label:'🎲 Board Game' },
                       ].filter(m => {
                         if (availProviders.length === 0) return m.id === 'none';
+                        if (ariaMode === 'none') return m.id === 'none';
                         if (availProviders.length === 1) return m.id === 'solo' || m.id === 'none';
                         return true;
                       }).map(m => (
@@ -1423,11 +1424,21 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                       ))}
                     </div>
                     {ariaMode === 'none' && (
-                      <div style={{ fontSize:'0.40rem', color:'rgba(140,160,200,0.40)',
-                        fontFamily:FONT.mono, padding:'0.10rem 0.1rem', lineHeight:1.5 }}>
-                        {lang==='en'
-                          ? 'Pre-written local responses — no API key needed'
-                          : 'Réponses locales pré-écrites — sans clé API'}
+                      <div style={{ display:'flex', flexDirection:'column', gap:'0.25rem' }}>
+                        <div style={{ fontSize:'0.40rem', color:'rgba(140,160,200,0.40)',
+                          fontFamily:FONT.mono, padding:'0.10rem 0.1rem', lineHeight:1.5 }}>
+                          {lang==='en'
+                            ? 'Pre-written local responses — no API key needed'
+                            : 'Réponses locales pré-écrites — sans clé API'}
+                        </div>
+                        {availProviders.length > 0 && (
+                          <button onClick={() => setAriaMode(availProviders.length === 1 ? 'solo' : 'aria')}
+                            style={{ background:'none', border:'none', cursor:'pointer', padding:0,
+                              fontFamily:FONT.mono, fontSize:'0.40rem',
+                              color:'rgba(140,160,200,0.45)', textDecoration:'underline', textAlign:'left' }}>
+                            {lang==='en' ? '↺ Enable AI mode' : '↺ Activer le mode IA'}
+                          </button>
+                        )}
                       </div>
                     )}
                     {(ariaMode === 'aria' || ariaMode === 'custom') && (
@@ -1467,7 +1478,8 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                           <div style={{ display:'flex', gap:'0.3rem', alignItems:'center', flexWrap:'wrap' }}>
                             <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem',
                               color:'rgba(200,164,74,0.70)', letterSpacing:'0.10em',
-                              borderLeft:'2px solid rgba(200,164,74,0.35)', paddingLeft:'0.4rem' }}>
+                              borderLeft:'2px solid rgba(200,164,74,0.35)', paddingLeft:'0.4rem',
+                              textTransform:'uppercase' }}>
                               {PROV_LABELS[p0] || p0}
                             </span>
                             {(modelReg[p0] || []).map(m => {

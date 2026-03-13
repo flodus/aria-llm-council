@@ -782,6 +782,7 @@ function SectionConstitution() {
                       { value:'none',   label:'🎲 Board Game',       desc:isEn?'Force local pre-written responses':'Force les réponses pré-écrites locales' },
                     ].filter(m => {
                       if (availableProviders.length === 0) return m.value === 'none';
+                      if (iaMode === 'none') return m.value === 'none';
                       if (availableProviders.length === 1) return m.value === 'solo' || m.value === 'none';
                       return true;
                     }).map(m => (
@@ -792,6 +793,14 @@ function SectionConstitution() {
                       </label>
                     ))}
                   </div>
+                  {iaMode === 'none' && availableProviders.length > 0 && (
+                    <button onClick={() => updateOpts('ia_mode', availableProviders.length === 1 ? 'solo' : 'aria')}
+                      style={{ background:'none', border:'none', cursor:'pointer', padding:0,
+                        fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
+                        color:'rgba(140,160,200,0.45)', textDecoration:'underline', textAlign:'left' }}>
+                      {isEn ? '↺ Enable AI mode' : '↺ Activer le mode IA'}
+                    </button>
+                  )}
                   {iaMode === 'solo' && (
                     <div style={{ paddingLeft:'0.8rem' }}>
                       <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"SOLO LLM":"LLM SOLO"}</div>
@@ -800,7 +809,7 @@ function SectionConstitution() {
                         <div style={{ display:'flex', flexDirection:'column', gap:'0.35rem' }}>
                           <span style={{ fontFamily:"'JetBrains Mono',monospace",
                             fontSize:'0.42rem', letterSpacing:'0.10em',
-                            color:'rgba(200,164,74,0.70)',
+                            color:'rgba(200,164,74,0.70)', textTransform:'uppercase',
                             borderLeft:'2px solid rgba(200,164,74,0.35)', paddingLeft:'0.4rem' }}>
                             {PROVIDERS.find(p => p.id === availableProviders[0])?.label.split('—')[1]?.trim() || availableProviders[0]}
                           </span>
@@ -834,7 +843,7 @@ function SectionConstitution() {
                                   style={{ opacity:disabled?0.30:1, cursor:disabled?'not-allowed':'pointer', flex:'0 0 auto', padding:'0.3rem 0.8rem' }}>
                                   <input type="radio" name="solo_model" value={p.id} disabled={disabled}
                                     checked={opts.solo_model===p.id} onChange={() => !disabled && updateOpts('solo_model', p.id)} />
-                                  <span className="settings-radio-label">{p.label.split('—')[1]?.trim() || p.id}</span>
+                                  <span className="settings-radio-label" style={{ textTransform:'uppercase' }}>{p.label.split('—')[1]?.trim() || p.id}</span>
                                   {disabled && <span style={{ fontSize:'0.36rem', color:'rgba(200,80,80,0.55)', marginLeft:'0.3rem' }}>⚠</span>}
                                 </label>
                               );
