@@ -103,6 +103,16 @@ Afficher à chaque fin d'échange :
 
 Pas de `Co-Authored-By` dans les messages de commit.
 
+## Règle 0 — Compréhension avant exécution
+Avant toute modification de code, Claude doit :
+1. Reformuler en 2-3 phrases ce qu'il a compris de la demande
+2. Lister les fichiers qu'il prévoit de toucher
+3. Attendre une confirmation explicite avant de commencer
+
+Pas de code sans confirmation. Pas d'exception.
+
+---
+
 ## Règles de livraison
 
 Pour chaque étape :
