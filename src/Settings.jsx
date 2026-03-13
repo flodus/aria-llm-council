@@ -796,28 +796,74 @@ function SectionConstitution() {
                     <div style={{ paddingLeft:'0.8rem' }}>
                       <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"SOLO LLM":"LLM SOLO"}</div>
                       {availableProviders.length === 1 ? (
-                        // Un seul provider : cartouche non-interactif
-                        <span style={{ display:'inline-block', fontFamily:"'JetBrains Mono',monospace",
-                          fontSize:'0.42rem', letterSpacing:'0.10em',
-                          padding:'0.20rem 0.6rem', borderRadius:'2px',
-                          border:'1px solid rgba(200,164,74,0.35)', color:'rgba(200,164,74,0.80)',
-                          background:'rgba(200,164,74,0.06)' }}>
-                          {PROVIDERS.find(p => p.id === availableProviders[0])?.label.split('—')[1]?.trim() || availableProviders[0]}
-                        </span>
+                        // Un seul provider : label texte + boutons modèle
+                        <div style={{ display:'flex', flexDirection:'column', gap:'0.35rem' }}>
+                          <span style={{ fontFamily:"'JetBrains Mono',monospace",
+                            fontSize:'0.42rem', letterSpacing:'0.10em',
+                            color:'rgba(200,164,74,0.70)',
+                            borderLeft:'2px solid rgba(200,164,74,0.35)', paddingLeft:'0.4rem' }}>
+                            {PROVIDERS.find(p => p.id === availableProviders[0])?.label.split('—')[1]?.trim() || availableProviders[0]}
+                          </span>
+                          <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
+                            {(PROVIDERS.find(p => p.id === availableProviders[0])?.models || []).map(m => {
+                              const soloModel = opts.ia_models?.[availableProviders[0]] || PROVIDERS.find(p => p.id === availableProviders[0])?.models[0]?.value;
+                              const chosen = soloModel === m.value;
+                              return (
+                                <button key={m.value}
+                                  style={{ background: chosen ? 'rgba(200,164,74,0.08)' : 'none',
+                                    border:`1px solid ${chosen ? 'rgba(200,164,74,0.45)' : 'rgba(255,255,255,0.10)'}`,
+                                    color: chosen ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)',
+                                    cursor:'pointer', padding:'0.18rem 0.45rem', fontSize:'0.40rem',
+                                    fontFamily:"'JetBrains Mono',monospace", letterSpacing:'0.05em',
+                                    opacity: chosen ? 1 : 0.55 }}
+                                  onClick={() => update(`ia_models.${availableProviders[0]}`, m.value)}>
+                                  {m.label.split('—')[0]?.trim()}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
                       ) : (
-                        <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
-                          {PROVIDERS.map(p => {
-                            const disabled = !opts.api_keys?.[p.id];
+                        // Multi-provider : radio provider + boutons modèle
+                        <div style={{ display:'flex', flexDirection:'column', gap:'0.45rem' }}>
+                          <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
+                            {PROVIDERS.map(p => {
+                              const disabled = !opts.api_keys?.[p.id];
+                              return (
+                                <label key={p.id} className={`settings-radio-card${opts.solo_model===p.id?' selected':''}${disabled?' disabled':''}`}
+                                  style={{ opacity:disabled?0.30:1, cursor:disabled?'not-allowed':'pointer', flex:'0 0 auto', padding:'0.3rem 0.8rem' }}>
+                                  <input type="radio" name="solo_model" value={p.id} disabled={disabled}
+                                    checked={opts.solo_model===p.id} onChange={() => !disabled && updateOpts('solo_model', p.id)} />
+                                  <span className="settings-radio-label">{p.label.split('—')[1]?.trim() || p.id}</span>
+                                  {disabled && <span style={{ fontSize:'0.36rem', color:'rgba(200,80,80,0.55)', marginLeft:'0.3rem' }}>⚠</span>}
+                                </label>
+                              );
+                            })}
+                          </div>
+                          {(() => {
+                            const soloProvId = opts.solo_model || availableProviders[0];
+                            const soloProvDef = PROVIDERS.find(p => p.id === soloProvId);
+                            const soloModel = opts.ia_models?.[soloProvId] || soloProvDef?.models[0]?.value;
                             return (
-                              <label key={p.id} className={`settings-radio-card${opts.solo_model===p.id?' selected':''}${disabled?' disabled':''}`}
-                                style={{ opacity:disabled?0.30:1, cursor:disabled?'not-allowed':'pointer', flex:'0 0 auto', padding:'0.3rem 0.8rem' }}>
-                                <input type="radio" name="solo_model" value={p.id} disabled={disabled}
-                                  checked={opts.solo_model===p.id} onChange={() => !disabled && updateOpts('solo_model', p.id)} />
-                                <span className="settings-radio-label">{p.label.split('—')[1]?.trim() || p.id}</span>
-                                {disabled && <span style={{ fontSize:'0.36rem', color:'rgba(200,80,80,0.55)', marginLeft:'0.3rem' }}>⚠</span>}
-                              </label>
+                              <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
+                                {(soloProvDef?.models || []).map(m => {
+                                  const chosen = soloModel === m.value;
+                                  return (
+                                    <button key={m.value}
+                                      style={{ background: chosen ? 'rgba(200,164,74,0.08)' : 'none',
+                                        border:`1px solid ${chosen ? 'rgba(200,164,74,0.45)' : 'rgba(255,255,255,0.10)'}`,
+                                        color: chosen ? 'rgba(200,164,74,0.88)' : 'rgba(140,160,200,0.55)',
+                                        cursor:'pointer', padding:'0.18rem 0.45rem', fontSize:'0.40rem',
+                                        fontFamily:"'JetBrains Mono',monospace", letterSpacing:'0.05em',
+                                        opacity: chosen ? 1 : 0.55 }}
+                                      onClick={() => update(`ia_models.${soloProvId}`, m.value)}>
+                                      {m.label.split('—')[0]?.trim()}
+                                    </button>
+                                  );
+                                })}
+                              </div>
                             );
-                          })}
+                          })()}
                         </div>
                       )}
                     </div>
