@@ -18,12 +18,9 @@ _Dernière mise à jour : 2026-03-13_
   - Vide la clé + réinitialise le statut de validation du provider
   - Fichier : `InitScreen.jsx` (composant `APIKeyInline`, lignes ~265-285)
 
-- [ ] **B3 — Accordéons invisibles InitScreen RÉSUMÉ** 🔴 URGENT
-  - Accordéons CONTEXTE DÉLIBÉRATIONS et MODE IA absents visuellement dans l'onglet RÉSUMÉ de PreLaunchScreen
-  - Migration inline → `.aria-accordion` CSS class effectuée mais n'a pas résolu le problème
-  - Cause probable : conflit spécificité CSS avec `button { background-color: #1a1a1a }` dans `index.css`
-    ou problème de largeur dans le conteneur flex (le conteneur scrollRef)
-  - Fichiers : `src/index.css` (classe `.aria-accordion`) · `src/InitScreen.jsx` (lignes ~1293-1454)
+- [x] **B3 — Accordéons invisibles InitScreen RÉSUMÉ**
+  - Cause racine : `overflow:hidden` sur `.aria-accordion` supprime `min-height:auto` des flex children
+  - Fix : `flex-shrink:0` sur `.aria-accordion` dans `index.css`
 
 - [ ] **B4 — Jauge LLM Council mal affichée** 🟡
   - La jauge de satisfaction s'affiche en bas de page après le résultat du vote du peuple
@@ -105,6 +102,19 @@ _(bloqué sur refonte carte V1)_
   - Vérifier useCallback/useMemo manquants
   - Identifier les appels IA redondants
   - Ne pas implémenter sans Assess complet
+
+---
+
+## ✅ LIVRÉ cette session (2026-03-13)
+
+- [x] **Panel carte EmptyPanel** : liste pays cliquables quand aucun pays sélectionné (CountryPanel.jsx)
+- [x] **Bug React "Expected static flag"** : `SaveBadge` — `useLocale()` appelé après `return null` → déplacé avant (Settings.jsx)
+- [x] **RestCountries noms français** : Pass 1b via `/translation/` pour Allemagne, Espagne, Russie… (InitScreen.jsx)
+- [x] **B3 — Accordéons invisibles** : `flex-shrink:0` sur `.aria-accordion` (index.css)
+- [x] **Console temporaire supprimée** : `[ARIA MAP]` dans Dashboard_p3.jsx
+- [x] **Mode IA — 0 clé** : seul Board Game disponible + ariaMode forcé à `none` (InitScreen.jsx)
+- [x] **Mode IA — 1 clé** : Solo + Board Game uniquement, cartouche provider + boutons modèle (InitScreen.jsx + Settings.jsx)
+- [x] **ariaMode init** : force `solo` si 1 provider et mode sauvegardé est `aria`/`custom` (InitScreen.jsx)
 
 ---
 

@@ -116,7 +116,8 @@
 ================================================================================
  PROGRESSION : [█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~16%
  BASE : Moteur + constitution par pays complets.
-        2 bugs à corriger · Refonte carte en approche.
+        Init UX poli (filtrage mode IA, recherche FR pays, panel carte).
+        1 bug restant (B4 — jauge conseil) · Refonte carte en approche.
 ================================================================================
 ```
 

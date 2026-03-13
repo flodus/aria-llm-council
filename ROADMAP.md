@@ -114,7 +114,8 @@
 ================================================================================
  PROGRESS: [█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~16%
  BASELINE: Core engine + per-country constitution complete.
-           2 bugs to fix · Map full rework incoming.
+           Init UX polished (mode IA gating, FR country search, panel map).
+           1 bug remaining (B4 — council gauge) · Map full rework incoming.
 ================================================================================
 ```
 
