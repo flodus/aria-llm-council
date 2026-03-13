@@ -135,9 +135,16 @@ function APIKeyInline({ onClose }) {
     try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; }
   };
   const loadModels = () => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); } catch { return {}; } };
+  const loadSavedStatus = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('aria_api_keys_status')||'{}');
+      return { claude: saved.claude||null, gemini: saved.gemini||null, grok: saved.grok||null, openai: saved.openai||null };
+    } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
+  };
   const [keys,   setKeys]   = useState(loadKeys);
   const [models, setModels] = useState(loadModels);
-  const [status,   setStatus]   = useState({ claude:null, gemini:null, grok:null, openai:null });
+  const [status,   setStatus]   = useState(loadSavedStatus);
+  const [hasDeleted, setHasDeleted] = useState(false);
   const [showPass, setShowPass] = useState({ claude:false, gemini:false, grok:false, openai:false });
   const [openProv, setOpenProv] = useState(null);
 
@@ -205,6 +212,7 @@ function APIKeyInline({ onClose }) {
   };
 
   const anyOk = Object.values(status).some(s=>s==='ok');
+  const canSave = anyOk || hasDeleted;
 
   const save = () => {
     try {
@@ -226,6 +234,7 @@ function APIKeyInline({ onClose }) {
   const deleteKey = (id) => {
     setKeys(k => ({ ...k, [id]: '' }));
     setStatus(s => ({ ...s, [id]: null }));
+    setHasDeleted(true);
     try {
       const stored = loadKeys();
       delete stored[id];
@@ -319,7 +328,7 @@ function APIKeyInline({ onClose }) {
           );
         })}
 
-        {!anyOk && Object.values(keys).some(v=>v) && (
+        {!canSave && Object.values(keys).some(v=>v) && (
           <div style={{ fontSize:'0.42rem', color:'rgba(200,164,74,0.45)', lineHeight:1.5 }}>
             {lang==='en'?'⚠ Test at least one key to enable saving.':'⚠ Testez au moins une clé pour activer la sauvegarde.'}
           </div>
@@ -327,8 +336,8 @@ function APIKeyInline({ onClose }) {
 
         <div style={{ display:'flex', gap:'0.6rem', justifyContent:'flex-end', marginTop:'0.2rem' }}>
           <button style={BTN_SECONDARY} onClick={onClose}>{lang==='en'?'CANCEL':'ANNULER'}</button>
-          <button style={{ ...BTN_PRIMARY, opacity: anyOk ? 1 : 0.35 }}
-            disabled={!anyOk} onClick={save}>{lang==='en'?'SAVE':'SAUVEGARDER'}</button>
+          <button style={{ ...BTN_PRIMARY, opacity: canSave ? 1 : 0.35 }}
+            disabled={!canSave} onClick={save}>{lang==='en'?'SAVE':'SAUVEGARDER'}</button>
         </div>
       </div>
     </div>
