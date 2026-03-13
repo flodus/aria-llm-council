@@ -1102,7 +1102,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
     return typeof v === 'string' && v.trim().length > 0;
   });
   const [ariaMode,    setAriaMode]    = useState(() => {
-    const saved = loadOpts().ia_mode || 'aria';
+    const saved = loadOpts().ia_mode;
     const keys = loadKeys();
     const provCount = ['openrouter','claude','gemini','grok','openai'].filter(id => {
       const v = keys[id];
@@ -1110,6 +1110,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       return typeof v === 'string' && v.trim().length > 0;
     }).length;
     if (provCount === 0) return 'none';
+    if (!saved) return 'none'; // première utilisation → Board Game par défaut
     if (provCount === 1 && (saved === 'aria' || saved === 'custom')) return 'solo';
     return saved;
   });
@@ -2473,7 +2474,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
           ].map(m => (
             <div key={m.id}
               style={{ ...S.mCard, opacity: m.disabled ? 0.35 : 1, cursor: m.disabled ? 'not-allowed' : 'pointer' }}
-              onClick={() => { if (m.disabled) return; setMode(m.id); setStep('config'); }}>
+              onClick={() => {
+                if (m.disabled) return;
+                setMode(m.id);
+                if (m.id === 'local') setAriaMode('none');
+                if (m.id === 'ai' && ariaMode === 'none') setAriaMode(availProviders.length === 1 ? 'solo' : 'aria');
+                setStep('config');
+              }}>
               <div style={{ fontSize:'1.4rem' }}>{m.icon}</div>
               <div style={{ fontFamily:FONT.cinzel, fontSize:'0.58rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.85)' }}>{m.title}</div>
               <div style={{ fontSize:'0.50rem', color:'rgba(140,160,200,0.55)', lineHeight:1.6 }}>{m.desc}</div>
