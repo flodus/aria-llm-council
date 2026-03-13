@@ -1079,12 +1079,22 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const PROV_LABELS = { openrouter:'OpenRouter', claude:'Claude', gemini:'Gemini', grok:'Grok', openai:'OpenAI' };
   const [modelReg,    setModelReg]    = useState(ARIA_FALLBACK_MODELS);
   const [regStatus,   setRegStatus]   = useState('idle');
-  const [ariaMode,    setAriaMode]    = useState(() => loadOpts().ia_mode || 'aria');
   const apiKeys = loadKeys();
   const availProviders = ['openrouter','claude','gemini','grok','openai'].filter(id => {
     const v = apiKeys[id];
     if (Array.isArray(v)) return v.some(k => typeof k === 'string' && k.trim().length > 0);
     return typeof v === 'string' && v.trim().length > 0;
+  });
+  const [ariaMode,    setAriaMode]    = useState(() => {
+    const saved = loadOpts().ia_mode || 'aria';
+    // Si aucune clé configurée, forcer board game
+    const keys = loadKeys();
+    const hasKey = ['openrouter','claude','gemini','grok','openai'].some(id => {
+      const v = keys[id];
+      if (Array.isArray(v)) return v.some(k => typeof k === 'string' && k.trim().length > 0);
+      return typeof v === 'string' && v.trim().length > 0;
+    });
+    return hasKey ? saved : 'none';
   });
   const p0 = availProviders[0] || 'openrouter';
   const p1 = availProviders[1] || p0;
@@ -1367,13 +1377,21 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
                 badge: ariaMode === 'none' ? 'BOARD GAME' : ariaMode === 'solo' ? 'SOLO' : ariaMode === 'custom' ? 'CUSTOM' : 'ARIA',
                 content: (
                   <div style={{ padding:'0.5rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem' }}>
+                    {availProviders.length === 0 && (
+                      <div style={{ fontSize:'0.40rem', color:'rgba(200,100,60,0.70)',
+                        fontFamily:FONT.mono, padding:'0.10rem 0.1rem', lineHeight:1.5 }}>
+                        {lang==='en'
+                          ? '⚠ No API key configured — only Board Game mode available'
+                          : '⚠ Aucune clé API configurée — seul le mode Board Game est disponible'}
+                      </div>
+                    )}
                     <div style={{ display:'flex', gap:'0.35rem' }}>
                       {[
                         { id:'aria',   label:'ARIA — Multi-agent complet' },
                         { id:'solo',   label: t('INIT_SOLO_LABEL', lang) },
                         { id:'custom', label: t('INIT_CUSTOM_LABEL', lang) },
                         { id:'none',   label:'🎲 Board Game' },
-                      ].map(m => (
+                      ].filter(m => availProviders.length > 0 || m.id === 'none').map(m => (
                         <button key={m.id}
                           style={{ ...BTN_SECONDARY, flex:1, fontSize:'0.40rem', padding:'0.28rem 0.4rem',
                             ...(ariaMode===m.id ? { border:'1px solid rgba(200,164,74,0.50)',
