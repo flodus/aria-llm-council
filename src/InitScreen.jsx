@@ -223,6 +223,19 @@ function APIKeyInline({ onClose }) {
 
   const stLabel = (s) => s==='ok'?'✅':s==='error'?'❌':s==='testing'?'⏳':s==='missing'?'⚠':'';
 
+  const deleteKey = (id) => {
+    setKeys(k => ({ ...k, [id]: '' }));
+    setStatus(s => ({ ...s, [id]: null }));
+    try {
+      const stored = loadKeys();
+      delete stored[id];
+      localStorage.setItem('aria_api_keys', JSON.stringify(stored));
+      const storedStatus = JSON.parse(localStorage.getItem('aria_api_keys_status')||'{}');
+      delete storedStatus[id];
+      localStorage.setItem('aria_api_keys_status', JSON.stringify(storedStatus));
+    } catch {}
+  };
+
   return (
     <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(4,8,18,0.92)',
       backdropFilter:'blur(8px)', display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -282,6 +295,9 @@ function APIKeyInline({ onClose }) {
                     </div>
                     <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.55rem', fontSize:'0.44rem', whiteSpace:'nowrap' }}
                       disabled={!val} onClick={()=>testKey(prov.id)}>Test</button>
+                    <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.45rem', fontSize:'0.44rem' }}
+                      disabled={!val} onClick={()=>deleteKey(prov.id)}
+                      title={lang==='en'?'Delete key':'Supprimer la clé'}>🗑</button>
                     {s && <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', minWidth:'1rem' }}>{stLabel(s)}</span>}
                   </div>
                   <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
