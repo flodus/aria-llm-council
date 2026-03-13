@@ -134,3 +134,44 @@ _(à développer)_
 
 ⚠️ Assess dédié requis avant implémentation
 Fichiers impactés : base_agents.json · llmCouncilEngine.js · Settings.jsx · ConstitutionModal.jsx
+
+---
+
+## ariaQA — Fichier questions/réponses hardcodées
+
+Idée : un fichier dédié `aria_qa.json` (+ `aria_qa_en.json`) séparé de `ariaData.js`.
+
+Structure cible :
+```json
+{
+  "justice": {
+    "questions": ["Faut-il réformer le système judiciaire ?", "..."],
+    "reponses": {
+      "arbitre":   ["réponse A", "réponse B", "réponse C"],
+      "enqueteur": ["réponse A", "réponse B", "réponse C"]
+    }
+  }
+}
+```
+
+Mécanique anti-répétition :
+- Pool de N réponses par ministre par question
+- Pioche aléatoire avec exclusion des dernières utilisées (via chronolog)
+- Variantes selon le régime du pays (arbitre en démocratie ≠ arbitre en junte)
+
+Board Game en offline :
+- keywords (déjà dans gemini.json) routent vers le bon ministère
+- Pool de réponses hardcodées s'affiche
+- Le joueur choisit ou modifie librement
+
+Chargement :
+- Fichier local en fallback
+- Ou depuis Gist (comme llm-registry.json) pour mise à jour sans redéploiement
+
+Lien avec :
+- gemini.json (keywords + questions déjà ébauchés)
+- chronolog (filtre anti-doublon)
+- normalizeCountry() (variantes par régime)
+
+⚠️ Assess dédié requis avant implémentation
+⚠️ À faire après intégration gemini.json dans base_agents.json
