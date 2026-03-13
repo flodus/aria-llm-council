@@ -83,7 +83,12 @@
  │           perd en Diplomatie. Propagé dans le contexte du conseil."
  ├─[V7] Protocole de crise ....... [Référendums d'urgence] ........... ⬡ 0%
  ├─[V8] Hub de scénarios ......... [Présets historiques & sandbox] ... ⬡ 0%
- └─[V9] Support i18n ............. [Bascule FR/EN au démarrage] ...... ⬡ 0%
+ └─[V9] i18n couverture complète .. [Audit → centraliser → traduire] . ⬡ 0%
+        ├─> Audit des chaînes franglais inline (isEn ? '…' : '…')
+        ├─> Centralisation ~300 chaînes + prompts IA vers ariaI18n.js
+        ├─> Traduction complète FR/EN de toute l'interface
+        ├─> Sync base_agents_en.json ↔ base_agents.json
+        └─> ariaQA_en.json (quand ariaQA sera créé)
 
  [ PHASE V3 : INFRASTRUCTURE LLM ] ............................... STATUT: EN FILE
  ├─[V10] Découverte dynamique .... [Énumération API après clé] ....... ⬡ 0%
@@ -92,7 +97,6 @@
 
  [ PHASE V4 : QUALITÉ & MAINTENABILITÉ ] ......................... STATUT: EN FILE
  ├─[V5] Refactor arborescence ... [src/components · engine · lib] .... ⬡ 0%
- ├─[V7] Audit i18n .............. [Centraliser chaînes inline → ariaI18n] ⬡ 0%
  └─[V8] Optimisation moteur ..... [Re-renders · useCallback · appels IA] ⬡ 0%
 
  [ PHASE V5 : MULTIJOUEUR ] ...................................... STATUT: DISTANT

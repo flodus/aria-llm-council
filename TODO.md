@@ -93,9 +93,10 @@ _(bloqué sur refonte carte V1)_
   - Concerne : Settings.jsx (prompts éditables) + llmCouncilEngine.js (synthèses)
   - Nécessite un Assess complet avant implémentation
 
-- [ ] **V7 — Audit i18n** : centraliser toutes les chaînes `isEn ? '...' : '...'` inline
-  vers `ariaI18n.js` — concerne Settings.jsx, Dashboard_p3.jsx, InitScreen.jsx, ConstitutionModal.jsx
-  Améliore la maintenabilité sans toucher aux mécaniques
+- [ ] **V9 — i18n couverture complète** : audit + centralisation des chaînes inline `isEn ? '...' : '...'`
+  vers `ariaI18n.js`, traduction FR/EN de toute l'UI, sync `base_agents_en.json`
+  — concerne Settings.jsx, Dashboard_p3.jsx, InitScreen.jsx, ConstitutionModal.jsx, LLMCouncil.jsx, CountryPanel.jsx
+  — `ariaQA_en.json` quand ariaQA sera créé · Voir `i18n_todolist.md` pour le détail (~300 strings + prompts IA)
 
 - [ ] **V8 — Optimisation moteur** : session Assess dédiée
   - Profiler les re-renders React

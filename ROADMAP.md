@@ -82,7 +82,12 @@
  │           loses Diplomacy. Propagated through council context."
  ├─[V7] Crisis protocol ......... [Emergency referendums] ........... ⬡ 0%
  ├─[V8] Scenarios hub ........... [Historical & Sandbox presets] .... ⬡ 0%
- └─[V9] i18n support ............ [FR/EN switch at startup] ......... ⬡ 0%
+ └─[V9] i18n full coverage ....... [Audit → centralise → translate] .. ⬡ 0%
+        ├─> Audit all inline franglais strings (isEn ? '…' : '…')
+        ├─> Centralise ~300 strings + AI prompts to ariaI18n.js
+        ├─> Full FR/EN UI translation (all components)
+        ├─> Sync base_agents_en.json ↔ base_agents.json
+        └─> ariaQA_en.json (when ariaQA is created)
 
  [ PHASE V3 : LLM INFRASTRUCTURE ] .............................. STATUS: QUEUED
  ├─[V10] Dynamic model discovery  [Post-key API enumeration] ........ ⬡ 0%
@@ -91,7 +96,6 @@
 
  [ PHASE V4 : QUALITY & MAINTAINABILITY ] ........................ STATUS: QUEUED
  ├─[V5] Src refactor ............ [src/components · engine · lib] .... ⬡ 0%
- ├─[V7] i18n audit .............. [Centralise inline strings → ariaI18n] ⬡ 0%
  └─[V8] Engine optimisation ..... [Re-renders · useCallback · AI calls] ⬡ 0%
 
  [ PHASE V5 : MULTIPLAYER ] ...................................... STATUS: DISTANT
