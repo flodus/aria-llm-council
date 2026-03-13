@@ -2477,8 +2477,12 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
               onClick={() => {
                 if (m.disabled) return;
                 setMode(m.id);
-                if (m.id === 'local') setAriaMode('none');
-                if (m.id === 'ai' && ariaMode === 'none') setAriaMode(availProviders.length === 1 ? 'solo' : 'aria');
+                try {
+                  const opts = JSON.parse(localStorage.getItem('aria_options')||'{}');
+                  if (m.id === 'local') opts.ia_mode = 'none';
+                  else if (m.id === 'ai' && opts.ia_mode === 'none') opts.ia_mode = 'aria';
+                  localStorage.setItem('aria_options', JSON.stringify(opts));
+                } catch {}
                 setStep('config');
               }}>
               <div style={{ fontSize:'1.4rem' }}>{m.icon}</div>
