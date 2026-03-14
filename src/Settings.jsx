@@ -437,9 +437,10 @@ function SectionSysteme({ onHardReset }) {
       id: 'gemini', label: 'Google — Gemini', placeholder: 'AIza...',
       hint: isEn?'Ministry synthesis · Presidential synthesis':'Synthèse ministérielle · Synthèse présidentielle',
       models: [
-        { value:'gemini-2.0-flash',   label:`gemini-2.0-flash — ${isEn?'ARIA default':'Défaut ARIA'}` },
-        { value:'gemini-1.5-pro',     label:`gemini-1.5-pro — ${isEn?'Powerful':'Puissant'}` },
-        { value:'gemini-1.5-flash',   label:`gemini-1.5-flash — ${isEn?'Fast':'Rapide'}` },
+        { value:'gemini-2.5-pro-preview-05-06', label:`gemini-2.5-pro-preview — ${isEn?'Powerful':'Puissant'}` },
+        { value:'gemini-2.0-flash',             label:`gemini-2.0-flash — ${isEn?'ARIA default':'Défaut ARIA'}` },
+        { value:'gemini-1.5-pro',               label:`gemini-1.5-pro — ${isEn?'Balanced':'Équilibré'}` },
+        { value:'gemini-1.5-flash',             label:`gemini-1.5-flash — ${isEn?'Fast':'Rapide'}` },
       ],
     },
     {
@@ -456,6 +457,7 @@ function SectionSysteme({ onHardReset }) {
       models: [
         { value:'gpt-4.1',      label:`gpt-4.1 — ${isEn?'Powerful':'Puissant'}` },
         { value:'gpt-4.1-mini', label:`gpt-4.1-mini — ${isEn?'Default · Fast':'Défaut · Rapide'}` },
+        { value:'o4-mini',      label:`o4-mini — ${isEn?'Reasoning':'Raisonnement'}` },
       ],
     },
   ];
@@ -719,9 +721,9 @@ function SectionConstitution() {
 
   const PROVIDERS = [
     { id:'claude', label:'Anthropic — Claude', models:[{value:'claude-opus-4-6',label:'opus-4-6'},{value:'claude-sonnet-4-6',label:'sonnet-4-6'},{value:'claude-haiku-4-5-20251001',label:'haiku-4-5'}] },
-    { id:'gemini', label:'Google — Gemini',    models:[{value:'gemini-2.0-flash',label:'2.0-flash'},{value:'gemini-1.5-pro',label:'1.5-pro'},{value:'gemini-1.5-flash',label:'1.5-flash'}] },
+    { id:'gemini', label:'Google — Gemini',    models:[{value:'gemini-2.5-pro-preview-05-06',label:'2.5-pro-preview'},{value:'gemini-2.0-flash',label:'2.0-flash'},{value:'gemini-1.5-pro',label:'1.5-pro'},{value:'gemini-1.5-flash',label:'1.5-flash'}] },
     { id:'grok',   label:'xAI — Grok',         models:[{value:'grok-3',label:'grok-3'},{value:'grok-3-mini',label:'grok-3-mini'}] },
-    { id:'openai', label:'OpenAI — GPT',        models:[{value:'gpt-4.1',label:'gpt-4.1'},{value:'gpt-4.1-mini',label:'gpt-4.1-mini'}] },
+    { id:'openai', label:'OpenAI — GPT',        models:[{value:'gpt-4.1',label:'gpt-4.1'},{value:'gpt-4.1-mini',label:'gpt-4.1-mini'},{value:'o4-mini',label:'o4-mini'}] },
   ];
   const anyKey = !!(opts.api_keys?.claude || opts.api_keys?.gemini || opts.api_keys?.grok || opts.api_keys?.openai);
   const iaMode = opts.ia_mode;
