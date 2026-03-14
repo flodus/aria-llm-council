@@ -3,6 +3,8 @@
 > Langue de travail : français. Toutes les réponses et commentaires en français.
 > Contexte technique complet : lire ARIA_CONTEXT.md à la racine du projet.
 
+@ARIA_CONTEXT.md
+
 ## Commandes
 ```bash
 npm run dev       # Dev server at http://localhost:5173
