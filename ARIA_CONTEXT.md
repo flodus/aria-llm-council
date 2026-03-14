@@ -1,9 +1,11 @@
 # ARIA_CONTEXT — Base de connaissances permanente
 Simulation de gouvernance multi-LLM — React 19 + Vite + GitHub Pages
+Session courante : Claude.ai (Assess/Decide) + Claude Code terminal (Do)
 
 ---
 
 ## Stack technique
+
 - React 19 + Vite, SPA client-side, pas de backend
 - Styles inline uniquement — pas de CSS modules, pas de TypeScript
 - MDI icons (Material Design Icons via CDN)
@@ -23,8 +25,9 @@ Simulation de gouvernance multi-LLM — React 19 + Vite + GitHub Pages
 | Dashboard_p3.jsx | Composant principal : modales, FAB, assemblage |
 | App.jsx | Shell global, ariaRef (API impérative p3) |
 | InitScreen.jsx | Écran démarrage : config monde, clés API |
-| Settings.jsx | Configuration (5 sections) |
+| Settings.jsx | Configuration (5 sections : Gouvernement/Constitution/Simulation/Système/À Propos) |
 | ConstitutionModal.jsx | Modale constitution par pays (in-game) |
+| CountryPanel.jsx | Panneau latéral pays sélectionné |
 | llmCouncilEngine.js | Pipeline délibération 6 phases ⚠️ ne pas modifier sans demande explicite |
 | ariaData.js | Données statiques + FALLBACK_RESPONSES ⚠️ idem |
 | ariaTheme.js | Design tokens ⚠️ idem |
@@ -33,11 +36,12 @@ Simulation de gouvernance multi-LLM — React 19 + Vite + GitHub Pages
 ---
 
 ## Conventions de code
+
 - Commentaires et noms de variables en français
-- Styles inline uniquement
+- Styles inline uniquement — jamais de CSS modules
 - Pas de TypeScript
 - Composants fonctionnels React uniquement
-- perGov[i] = null = héritage gouvernance commune — ne jamais initialiser autrement
+- Hooks : useCallback/useMemo sur les fonctions passées en props
 
 ---
 
@@ -46,19 +50,19 @@ Simulation de gouvernance multi-LLM — React 19 + Vite + GitHub Pages
 ### perGov
 ```js
 perGov[i] = null  // null = hérite constitution commune
-// Flux : InitScreen.saveAndLaunch → defs[i].governanceOverride 
+// Flux : InitScreen.saveAndLaunch → defs[i].governanceOverride
 //        → Dashboard_p1 → llmCouncilEngine.getAgentsFor(country)
 ```
 
 ### Country Context
-- Contrôlé par aria_options.gameplay.context_mode ('auto'|'rich'|'stats_only'|'off')
+- Contrôlé par `aria_options.gameplay.context_mode` ('auto'|'rich'|'stats_only'|'off')
 - Hiérarchie : Settings global → Constitution par pays → contextOverride (remplace tout)
-- buildCountryContext() dans llmCouncilEngine.js
+- `buildCountryContext()` dans llmCouncilEngine.js
 
 ### Providers IA
 - Claude + Gemini : implémentés dans callModel()
-- Grok + OpenAI : déclarés, pas encore implémentés dans callModel()
-- Clés debug : préfixe valide + contient -fake/-test/-debug/-demo → statut ⏳
+- Grok + OpenAI : déclarés dans les sélecteurs, pas encore implémentés dans callModel()
+- Clés debug : préfixe valide + contient -fake/-test/-debug/-demo → statut ⏳, pas d'appel API
 
 ### Présidence
 - ☉ Phare = La Volonté (président seul)
@@ -72,7 +76,7 @@ justice · economie · defense · sante · education · ecologie · industrie
 
 ---
 
-## localStorage — clés importantes
+## LocalStorage — clés importantes
 
 | Clé | Contenu |
 |-----|---------|
@@ -86,6 +90,16 @@ justice · economie · defense · sante · education · ecologie · industrie
 
 ---
 
+## Fichiers de suivi
+- TODO.md — backlog quotidien
+- ROADMAP.fr.md — vision globale
+- REFLEXIONS.md — idées de fond (Assess requis)
+- ARBORESCENCE.md — structure complète
+- SETTINGS_ARCHITECTURE.md — avant/après refonte Settings
+- ANALYSE_STRUCTURE_PAYS.md — base normalizeCountry()
+
+---
+
 ## Décisions d'architecture actées
 - server.js conservé — base V4 multijoueur + proxy RSS futur
 - Prompts JSON synthèse en français intentionnel — moteur parse un format strict
@@ -95,15 +109,5 @@ justice · economie · defense · sante · education · ecologie · industrie
 - Trois niveaux de reset : "Recommencer l'histoire" / "Refonder" / "Rendez-vous en terres inconnues"
 - generateWorld() 100% déterministe — soft reset trivial à implémenter
 - Règle 0 : CR avant exécution — Claude Code reformule avant de coder
-
----
-
-## Fichiers de suivi
-- TODO.md — backlog quotidien
-- ROADMAP.fr.md — vision globale
-- REFLEXIONS.md — idées de fond (Assess requis)
-- ARBORESCENCE.md — structure complète
-- SETTINGS_ARCHITECTURE.md — avant/après refonte Settings
-- ANALYSE_STRUCTURE_PAYS.md — base normalizeCountry()
 
 _Mettre à jour après chaque décision d'architecture majeure_
