@@ -650,8 +650,32 @@ export function checkSeuils(before, after) {
 /** Récupère les clés API depuis localStorage */
 export function getApiKeys() {
   try {
-    return JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+    const raw = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+    const result = {};
+    for (const [id, val] of Object.entries(raw)) {
+      if (typeof val === 'string') result[id] = val;
+      else if (Array.isArray(val) && val.length > 0) {
+        const def = val.find(k => k.default) || val[0];
+        result[id] = def?.key || '';
+      }
+    }
+    return result;
   } catch { return {}; }
+}
+
+// Retourne les clés d'un provider ordonnées (default en premier), rétrocompat string/array
+function getProviderKeys(provider) {
+  try {
+    const raw = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+    const val = raw[provider];
+    if (!val) return [];
+    if (typeof val === 'string') return val.trim() ? [{ key: val.trim(), model: null }] : [];
+    if (Array.isArray(val)) {
+      const valid = val.filter(k => k.key?.trim());
+      return [...valid.filter(k => k.default), ...valid.filter(k => !k.default)];
+    }
+    return [];
+  } catch { return []; }
 }
 
 /** Construit le prompt IA de création d'un pays */
@@ -735,98 +759,81 @@ Génère une notification d'analyse en JSON :
 
 // Appelle un modèle spécifique (Claude ou Gemini) via API
 async function callModel(model, prompt, keys, systemPrompt = '', _retryCount = 0) {
-  // Priorité Gemini (gratuit) si les deux clés existent
-  // Si le modèle demandé n'a pas de clé → fallback dans l'ordre : gemini → claude → grok → openai
+  // Fallback provider si pas de clé pour le provider demandé (rétrocompat string + array)
+  const hasKey = (p) => { const v = keys[p]; return !!(v && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some(k => k.key?.trim()) : false)); };
   const KEY_PRIORITY = ['gemini','claude','grok','openai'];
-  if (!keys[model]) {
-    model = KEY_PRIORITY.find(p => keys[p]) || model;
-  }
+  if (!hasKey(model)) model = KEY_PRIORITY.find(p => hasKey(p)) || model;
 
-  // 1. On prépare le contenu fusionné (Rôle + Données)
   const fullContent = systemPrompt
-  ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
-  : prompt;
+    ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
+    : prompt;
 
-  if (model === 'claude' && keys.claude) {
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': keys.claude,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').claude || 'claude-sonnet-4-6'; } catch { return 'claude-sonnet-4-6'; } })(),
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: fullContent }],
-        }),
-      });
-      const data = await res.json();
-      const text = data?.content?.[0]?.text || '';
-      const clean = text.replace(/```json|```/g, '').trim();
-      return JSON.parse(clean);
-    } catch (e) {
-      console.warn('[ARIA] Claude error:', e.message);
-      return { error: true, msg: getRandomFallback() };
-    }
-  }
-
-  if (model === 'gemini' && keys.gemini) {
-    const preferredGemini = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').gemini; } catch { return null; } })();
-    const GEMINI_MODELS = [preferredGemini, 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
-    let lastWas429 = false;
-    for (const gModel of GEMINI_MODELS) {
-      // Si le modèle précédent a eu un 429, attendre avant de tenter le suivant
-      if (lastWas429) await new Promise(r => setTimeout(r, 1500));
-      lastWas429 = false;
-      let attempt = 0;
-      while (attempt <= 2) {
-        try {
-          const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keys.gemini}`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: fullContent }] }],
-                generationConfig: { temperature: 0.8, maxOutputTokens: 1000 },
-              }),
-            }
-          );
-          if (!res.ok) {
-            if (res.status === 429) {
-              lastWas429 = true;
-              if (attempt < 2) {
-                const delay = 2000 * Math.pow(2, attempt); // 2s → 4s
-                console.warn(`[ARIA] Gemini 429 (${gModel}) — retry ${attempt+1}/2 dans ${delay}ms`);
-                await new Promise(r => setTimeout(r, delay));
-                attempt++;
-                continue;
-              }
-              // Épuisé sur ce modèle → essayer modèle suivant
-              break;
-            }
-            break; // autre erreur HTTP → modèle suivant
-          }
-          const data = await res.json();
-          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          const clean = text.replace(/```json|```/g, '').trim();
-          return JSON.parse(clean);
-        } catch (e) {
-          console.warn(`[ARIA] Gemini ${gModel} error:`, e.message);
-          break; // exception → modèle suivant
-        }
+  if (model === 'claude') {
+    const claudeKeys = getProviderKeys('claude');
+    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').claude || 'claude-sonnet-4-6'; } catch { return 'claude-sonnet-4-6'; } })();
+    for (const keyEntry of claudeKeys) {
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': keyEntry.key,
+            'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+          body: JSON.stringify({ model: keyEntry.model || prefModel, max_tokens: 1000,
+            messages: [{ role: 'user', content: fullContent }] }),
+        });
+        if (res.status === 429) { console.warn('[ARIA] Claude 429 — tentative clé suivante'); continue; }
+        const data = await res.json();
+        const text = data?.content?.[0]?.text || '';
+        return JSON.parse(text.replace(/```json|```/g, '').trim());
+      } catch (e) {
+        console.warn('[ARIA] Claude error:', e.message);
+        if (claudeKeys.indexOf(keyEntry) < claudeKeys.length - 1) continue;
       }
     }
-    // Tous les modèles Gemini épuisés → fallback Claude si disponible
-    if (keys.claude) {
-      console.warn('[ARIA] Gemini épuisé — fallback Claude');
-      return callModel('claude', prompt, keys, systemPrompt, 0);
+    return { error: true, msg: getRandomFallback() };
+  }
+
+  if (model === 'gemini') {
+    const geminiKeys = getProviderKeys('gemini');
+    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').gemini; } catch { return null; } })();
+    for (const keyEntry of geminiKeys) {
+      const GEMINI_MODELS = [keyEntry.model || prefModel, 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
+      let lastWas429 = false;
+      for (const gModel of GEMINI_MODELS) {
+        if (lastWas429) await new Promise(r => setTimeout(r, 1500));
+        lastWas429 = false;
+        let attempt = 0;
+        while (attempt <= 2) {
+          try {
+            const res = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keyEntry.key}`,
+              { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: fullContent }] }],
+                  generationConfig: { temperature: 0.8, maxOutputTokens: 1000 } }) }
+            );
+            if (!res.ok) {
+              if (res.status === 429) {
+                lastWas429 = true;
+                if (attempt < 2) {
+                  await new Promise(r => setTimeout(r, 2000 * Math.pow(2, attempt)));
+                  attempt++; continue;
+                }
+                break;
+              }
+              break;
+            }
+            const data = await res.json();
+            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            return JSON.parse(text.replace(/```json|```/g, '').trim());
+          } catch (e) { console.warn(`[ARIA] Gemini ${gModel} error:`, e.message); break; }
+        }
+      }
+      console.warn('[ARIA] Gemini: modèles épuisés pour cette clé — tentative clé suivante');
     }
+    const claudeKeys = getProviderKeys('claude');
+    if (claudeKeys.length > 0) { console.warn('[ARIA] Gemini épuisé — fallback Claude'); return callModel('claude', prompt, keys, systemPrompt, 0); }
     return { error: true, code: 429, msg: '⚠ Quota Gemini dépassé — tous les modèles épuisés.' };
   }
+
   return { error: true, msg: "SYSTÈME : Aucune clé API valide détectée." };
 }
 
@@ -866,7 +873,8 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   const promptsSys = getPromptsSys(); // On récupère les prompts personnalisables
   const keys = opts.api_keys;
   const roles = opts.ia_roles;
-  const hasKeys = !!(keys.claude || keys.gemini);
+  const hasKeyForProv = (v) => !!(v && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some(k => k.key?.trim()) : false));
+  const hasKeys = hasKeyForProv(keys.claude) || hasKeyForProv(keys.gemini) || hasKeyForProv(keys.grok) || hasKeyForProv(keys.openai);
 
   // 1. Priorité au mode hors-ligne forcé, Board Game (ia_mode:'none'), ou absence de clés
   if (!hasKeys || opts.force_local || opts.ia_mode === 'none') {

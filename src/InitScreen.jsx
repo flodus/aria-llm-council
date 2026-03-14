@@ -131,22 +131,7 @@ const KEY_STATUS_STYLE = (s) => ({
 
 function APIKeyInline({ onClose }) {
   const { lang } = useLocale();
-  const loadKeys = () => {
-    try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; }
-  };
-  const loadModels = () => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); } catch { return {}; } };
-  const loadSavedStatus = () => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('aria_api_keys_status')||'{}');
-      return { claude: saved.claude||null, gemini: saved.gemini||null, grok: saved.grok||null, openai: saved.openai||null };
-    } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
-  };
-  const [keys,   setKeys]   = useState(loadKeys);
-  const [models, setModels] = useState(loadModels);
-  const [status,   setStatus]   = useState(loadSavedStatus);
-  const [hasDeleted, setHasDeleted] = useState(false);
-  const [showPass, setShowPass] = useState({ claude:false, gemini:false, grok:false, openai:false });
-  const [openProv, setOpenProv] = useState(null);
+  const loadKeys = () => { try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; } };
 
   const PROVIDERS = [
     { id:'claude', label:'CLAUDE',  sub:'Anthropic',  ph:'sk-ant-…',
@@ -201,48 +186,102 @@ function APIKeyInline({ onClose }) {
     }},
   ];
 
-  const testKey = async (id) => {
-    if (!keys[id]) { setStatus(s=>({...s,[id]:'missing'})); return; }
-    setStatus(s=>({...s,[id]:'testing'}));
+  // ── État multi-clés ────────────────────────────────────────────────────────
+  const [keyState, setKeyState] = useState(() => {
+    const raw = loadKeys();
+    const saved = (() => { try { return JSON.parse(localStorage.getItem('aria_api_keys_status')||'{}'); } catch { return {}; } })();
+    const provKeys = {};
+    const keyStatus = {};
+    for (const p of PROVIDERS) {
+      const val = raw[p.id];
+      const defModel = p.versions.find(v=>v.label.includes('★'))?.id || p.versions[0]?.id || '';
+      let entries = [];
+      if (typeof val === 'string' && val.trim()) {
+        const id = Math.random().toString(36).slice(2);
+        entries = [{ key: val, model: defModel, default: true, _id: id }];
+        keyStatus[id] = saved[p.id] || null;
+      } else if (Array.isArray(val)) {
+        entries = val.filter(k => k.key?.trim()).map((k, i) => {
+          const id = Math.random().toString(36).slice(2);
+          keyStatus[id] = i === 0 ? (saved[p.id] || null) : null;
+          return { key: k.key, model: k.model || defModel, default: !!k.default, _id: id };
+        });
+        if (entries.length > 0 && !entries.some(k => k.default)) entries[0] = { ...entries[0], default: true };
+      }
+      provKeys[p.id] = entries;
+    }
+    return { provKeys, keyStatus };
+  });
+  const { provKeys, keyStatus } = keyState;
+  const setPK = (fn) => setKeyState(s => ({ ...s, provKeys: typeof fn === 'function' ? fn(s.provKeys) : fn }));
+  const setKS = (fn) => setKeyState(s => ({ ...s, keyStatus: typeof fn === 'function' ? fn(s.keyStatus) : fn }));
+  const [hasDeleted, setHasDeleted] = useState(false);
+  const [openProv, setOpenProv] = useState(null);
+
+  const addKey = (provId) => {
+    const prov = PROVIDERS.find(p => p.id === provId);
+    const defModel = prov.versions.find(v=>v.label.includes('★'))?.id || prov.versions[0]?.id || '';
+    const id = Math.random().toString(36).slice(2);
+    setPK(pk => ({ ...pk, [provId]: [...(pk[provId]||[]), { key:'', model:defModel, default:false, _id:id }] }));
+  };
+  const updateEntry = (provId, _id, field, value) => {
+    setPK(pk => ({ ...pk, [provId]: pk[provId].map(k => k._id===_id ? {...k,[field]:value} : k) }));
+    if (field === 'key') setKS(ks => ({ ...ks, [_id]: null }));
+  };
+  const removeEntry = (provId, _id) => {
+    setPK(pk => {
+      let arr = pk[provId].filter(k => k._id !== _id);
+      if (arr.length > 0 && !arr.some(k => k.default)) arr = [{ ...arr[0], default:true }, ...arr.slice(1)];
+      return { ...pk, [provId]: arr };
+    });
+    setKS(ks => { const n={...ks}; delete n[_id]; return n; });
+    setHasDeleted(true);
+  };
+  const setDefault = (provId, _id) =>
+    setPK(pk => ({ ...pk, [provId]: pk[provId].map(k => ({...k, default: k._id===_id})) }));
+
+  const testEntry = async (provId, _id, keyVal, modelVal) => {
+    if (!keyVal?.trim()) return;
+    setKS(ks => ({...ks, [_id]:'testing'}));
+    const prov = PROVIDERS.find(p=>p.id===provId);
     try {
-      const prov = PROVIDERS.find(p=>p.id===id);
-      const ok = await prov.testUrl(keys[id], models[id]);
-      setStatus(s=>({...s,[id]: ok ? 'ok' : 'error'}));
-    } catch { setStatus(s=>({...s,[id]:'error'})); }
+      const ok = await prov.testUrl(keyVal, modelVal);
+      setKS(ks => ({...ks, [_id]: ok?'ok':'error'}));
+    } catch { setKS(ks => ({...ks, [_id]:'error'})); }
   };
 
-  const anyOk = Object.values(status).some(s=>s==='ok');
+  const anyOk = Object.values(keyStatus).some(s=>s==='ok');
+  const hasAnyKey = Object.values(provKeys).some(arr => arr.some(k=>k.key?.trim()));
   const canSave = anyOk || hasDeleted;
+  const stIcon = (s) => s==='ok'?'✅':s==='error'?'❌':s==='testing'?'⏳':'';
 
   const save = () => {
-    try {
-      const existing = loadKeys();
-      const merged = { ...existing, ...keys };
-      localStorage.setItem('aria_api_keys', JSON.stringify(merged));
-      const st = {};
-      PROVIDERS.forEach(p => { if (status[p.id]==='ok') st[p.id]='ok'; else if (status[p.id]==='error') st[p.id]='error'; });
-      localStorage.setItem('aria_api_keys_status', JSON.stringify(st));
-      // Save preferred models per provider
-      const existingModels = loadModels();
-      localStorage.setItem('aria_preferred_models', JSON.stringify({...existingModels, ...models}));
-    } catch {}
+    const toSave = {};
+    const statusToSave = {};
+    for (const [provId, keyArr] of Object.entries(provKeys)) {
+      const valid = keyArr.filter(k => k.key?.trim());
+      if (valid.length === 0) continue;
+      if (!valid.some(k => k.default)) valid[0] = { ...valid[0], default: true };
+      toSave[provId] = valid.length === 1
+        ? valid[0].key.trim()
+        : valid.map(({ _id, ...k }) => ({ ...k, key: k.key.trim() }));
+      const statuses = valid.map(k => keyStatus[k._id]);
+      if (statuses.some(s => s==='ok')) statusToSave[provId] = 'ok';
+      else if (statuses.length > 0 && statuses.every(s => s==='error')) statusToSave[provId] = 'error';
+      // Modèle préféré = modèle de la clé default
+      const defKey = valid.find(k => k.default) || valid[0];
+      if (defKey?.model) {
+        try {
+          const pm = JSON.parse(localStorage.getItem('aria_preferred_models')||'{}');
+          localStorage.setItem('aria_preferred_models', JSON.stringify({...pm, [provId]: defKey.model}));
+        } catch {}
+      }
+    }
+    const existing = loadKeys();
+    for (const pid of PROVIDERS.map(p=>p.id)) { if (!toSave[pid]) delete existing[pid]; }
+    localStorage.setItem('aria_api_keys', JSON.stringify({ ...existing, ...toSave }));
+    localStorage.setItem('aria_api_keys_status', JSON.stringify(statusToSave));
     onClose();
-  };
-
-  const stLabel = (s) => s==='ok'?'✅':s==='error'?'❌':s==='testing'?'⏳':s==='missing'?'⚠':'';
-
-  const deleteKey = (id) => {
-    setKeys(k => ({ ...k, [id]: '' }));
-    setStatus(s => ({ ...s, [id]: null }));
-    setHasDeleted(true);
-    try {
-      const stored = loadKeys();
-      delete stored[id];
-      localStorage.setItem('aria_api_keys', JSON.stringify(stored));
-      const storedStatus = JSON.parse(localStorage.getItem('aria_api_keys_status')||'{}');
-      delete storedStatus[id];
-      localStorage.setItem('aria_api_keys_status', JSON.stringify(storedStatus));
-    } catch {}
   };
 
   return (
@@ -250,93 +289,95 @@ function APIKeyInline({ onClose }) {
       backdropFilter:'blur(8px)', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <div style={{ ...CARD_STYLE, width:480, display:'flex', flexDirection:'column', gap:'0.7rem' }}>
         <div style={{ ...labelStyle(), marginBottom:'0.1rem' }}>{lang==='en'?'🔑 API KEYS':'🔑 CLÉS API'}</div>
-        <p style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.40)',
-          margin:0, lineHeight:1.6 }}>
+        <p style={{ fontFamily:FONT.mono, fontSize:'0.43rem', color:'rgba(140,160,200,0.40)', margin:0, lineHeight:1.6 }}>
           {lang==='en'?'Stored locally — no server. Configure at least one key.':'Stockées localement — aucun serveur. Configurez au moins une clé.'}
         </p>
 
         {PROVIDERS.map(prov => {
-          const val    = keys[prov.id] || '';
-          const s      = status[prov.id];
-          const isOpen = openProv === prov.id;
-          const statIcon = s==='ok' ? '✅' : s==='error' ? '❌' : s==='testing' ? '⏳' : val ? '🔑' : '—';
+          const keyArr = provKeys[prov.id] || [];
+          const hasAK  = keyArr.some(k=>k.key?.trim());
+          const provOk = keyArr.some(k=>keyStatus[k._id]==='ok');
+          const provErr = !provOk && hasAK && keyArr.filter(k=>k.key?.trim()).every(k=>keyStatus[k._id]==='error');
+          const statIcon = provOk?'✅':provErr?'❌':hasAK?'🔑':'—';
+          const isOpen   = openProv === prov.id;
           return (
-            <div key={prov.id} style={{
-              border:`1px solid ${val ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`,
-              borderRadius:'2px', overflow:'hidden',
-              background: val ? 'rgba(200,164,74,0.02)' : 'rgba(255,255,255,0.01)' }}>
-              {/* Header accordéon */}
-              <button onClick={() => setOpenProv(p => p === prov.id ? null : prov.id)}
+            <div key={prov.id} style={{ border:`1px solid ${hasAK?'rgba(200,164,74,0.14)':'rgba(255,255,255,0.06)'}`,
+              borderRadius:'2px', overflow:'hidden', background:hasAK?'rgba(200,164,74,0.02)':'rgba(255,255,255,0.01)' }}>
+              <button onClick={()=>setOpenProv(p=>p===prov.id?null:prov.id)}
                 style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
                   padding:'0.38rem 0.6rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
                 <span style={{ fontSize:'0.65rem', color:'rgba(200,164,74,0.50)' }}>{isOpen?'▾':'▸'}</span>
                 <span style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.10em',
-                  color: isOpen ? 'rgba(200,164,74,0.88)' : 'rgba(200,215,240,0.70)', flex:1 }}>
-                  {prov.label}
-                </span>
+                  color:isOpen?'rgba(200,164,74,0.88)':'rgba(200,215,240,0.70)', flex:1 }}>{prov.label}</span>
                 <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
                 <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', marginLeft:'0.4rem',
-                  color: s==='ok' ? 'rgba(58,191,122,0.80)' : s==='error' ? 'rgba(200,58,58,0.80)' : 'rgba(140,160,200,0.35)' }}>
-                  {statIcon}
-                </span>
+                  color:provOk?'rgba(58,191,122,0.80)':provErr?'rgba(200,58,58,0.80)':'rgba(140,160,200,0.35)' }}>{statIcon}</span>
               </button>
-              {/* Corps accordéon */}
+
               {isOpen && (
-                <div style={{ padding:'0.5rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.5rem',
-                  borderTop:`1px solid ${val ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.05)'}` }}>
-                  <div style={{ display:'flex', gap:'0.4rem', alignItems:'center' }}>
-                    <div style={{ position:'relative', flex:1 }}>
-                      <input style={{ ...INPUT_STYLE, fontSize:'0.48rem', paddingRight:'2rem' }}
-                        type={showPass[prov.id] ? 'text' : 'password'}
-                        value={val}
-                        onChange={e => { setKeys(k=>({...k,[prov.id]:e.target.value})); setStatus(s=>({...s,[prov.id]:null})); }}
-                        placeholder={prov.ph} />
-                      <button
-                        onClick={() => setShowPass(p=>({...p,[prov.id]:!p[prov.id]}))}
-                        style={{ position:'absolute', right:'0.4rem', top:'50%', transform:'translateY(-50%)',
-                          background:'none', border:'none', cursor:'pointer', padding:'0.1rem',
-                          color: showPass[prov.id] ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)',
-                          fontSize:'0.75rem', lineHeight:1 }}
-                        title={showPass[prov.id] ? (lang==='en'?'Hide':'Masquer') : (lang==='en'?'Show':'Afficher')}>
-                        <span className={showPass[prov.id] ? 'mdi mdi-eye-lock-open' : 'mdi mdi-eye-lock'}
-                          style={{ fontSize:'1rem' }} />
-                      </button>
-                    </div>
-                    <button style={{ ...BTN_SECONDARY, padding:'0.35rem 0.55rem', fontSize:'0.44rem', whiteSpace:'nowrap' }}
-                      disabled={!val} onClick={()=>testKey(prov.id)}>Test</button>
-                    <button style={{ ...BTN_SECONDARY, padding:'0.20rem 0.40rem', fontSize:'0.85rem', lineHeight:1 }}
-                      disabled={!val} onClick={()=>deleteKey(prov.id)}
-                      title={lang==='en'?'Delete key':'Supprimer la clé'}>🗑</button>
-                    {s && <span style={{ fontFamily:FONT.mono, fontSize:'0.50rem', minWidth:'1rem' }}>{stLabel(s)}</span>}
-                  </div>
-                  <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
-                    {prov.versions.map(v => {
-                      const chosen = (models[prov.id] || prov.versions.find(x=>x.label.includes('★'))?.id || prov.versions[0]?.id) === v.id;
-                      return (
-                        <button key={v.id}
-                          style={{ ...BTN_SECONDARY, padding:'0.18rem 0.45rem', fontSize:'0.40rem',
-                            ...(chosen ? { border:'1px solid rgba(200,164,74,0.45)', color:'rgba(200,164,74,0.88)', background:'rgba(200,164,74,0.08)' } : { opacity:0.55 }) }}
-                          onClick={() => setModels(m => ({...m, [prov.id]: v.id}))}>
-                          {v.label}
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div style={{ padding:'0.5rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem',
+                  borderTop:`1px solid ${hasAK?'rgba(200,164,74,0.10)':'rgba(255,255,255,0.05)'}` }}>
+                  {keyArr.map((entry, idx) => {
+                    const st = keyStatus[entry._id];
+                    return (
+                      <div key={entry._id} style={{ display:'flex', flexDirection:'column', gap:'0.28rem',
+                        paddingBottom: idx<keyArr.length-1?'0.45rem':0,
+                        borderBottom: idx<keyArr.length-1?'1px solid rgba(255,255,255,0.05)':'none' }}>
+                        <div style={{ display:'flex', gap:'0.4rem', alignItems:'center' }}>
+                          <button onClick={()=>setDefault(prov.id, entry._id)}
+                            title={lang==='en'?'Set as default':'Clé par défaut'}
+                            style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem',
+                              padding:'0 0.15rem', lineHeight:1, opacity:entry.default?1:0.40, flexShrink:0 }}>
+                            {entry.default?'⭐':'☆'}
+                          </button>
+                          <input style={{ ...INPUT_STYLE, fontSize:'0.44rem', flex:1 }}
+                            type="password" value={entry.key}
+                            onChange={e=>updateEntry(prov.id, entry._id, 'key', e.target.value)}
+                            placeholder={prov.ph} />
+                          <button style={{ ...BTN_SECONDARY, padding:'0.28rem 0.50rem', fontSize:'0.42rem', whiteSpace:'nowrap' }}
+                            disabled={!entry.key?.trim()} onClick={()=>testEntry(prov.id, entry._id, entry.key, entry.model)}>
+                            Test
+                          </button>
+                          {st && <span style={{ fontSize:'0.75rem', minWidth:'1rem', flexShrink:0 }}>{stIcon(st)}</span>}
+                          <button style={{ ...BTN_SECONDARY, padding:'0.18rem 0.35rem', fontSize:'0.80rem', lineHeight:1, flexShrink:0 }}
+                            onClick={()=>removeEntry(prov.id, entry._id)}
+                            title={lang==='en'?'Delete key':'Supprimer'}>🗑</button>
+                        </div>
+                        <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap', paddingLeft:'1.6rem' }}>
+                          {prov.versions.map(v => {
+                            const chosen = entry.model === v.id;
+                            return (
+                              <button key={v.id}
+                                style={{ ...BTN_SECONDARY, padding:'0.15rem 0.40rem', fontSize:'0.38rem',
+                                  ...(chosen?{border:'1px solid rgba(200,164,74,0.45)',color:'rgba(200,164,74,0.88)',background:'rgba(200,164,74,0.08)'}:{opacity:0.50}) }}
+                                onClick={()=>updateEntry(prov.id, entry._id, 'model', v.id)}>
+                                {v.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.25rem 0.6rem',
+                    alignSelf:'flex-start', border:'1px dashed rgba(200,164,74,0.25)', color:'rgba(200,164,74,0.60)' }}
+                    onClick={()=>addKey(prov.id)}>
+                    + {lang==='en'?'Add a key':'Ajouter une clé'}
+                  </button>
                 </div>
               )}
             </div>
           );
         })}
 
-        {!canSave && Object.values(keys).some(v=>v) && (
+        {!canSave && hasAnyKey && (
           <div style={{ fontSize:'0.42rem', color:'rgba(200,164,74,0.45)', lineHeight:1.5 }}>
             {lang==='en'?'⚠ Test at least one key to enable saving.':'⚠ Testez au moins une clé pour activer la sauvegarde.'}
           </div>
         )}
-
         <div style={{ display:'flex', gap:'0.6rem', justifyContent:'flex-end', marginTop:'0.2rem' }}>
           <button style={BTN_SECONDARY} onClick={onClose}>{lang==='en'?'CANCEL':'ANNULER'}</button>
-          <button style={{ ...BTN_PRIMARY, opacity: canSave ? 1 : 0.35 }}
+          <button style={{ ...BTN_PRIMARY, opacity:canSave?1:0.35 }}
             disabled={!canSave} onClick={save}>{lang==='en'?'SAVE':'SAUVEGARDER'}</button>
         </div>
       </div>
@@ -1146,11 +1187,12 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       };
     }
     // Aria/custom : lire les providers par rôle (format Settings : ministre_model = provider)
-    const ministerProv  = r.ministre_provider  || r.ministre_model || p0;
-    const synthMinProv  = r.synthese_min_prov  || r.synthese_min   || p1;
-    const phareProv     = r.phare_provider     || r.phare_model    || p0;
-    const boussoleProv  = r.boussole_provider  || r.boussole_model || p0;
-    const synthPresProv = r.synthese_pres_prov || r.synthese_pres  || p1;
+    const vp = (p) => availProviders.includes(p) ? p : (availProviders[0] || p); // valide vs providers dispo
+    const ministerProv  = vp(r.ministre_provider  || r.ministre_model || p0);
+    const synthMinProv  = vp(r.synthese_min_prov  || r.synthese_min   || p1);
+    const phareProv     = vp(r.phare_provider     || r.phare_model    || p0);
+    const boussoleProv  = vp(r.boussole_provider  || r.boussole_model || p0);
+    const synthPresProv = vp(r.synthese_pres_prov || r.synthese_pres  || p1);
     return {
       ministre_provider:   ministerProv,  ministre_model:      modelOf(ministerProv),
       synthese_min_prov:   synthMinProv,  synthese_min_model:  modelOf(synthMinProv),

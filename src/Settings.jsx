@@ -361,61 +361,6 @@ function SectionSysteme({ onHardReset }) {
     reader.readAsText(file);
   };
 
-  // ── Test de connexion par provider ────────────────────────────────────────
-  const testKey = async (provider) => {
-    const key = opts.api_keys[provider];
-    if (!key) { setStatus(s => ({ ...s, [provider]: 'missing' })); return; }
-    setStatus(s => ({ ...s, [provider]: 'testing' }));
-
-    const saveStatus = (result) => {
-      setStatus(s => {
-        const next = { ...s, [provider]: result };
-        try { localStorage.setItem('aria_api_keys_status', JSON.stringify(next)); } catch {}
-        return next;
-      });
-    };
-
-    try {
-      if (provider === 'claude') {
-        const model = opts.ia_models?.claude || 'claude-sonnet-4-6';
-        const r = await fetch('https://api.anthropic.com/v1/messages', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json','x-api-key':key,
-            'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
-        });
-        saveStatus(r.ok ? 'ok' : 'error');
-
-      } else if (provider === 'gemini') {
-        const model = opts.ia_models?.gemini || 'gemini-2.0-flash';
-        const r = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
-          { method:'POST', headers:{ 'Content-Type':'application/json' },
-            body: JSON.stringify({ contents:[{ parts:[{ text:'ping' }] }] }) }
-        );
-        saveStatus((r.ok || r.status===429) ? 'ok' : 'error');
-
-      } else if (provider === 'grok') {
-        const model = opts.ia_models?.grok || 'grok-3-mini';
-        const r = await fetch('https://api.x.ai/v1/chat/completions', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${key}` },
-          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
-        });
-        saveStatus(r.ok ? 'ok' : 'error');
-
-      } else if (provider === 'openai') {
-        const model = opts.ia_models?.openai || 'gpt-4.1-mini';
-        const r = await fetch('https://api.openai.com/v1/chat/completions', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${key}` },
-          body: JSON.stringify({ model, max_tokens:10, messages:[{ role:'user', content:'ping' }] }),
-        });
-        saveStatus(r.ok ? 'ok' : 'error');
-      }
-    } catch { saveStatus('error'); }
-  };
-
   const statusLabel = (s) =>
     s==='ok'      ? (isEn?'✅ Connected':'✅ Connecté')  :
     s==='error'   ? (isEn?'❌ Invalid':'❌ Invalide')  :
@@ -462,15 +407,107 @@ function SectionSysteme({ onHardReset }) {
     },
   ];
 
-  const hasClaude = !!opts.api_keys.claude;
-  const hasGemini = !!opts.api_keys.gemini;
-  const hasGrok   = !!opts.api_keys.grok;
-  const hasOpenai = !!opts.api_keys.openai;
-  const anyKey    = hasClaude || hasGemini || hasGrok || hasOpenai;
+  // ── État multi-clés ────────────────────────────────────────────────────────
+  const [keysState, setKeysState] = useState(() => {
+    const provKeys = {};
+    const keyStatuses = {};
+    for (const p of PROVIDERS) {
+      const val = opts.api_keys?.[p.id];
+      const defModel = opts.ia_models?.[p.id] || p.models[0]?.value || '';
+      let entries = [];
+      if (typeof val === 'string' && val.trim()) {
+        const id = Math.random().toString(36).slice(2);
+        entries = [{ key: val, model: defModel, default: true, _id: id }];
+        keyStatuses[id] = status[p.id] || null;
+      } else if (Array.isArray(val)) {
+        entries = val.filter(k => k.key?.trim()).map((k, i) => {
+          const id = Math.random().toString(36).slice(2);
+          keyStatuses[id] = i === 0 ? (status[p.id] || null) : null;
+          return { key: k.key, model: k.model || defModel, default: !!k.default, _id: id };
+        });
+        if (entries.length > 0 && !entries.some(k => k.default)) entries[0] = { ...entries[0], default: true };
+      }
+      provKeys[p.id] = entries;
+    }
+    return { provKeys, keyStatuses };
+  });
+  const { provKeys: sProvKeys, keyStatuses } = keysState;
+  const setKS2 = (fn) => setKeysState(s => ({ ...s, keyStatuses: typeof fn === 'function' ? fn(s.keyStatuses) : fn }));
+  const setPK2 = (fn) => setKeysState(s => ({ ...s, provKeys: typeof fn === 'function' ? fn(s.provKeys) : fn }));
+
+  const addSettingsKey = (provId) => {
+    const prov = PROVIDERS.find(p => p.id === provId);
+    const id = Math.random().toString(36).slice(2);
+    setPK2(pk => ({ ...pk, [provId]: [...(pk[provId]||[]), { key:'', model:prov.models[0]?.value||'', default:false, _id:id }] }));
+  };
+  const updateSettingsKey = (provId, _id, field, value) => {
+    setPK2(pk => ({ ...pk, [provId]: pk[provId].map(k => k._id===_id ? {...k,[field]:value} : k) }));
+    if (field === 'key') setKS2(ks => ({ ...ks, [_id]: null }));
+    setSaved(false);
+  };
+  const removeSettingsKey = (provId, _id) => {
+    setPK2(pk => {
+      let arr = pk[provId].filter(k => k._id !== _id);
+      if (arr.length > 0 && !arr.some(k => k.default)) arr = [{ ...arr[0], default: true }, ...arr.slice(1)];
+      return { ...pk, [provId]: arr };
+    });
+    setKS2(ks => { const n={...ks}; delete n[_id]; return n; });
+    setSaved(false);
+  };
+  const setSettingsDefault = (provId, _id) => {
+    setPK2(pk => ({ ...pk, [provId]: pk[provId].map(k => ({...k, default: k._id===_id})) }));
+    setSaved(false);
+  };
+
+  const testSettingsKey = async (provId, _id, keyVal, modelVal) => {
+    if (!keyVal?.trim()) return;
+    setKS2(ks => ({...ks, [_id]:'testing'}));
+    try {
+      let ok = false;
+      if (provId === 'claude') {
+        const r = await fetch('https://api.anthropic.com/v1/messages', {
+          method:'POST', headers:{'Content-Type':'application/json','x-api-key':keyVal,
+            'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+          body: JSON.stringify({ model: modelVal||'claude-haiku-4-5-20251001', max_tokens:10, messages:[{role:'user',content:'ping'}] }),
+        }); ok = r.ok;
+      } else if (provId === 'gemini') {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelVal||'gemini-2.0-flash'}:generateContent?key=${keyVal}`,
+          { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ contents:[{parts:[{text:'ping'}]}] }) });
+        ok = r.ok || r.status===429;
+      } else if (provId === 'grok') {
+        const r = await fetch('https://api.x.ai/v1/chat/completions', {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${keyVal}`},
+          body: JSON.stringify({ model: modelVal||'grok-3-mini', max_tokens:10, messages:[{role:'user',content:'ping'}] }),
+        }); ok = r.ok;
+      } else if (provId === 'openai') {
+        const r = await fetch('https://api.openai.com/v1/chat/completions', {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${keyVal}`},
+          body: JSON.stringify({ model: modelVal||'gpt-4.1-mini', max_tokens:10, messages:[{role:'user',content:'ping'}] }),
+        }); ok = r.ok;
+      }
+      setKS2(ks => ({...ks, [_id]: ok?'ok':'error'}));
+      if (ok) setStatus(s => ({...s, [provId]: 'ok'}));
+    } catch { setKS2(ks => ({...ks, [_id]:'error'})); }
+  };
+
+  const getProvStatus2 = (provId) => {
+    const keyArr = (sProvKeys[provId]||[]).filter(k => k.key?.trim());
+    if (keyArr.length === 0) return null;
+    const statuses = keyArr.map(k => keyStatuses[k._id]);
+    if (statuses.some(s => s==='ok')) return 'ok';
+    if (statuses.every(s => s==='error')) return 'error';
+    return null;
+  };
+
   const iaMode    = opts.ia_mode;
+  const anyKey    = PROVIDERS.some(p => (sProvKeys[p.id]||[]).some(k => k.key?.trim()));
 
   // Tous les providers disponibles (clé présente + non en erreur)
-  const availableProviders = PROVIDERS.filter(p => !!opts.api_keys[p.id] && status[p.id] !== 'error').map(p => p.id);
+  const availableProviders = PROVIDERS.filter(p => {
+    const keyArr = (sProvKeys[p.id]||[]).filter(k => k.key?.trim());
+    return keyArr.length > 0 && getProvStatus2(p.id) !== 'error';
+  }).map(p => p.id);
 
   return (
     <div className="settings-section-body">
@@ -479,7 +516,7 @@ function SectionSysteme({ onHardReset }) {
       {/* ▸ CLÉS API + MODÈLES */}
       <div className={`aria-accordion${openAcc==='keys' ? ' open' : ''}`}>
         {HDR('keys', isEn?'API KEYS & MODELS':'CLÉS API & MODÈLES',
-          `${[opts.api_keys?.claude,opts.api_keys?.gemini,opts.api_keys?.grok,opts.api_keys?.openai].filter(Boolean).length}/4 ${isEn?'keys':'clés'}${Object.values(status).some(s=>s==='ok') ? ' ✅' : ''}`
+          `${PROVIDERS.filter(p => (sProvKeys[p.id]||[]).some(k=>k.key?.trim())).length}/4 ${isEn?'keys':'clés'}${Object.values(keyStatuses).some(s=>s==='ok') ? ' ✅' : ''}`
         )}
         {openAcc==='keys' && (
         <div className="aria-accordion__body">
@@ -489,74 +526,80 @@ function SectionSysteme({ onHardReset }) {
         </p>
 
         {PROVIDERS.map(prov => {
-          const hasKey = !!opts.api_keys[prov.id];
-          const stat   = status[prov.id];
-          const isOpen = openProvAcc === prov.id;
-          const statIcon = stat==='ok' ? '✅' : stat==='error' ? '❌' : stat==='testing' ? '⏳' : hasKey ? '🔑' : '—';
-          const SUB      = { border:`1px solid ${hasKey ? 'rgba(200,164,74,0.14)' : 'rgba(255,255,255,0.06)'}`, borderRadius:'2px', overflow:'hidden', marginBottom:'0.45rem', background: hasKey ? 'rgba(200,164,74,0.02)' : 'rgba(255,255,255,0.01)' };
-          const SUB_BODY = { padding:'0.5rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.5rem', borderTop:`1px solid ${hasKey ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.05)'}` };
+          const keyArr = sProvKeys[prov.id] || [];
+          const hasAK  = keyArr.some(k => k.key?.trim());
+          const provOk = keyArr.some(k => keyStatuses[k._id]==='ok');
+          const provErr= !provOk && hasAK && keyArr.filter(k=>k.key?.trim()).every(k=>keyStatuses[k._id]==='error');
+          const statIcon = provOk?'✅':provErr?'❌':hasAK?'🔑':'—';
+          const isOpen   = openProvAcc === prov.id;
+          const SUB = { border:`1px solid ${hasAK?'rgba(200,164,74,0.14)':'rgba(255,255,255,0.06)'}`, borderRadius:'2px', overflow:'hidden', marginBottom:'0.45rem', background:hasAK?'rgba(200,164,74,0.02)':'rgba(255,255,255,0.01)' };
           return (
             <div key={prov.id} style={SUB}>
-              <button onClick={() => setOpenProvAcc(p => p === prov.id ? null : prov.id)}
+              <button onClick={() => setOpenProvAcc(p => p===prov.id?null:prov.id)}
                 style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
                   padding:'0.38rem 0.6rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
                 <span style={{ fontSize:'0.65rem', color:'rgba(200,164,74,0.50)' }}>{isOpen?'▾':'▸'}</span>
                 <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', letterSpacing:'0.10em',
-                  color: isOpen ? 'rgba(200,164,74,0.88)' : 'rgba(200,215,240,0.70)', flex:1 }}>
-                  {prov.label}
-                </span>
-                {prov.hint && !isOpen && (
-                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem',
-                    color:'rgba(100,120,160,0.40)' }}>{prov.hint}</span>
-                )}
-                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                  color: stat==='ok' ? 'rgba(58,191,122,0.80)' : stat==='error' ? 'rgba(200,58,58,0.80)' : 'rgba(140,160,200,0.35)',
-                  marginLeft:'0.4rem' }}>{statIcon}</span>
+                  color:isOpen?'rgba(200,164,74,0.88)':'rgba(200,215,240,0.70)', flex:1 }}>{prov.label}</span>
+                {prov.hint && !isOpen && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.36rem', color:'rgba(100,120,160,0.40)' }}>{prov.hint}</span>}
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem', marginLeft:'0.4rem',
+                  color:provOk?'rgba(58,191,122,0.80)':provErr?'rgba(200,58,58,0.80)':'rgba(140,160,200,0.35)' }}>{statIcon}</span>
               </button>
 
               {isOpen && (
-                <div style={SUB_BODY}>
-                  {prov.hint && (
-                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                      color:'rgba(100,120,160,0.50)', marginBottom:'0.2rem' }}>{prov.hint}</div>
-                  )}
-                  <div className="settings-row">
-                    <TextInput password
-                      value={opts.api_keys[prov.id] || ''}
-                      onChange={v => update(`api_keys.${prov.id}`, v)}
-                      placeholder={prov.placeholder}
-                    />
-                    <button className="settings-btn-test" onClick={() => testKey(prov.id)}>
-                      {isEn?'Test':'Tester'}
-                    </button>
-                    <span className={`settings-status ${stat}`}>{statusLabel(stat)}</span>
-                    {hasKey && (
-                      <button title={isEn?`Delete key for ${prov.label}`:`Supprimer la clé ${prov.label}`}
-                        onClick={() => { update(`api_keys.${prov.id}`, ''); setStatus(s => ({ ...s, [prov.id]: null })); }}
-                        style={{ background:'none', border:'none', cursor:'pointer',
-                          fontSize:'0.85rem', opacity:0.40, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
-                    )}
-                  </div>
-                  <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', opacity: hasKey ? 1 : 0.35 }}>
-                    <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
-                      color:'rgba(140,160,200,0.50)', minWidth:'4rem' }}>{isEn?"Model":"Modèle"}</span>
-                    <select
-                      disabled={!hasKey}
-                      value={opts.ia_models?.[prov.id] || prov.models[0].value}
-                      onChange={e => update(`ia_models.${prov.id}`, e.target.value)}
-                      className="settings-select"
-                      style={{ cursor: hasKey ? 'pointer' : 'not-allowed', flex:1,
-                        fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem' }}
-                    >
-                      {prov.models.map(m => (
-                        <option key={m.value} value={m.value}>{m.value}   ({m.label.split('—')[1]?.trim() || ''})</option>
-                      ))}
-                    </select>
-                    {!hasKey && (
-                      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                        color:'rgba(200,80,80,0.55)' }}>{isEn?'⚠ missing key':'⚠ clé manquante'}</span>
-                    )}
-                  </div>
+                <div style={{ padding:'0.5rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem',
+                  borderTop:`1px solid ${hasAK?'rgba(200,164,74,0.10)':'rgba(255,255,255,0.05)'}` }}>
+                  {prov.hint && <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem', color:'rgba(100,120,160,0.50)' }}>{prov.hint}</div>}
+                  {keyArr.map((entry, idx) => {
+                    const st = keyStatuses[entry._id];
+                    const stLbl = st==='ok'?'✅':st==='error'?'❌':st==='testing'?'⏳':'';
+                    return (
+                      <div key={entry._id} style={{ display:'flex', flexDirection:'column', gap:'0.28rem',
+                        paddingBottom:idx<keyArr.length-1?'0.45rem':0,
+                        borderBottom:idx<keyArr.length-1?'1px solid rgba(255,255,255,0.05)':'none' }}>
+                        <div className="settings-row">
+                          <button onClick={()=>setSettingsDefault(prov.id, entry._id)}
+                            title={isEn?'Set as default':'Clé par défaut'}
+                            style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem',
+                              padding:'0 0.15rem', lineHeight:1, opacity:entry.default?1:0.40, flexShrink:0 }}>
+                            {entry.default?'⭐':'☆'}
+                          </button>
+                          <TextInput password value={entry.key}
+                            onChange={v => updateSettingsKey(prov.id, entry._id, 'key', v)}
+                            placeholder={prov.placeholder} />
+                          <button className="settings-btn-test"
+                            onClick={() => testSettingsKey(prov.id, entry._id, entry.key, entry.model)}>
+                            {isEn?'Test':'Tester'}
+                          </button>
+                          {stLbl && <span className={`settings-status`}>{stLbl}</span>}
+                          <button title={isEn?'Delete key':'Supprimer'}
+                            onClick={() => removeSettingsKey(prov.id, entry._id)}
+                            style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem', opacity:0.45, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
+                        </div>
+                        <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap', paddingLeft:'1.6rem' }}>
+                          {prov.models.map(m => {
+                            const chosen = entry.model === m.value;
+                            return (
+                              <button key={m.value}
+                                style={{ padding:'0.15rem 0.40rem', fontSize:'0.38rem', fontFamily:"'JetBrains Mono',monospace",
+                                  cursor:'pointer', background:chosen?'rgba(200,164,74,0.08)':'none',
+                                  border:`1px solid ${chosen?'rgba(200,164,74,0.45)':'rgba(255,255,255,0.10)'}`,
+                                  color:chosen?'rgba(200,164,74,0.88)':'rgba(140,160,200,0.55)' }}
+                                onClick={() => updateSettingsKey(prov.id, entry._id, 'model', m.value)}>
+                                {m.value.split('-').slice(-2).join('-')}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <button onClick={() => addSettingsKey(prov.id)}
+                    style={{ background:'none', border:'1px dashed rgba(200,164,74,0.25)', cursor:'pointer',
+                      color:'rgba(200,164,74,0.60)', fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
+                      padding:'0.25rem 0.6rem', alignSelf:'flex-start' }}>
+                    + {isEn?'Add a key':'Ajouter une clé'}
+                  </button>
                 </div>
               )}
             </div>
