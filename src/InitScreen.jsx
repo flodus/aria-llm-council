@@ -220,7 +220,7 @@ function APIKeyInline({ onClose }) {
       const merged = { ...existing, ...keys };
       localStorage.setItem('aria_api_keys', JSON.stringify(merged));
       const st = {};
-      PROVIDERS.forEach(p => { if (status[p.id]==='ok') st[p.id]='ok'; });
+      PROVIDERS.forEach(p => { if (status[p.id]==='ok') st[p.id]='ok'; else if (status[p.id]==='error') st[p.id]='error'; });
       localStorage.setItem('aria_api_keys_status', JSON.stringify(st));
       // Save preferred models per provider
       const existingModels = loadModels();
@@ -1115,13 +1115,14 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const [ariaMode,    setAriaMode]    = useState(() => {
     const saved = loadOpts().ia_mode;
     const keys = loadKeys();
+    const ks = loadKeyStatus();
     const provCount = ['openrouter','claude','gemini','grok','openai'].filter(id => {
       const v = keys[id];
-      if (Array.isArray(v)) return v.some(k => typeof k === 'string' && k.trim().length > 0);
-      return typeof v === 'string' && v.trim().length > 0;
+      const hasKey = Array.isArray(v) ? v.some(k => typeof k === 'string' && k.trim().length > 0) : typeof v === 'string' && v.trim().length > 0;
+      return hasKey && ks[id] !== 'error';
     }).length;
     if (provCount === 0) return 'none';
-    if (!saved) return 'none'; // première utilisation → Board Game par défaut
+    if (!saved) return provCount === 1 ? 'solo' : 'aria'; // défaut intelligent selon les clés valides
     if (provCount === 1 && (saved === 'aria' || saved === 'custom')) return 'solo';
     return saved;
   });
@@ -1130,14 +1131,26 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const prefModels = loadPreferredModels();
   const initRoles = () => {
     const r = loadIARoles();
-    const savedSoloModel = loadOpts().solo_model;
+    const opts = loadOpts();
     const modelOf = (prov) => prefModels[prov] || ARIA_FALLBACK_MODELS[prov]?.find(m=>m.label.includes('★'))?.id || ARIA_FALLBACK_MODELS[prov]?.[0]?.id || '';
-    // Compatibilité Settings : Settings stocke les providers dans ministre_model, synthese_min, phare_model, etc.
-    const ministerProv  = r.ministre_provider  || r.ministre_model   || savedSoloModel || p0;
-    const synthMinProv  = r.synthese_min_prov  || r.synthese_min     || ministerProv   || p1;
-    const phareProv     = r.phare_provider     || r.phare_model      || p0;
-    const boussoleProv  = r.boussole_provider  || r.boussole_model   || p1;
-    const synthPresProv = r.synthese_pres_prov || r.synthese_pres    || p0;
+    // Solo : un seul provider pour tous les rôles
+    if (opts.ia_mode === 'solo') {
+      const soloProv  = opts.solo_model || p0;
+      const soloModel = modelOf(soloProv);
+      return {
+        ministre_provider:  soloProv, ministre_model:      soloModel,
+        synthese_min_prov:  soloProv, synthese_min_model:  soloModel,
+        phare_provider:     soloProv, phare_model:         soloModel,
+        boussole_provider:  soloProv, boussole_model:      soloModel,
+        synthese_pres_prov: soloProv, synthese_pres_model: soloModel,
+      };
+    }
+    // Aria/custom : lire les providers par rôle (format Settings : ministre_model = provider)
+    const ministerProv  = r.ministre_provider  || r.ministre_model || p0;
+    const synthMinProv  = r.synthese_min_prov  || r.synthese_min   || p1;
+    const phareProv     = r.phare_provider     || r.phare_model    || p0;
+    const boussoleProv  = r.boussole_provider  || r.boussole_model || p0;
+    const synthPresProv = r.synthese_pres_prov || r.synthese_pres  || p1;
     return {
       ministre_provider:   ministerProv,  ministre_model:      modelOf(ministerProv),
       synthese_min_prov:   synthMinProv,  synthese_min_model:  modelOf(synthMinProv),
@@ -1204,24 +1217,28 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       const opts = loadOpts();
       opts.ia_mode = ariaMode;
       opts.solo_model = roles.ministre_provider || availProviders[0] || 'claude';
-      // Sauvegarde ia_roles au format Settings (clé = provider)
-      opts.ia_roles = {
-        ...(opts.ia_roles || {}),
-        ministre_model:  roles.ministre_provider  || availProviders[0] || 'claude',
-        synthese_min:    roles.synthese_min_prov  || availProviders[0] || 'claude',
-        phare_model:     roles.phare_provider     || availProviders[0] || 'claude',
-        boussole_model:  roles.boussole_provider  || availProviders[0] || 'claude',
-        synthese_pres:   roles.synthese_pres_prov || availProviders[0] || 'claude',
-      };
+      // ia_roles (format Settings : clé = provider) — seulement pour aria/custom
+      if (ariaMode === 'aria' || ariaMode === 'custom') {
+        opts.ia_roles = {
+          ...(opts.ia_roles || {}),
+          ministre_model:  roles.ministre_provider  || availProviders[0] || 'claude',
+          synthese_min:    roles.synthese_min_prov  || availProviders[0] || 'claude',
+          phare_model:     roles.phare_provider     || availProviders[0] || 'claude',
+          boussole_model:  roles.boussole_provider  || availProviders[0] || 'claude',
+          synthese_pres:   roles.synthese_pres_prov || availProviders[0] || 'claude',
+        };
+      }
+      // Modèles par provider dans ia_models (lu par Settings pour le sélecteur solo)
+      if (!opts.ia_models) opts.ia_models = {};
+      if (roles.ministre_provider  && roles.ministre_model)      opts.ia_models[roles.ministre_provider]  = roles.ministre_model;
+      if (roles.synthese_min_prov  && roles.synthese_min_model)  opts.ia_models[roles.synthese_min_prov]  = roles.synthese_min_model;
+      if (roles.phare_provider     && roles.phare_model)         opts.ia_models[roles.phare_provider]     = roles.phare_model;
+      if (roles.boussole_provider  && roles.boussole_model)      opts.ia_models[roles.boussole_provider]  = roles.boussole_model;
+      if (roles.synthese_pres_prov && roles.synthese_pres_model) opts.ia_models[roles.synthese_pres_prov] = roles.synthese_pres_model;
       localStorage.setItem('aria_options', JSON.stringify(opts));
-      // Sauvegarde des préférences de modèles par provider
-      const prefModelsToSave = {};
-      if (roles.ministre_provider  && roles.ministre_model)      prefModelsToSave[roles.ministre_provider]  = roles.ministre_model;
-      if (roles.synthese_min_prov  && roles.synthese_min_model)  prefModelsToSave[roles.synthese_min_prov]  = roles.synthese_min_model;
-      if (roles.phare_provider     && roles.phare_model)         prefModelsToSave[roles.phare_provider]     = roles.phare_model;
-      if (roles.boussole_provider  && roles.boussole_model)      prefModelsToSave[roles.boussole_provider]  = roles.boussole_model;
-      if (roles.synthese_pres_prov && roles.synthese_pres_model) prefModelsToSave[roles.synthese_pres_prov] = roles.synthese_pres_model;
-      localStorage.setItem('aria_preferred_models', JSON.stringify({...loadPreferredModels(), ...prefModelsToSave}));
+      localStorage.setItem('aria_preferred_models', JSON.stringify({...loadPreferredModels(),
+        ...Object.fromEntries([[roles.ministre_provider, roles.ministre_model],[roles.synthese_min_prov, roles.synthese_min_model],[roles.phare_provider, roles.phare_model],[roles.boussole_provider, roles.boussole_model],[roles.synthese_pres_prov, roles.synthese_pres_model]].filter(([k,v])=>k&&v))
+      }));
     } catch {}
     // Merge ctx overrides + perGov overrides dans chaque pendingDef
     const defs = (pendingDefs || []).map((d, i) => {

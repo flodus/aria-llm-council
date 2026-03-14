@@ -288,12 +288,8 @@ function SectionSysteme({ onHardReset }) {
     try {
       const s = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
       const k = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
-      return {
-        claude: (s.claude==='ok' && k.claude) ? 'ok' : null,
-        gemini: (s.gemini==='ok' && k.gemini) ? 'ok' : null,
-        grok:   (s.grok  ==='ok' && k.grok)   ? 'ok' : null,
-        openai: (s.openai==='ok' && k.openai)  ? 'ok' : null,
-      };
+      const st = (id) => s[id]==='ok' && k[id] ? 'ok' : s[id]==='error' && k[id] ? 'error' : null;
+      return { claude: st('claude'), gemini: st('gemini'), grok: st('grok'), openai: st('openai') };
     } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
   });
 
