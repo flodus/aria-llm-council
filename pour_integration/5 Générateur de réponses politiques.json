@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "name": "ARIA_dialogue_generator"
+  },
+
+  "phrases_president": [
+    "Nous devons agir avec responsabilité.",
+    "L'intérêt national doit primer.",
+    "Cette décision aura des conséquences pour toute la nation."
+  ],
+
+  "phrases_ministres": [
+    "Nous devons étudier cette proposition.",
+    "Les implications sont importantes.",
+    "Une analyse approfondie est nécessaire."
+  ],
+
+  "reactions_debat": [
+    "Je soutiens cette proposition.",
+    "Je m'oppose fermement à cette décision.",
+    "Nous devons trouver un compromis.",
+    "Cette politique comporte des risques."
+  ]
+}

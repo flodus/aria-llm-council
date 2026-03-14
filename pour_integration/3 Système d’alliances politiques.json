@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "name": "ARIA_alliance_system"
+  },
+
+  "alliances_possibles": [
+    "coalition_progressiste",
+    "coalition_conservatrice",
+    "bloc_securitaire",
+    "bloc_economique",
+    "coalition_technocratique"
+  ],
+
+  "effets_alliances": {
+    "coalition_progressiste": "favorise les politiques sociales",
+    "coalition_conservatrice": "favorise la stabilité et l'ordre",
+    "bloc_securitaire": "renforce les décisions militaires",
+    "bloc_economique": "priorise la croissance",
+    "coalition_technocratique": "favorise les décisions scientifiques"
+  }
+}

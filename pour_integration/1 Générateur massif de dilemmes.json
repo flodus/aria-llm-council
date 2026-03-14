@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "name": "ARIA_mass_dilemma_generator",
+    "version": "1.0"
+  },
+
+  "templates": [
+    "Faut-il sacrifier {valeur_A} pour protéger {valeur_B} ?",
+    "Un gouvernement doit-il privilégier {groupe_A} ou {groupe_B} ?",
+    "Peut-on restreindre {liberte} pour garantir {objectif} ?",
+    "La société doit-elle accepter {innovation} malgré {risque} ?",
+    "Un État doit-il choisir entre {valeur_A} et {valeur_B} ?",
+    "Est-il légitime d'imposer {politique} pour atteindre {objectif} ?"
+  ],
+
+  "variables": {
+    "valeur_A": [
+      "la liberté",
+      "la sécurité",
+      "l'égalité",
+      "la prospérité",
+      "la stabilité"
+    ],
+
+    "valeur_B": [
+      "l'ordre",
+      "la paix",
+      "la croissance économique",
+      "la justice sociale",
+      "la sécurité nationale"
+    ],
+
+    "liberte": [
+      "la liberté d'expression",
+      "la vie privée",
+      "la liberté économique",
+      "la liberté de circulation"
+    ],
+
+    "objectif": [
+      "la sécurité nationale",
+      "la stabilité politique",
+      "la prospérité économique",
+      "la cohésion sociale"
+    ],
+
+    "groupe_A": [
+      "les travailleurs",
+      "les citoyens",
+      "les régions pauvres",
+      "les petites entreprises"
+    ],
+
+    "groupe_B": [
+      "les investisseurs",
+      "les grandes entreprises",
+      "les régions riches",
+      "les générations futures"
+    ],
+
+    "innovation": [
+      "l'intelligence artificielle autonome",
+      "la modification génétique",
+      "la surveillance numérique",
+      "les robots militaires"
+    ],
+
+    "risque": [
+      "la perte de contrôle",
+      "les abus de pouvoir",
+      "les inégalités",
+      "les risques pour la sécurité"
+    ],
+
+    "politique": [
+      "une surveillance accrue",
+      "une taxation forte",
+      "une régulation stricte",
+      "une centralisation du pouvoir"
+    ]
+  }
+}

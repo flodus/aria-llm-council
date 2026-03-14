@@ -1,0 +1,193 @@
+{
+  "meta": {
+    "name": "ARIA_extended_deliberation_pack",
+    "version": "1.0",
+    "description": "Extension de questions, générateurs et événements pour le système ARIA."
+  },
+
+  "questions_par_ministere": {
+    "justice": [
+      "Faut-il juger un citoyen selon l'intention ou uniquement selon l'acte commis ?",
+      "Un État peut-il violer la loi pour sauver la nation ?",
+      "Doit-on permettre l'exil volontaire des criminels plutôt que la prison ?",
+      "Les lanceurs d'alerte doivent-ils être protégés même s'ils trahissent l'État ?"
+    ],
+    "economie": [
+      "Faut-il plafonner le prix des biens essentiels en période de crise ?",
+      "Un État doit-il sauver une entreprise trop grande pour faire faillite ?",
+      "La richesse doit-elle être redistribuée ou simplement taxée ?",
+      "Faut-il garantir un emploi à chaque citoyen par l'État ?"
+    ],
+    "defense": [
+      "Peut-on sacrifier une ville pour sauver le reste du pays ?",
+      "Une attaque préventive est-elle parfois justifiée ?",
+      "Faut-il mentir à la population pour éviter la panique en temps de guerre ?",
+      "Un soldat doit-il désobéir à un ordre immoral ?"
+    ],
+    "sante": [
+      "Faut-il privilégier les patients les plus utiles à la société en cas de pénurie ?",
+      "Un citoyen doit-il être obligé de vivre sainement pour protéger le système de santé ?",
+      "Peut-on tester des traitements expérimentaux sur des condamnés ?",
+      "La génétique doit-elle être utilisée pour éliminer certaines maladies avant la naissance ?"
+    ],
+    "education": [
+      "Faut-il enseigner aux enfants comment contester l'autorité ?",
+      "Une société doit-elle former des citoyens critiques ou des citoyens loyaux ?",
+      "L'école doit-elle préparer à la liberté ou à l'efficacité économique ?",
+      "Peut-on sacrifier l'art et la philosophie pour privilégier les sciences ?"
+    ],
+    "ecologie": [
+      "Faut-il interdire la propriété privée de la nature ?",
+      "Une génération doit-elle payer pour les erreurs des précédentes ?",
+      "Peut-on déplacer une population pour sauver un écosystème ?",
+      "Les animaux doivent-ils avoir un statut juridique proche de celui des humains ?"
+    ],
+    "industrie": [
+      "Faut-il limiter volontairement le progrès technologique ?",
+      "Une IA doit-elle pouvoir refuser d'obéir à un ordre humain immoral ?",
+      "Peut-on remplacer des dirigeants humains par des algorithmes ?",
+      "Un État doit-il contrôler totalement les réseaux numériques ?"
+    ]
+  },
+
+  "questions_tabou": [
+    "Faut-il manipuler l'opinion publique pour maintenir l'ordre ?",
+    "Un gouvernement doit-il cacher certaines vérités ?",
+    "Peut-on sacrifier quelques innocents pour sauver la majorité ?",
+    "Faut-il surveiller tous les citoyens pour prévenir les crimes ?"
+  ],
+
+  "questions_ideologiques_fortes": [
+    "La sécurité vaut-elle plus que la liberté ?",
+    "Un État doit-il être moral ou efficace ?",
+    "Le peuple doit-il toujours avoir raison ?",
+    "Peut-on protéger la démocratie en limitant la démocratie ?",
+    "La vérité doit-elle toujours être dite aux citoyens ?",
+    "Un gouvernement doit-il être aimé ou craint ?",
+    "La stabilité est-elle plus importante que la justice ?"
+  ],
+
+  "questions_aria_100": [
+    "Une démocratie peut-elle survivre à trop de divisions ?",
+    "Un peuple doit-il être protégé contre lui-même ?",
+    "La liberté économique doit-elle primer sur l'égalité sociale ?",
+    "Peut-on forcer les citoyens à participer à la vie politique ?",
+    "Les médias doivent-ils être régulés par l'État ?",
+    "Un pays doit-il toujours respecter ses alliances ?",
+    "La neutralité est-elle possible en politique mondiale ?",
+    "Le progrès justifie-t-il tous les risques ?",
+    "Les élites doivent-elles gouverner ou servir ?",
+    "Une nation doit-elle privilégier sa culture au détriment des autres ?",
+    "Le bonheur des citoyens est-il un objectif politique légitime ?",
+    "Peut-on interdire certaines idées pour protéger la société ?",
+    "La croissance infinie est-elle possible ?",
+    "La surveillance totale garantit-elle la sécurité ?",
+    "Un gouvernement doit-il parfois mentir ?",
+    "La vérité scientifique doit-elle primer sur l'opinion publique ?",
+    "Une crise justifie-t-elle des pouvoirs exceptionnels ?",
+    "La démocratie directe est-elle viable dans un grand pays ?",
+    "Un dirigeant doit-il être moralement exemplaire ?",
+    "Les citoyens doivent-ils être consultés pour toutes les décisions majeures ?",
+    "La stabilité doit-elle primer sur le changement ?",
+    "Un pays doit-il fermer ses frontières en période de crise ?",
+    "La richesse est-elle un danger pour la démocratie ?",
+    "Les grandes entreprises ont-elles trop de pouvoir ?",
+    "La justice doit-elle être rapide ou parfaite ?",
+    "La technologie doit-elle être régulée par l'État ?",
+    "La sécurité alimentaire doit-elle être nationale ?",
+    "Un gouvernement peut-il imposer le bonheur ?",
+    "La culture nationale doit-elle être protégée ?",
+    "Un pays doit-il toujours chercher la puissance ?",
+    "L'égalité est-elle compatible avec la liberté ?",
+    "Une nation peut-elle survivre sans identité forte ?",
+    "La paix justifie-t-elle des compromis injustes ?",
+    "Un État doit-il garantir la vérité ?",
+    "La transparence totale est-elle possible ?",
+    "La prospérité justifie-t-elle les inégalités ?",
+    "La stabilité sociale doit-elle être imposée ?",
+    "Le progrès moral accompagne-t-il le progrès technique ?",
+    "La démocratie peut-elle devenir tyrannique ?",
+    "Une société peut-elle être trop libre ?",
+    "La liberté individuelle a-t-elle des limites ?",
+    "Un État doit-il protéger la morale publique ?",
+    "L'individu doit-il parfois céder face au collectif ?",
+    "La peur est-elle un outil politique légitime ?",
+    "La confiance publique peut-elle être restaurée après un scandale ?",
+    "Un gouvernement doit-il anticiper ou réagir ?",
+    "La vérité politique existe-t-elle ?",
+    "Les crises révèlent-elles les vrais dirigeants ?",
+    "Un peuple doit-il toujours être consulté ?",
+    "Le pouvoir corrompt-il toujours ?"
+  ],
+
+  "questions_par_regime": {
+    "democratie": [
+      "Le vote obligatoire renforcerait-il la démocratie ?",
+      "Les référendums doivent-ils décider des lois majeures ?",
+      "La majorité peut-elle opprimer la minorité ?"
+    ],
+    "junte_militaire": [
+      "La sécurité nationale doit-elle primer sur les libertés ?",
+      "L'armée doit-elle contrôler les médias ?",
+      "La discipline doit-elle être imposée à toute la société ?"
+    ],
+    "theocratie": [
+      "La loi divine doit-elle remplacer la loi civile ?",
+      "Les dirigeants religieux doivent-ils gouverner directement ?",
+      "La foi doit-elle être protégée contre la critique ?"
+    ],
+    "technocratie": [
+      "Les décisions doivent-elles être confiées aux experts ?",
+      "Les algorithmes peuvent-ils gouverner mieux que les humains ?",
+      "La compétence doit-elle remplacer l'élection ?"
+    ]
+  },
+
+  "cartes_evenements": [
+    {
+      "titre": "Fuite gouvernementale",
+      "description": "Des documents secrets révèlent des décisions cachées du gouvernement.",
+      "effet": "Déclenche immédiatement une question idéologique."
+    },
+    {
+      "titre": "Crise économique soudaine",
+      "description": "La monnaie chute brutalement.",
+      "effet": "Déclenche une question économique."
+    },
+    {
+      "titre": "Émeutes nationales",
+      "description": "Des manifestations violentes éclatent dans plusieurs villes.",
+      "effet": "Déclenche un débat sécurité vs liberté."
+    },
+    {
+      "titre": "Découverte technologique majeure",
+      "description": "Une innovation pourrait bouleverser la société.",
+      "effet": "Déclenche une question industrie."
+    },
+    {
+      "titre": "Pression internationale",
+      "description": "Un allié exige une décision immédiate.",
+      "effet": "Déclenche une question diplomatique."
+    }
+  ],
+
+  "generateur_procedural_questions": {
+    "templates": [
+      "Faut-il sacrifier {valeur_A} pour protéger {valeur_B} ?",
+      "Un gouvernement doit-il privilégier {groupe_A} ou {groupe_B} ?",
+      "Peut-on restreindre {liberte} pour garantir {objectif} ?",
+      "La société doit-elle accepter {innovation} malgré {risque} ?",
+      "Un État doit-il choisir entre {stabilite} et {justice} ?"
+    ],
+    "variables": {
+      "valeur_A": ["liberté", "sécurité", "égalité", "stabilité"],
+      "valeur_B": ["ordre", "prospérité", "paix", "survie nationale"],
+      "liberte": ["expression", "vie privée", "circulation"],
+      "objectif": ["sécurité", "stabilité politique", "protection nationale"],
+      "innovation": ["IA autonome", "génétique humaine", "surveillance totale"],
+      "risque": ["perte de contrôle", "abus de pouvoir", "inégalités"],
+      "stabilite": ["ordre social", "gouvernance forte"],
+      "justice": ["égalité des droits", "équité sociale"]
+    }
+  }
+}

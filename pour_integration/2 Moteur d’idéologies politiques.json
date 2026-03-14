@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "name": "ARIA_ideology_engine"
+  },
+
+  "ideologies": {
+
+    "liberal": {
+      "priorites": [
+        "liberte individuelle",
+        "marché libre",
+        "droits civiques"
+      ]
+    },
+
+    "social_democrate": {
+      "priorites": [
+        "egalite sociale",
+        "services publics",
+        "protection sociale"
+      ]
+    },
+
+    "autoritaire": {
+      "priorites": [
+        "ordre",
+        "stabilite",
+        "controle de l'Etat"
+      ]
+    },
+
+    "technocrate": {
+      "priorites": [
+        "expertise",
+        "efficacite",
+        "decision rationnelle"
+      ]
+    },
+
+    "ecologiste": {
+      "priorites": [
+        "durabilite",
+        "protection environnement",
+        "transition energetique"
+      ]
+    }
+  }
+}
