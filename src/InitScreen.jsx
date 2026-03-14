@@ -21,7 +21,7 @@ import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './ariaData';
 function getRealCountries() {
   return loadLang() === 'en' ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA;
 }
-import { PAYS_LOCAUX, getStats } from './Dashboard_p1';
+import { PAYS_LOCAUX, getStats, isValidKeyFormat, isFakeKey } from './Dashboard_p1';
 
 // ── Getters localisés — labels terrain/régime/pays depuis JSON ────────────
 function getTerrainLabels() {
@@ -241,19 +241,30 @@ function APIKeyInline({ onClose }) {
     setPK(pk => ({ ...pk, [provId]: pk[provId].map(k => ({...k, default: k._id===_id})) }));
 
   const testEntry = async (provId, _id, keyVal, modelVal) => {
-    if (!keyVal?.trim()) return;
+    const k = keyVal?.trim();
+    if (!k) return;
+    // Pré-validation format local
+    if (!isValidKeyFormat(provId, k)) {
+      setKS(ks => ({...ks, [_id]:'error'}));
+      return;
+    }
+    // Clé debug — format OK mais manifestement factice
+    if (isFakeKey(provId, k)) {
+      setKS(ks => ({...ks, [_id]:'debug'}));
+      return;
+    }
     setKS(ks => ({...ks, [_id]:'testing'}));
     const prov = PROVIDERS.find(p=>p.id===provId);
     try {
-      const ok = await prov.testUrl(keyVal, modelVal);
+      const ok = await prov.testUrl(k, modelVal);
       setKS(ks => ({...ks, [_id]: ok?'ok':'error'}));
     } catch { setKS(ks => ({...ks, [_id]:'error'})); }
   };
 
-  const anyOk = Object.values(keyStatus).some(s=>s==='ok');
+  const anyOk = Object.values(keyStatus).some(s=>s==='ok'||s==='debug');
   const hasAnyKey = Object.values(provKeys).some(arr => arr.some(k=>k.key?.trim()));
   const canSave = anyOk || hasDeleted;
-  const stIcon = (s) => s==='ok'?'✅':s==='error'?'❌':s==='testing'?'⏳':'';
+  const stIcon = (s) => s==='ok'?'✅':s==='error'?'❌':s==='testing'?'⏳ …':s==='debug'?'🐛':'';
 
   const save = () => {
     const toSave = {};
@@ -267,6 +278,7 @@ function APIKeyInline({ onClose }) {
         : valid.map(({ _id, ...k }) => ({ ...k, key: k.key.trim() }));
       const statuses = valid.map(k => keyStatus[k._id]);
       if (statuses.some(s => s==='ok')) statusToSave[provId] = 'ok';
+      else if (statuses.some(s => s==='debug')) statusToSave[provId] = 'debug';
       else if (statuses.length > 0 && statuses.every(s => s==='error')) statusToSave[provId] = 'error';
       // Modèle préféré = modèle de la clé default
       const defKey = valid.find(k => k.default) || valid[0];
@@ -296,9 +308,10 @@ function APIKeyInline({ onClose }) {
         {PROVIDERS.map(prov => {
           const keyArr = provKeys[prov.id] || [];
           const hasAK  = keyArr.some(k=>k.key?.trim());
-          const provOk = keyArr.some(k=>keyStatus[k._id]==='ok');
-          const provErr = !provOk && hasAK && keyArr.filter(k=>k.key?.trim()).every(k=>keyStatus[k._id]==='error');
-          const statIcon = provOk?'✅':provErr?'❌':hasAK?'🔑':'—';
+          const provOk  = keyArr.some(k=>keyStatus[k._id]==='ok');
+          const provDbg = !provOk && keyArr.some(k=>keyStatus[k._id]==='debug');
+          const provErr = !provOk && !provDbg && hasAK && keyArr.filter(k=>k.key?.trim()).every(k=>keyStatus[k._id]==='error');
+          const statIcon = provOk?'✅':provDbg?'🐛':provErr?'❌':hasAK?'🔑':'—';
           const isOpen   = openProv === prov.id;
           return (
             <div key={prov.id} style={{ border:`1px solid ${hasAK?'rgba(200,164,74,0.14)':'rgba(255,255,255,0.06)'}`,
@@ -311,7 +324,7 @@ function APIKeyInline({ onClose }) {
                   color:isOpen?'rgba(200,164,74,0.88)':'rgba(200,215,240,0.70)', flex:1 }}>{prov.label}</span>
                 <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
                 <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', marginLeft:'0.4rem',
-                  color:provOk?'rgba(58,191,122,0.80)':provErr?'rgba(200,58,58,0.80)':'rgba(140,160,200,0.35)' }}>{statIcon}</span>
+                  color:provOk?'rgba(58,191,122,0.80)':provDbg?'rgba(180,140,80,0.80)':provErr?'rgba(200,58,58,0.80)':'rgba(140,160,200,0.35)' }}>{statIcon}</span>
               </button>
 
               {isOpen && (
@@ -338,7 +351,13 @@ function APIKeyInline({ onClose }) {
                             disabled={!entry.key?.trim()} onClick={()=>testEntry(prov.id, entry._id, entry.key, entry.model)}>
                             Test
                           </button>
-                          {st && <span style={{ fontSize:'0.75rem', minWidth:'1rem', flexShrink:0 }}>{stIcon(st)}</span>}
+                          {st && (
+                            <span style={{ fontSize:'0.75rem', minWidth:'1rem', flexShrink:0,
+                              ...(st==='debug'?{color:'rgba(200,160,60,0.85)',cursor:'help'}:{}) }}
+                              title={st==='debug'?(lang==='en'?'Debug key — correct format, no real API call':'Clé debug — format correct, aucun appel API réel'):undefined}>
+                              {stIcon(st)}
+                            </span>
+                          )}
                           <button style={{ ...BTN_SECONDARY, padding:'0.18rem 0.35rem', fontSize:'0.80rem', lineHeight:1, flexShrink:0 }}
                             onClick={()=>removeEntry(prov.id, entry._id)}
                             title={lang==='en'?'Delete key':'Supprimer'}>🗑</button>

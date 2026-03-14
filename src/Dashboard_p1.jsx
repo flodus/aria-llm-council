@@ -757,7 +757,25 @@ Génère une notification d'analyse en JSON :
 //  2. MOTEUR D'INTELLIGENCE (API & LOCAL FALLBACK)
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Appelle un modèle spécifique (Claude ou Gemini) via API
+// Validation de format et détection de clé debug par provider
+const KEY_FORMAT = {
+  claude: k => k.startsWith('sk-ant-') && k.length >= 20,
+  gemini: k => k.startsWith('AIza') && k.length >= 15,
+  grok:   k => k.startsWith('xai-') && k.length >= 15,
+  openai: k => k.startsWith('sk-') && !k.startsWith('sk-ant-') && k.length >= 15,
+};
+const FAKE_PATTERNS = ['-test', '-fake', '-debug', '-demo', '-mock'];
+export function isValidKeyFormat(provider, key) {
+  const k = (key || '').trim();
+  return !!(KEY_FORMAT[provider]?.(k));
+}
+export function isFakeKey(provider, key) {
+  const k = (key || '').trim();
+  if (!isValidKeyFormat(provider, k)) return false;
+  return FAKE_PATTERNS.some(p => k.toLowerCase().includes(p));
+}
+
+// Appelle un modèle spécifique (Claude, Gemini, Grok, OpenAI) via API
 async function callModel(model, prompt, keys, systemPrompt = '', _retryCount = 0) {
   // Fallback provider si pas de clé pour le provider demandé (rétrocompat string + array)
   const hasKey = (p) => { const v = keys[p]; return !!(v && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some(k => k.key?.trim()) : false)); };
@@ -832,6 +850,58 @@ async function callModel(model, prompt, keys, systemPrompt = '', _retryCount = 0
     const claudeKeys = getProviderKeys('claude');
     if (claudeKeys.length > 0) { console.warn('[ARIA] Gemini épuisé — fallback Claude'); return callModel('claude', prompt, keys, systemPrompt, 0); }
     return { error: true, code: 429, msg: '⚠ Quota Gemini dépassé — tous les modèles épuisés.' };
+  }
+
+  if (model === 'grok') {
+    const grokKeys = getProviderKeys('grok');
+    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').grok || 'grok-3-mini'; } catch { return 'grok-3-mini'; } })();
+    for (const keyEntry of grokKeys) {
+      if (isFakeKey('grok', keyEntry.key)) {
+        console.warn('[ARIA] Grok — clé debug détectée, réponse locale');
+        return { error: true, msg: getRandomFallback() };
+      }
+      if (!isValidKeyFormat('grok', keyEntry.key)) continue;
+      try {
+        const res = await fetch('https://api.x.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keyEntry.key}` },
+          body: JSON.stringify({ model: keyEntry.model || prefModel, max_tokens: 1000,
+            messages: [{ role: 'user', content: fullContent }] }),
+        });
+        if (res.status === 429) { console.warn('[ARIA] Grok 429 — tentative clé suivante'); continue; }
+        if (!res.ok) { console.warn('[ARIA] Grok erreur HTTP', res.status); continue; }
+        const data = await res.json();
+        const text = data?.choices?.[0]?.message?.content || '';
+        return JSON.parse(text.replace(/```json|```/g, '').trim());
+      } catch (e) { console.warn('[ARIA] Grok error:', e.message); continue; }
+    }
+    return { error: true, msg: getRandomFallback() };
+  }
+
+  if (model === 'openai') {
+    const openaiKeys = getProviderKeys('openai');
+    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}').openai || 'gpt-4.1-mini'; } catch { return 'gpt-4.1-mini'; } })();
+    for (const keyEntry of openaiKeys) {
+      if (isFakeKey('openai', keyEntry.key)) {
+        console.warn('[ARIA] OpenAI — clé debug détectée, réponse locale');
+        return { error: true, msg: getRandomFallback() };
+      }
+      if (!isValidKeyFormat('openai', keyEntry.key)) continue;
+      try {
+        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keyEntry.key}` },
+          body: JSON.stringify({ model: keyEntry.model || prefModel, max_tokens: 1000,
+            messages: [{ role: 'user', content: fullContent }] }),
+        });
+        if (res.status === 429) { console.warn('[ARIA] OpenAI 429 — tentative clé suivante'); continue; }
+        if (!res.ok) { console.warn('[ARIA] OpenAI erreur HTTP', res.status); continue; }
+        const data = await res.json();
+        const text = data?.choices?.[0]?.message?.content || '';
+        return JSON.parse(text.replace(/```json|```/g, '').trim());
+      } catch (e) { console.warn('[ARIA] OpenAI error:', e.message); continue; }
+    }
+    return { error: true, msg: getRandomFallback() };
   }
 
   return { error: true, msg: "SYSTÈME : Aucune clé API valide détectée." };
