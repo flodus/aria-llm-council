@@ -153,6 +153,24 @@ Structure cible :
   }
 }
 ```
+ (ajouter un niveau regime dans tes réponses)
+ {
+  "justice": {
+    "reponses": {
+      "arbitre": {
+        "democratie": [
+          "L'équité exige que nous consultions les citoyens. Je propose une commission paritaire.",
+          "La loi est le socle de notre liberté ; ne touchons pas aux fondations sans un référendum."
+        ],
+        "junte": [
+          "La justice doit être rapide pour maintenir l'ordre. La procédure sera simplifiée.",
+          "L'arbitrage est un luxe en temps de crise ; nous trancherons selon les besoins de la stabilité."
+        ]
+      }
+    }
+  }
+}
+
 
 Mécanique anti-répétition :
 - Pool de N réponses par ministre par question
