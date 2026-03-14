@@ -208,6 +208,11 @@ function APIKeyInline({ onClose }) {
         });
         if (entries.length > 0 && !entries.some(k => k.default)) entries[0] = { ...entries[0], default: true };
       }
+      // Toujours au moins une entrée vide pour affichage immédiat du champ
+      if (entries.length === 0) {
+        const id = Math.random().toString(36).slice(2);
+        entries = [{ key: '', model: defModel, default: true, _id: id }];
+      }
       provKeys[p.id] = entries;
     }
     return { provKeys, keyStatus };
@@ -216,7 +221,6 @@ function APIKeyInline({ onClose }) {
   const setPK = (fn) => setKeyState(s => ({ ...s, provKeys: typeof fn === 'function' ? fn(s.provKeys) : fn }));
   const setKS = (fn) => setKeyState(s => ({ ...s, keyStatus: typeof fn === 'function' ? fn(s.keyStatus) : fn }));
   const [hasDeleted, setHasDeleted] = useState(false);
-  const [openProv, setOpenProv] = useState(null);
 
   const addKey = (provId) => {
     const prov = PROVIDERS.find(p => p.id === provId);
@@ -307,84 +311,81 @@ function APIKeyInline({ onClose }) {
 
         {PROVIDERS.map(prov => {
           const keyArr = provKeys[prov.id] || [];
-          const hasAK  = keyArr.some(k=>k.key?.trim());
           const provOk  = keyArr.some(k=>keyStatus[k._id]==='ok');
           const provDbg = !provOk && keyArr.some(k=>keyStatus[k._id]==='debug');
-          const provErr = !provOk && !provDbg && hasAK && keyArr.filter(k=>k.key?.trim()).every(k=>keyStatus[k._id]==='error');
-          const statIcon = provOk?'✅':provDbg?'🐛':provErr?'❌':hasAK?'🔑':'—';
-          const isOpen   = openProv === prov.id;
+          const provErr = !provOk && !provDbg && keyArr.some(k=>k.key?.trim()) && keyArr.filter(k=>k.key?.trim()).every(k=>keyStatus[k._id]==='error');
+          const statIcon = provOk?'✅':provDbg?'🐛':provErr?'❌':'';
+          const multiKeys = keyArr.length > 1;
           return (
-            <div key={prov.id} style={{ border:`1px solid ${hasAK?'rgba(200,164,74,0.14)':'rgba(255,255,255,0.06)'}`,
-              borderRadius:'2px', overflow:'hidden', background:hasAK?'rgba(200,164,74,0.02)':'rgba(255,255,255,0.01)' }}>
-              <button onClick={()=>setOpenProv(p=>p===prov.id?null:prov.id)}
-                style={{ width:'100%', display:'flex', alignItems:'center', gap:'0.5rem',
-                  padding:'0.38rem 0.6rem', background:'none', border:'none', cursor:'pointer', textAlign:'left' }}>
-                <span style={{ fontSize:'0.65rem', color:'rgba(200,164,74,0.50)' }}>{isOpen?'▾':'▸'}</span>
+            <div key={prov.id} style={{ border:'1px solid rgba(255,255,255,0.07)', borderRadius:'2px',
+              padding:'0.45rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.35rem' }}>
+              {/* En-tête provider */}
+              <div style={{ display:'flex', alignItems:'center', gap:'0.4rem' }}>
                 <span style={{ fontFamily:FONT.mono, fontSize:'0.46rem', letterSpacing:'0.10em',
-                  color:isOpen?'rgba(200,164,74,0.88)':'rgba(200,215,240,0.70)', flex:1 }}>{prov.label}</span>
+                  color:'rgba(200,215,240,0.70)', flex:1 }}>{prov.label}</span>
                 <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:'rgba(100,120,160,0.40)' }}>{prov.sub}</span>
-                <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', marginLeft:'0.4rem',
-                  color:provOk?'rgba(58,191,122,0.80)':provDbg?'rgba(180,140,80,0.80)':provErr?'rgba(200,58,58,0.80)':'rgba(140,160,200,0.35)' }}>{statIcon}</span>
+                {statIcon && <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', marginLeft:'0.2rem',
+                  color:provOk?'rgba(58,191,122,0.80)':provDbg?'rgba(180,140,80,0.80)':'rgba(200,58,58,0.80)' }}>{statIcon}</span>}
+              </div>
+              {/* Champs de clés */}
+              {keyArr.map((entry, idx) => {
+                const st = keyStatus[entry._id];
+                return (
+                  <div key={entry._id} style={{ display:'flex', flexDirection:'column', gap:'0.25rem',
+                    paddingTop: idx>0?'0.35rem':0,
+                    borderTop: idx>0?'1px solid rgba(255,255,255,0.05)':'none' }}>
+                    <div style={{ display:'flex', gap:'0.4rem', alignItems:'center' }}>
+                      {multiKeys && (
+                        <button onClick={()=>setDefault(prov.id, entry._id)}
+                          title={lang==='en'?'Set as default':'Clé par défaut'}
+                          style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem',
+                            padding:'0 0.15rem', lineHeight:1, opacity:entry.default?1:0.40, flexShrink:0 }}>
+                          {entry.default?'⭐':'☆'}
+                        </button>
+                      )}
+                      <input style={{ ...INPUT_STYLE, fontSize:'0.44rem', flex:1 }}
+                        type="password" value={entry.key}
+                        onChange={e=>updateEntry(prov.id, entry._id, 'key', e.target.value)}
+                        placeholder={prov.ph} />
+                      <button style={{ ...BTN_SECONDARY, padding:'0.28rem 0.50rem', fontSize:'0.42rem', whiteSpace:'nowrap' }}
+                        disabled={!entry.key?.trim()} onClick={()=>testEntry(prov.id, entry._id, entry.key, entry.model)}>
+                        Test
+                      </button>
+                      {st && (
+                        <span style={{ fontSize:'0.75rem', minWidth:'1rem', flexShrink:0,
+                          ...(st==='debug'?{color:'rgba(200,160,60,0.85)',cursor:'help'}:{}) }}
+                          title={st==='debug'?(lang==='en'?'Debug key — correct format, no real API call':'Clé debug — format correct, aucun appel API réel'):undefined}>
+                          {stIcon(st)}
+                        </span>
+                      )}
+                      {multiKeys && (
+                        <button style={{ ...BTN_SECONDARY, padding:'0.18rem 0.35rem', fontSize:'0.80rem', lineHeight:1, flexShrink:0 }}
+                          onClick={()=>removeEntry(prov.id, entry._id)}
+                          title={lang==='en'?'Delete key':'Supprimer'}>🗑</button>
+                      )}
+                    </div>
+                    <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
+                      {prov.versions.map(v => {
+                        const chosen = entry.model === v.id;
+                        return (
+                          <button key={v.id}
+                            style={{ ...BTN_SECONDARY, padding:'0.15rem 0.40rem', fontSize:'0.38rem',
+                              ...(chosen?{border:'1px solid rgba(200,164,74,0.45)',color:'rgba(200,164,74,0.88)',background:'rgba(200,164,74,0.08)'}:{opacity:0.50}) }}
+                            onClick={()=>updateEntry(prov.id, entry._id, 'model', v.id)}>
+                            {v.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+              {/* Bouton ajouter une clé supplémentaire */}
+              <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.22rem 0.5rem',
+                alignSelf:'flex-start', border:'1px dashed rgba(200,164,74,0.25)', color:'rgba(200,164,74,0.60)' }}
+                onClick={()=>addKey(prov.id)}>
+                + {lang==='en'?'Add a key':'Ajouter une clé'}
               </button>
-
-              {isOpen && (
-                <div style={{ padding:'0.5rem 0.65rem 0.6rem', display:'flex', flexDirection:'column', gap:'0.55rem',
-                  borderTop:`1px solid ${hasAK?'rgba(200,164,74,0.10)':'rgba(255,255,255,0.05)'}` }}>
-                  {keyArr.map((entry, idx) => {
-                    const st = keyStatus[entry._id];
-                    return (
-                      <div key={entry._id} style={{ display:'flex', flexDirection:'column', gap:'0.28rem',
-                        paddingBottom: idx<keyArr.length-1?'0.45rem':0,
-                        borderBottom: idx<keyArr.length-1?'1px solid rgba(255,255,255,0.05)':'none' }}>
-                        <div style={{ display:'flex', gap:'0.4rem', alignItems:'center' }}>
-                          <button onClick={()=>setDefault(prov.id, entry._id)}
-                            title={lang==='en'?'Set as default':'Clé par défaut'}
-                            style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem',
-                              padding:'0 0.15rem', lineHeight:1, opacity:entry.default?1:0.40, flexShrink:0 }}>
-                            {entry.default?'⭐':'☆'}
-                          </button>
-                          <input style={{ ...INPUT_STYLE, fontSize:'0.44rem', flex:1 }}
-                            type="password" value={entry.key}
-                            onChange={e=>updateEntry(prov.id, entry._id, 'key', e.target.value)}
-                            placeholder={prov.ph} />
-                          <button style={{ ...BTN_SECONDARY, padding:'0.28rem 0.50rem', fontSize:'0.42rem', whiteSpace:'nowrap' }}
-                            disabled={!entry.key?.trim()} onClick={()=>testEntry(prov.id, entry._id, entry.key, entry.model)}>
-                            Test
-                          </button>
-                          {st && (
-                            <span style={{ fontSize:'0.75rem', minWidth:'1rem', flexShrink:0,
-                              ...(st==='debug'?{color:'rgba(200,160,60,0.85)',cursor:'help'}:{}) }}
-                              title={st==='debug'?(lang==='en'?'Debug key — correct format, no real API call':'Clé debug — format correct, aucun appel API réel'):undefined}>
-                              {stIcon(st)}
-                            </span>
-                          )}
-                          <button style={{ ...BTN_SECONDARY, padding:'0.18rem 0.35rem', fontSize:'0.80rem', lineHeight:1, flexShrink:0 }}
-                            onClick={()=>removeEntry(prov.id, entry._id)}
-                            title={lang==='en'?'Delete key':'Supprimer'}>🗑</button>
-                        </div>
-                        <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap', paddingLeft:'1.6rem' }}>
-                          {prov.versions.map(v => {
-                            const chosen = entry.model === v.id;
-                            return (
-                              <button key={v.id}
-                                style={{ ...BTN_SECONDARY, padding:'0.15rem 0.40rem', fontSize:'0.38rem',
-                                  ...(chosen?{border:'1px solid rgba(200,164,74,0.45)',color:'rgba(200,164,74,0.88)',background:'rgba(200,164,74,0.08)'}:{opacity:0.50}) }}
-                                onClick={()=>updateEntry(prov.id, entry._id, 'model', v.id)}>
-                                {v.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  <button style={{ ...BTN_SECONDARY, fontSize:'0.40rem', padding:'0.25rem 0.6rem',
-                    alignSelf:'flex-start', border:'1px dashed rgba(200,164,74,0.25)', color:'rgba(200,164,74,0.60)' }}
-                    onClick={()=>addKey(prov.id)}>
-                    + {lang==='en'?'Add a key':'Ajouter une clé'}
-                  </button>
-                </div>
-              )}
             </div>
           );
         })}
@@ -1182,7 +1183,7 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
       return hasKey && ks[id] !== 'error';
     }).length;
     if (provCount === 0) return 'none';
-    if (!saved) return provCount === 1 ? 'solo' : 'aria'; // défaut intelligent selon les clés valides
+    if (!saved || saved === 'none') return provCount === 1 ? 'solo' : 'aria'; // défaut intelligent selon les clés valides
     if (provCount === 1 && (saved === 'aria' || saved === 'custom')) return 'solo';
     return saved;
   });
