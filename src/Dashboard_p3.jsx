@@ -218,6 +218,7 @@ function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
   const { lang: uiLang } = useLocale();
   const MONO  = "'JetBrains Mono', monospace";
   const SERIF = "'Cinzel', serif";
+  const popForecasts = {}; // réservé — prévisions population par pays (non encore calculées)
 
   // councilHistory = tableau de { countryId, countryNom, countryEmoji, question, vote, label }
   const withCouncil = councilHistory.filter(h => h.vote);
