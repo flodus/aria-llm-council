@@ -471,8 +471,8 @@ function SectionSysteme({ onHardReset }) {
   const anyKey    = hasClaude || hasGemini || hasGrok || hasOpenai;
   const iaMode    = opts.ia_mode;
 
-  // Tous les providers disponibles (clé présente)
-  const availableProviders = PROVIDERS.filter(p => !!opts.api_keys[p.id]).map(p => p.id);
+  // Tous les providers disponibles (clé présente + non en erreur)
+  const availableProviders = PROVIDERS.filter(p => !!opts.api_keys[p.id] && status[p.id] !== 'error').map(p => p.id);
 
   return (
     <div className="settings-section-body">
@@ -729,7 +729,8 @@ function SectionConstitution() {
   ];
   const anyKey = !!(opts.api_keys?.claude || opts.api_keys?.gemini || opts.api_keys?.grok || opts.api_keys?.openai);
   const iaMode = opts.ia_mode;
-  const availableProviders = PROVIDERS.filter(p => !!opts.api_keys?.[p.id]).map(p => p.id);
+  const keyStatusSaved = (() => { try { return JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}'); } catch { return {}; } })();
+  const availableProviders = PROVIDERS.filter(p => !!opts.api_keys?.[p.id] && keyStatusSaved[p.id] !== 'error').map(p => p.id);
 
   const parsePromptParts = (text) => {
     const jsonStart = text.indexOf('Format JSON');

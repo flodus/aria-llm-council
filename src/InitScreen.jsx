@@ -1101,14 +1101,16 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const loadPreferredModels = () => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); } catch { return {}; } };
   const loadIARoles = () => { try { const r = (JSON.parse(localStorage.getItem('aria_options')||'{}')).ia_roles || {}; return r; } catch { return {}; } };
   const loadKeys = () => { try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; } };
+  const loadKeyStatus = () => { try { return JSON.parse(localStorage.getItem('aria_api_keys_status')||'{}'); } catch { return {}; } };
   const PROV_LABELS = { openrouter:'OpenRouter', claude:'Claude', gemini:'Gemini', grok:'Grok', openai:'OpenAI' };
   const [modelReg,    setModelReg]    = useState(ARIA_FALLBACK_MODELS);
   const [regStatus,   setRegStatus]   = useState('idle');
   const apiKeys = loadKeys();
+  const savedKeyStatus = loadKeyStatus();
   const availProviders = ['openrouter','claude','gemini','grok','openai'].filter(id => {
     const v = apiKeys[id];
-    if (Array.isArray(v)) return v.some(k => typeof k === 'string' && k.trim().length > 0);
-    return typeof v === 'string' && v.trim().length > 0;
+    const hasKey = Array.isArray(v) ? v.some(k => typeof k === 'string' && k.trim().length > 0) : typeof v === 'string' && v.trim().length > 0;
+    return hasKey && savedKeyStatus[id] !== 'error';
   });
   const [ariaMode,    setAriaMode]    = useState(() => {
     const saved = loadOpts().ia_mode;
@@ -1128,13 +1130,20 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
   const prefModels = loadPreferredModels();
   const initRoles = () => {
     const r = loadIARoles();
+    const savedSoloModel = loadOpts().solo_model;
     const modelOf = (prov) => prefModels[prov] || ARIA_FALLBACK_MODELS[prov]?.find(m=>m.label.includes('★'))?.id || ARIA_FALLBACK_MODELS[prov]?.[0]?.id || '';
+    // Compatibilité Settings : Settings stocke les providers dans ministre_model, synthese_min, phare_model, etc.
+    const ministerProv  = r.ministre_provider  || r.ministre_model   || savedSoloModel || p0;
+    const synthMinProv  = r.synthese_min_prov  || r.synthese_min     || ministerProv   || p1;
+    const phareProv     = r.phare_provider     || r.phare_model      || p0;
+    const boussoleProv  = r.boussole_provider  || r.boussole_model   || p1;
+    const synthPresProv = r.synthese_pres_prov || r.synthese_pres    || p0;
     return {
-      ministre_provider:   r.ministre_provider   || p0, ministre_model:     r.ministre_model     || modelOf(r.ministre_provider  || p0),
-      synthese_min_prov:   r.synthese_min_prov   || p1, synthese_min_model: r.synthese_min_model || modelOf(r.synthese_min_prov  || p1),
-      phare_provider:      r.phare_provider      || p0, phare_model:        r.phare_model        || modelOf(r.phare_provider     || p0),
-      boussole_provider:   r.boussole_provider   || p1, boussole_model:     r.boussole_model     || modelOf(r.boussole_provider  || p1),
-      synthese_pres_prov:  r.synthese_pres_prov  || p0, synthese_pres_model:r.synthese_pres_model|| modelOf(r.synthese_pres_prov || p0),
+      ministre_provider:   ministerProv,  ministre_model:      modelOf(ministerProv),
+      synthese_min_prov:   synthMinProv,  synthese_min_model:  modelOf(synthMinProv),
+      phare_provider:      phareProv,     phare_model:         modelOf(phareProv),
+      boussole_provider:   boussoleProv,  boussole_model:      modelOf(boussoleProv),
+      synthese_pres_prov:  synthPresProv, synthese_pres_model: modelOf(synthPresProv),
     };
   };
   const [roles, setRoles] = useState(initRoles);
@@ -1194,14 +1203,25 @@ function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaun
     try {
       const opts = loadOpts();
       opts.ia_mode = ariaMode;
-      opts.ia_roles = roles;
+      opts.solo_model = roles.ministre_provider || availProviders[0] || 'claude';
+      // Sauvegarde ia_roles au format Settings (clé = provider)
+      opts.ia_roles = {
+        ...(opts.ia_roles || {}),
+        ministre_model:  roles.ministre_provider  || availProviders[0] || 'claude',
+        synthese_min:    roles.synthese_min_prov  || availProviders[0] || 'claude',
+        phare_model:     roles.phare_provider     || availProviders[0] || 'claude',
+        boussole_model:  roles.boussole_provider  || availProviders[0] || 'claude',
+        synthese_pres:   roles.synthese_pres_prov || availProviders[0] || 'claude',
+      };
       localStorage.setItem('aria_options', JSON.stringify(opts));
-      localStorage.setItem('aria_preferred_models', JSON.stringify(
-        Object.fromEntries(Object.entries(roles).filter(([k])=>k.endsWith('_model')).map(([k,v])=>{
-          const prov = roles[k.replace('_model','_provider')] || roles[k.replace('_model','_prov')+'ider'];
-          return prov ? [prov, v] : null;
-        }).filter(Boolean))
-      ));
+      // Sauvegarde des préférences de modèles par provider
+      const prefModelsToSave = {};
+      if (roles.ministre_provider  && roles.ministre_model)      prefModelsToSave[roles.ministre_provider]  = roles.ministre_model;
+      if (roles.synthese_min_prov  && roles.synthese_min_model)  prefModelsToSave[roles.synthese_min_prov]  = roles.synthese_min_model;
+      if (roles.phare_provider     && roles.phare_model)         prefModelsToSave[roles.phare_provider]     = roles.phare_model;
+      if (roles.boussole_provider  && roles.boussole_model)      prefModelsToSave[roles.boussole_provider]  = roles.boussole_model;
+      if (roles.synthese_pres_prov && roles.synthese_pres_model) prefModelsToSave[roles.synthese_pres_prov] = roles.synthese_pres_model;
+      localStorage.setItem('aria_preferred_models', JSON.stringify({...loadPreferredModels(), ...prefModelsToSave}));
     } catch {}
     // Merge ctx overrides + perGov overrides dans chaque pendingDef
     const defs = (pendingDefs || []).map((d, i) => {
