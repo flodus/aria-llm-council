@@ -1,5 +1,5 @@
-import { useLocale } from '../ariaI18n';
-import { FONT } from '../ariaTheme';
+import { useLocale } from '../../../ariaI18n';
+import { FONT, cinzel, mono } from '../../../shared/theme';
 
 export default function ARIAHeader({ showQuote }) {
   const { lang } = useLocale();

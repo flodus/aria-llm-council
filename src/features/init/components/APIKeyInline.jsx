@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
-import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../ariaTheme';
+import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { isValidKeyFormat, isFakeKey } from '../../../Dashboard_p1';
 
 // TODO: isValidKeyFormat et isFakeKey à déplacer dans un service partagé (shared/services/llm)

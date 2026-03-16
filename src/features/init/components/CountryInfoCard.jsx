@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
-import { FONT } from '../../../ariaTheme';
+import { FONT, CARD_STYLE, labelStyle } from '../../../shared/theme';
 
 export default function CountryInfoCard({ data }) {
   const { lang } = useLocale();

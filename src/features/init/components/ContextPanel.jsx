@@ -1,5 +1,5 @@
 import { useLocale, t } from '../../../ariaI18n';
-import { FONT, INPUT_STYLE, BTN_SECONDARY } from '../../../ariaTheme';
+import { FONT, INPUT_STYLE, BTN_SECONDARY } from '../../../shared/theme';
 
 export default function ContextPanel({ countryName, open, onToggle, mode, setMode, override, setOverride, embedded }) {
   const { lang } = useLocale();

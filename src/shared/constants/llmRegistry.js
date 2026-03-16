@@ -7,8 +7,7 @@
 //      (même format que ARIA_FALLBACK_MODELS ci-dessous)
 //   2. Remplacer REPLACE_WITH_YOUR_GIST_ID par l'ID du Gist dans l'URL
 
-export const ARIA_REGISTRY_URL = 'https://gist.githubusercontent.com/flodus/REPLACE_WITH_YOUR_GIST_ID/raw/llm-registry.json';
-
+// Modèles LLM disponibles (fallback si registry offline)
 export const ARIA_FALLBACK_MODELS = {
   openrouter: [
     { id:'anthropic/claude-sonnet-4-5',     label:'Claude Sonnet 4.5 ★' },
@@ -23,7 +22,7 @@ export const ARIA_FALLBACK_MODELS = {
   claude: [
     { id:'claude-sonnet-4-6',              label:'Sonnet 4.6 ★' },
     { id:'claude-haiku-4-5-20251001',      label:'Haiku 4.5' },
-    { id:'claude-opus-4-6',               label:'Opus 4.6' },
+    { id:'claude-opus-4-6',                 label:'Opus 4.6' },
   ],
   gemini: [
     { id:'gemini-2.0-flash',               label:'2.0 Flash ★' },
@@ -32,11 +31,23 @@ export const ARIA_FALLBACK_MODELS = {
   ],
   grok: [
     { id:'grok-3-mini', label:'Grok 3 Mini ★' },
-    { id:'grok-3',      label:'Grok 3' },
+    { id:'grok-3', label:'Grok 3' }
   ],
   openai: [
     { id:'gpt-4.1-mini', label:'GPT-4.1 Mini ★' },
-    { id:'gpt-4.1',      label:'GPT-4.1' },
-    { id:'o4-mini',      label:'o4-mini' },
+    { id:'gpt-4.1', label:'GPT-4.1' },
+    { id:'o4-mini', label:'o4-mini' }
   ],
 };
+
+// Noms des providers pour l'affichage
+export const PROV_LABELS = {
+  openrouter: 'OpenRouter',
+  claude: 'Claude',
+  gemini: 'Gemini',
+  grok: 'Grok',
+  openai: 'OpenAI'
+};
+
+// URL du registre distant (placeholder)
+export const ARIA_REGISTRY_URL = 'https://gist.githubusercontent.com/flodus/REPLACE_WITH_YOUR_GIST_ID/raw/llm-registry.json';

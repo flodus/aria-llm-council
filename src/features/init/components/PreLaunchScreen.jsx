@@ -1,21 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocale, t, loadLang } from '../../../ariaI18n';
-import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../ariaTheme';
+import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import ARIAHeader from './ARIAHeader';
 import ContextPanel from './ContextPanel';
 import RecapAccordion from './RecapAccordion';
 import { getRegimeLabels, getTerrainLabels } from '../services/labels';
 import BASE_AGENTS from '../../../../templates/base_agents.json';
 import BASE_AGENTS_EN from '../../../../templates/base_agents_en.json';
-import { ARIA_FALLBACK_MODELS, ARIA_REGISTRY_URL } from '../../../shared/constants/llmRegistry';
+import { ARIA_FALLBACK_MODELS, ARIA_REGISTRY_URL, PROV_LABELS } from '../../../shared/constants/llmRegistry';
 
-const PROV_LABELS = {
-    openrouter: 'OpenRouter',
-    claude: 'Claude',
-    gemini: 'Gemini',
-    grok: 'Grok',
-    openai: 'OpenAI'
-};
 
 // Helpers localStorage
 const loadOpts = () => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}'); } catch { return {}; } };
