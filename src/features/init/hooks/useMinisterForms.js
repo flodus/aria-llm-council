@@ -27,10 +27,52 @@ export default function useMinisterForms() {
         });
     };
 
+    const addMinister = (setPlAgents) => {
+        if (!newMinData.id || !newMinData.name) return;
+        const id = newMinData.id.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
+        if (!id) return;
+        setPlAgents(a => ({
+            ...a,
+            ministers: {
+                ...a.ministers,
+                [id]: { ...newMinData, id, sign: 'Custom', weight: 1 }
+            }
+        }));
+        resetNewMinData();
+        setNewMinForm(false);
+    };
+
+    const addMinistry = (setPlAgents) => {
+        if (!newMinistryData.id || !newMinistryData.name) return;
+        const id = newMinistryData.id.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
+        if (!id) return;
+        setPlAgents(a => ({
+            ...a,
+            ministries: [...a.ministries, {
+                ...newMinistryData,
+                id,
+                keywords: [],
+                questions: [],
+                ministerPrompts: {}
+            }]
+        }));
+        resetNewMinistryData();
+        setNewMinistryForm(false);
+    };
+
     return {
+        // États
         newMinForm, setNewMinForm,
-        newMinData, setNewMinData, resetNewMinData,
+        newMinData, setNewMinData,
         newMinistryForm, setNewMinistryForm,
-        newMinistryData, setNewMinistryData, resetNewMinistryData
+        newMinistryData, setNewMinistryData,
+
+        // Reset
+        resetNewMinData,
+        resetNewMinistryData,
+
+        // Add (NOUVEAU)
+        addMinister,
+        addMinistry
     };
 }

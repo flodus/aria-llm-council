@@ -25,12 +25,10 @@ import {
     useCountryOverride,
     useIAConfig,
     useCountryContext,
-    useMinisterForms
+    useMinisterForms,
+    useGameLaunch
 } from '../hooks';
-
-// Helpers localStorage (à déplacer plus tard dans un service)
-const loadOpts = () => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}'); } catch { return {}; } };
-const loadPreferredModels = () => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); } catch { return {}; } };
+import { loadOpts, loadPreferredModels } from '../../../shared/services';
 
 export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaunch }) {
     const { lang } = useLocale();
@@ -55,19 +53,14 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
 
     const countries = pendingDefs || [];
 
-    const saveAndLaunch = () => {
-        // Sauvegarde constitution
-        if (constitution.commonAgents) {
-            try {
-                localStorage.setItem('aria_agents_override', JSON.stringify({
-                    ...constitution.commonAgents,
-                    active_ministries: constitution.commonMins,
-                    active_presidency: constitution.commonPres,
-                    active_ministers: constitution.commonMinsters,
-                }));
-            } catch {}
-        }
+    // Sauvegarde constitution (hook)
+    const { saveAndLaunch } = useGameLaunch(constitution, iaConfig, countryContext, constitution.perGov, onLaunch);
 
+    const addMinister = () => ministerForms.addMinister(countryOverride.setPlAgents);
+    const addMinistry = () => ministerForms.addMinistry(countryOverride.setPlAgents);
+
+    // Fonction de lancement complète
+    const handleLaunch = () => {
         // Sauvegarde IA config
         try {
             const opts = loadOpts();
@@ -115,7 +108,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             }));
         } catch {}
 
-        // Merge des overrides
+        // Merge des overrides et lancement
         const defs = (pendingDefs || []).map((d, i) => {
             const gov = constitution.perGov[i];
             return {
@@ -134,39 +127,6 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         });
 
         onLaunch(pendingPreset, defs);
-    };
-
-    const addMinister = () => {
-        if (!ministerForms.newMinData.id || !ministerForms.newMinData.name) return;
-        const id = ministerForms.newMinData.id.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
-        if (!id) return;
-        countryOverride.setPlAgents(a => ({
-            ...a,
-            ministers: {
-                ...a.ministers,
-                [id]: { ...ministerForms.newMinData, id, sign: 'Custom', weight: 1 }
-            }
-        }));
-        ministerForms.resetNewMinData();
-        ministerForms.setNewMinForm(false);
-    };
-
-    const addMinistry = () => {
-        if (!ministerForms.newMinistryData.id || !ministerForms.newMinistryData.name) return;
-        const id = ministerForms.newMinistryData.id.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
-        if (!id) return;
-        countryOverride.setPlAgents(a => ({
-            ...a,
-            ministries: [...a.ministries, {
-                ...ministerForms.newMinistryData,
-                id,
-                keywords: [],
-                questions: [],
-                ministerPrompts: {}
-            }]
-        }));
-        ministerForms.resetNewMinistryData();
-        ministerForms.setNewMinistryForm(false);
     };
 
     return (
@@ -365,7 +325,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         lang={lang}
         plCtxModes={countryContext.plCtxModes}
         plCtxOvrs={countryContext.plCtxOvrs}
-        saveAndLaunch={saveAndLaunch}
+        saveAndLaunch={handleLaunch}
         />
         </div>
     );
