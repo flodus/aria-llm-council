@@ -26,7 +26,7 @@ import {
 } from './Dashboard_p1';
 import { getTerrainLabel, getRegimeLabel } from './ariaTheme';
 import { MapSVG } from './Dashboard_p2';
-import ConstitutionModal from './ConstitutionModal';
+import ConstitutionModal from './features/council/components/ConstitutionModal';
 import LLMCouncil from './LLMCouncil';
 import {
   routeQuestion,
