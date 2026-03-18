@@ -10,7 +10,10 @@ export default function MinisterDetail({
     onToggleActive,
     onUpdateEssence,
     onUpdateComm,
-    onUpdateAnnotation
+    onUpdateAnnotation,
+    onClose,
+    onDelete,
+    isCustom = false
 }) {
     const { lang } = useLocale();
 
@@ -52,6 +55,30 @@ export default function MinisterDetail({
         >
         {isActive ? '● actif' : '○ inactif'}
         </button>
+        <button
+        style={{
+            ...BTN_SECONDARY,
+            padding: '0.1rem 0.3rem',
+            fontSize: '0.7rem'
+
+        }}
+        onClick={onClose}>✕
+        </button>
+        {isCustom && (
+            <button
+            style={{
+                ...BTN_SECONDARY,
+                padding: '0.1rem 0.3rem',
+                fontSize: '0.7rem',
+                color: 'rgba(200,80,80,0.8)',
+                      borderColor: 'rgba(200,80,80,0.3)'
+            }}
+            onClick={onDelete}
+            title={lang === 'en' ? 'Delete minister' : 'Supprimer le ministre'}
+            >
+            🗑️
+            </button>
+        )}
         </div>
 
         {/* Style de communication */}
