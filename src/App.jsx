@@ -14,7 +14,7 @@ import Settings         from './Settings';
 import InitScreen       from './features/init/InitScreen';
 import CountryPanel from './features/world/components/CountryPanel/CountryPanel';
 import EmptyPanel from './features/world/components/CountryPanel/CountryPanelEmpty';
-import LegitimiteOverlay from './LegitimiteOverlay';
+import LegitimiteOverlay from './features/world/LegitimiteOverlay';
 import { FONT, COLOR }  from './shared/theme';
 import { loadLang, t, useLocale } from './ariaI18n';
 

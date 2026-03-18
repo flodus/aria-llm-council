@@ -4,7 +4,7 @@
 //  Accordéons Cycle → (groupe pays) → Événement → Détails
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { loadLang, t, useLocale } from './ariaI18n';
+import { loadLang, t, useLocale } from '../../ariaI18n';
 import { useState, useEffect } from 'react';
 
 const MONO   = "'JetBrains Mono', monospace";
