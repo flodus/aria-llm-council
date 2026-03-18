@@ -4,7 +4,7 @@
 //  Usage : <Settings onClose={() => setPage('dashboard')} />
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { getRegimeLabel, getTerrainLabel } from './ariaTheme';
+import { getRegimeLabel, getTerrainLabel } from './shared/theme';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
 import BASE_AGENTS    from '../templates/base_agents.json';

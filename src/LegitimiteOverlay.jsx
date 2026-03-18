@@ -6,7 +6,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from 'react';
-import { COLOR, FONT, mono, cinzel } from './ariaTheme';
+import { COLOR, FONT, mono, cinzel } from './shared/theme';
 
 // ── Données Think-Tank (fixes) ────────────────────────────────────────────
 const MANIFESTE_PAYS = [
