@@ -16,6 +16,7 @@ import useConstitutionModal from '../hooks/useConstitutionModal';
 import {
     PresidencySection,
     MinistersList,
+    MinisterDetail,
     MinistryDetail,
     PromptEditor
 } from './constitution';
@@ -154,28 +155,18 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             ministers={constitution.ministers}
             activeMinsters={constitution.activeMinsters}
             onToggleMinister={toggleMinister}
-            onSetAllActive={setAllMinistersActive}
             />
 
-            {/* Éditeur de prompt pour le ministre sélectionné */}
             {selectedMinister && (
-                <PromptEditor
-                prompt={{
-                    id: selectedMinister,
-                    title: constitution.ministers[selectedMinister]?.name,
-                    content: constitution.ministers[selectedMinister]?.essence,
-                    type: 'minister',
-                    color: constitution.ministers[selectedMinister]?.color
-                }}
-                isOpen={openPromptEditor === selectedMinister}
-                onToggle={() => setOpenPromptEditor(
-                    openPromptEditor === selectedMinister ? null : selectedMinister
-                )}
-                onSave={(newContent) => {
-                    // À implémenter selon la structure des données
-                    console.log('Save prompt for', selectedMinister, newContent);
-                }}
-                onCancel={() => setOpenPromptEditor(null)}
+                <MinisterDetail
+                minister={constitution.ministers[selectedMinister]}
+                ministerId={selectedMinister}
+                isActive={isMinisterActive(selectedMinister)}
+                isSelected={true}
+                onToggleActive={() => toggleMinister(selectedMinister)}
+                onUpdateEssence={(value) => updateMinisterEssence(selectedMinister, value)}
+                onUpdateComm={(value) => updateMinisterComm(selectedMinister, value)}
+                onUpdateAnnotation={(value) => updateMinisterAnnotation(selectedMinister, value)}
                 />
             )}
             </>

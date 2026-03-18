@@ -6,32 +6,38 @@
  */
 
 import { useState, useCallback } from 'react';
-import BASE_AGENTS from '../../../../templates/base_agents.json';
+import { useLocale } from '../../../ariaI18n';
+import { BASE_AGENTS, BASE_AGENTS_EN } from '../../../../templates';
 
-console.log('initialConstitution reçu:', initialConstitution);
+export default function useConstitutionModal(props) {
+    const { lang } = useLocale();
 
-export default function useConstitutionModal(initialConstitution) {
-    // 🔥 Valeurs par défaut si initialConstitution est undefined ou null
+    // Sécuriser l'entrée
+    const initialConstitution = props || {};
+
+    const BASE_AGENTS_DATA = lang === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
+
     const defaultConstitution = {
-        presidency: {
-            phare: { name: 'Phare', symbol: '☉', subtitle: 'La Volonté', essence: '', role_long: '' },
-            boussole: { name: 'Boussole', symbol: '☽', subtitle: "L'Âme", essence: '', role_long: '' }
-        },
+        presidency: BASE_AGENTS_DATA.presidency,
         activePres: ['phare', 'boussole'],
-        ministers: {},
+        ministers: BASE_AGENTS_DATA.ministers,
         activeMinsters: null,
-        ministries: []
+        ministries: (BASE_AGENTS_DATA.ministries || []).map(m => ({
+            ...m,
+            ministerPrompts: m.ministerPrompts || {}
+        }))
     };
 
-    // États pour la constitution
     const [constitution, setConstitution] = useState({
         ...defaultConstitution,
         ...initialConstitution,
-        // Fusion profonde pour presidency
-        presidency: {
-            ...defaultConstitution.presidency,
-            ...(initialConstitution?.presidency || {})
-        }
+        // ... autres fusions
+        ministries: initialConstitution.ministries?.length
+        ? initialConstitution.ministries.map(m => ({
+            ...m,
+            ministerPrompts: m.ministerPrompts || {}
+        }))
+        : defaultConstitution.ministries
     });
 
     // États pour l'UI
@@ -105,7 +111,7 @@ export default function useConstitutionModal(initialConstitution) {
      */
     const toggleMinistry = useCallback((ministryId) => {
         setConstitution(prev => {
-            const all = prev.ministries.map(m => m.id);
+            const all = (prev.ministries || []).map(m => m.id);
             const cur = prev.activeMins || all;
             const on = cur.includes(ministryId);
             const next = on ? cur.filter(id => id !== ministryId) : [...cur, ministryId];
@@ -132,7 +138,7 @@ export default function useConstitutionModal(initialConstitution) {
     const updateMinistryMission = useCallback((ministryId, newMission) => {
         setConstitution(prev => ({
             ...prev,
-            ministries: prev.ministries.map(m =>
+            ministries: (prev.ministries || []).map(m =>
             m.id === ministryId ? { ...m, mission: newMission } : m
             )
         }));
@@ -147,13 +153,13 @@ export default function useConstitutionModal(initialConstitution) {
     const assignMinisterToMinistry = useCallback((ministryId, ministerId, currentlyIn) => {
         setConstitution(prev => ({
             ...prev,
-            ministries: prev.ministries.map(m =>
+            ministries: (prev.ministries || []).map(m =>
             m.id === ministryId
             ? {
                 ...m,
                 ministers: currentlyIn
-                ? m.ministers.filter(id => id !== ministerId)
-                : [...m.ministers, ministerId]
+                ? (m.ministers || []).filter(id => id !== ministerId)
+                : [...(m.ministers || []), ministerId]
             }
             : m
             )
@@ -169,13 +175,13 @@ export default function useConstitutionModal(initialConstitution) {
     const updateMinisterPrompt = useCallback((ministryId, ministerId, newPrompt) => {
         setConstitution(prev => ({
             ...prev,
-            ministries: prev.ministries.map(m =>
+            ministries: (prev.ministries || []).map(m =>
             m.id === ministryId
             ? {
                 ...m,
                 ministerPrompts: {
                     ...(m.ministerPrompts || {}),
-                                            [ministerId]: newPrompt
+                                                    [ministerId]: newPrompt
                 }
             }
             : m
@@ -189,8 +195,9 @@ export default function useConstitutionModal(initialConstitution) {
      * @returns {boolean} True si le ministre est actif
      */
     const isMinisterActive = useCallback((ministerId) => {
-        return constitution.activeMinsters === null ||
-        constitution.activeMinsters.includes(ministerId);
+        // 🔥 Sécurisation
+        const activeMinsters = constitution.activeMinsters || [];
+        return activeMinsters.length === 0 || activeMinsters.includes(ministerId);
     }, [constitution.activeMinsters]);
 
     /**
@@ -199,8 +206,9 @@ export default function useConstitutionModal(initialConstitution) {
      * @returns {boolean} True si le ministère est actif
      */
     const isMinistryActive = useCallback((ministryId) => {
-        return constitution.activeMins === null ||
-        constitution.activeMins.includes(ministryId);
+        // 🔥 Sécurisation
+        const activeMins = constitution.activeMins || [];
+        return activeMins.length === 0 || activeMins.includes(ministryId);
     }, [constitution.activeMins]);
 
     return {
