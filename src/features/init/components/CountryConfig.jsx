@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  CountryConfig.jsx — Formulaire de configuration d'un pays (mode personnalisé)
+//
+//  Gère les deux types de pays : fictif (imaginaire) et réel.
+//  En mode IA + réel : validation temps réel via RestCountries (debounce 700ms).
+//  Inclut un ContextPanel pour le mode de contexte de délibération par pays.
+//
+//  Dépendances : features/init/services, shared/services/country
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useState, useEffect, useRef } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 // Thème (pas d'index)

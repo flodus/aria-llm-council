@@ -1,5 +1,21 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  validation.js — Validation et matching de noms de pays
+//
+//  Stratégie en 3 passes :
+//    1. Recherche directe RestCountries (/name/)
+//    1b. Endpoint /translation/ pour les noms français
+//    2. Fuzzy local sur /all (Levenshtein + phonétique)
+//
+//  Dépendances : RestCountries API (externe)
+//  Exporté via : shared/services/country/index.js
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Utilitaires de normalisation ─────────────────────────────────────────
+
+/** Normalise une chaîne : minuscules, sans accents, sans espaces en bordure */
 const _norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
 
+/** Distance de Levenshtein — retourne 99 si les longueurs diffèrent de plus de 4 */
 const _lev = (a, b) => {
     if (Math.abs(a.length-b.length) > 4) return 99;
     const dp = Array.from({length:a.length+1},(_,i)=>Array.from({length:b.length+1},(_,j)=>i||j));
@@ -8,9 +24,17 @@ const _lev = (a, b) => {
     return dp[a.length][b.length];
 };
 
+/** Normalisation vocalique FR → forme phonétique simplifiée (ex: "eau" → "o") */
 const _mapV = s => s.replace(/ou$/,'u').replace(/eau/g,'o').replace(/ai|ei/g,'e')
 .replace(/ie$/,'i').replace(/ique$/,'ic').replace(/que$/,'c');
 
+// ── Fonctions exportées ───────────────────────────────────────────────────
+
+/**
+ * Compare une requête utilisateur à un nom de pays.
+ * Teste : égalité exacte, préfixe, phonétique vocalique, Levenshtein, squelette consonantique.
+ * @returns {'found'|'suggestion'|null}
+ */
 export const rcMatch = (q, name) => {
     const nq = _norm(q), nr = _norm(name);
     const parts = [nr, ...nr.split(/[\s-]+/)];
@@ -28,12 +52,14 @@ export const rcMatch = (q, name) => {
     return null;
 };
 
+/** Retourne le nom d'affichage localisé d'un résultat RestCountries */
 export const rcDisplayName = (rc, lang) =>
 lang==='fr' ? (rc.translations?.fra?.common||rc.name?.common||'') : (rc.name?.common||'');
 
 // Cache pour /all
 let _allCountriesCache = null;
 
+/** Charge et met en cache la liste complète RestCountries (/all) pour le fuzzy pass 2 */
 export const getAllCountries = async () => {
     if (_allCountriesCache) return _allCountriesCache;
     try {
@@ -46,6 +72,12 @@ export const getAllCountries = async () => {
     return _allCountriesCache || [];
 };
 
+/**
+ * Valide un nom de pays saisi librement via RestCountries (sans appel LLM).
+ * @param {string} query - Saisie utilisateur
+ * @param {string} lang  - Langue courante ('fr'|'en')
+ * @returns {Promise<{status:'found'|'suggestion'|'notfound'|'error', displayName:string|null, canonicalName:string|null}>}
+ */
 export const validateCountryWithAI = async (query, lang) => {
     if (!query || query.length < 2) return { status:'notfound', displayName:null, canonicalName:null };
 

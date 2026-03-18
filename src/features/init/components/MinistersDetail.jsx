@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  MinistersDetail.jsx — Onglet de configuration détaillée des ministres
+//
+//  Affiche une grille de sélection (actif/inactif) et, en dessous,
+//  la fiche éditable de chaque ministre : essence, style de communication,
+//  angle d'annotation inter-ministérielle.
+//
+//  Dépendances : government/ (Hint, ActiveToggle, ColorPicker, EmojiPicker, DeleteButton)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
@@ -20,8 +30,12 @@ export default function MinistersDetail({
     const { lang } = useLocale();
     const allEntries = Object.entries(plAgents.ministers);
 
+    // ── Helpers grille ────────────────────────────────────────────────────
+
+    // null = tous actifs (héritage commun), sinon liste explicite
     const isMinsterOn = (k) => activeMinsters === null || activeMinsters.includes(k);
 
+    // Clic sur la grille : premier clic sélectionne, second clic désactive/réactive
     const handleGridClickMinster = (key) => {
         if (selectedMinister !== key) {
             setSelectedMinister(key);
@@ -36,11 +50,13 @@ export default function MinistersDetail({
         }
     };
 
+    // Ordre grille : actifs en premier, inactifs en bas
     const gridMinsters = [
         ...allEntries.filter(([k]) => isMinsterOn(k)),
         ...allEntries.filter(([k]) => !isMinsterOn(k)),
     ];
 
+    // Ordre liste détaillée : sélectionné en tête, puis actifs, puis inactifs
     const sortedMinsters = [
         ...allEntries.filter(([k]) => k === selectedMinister),
         ...allEntries.filter(([k]) => k !== selectedMinister && isMinsterOn(k)),

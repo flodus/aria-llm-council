@@ -1,3 +1,14 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  PreLaunchScreen.jsx — Écran de configuration pré-lancement (Constitution)
+//
+//  Intercalé entre la sélection du preset et la génération du monde.
+//  Permet de configurer : contexte pays, mode IA, présidence, ministères, ministres.
+//  Onglets : RÉSUMÉ · PRÉSIDENCE · MINISTÈRES · MINISTRES
+//
+//  Flux : InitScreen.preLaunch() → PreLaunchScreen → handleLaunch() → InitScreen.launch()
+//  Dépendances : hooks/ (useConstitution, useCountryOverride, useIAConfig…)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useRef, useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
@@ -59,9 +70,10 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
     const addMinister = () => ministerForms.addMinister(countryOverride.setPlAgents);
     const addMinistry = () => ministerForms.addMinistry(countryOverride.setPlAgents);
 
-    // Fonction de lancement complète
+    // ── Lancement ────────────────────────────────────────────────────────────
+    // Persiste la config IA, merge les overrides par pays, puis délègue à InitScreen.launch()
     const handleLaunch = () => {
-        // Sauvegarde IA config
+        // Sauvegarde IA config dans aria_options + aria_preferred_models
         try {
             const opts = loadOpts();
             opts.ia_mode = iaConfig.ariaMode;
@@ -108,7 +120,8 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             }));
         } catch {}
 
-        // Merge des overrides et lancement
+        // Merge context_mode + contextOverride + governanceOverride dans chaque def pays
+        // perGov[i] = null → héritage commun (pas d'override)
         const defs = (pendingDefs || []).map((d, i) => {
             const gov = constitution.perGov[i];
             return {

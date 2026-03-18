@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  FictionalCountrySection.jsx — Sélection / création d'un pays fictif
+//
+//  Deux états :
+//    - Preset sélectionné : affiche la fiche du pays prédéfini (PAYS_LOCAUX)
+//    - "Nouveau" : formulaire libre (nom, terrain, régime) + estimations
+//
+//  Dépendances : features/init/services/labels, shared/theme
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { getTerrainLabels, getRegimeLabels, getPaysLocaux } from '../services/labels';
