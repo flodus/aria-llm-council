@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  CountryContextAccordion.jsx — Accordéon contexte de délibération multi-pays
+//
+//  Accordéon de groupe : header cliquable → onglets pays → ContextPanel.
+//  plCtxOpen : null = fermé, number = index pays ouvert.
+//  ContextPanel est rendu en mode `embedded` (sans son propre header).
+//
+//  Dépendances : ariaI18n, shared/theme, ContextPanel
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale, t } from '../../../ariaI18n';
 import { BTN_SECONDARY } from '../../../shared/theme';
 import ContextPanel from './ContextPanel';

@@ -1,3 +1,12 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ConstitutionTabs.jsx — Onglets RÉSUMÉ / PRÉSIDENCE / MINISTÈRES / MINISTRES
+//
+//  Rendu en ligne avec soulignement doré sur l'onglet actif.
+//  scrollRef : remonte en haut du panneau lors du changement d'onglet.
+//
+//  Dépendances : ariaI18n, shared/theme (FONT)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale } from '../../../ariaI18n';
 import { FONT } from '../../../shared/theme';
 

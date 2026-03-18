@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ConfirmLaunchDialog.jsx — Modale de confirmation avant génération du monde
+//
+//  Overlay fixe plein écran (zIndex 9999) fermable en cliquant le fond.
+//  Affiche un RecapAccordion de tous les pays + boutons Modifier / Générer.
+//  lang peut être passé en prop ou lu depuis le contexte (fallback).
+//
+//  Dépendances : ariaI18n, shared/theme, RecapAccordion
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, BTN_SECONDARY, BTN_PRIMARY } from '../../../shared/theme';
 import RecapAccordion from './RecapAccordion';

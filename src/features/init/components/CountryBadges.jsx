@@ -1,3 +1,12 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  CountryBadges.jsx — Badges pays cliquables avec indicateur override ✦
+//
+//  Affiche un bouton par pays ; le pays sélectionné est mis en doré.
+//  ✦ bleu si perGov[i] non nul (constitution indépendante configurée).
+//
+//  Dépendances : shared/theme (FONT, BTN_SECONDARY)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { FONT, BTN_SECONDARY } from '../../../shared/theme';
 
 export default function CountryBadges({ countries, perGov, currentCountry, onSelectCountry }) {

@@ -1,3 +1,12 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ActivePresidencySection.jsx — Toggle Phare (☉) / Boussole (☽) actif
+//
+//  Chaque rôle présidentiel peut être activé/désactivé indépendamment.
+//  Avertissement affiché si aucun président n'est actif.
+//
+//  Dépendances : ariaI18n, shared/theme
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 

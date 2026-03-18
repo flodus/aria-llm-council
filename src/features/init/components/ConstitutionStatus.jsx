@@ -1,3 +1,12 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ConstitutionStatus.jsx — Badge "Constitution Indépendante ✦" ou "Commune ◈"
+//
+//  hasOverride true → badge bleu "CONSTITUTION INDÉPENDANTE — NOM_PAYS"
+//  hasOverride false → badge doré discret "CONSTITUTION COMMUNE"
+//
+//  Dépendances : ariaI18n, shared/theme (FONT)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale } from '../../../ariaI18n';
 import { FONT } from '../../../shared/theme';
 
