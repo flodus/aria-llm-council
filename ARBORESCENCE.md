@@ -1,36 +1,106 @@
 # ARBORESCENCE — ARIA
-_Générée le 2026-03-12 · Exclut : `node_modules/` · `.git/` · `dist/`_
-a refaire
+_Générée le 2026-03-18 · Exclut : `node_modules/` · `.git/` · `dist/`_
+
 ---
 
 ```
 aria/
 │
 ├── src/                              ← Code source React
-│   ├── main.jsx                      ← Point d'entrée Vite
+│   │
+│   ├── features/                    ← Domaines métier
+│   │   ├── chronolog/               ← Journal historique des cycles
+│   │   │   ├── components/
+│   │   │   ├── contexts/
+│   │   │   ├── hooks/
+│   │   │   ├── services/
+│   │   │   └── types/
+│   │   ├── council/                 ← Délibération LLM + constitution
+│   │   │   ├── components/
+│   │   │   │   └── constitution/
+│   │   │   ├── ConstitutionModal.jsx
+│   │   │   ├── contexts/
+│   │   │   ├── hooks/
+│   │   │   ├── services/
+│   │   │   └── types/
+│   │   ├── game/                    ← Cycle de jeu global
+│   │   │   ├── GameProvider.jsx
+│   │   │   ├── gameReducer.js
+│   │   │   ├── useGameCycle.js
+│   │   │   └── types/
+│   │   ├── init/                    ← Écran de démarrage + config
+│   │   │   ├── components/
+│   │   │   │   ├── api/
+│   │   │   │   ├── flows/
+│   │   │   │   ├── government/
+│   │   │   │   └── screens/
+│   │   │   ├── hooks/
+│   │   │   ├── services/
+│   │   │   └── types/
+│   │   ├── map/                     ← Carte hexagonale
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── types/
+│   │   │   └── views/
+│   │   ├── settings/                ← Page configuration (5 sections)
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── services/
+│   │   │   └── types/
+│   │   └── world/                   ← Panneau pays + données monde
+│   │       ├── components/
+│   │       │   └── CountryPanel/
+│   │       │       ├── council/
+│   │       │       ├── map/
+│   │       │       └── timeline/
+│   │       ├── contexts/
+│   │       ├── hooks/
+│   │       ├── services/
+│   │       ├── types/
+│   │       └── utils/
+│   │
+│   ├── shared/                      ← Composants et services transverses
+│   │   ├── components/              ← BackButton, ButtonRow, Card, HeaderTitle, SubtitleCard, TitleCard
+│   │   ├── constants/
+│   │   │   └── llmRegistry.js
+│   │   ├── data/
+│   │   ├── hooks/
+│   │   │   └── useAriaOptions.js
+│   │   ├── services/
+│   │   │   ├── boardgame/
+│   │   │   ├── country/
+│   │   │   ├── llm/
+│   │   │   │   └── clients/
+│   │   │   └── storage.js
+│   │   └── theme/
+│   │       ├── i18n/
+│   │       ├── ariaTheme.js
+│   │       └── components.js
+│   │
 │   ├── App.jsx                       ← Shell principal : routing, topbar, états globaux
 │   ├── App.css                       ← Styles globaux (topbar, layout, animations)
+│   ├── main.jsx                      ← Point d'entrée Vite
 │   ├── index.css                     ← Reset + variables CSS globales
+│   │
+│   ├── ariaData.js                   ← Données statiques (à supprimer après vérification migration)
+│   ├── ariaTheme.js                  ← Design tokens (à supprimer après vérification migration)
+│   ├── ariaHexWorld.js               ← Génération monde hexagonal
+│   ├── ariaI18n.js                   ← i18n FR/EN : t(), useLocale(), loadLang()
 │   │
 │   ├── Dashboard_p1.jsx              ← Moteur core : useARIA, callAI, generateWorld, doCycle
 │   ├── Dashboard_p2.jsx              ← Rendu SVG carte (chemins organiques)
 │   ├── Dashboard_p3.jsx              ← Composant principal : modales, FAB, assemblage
 │   │
-│   ├── InitScreen.jsx                ← Écran de démarrage : config monde, clés API
-│   ├── Settings.jsx                  ← Page configuration complète (5 sections)
-│   ├── Settings.css                  ← Styles dédiés Settings
-│   ├── CountryPanel.jsx              ← Panneau latéral pays sélectionné
-│   ├── ConstitutionModal.jsx         ← Modale constitution par pays
-│   ├── LegitimiteOverlay.jsx         ← Overlay rapport de légitimité
 │   ├── ChronologView.jsx             ← Vue chronolog (onglet CHRONOLOG)
-│   ├── LLMCouncil.jsx                ← Vue conseil LLM (onglet LLM COUNCIL)
 │   ├── HexGrid.jsx                   ← Grille hexagonale (carte)
+│   ├── LegitimiteOverlay.jsx         ← Overlay rapport de légitimité
+│   ├── LLMCouncil.jsx                ← Vue conseil LLM (onglet LLM COUNCIL)
 │   │
 │   ├── llmCouncilEngine.js           ← Pipeline délibération 6 phases
-│   ├── ariaData.js                   ← Données statiques + FALLBACK_RESPONSES
-│   ├── ariaTheme.js                  ← Design tokens (FONT, COLOR, getRegimeLabel...)
-│   ├── ariaI18n.js                   ← i18n FR/EN : t(), useLocale(), loadLang()
-│   ├── ariaHexWorld.js               ← Génération monde hexagonal
+│   ├── Settings.jsx                  ← Page configuration complète (5 sections)
+│   ├── Settings.css                  ← Styles dédiés Settings
+│   ├── InitScreen.jsx                ← À déplacer — voir chantier refactor/init-screen-move
+│   │
 │   ├── WorldEngine.js                ← Moteur monde (cycles, stats, événements)
 │   ├── useChronolog.js               ← Hook chronolog
 │   └── llm-registry.json            ← Registre modèles LLM disponibles
@@ -99,7 +169,6 @@ aria/
 ├── ROADMAP.md                        ← Vision globale EN (phases V0→V5)
 ├── ROADMAP.fr.md                     ← Vision globale FR
 ├── REFLEXIONS.md                     ← Idées de fond (Assess requis avant impl.)
-├── SETTINGS_ARCHITECTURE.md         ← Comparaison AVANT/APRÈS refonte Settings
 ├── ARBORESCENCE.md                   ← Ce fichier
 ├── CONTRIBUTING.md / .fr.md          ← Guide contribution EN/FR
 ├── README.md / README.fr.md          ← Documentation principale EN/FR
@@ -129,10 +198,3 @@ aria/
 | `doc/` | Documentation, screenshots, artwork |
 | `.claude/` | Config Claude Code + skills ADD |
 | `.github/` | Pipeline CI/CD GitHub Pages |
-
-## Notes archi future (V5)
-
-Refactor prévu (`TODO V5`) : réorganiser `src/` en :
-- `src/components/` — UI (Dashboard_p3, CountryPanel, ConstitutionModal, Settings…)
-- `src/engine/` — moteur (Dashboard_p1, llmCouncilEngine, ariaData, ariaTheme…)
-- `src/lib/` — utilitaires (ariaI18n, helpers…)
