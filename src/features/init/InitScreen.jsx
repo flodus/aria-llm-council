@@ -22,7 +22,7 @@ import {
   t,
   loadLang
 
-} from './ariaI18n';
+} from '../../ariaI18n';
 import {
   FONT,
   COLOR,
@@ -38,24 +38,24 @@ import {
   mCard,
   tag
 
-} from './ariaTheme';
+} from '../../ariaTheme';
 import {
   PAYS_LOCAUX,
   getStats,
   isValidKeyFormat,
   isFakeKey
 
-} from './Dashboard_p1';
+} from '../../Dashboard_p1';
 import {
   REAL_COUNTRIES_DATA,
   REAL_COUNTRIES_DATA_EN
 
-} from './ariaData';
+} from '../../ariaData';
 import {
   BASE_AGENTS,
   BASE_AGENTS_EN
 
-} from '../templates';
+} from '../../../templates';
 import {
   ARIAHeader,
   CountryInfoCard,
@@ -64,18 +64,18 @@ import {
   RecapAccordion,
   PreLaunchScreen,
   CountryConfig
-} from './features/init/components';
+} from './components';
 import {
   CustomFlow,
   DefaultLocalFlow,
   DefaultAIFlow
-} from './features/init/components/flows';
+} from './components/flows';
 import {
   NameScreen,
   ModeScreen,
   GeneratingScreen,
   PresetChoiceScreen
-} from './features/init/components/screens';
+} from './components/screens';
 import {
   getTerrainLabels,
   getRegimeLabels,
@@ -85,13 +85,13 @@ import {
   getAllCountries,
   validateCountryWithAI,
   getRealCountries
-} from './features/init/services';
+} from './services';
 import {
   ARIA_FALLBACK_MODELS,
   ARIA_REGISTRY_URL,
   PROV_LABELS
 
-} from './shared/constants/llmRegistry';
+} from '../../shared/constants/llmRegistry';
 import {
   BackButton,
   HeaderTitle,
@@ -99,7 +99,7 @@ import {
   TitleCard,
   SubtitleCard,
   ButtonRow
-} from './shared/components';
+} from '../../shared/components';
 
 
 // ── Getters localisés — labels terrain/régime/pays depuis JSON ────────────
