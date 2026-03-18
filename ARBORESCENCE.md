@@ -70,7 +70,6 @@ aria/
 │   │   │   └── services/
 │   │   │
 │   │   └── world/                   ← Logique métier du monde simulé
-│   │       ├── WorldEngine.js       ← Moteur monde : génération, cycles, stats, événements
 │   │       ├── LegitimiteOverlay.jsx← Overlay rapport légitimité ARIA (données Think-Tank + sim)
 │   │       ├── components/
 │   │       │   └── CountryPanel/    ← Panneau latéral pays sélectionné
@@ -83,15 +82,16 @@ aria/
 │   │       ├── hooks/
 │   │       │   └── useCountryPanel.js
 │   │       ├── services/
-│   │       │   ├── crisisEngine.js
-│   │       │   └── worldEngine.js   ← stub vide (future migration depuis WorldEngine.js racine)
+│   │       │   ├── WorldEngine.js   ← Moteur monde : génération hex, biomes, placement pays
+│   │       │   └── crisisEngine.js
 │   │       └── utils/
 │   │           └── countryHelpers.js
 │   │
 │   ├── shared/                      ← Composants et services transverses (jamais dépendant de features/)
 │   │   ├── components/              ← BackButton, ButtonRow, Card, HeaderTitle, SubtitleCard, TitleCard
 │   │   ├── constants/
-│   │   │   └── llmRegistry.js       ← Registre providers + modèles LLM
+│   │   │   ├── llmRegistry.js       ← Registre providers + modèles LLM (fallback offline)
+│   │   │   └── llm-registry.json    ← Données fallback local (source de vérité : Gist distant)
 │   │   ├── hooks/
 │   │   │   └── useAriaOptions.js
 │   │   ├── services/
@@ -100,9 +100,8 @@ aria/
 │   │   │   ├── llm/                 ← clients/ vides (claude, gemini, openai) — implémentation future
 │   │   │   └── storage.js           ← localStorage : loadOpts/saveOpts, loadKeys…
 │   │   └── theme/
-│   │       ├── ariaTheme.js         ← COLOR, FONT, CARD_STYLE, labelStyle, BTN_*…
-│   │       ├── components.js        ← wrap, mCard, tag, wrapNarrow…
-│   │       └── i18n/                ← regimes.js, terrains.js, resources.js (labels bilingues)
+│   │       ├── ariaTheme.js         ← COLOR, FONT, CARD_STYLE, labelStyle, BTN_*, REGIME_LABELS, TERRAIN_LABELS…
+│   │       └── components.js        ← wrap, mCard, tag, wrapNarrow…
 │   │
 │   ├── App.jsx                      ← Shell principal : routing, topbar, états globaux
 │   ├── App.css                      ← Styles globaux (topbar, layout, animations float)

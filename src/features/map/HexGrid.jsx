@@ -24,7 +24,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useCallback, useState, useMemo, memo } from 'react';
-import { BIOME, BIOME_COLOR, MAP_W, MAP_H, HEX_R, hexPointsStr } from '../world/WorldEngine';
+import { BIOME, BIOME_COLOR, MAP_W, MAP_H, HEX_R, hexPointsStr } from '../world/services/WorldEngine';
 
 const REGIME_EMOJI_FALLBACK = {
   democratie_liberale:'🗳️', republique_federale:'🏛️', monarchie_constitutionnelle:'👑',
