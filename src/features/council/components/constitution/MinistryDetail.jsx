@@ -22,7 +22,10 @@ export default function MinistryDetail({
     onUpdateMission,
     ministers,
     onAssignMinister,
-    onUpdatePrompt
+    onUpdatePrompt,
+    onClose,
+    onDelete,
+    isBase = false
 }) {
     const { lang } = useLocale();
 
@@ -65,6 +68,30 @@ export default function MinistryDetail({
         >
         {isActive ? '● actif' : '○ inactif'}
         </button>
+        <button
+        style={{
+            ...BTN_SECONDARY,
+            padding: '0.1rem 0.3rem',
+            fontSize: '0.7rem'
+
+        }}
+        onClick={onClose}>✕
+        </button>
+        {!isBase && (
+            <button
+            style={{
+                ...BTN_SECONDARY,
+                padding: '0.1rem 0.3rem',
+                fontSize: '0.7rem',
+                color: 'rgba(200,80,80,0.8)',
+                     borderColor: 'rgba(200,80,80,0.3)'
+            }}
+            onClick={onDelete}
+            title={lang === 'en' ? 'Delete ministry' : 'Supprimer le ministère'}
+            >
+            🗑️
+            </button>
+        )}
         </div>
 
         {/* Mission du ministère - éditable seulement si actif */}
