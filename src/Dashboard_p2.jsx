@@ -11,7 +11,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from 'react';
-import { HexGrid } from './features/world/HexGrid';
+import { HexGrid } from './features/map/HexGrid';
 import { generateWorld, placeCountries, strToSeed, MAP_W, MAP_H } from './features/world/WorldEngine';
 import { loadLang, t } from './ariaI18n';
 
