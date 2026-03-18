@@ -8,6 +8,7 @@
 import { useState, useCallback } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { BASE_AGENTS, BASE_AGENTS_EN } from '../../../../templates';
+import { loadAgentsOverride } from '../../../shared/services';
 
 export default function useConstitutionModal(props) {
     const { lang } = useLocale();
@@ -22,25 +23,43 @@ export default function useConstitutionModal(props) {
         activePres: ['phare', 'boussole'],
         ministers: BASE_AGENTS_DATA.ministers,
         activeMinsters: null,
+        activeMins: null,
         ministries: (BASE_AGENTS_DATA.ministries || []).map(m => ({
             ...m,
             ministerPrompts: m.ministerPrompts || {}
         }))
     };
 
-    const [constitution, setConstitution] = useState({
+    const savedOv = loadAgentsOverride() || {};
+
+    // Fusionner : défauts + overrides + gouvernance du pays
+    const mergedInitial = {
         ...defaultConstitution,
+        ...savedOv,
         ...initialConstitution,
-        // ... autres fusions
-        ministries: initialConstitution.ministries?.length
-        ? initialConstitution.ministries.map(m => ({
-            ...m,
-            ministerPrompts: m.ministerPrompts || {}
-        }))
-        : defaultConstitution.ministries
-    });
+        // Fusion profonde pour les ministères (tableau)
+        ministries: initialConstitution?.ministries?.length
+        ? initialConstitution.ministries
+        : savedOv?.ministries?.length
+        ? savedOv.ministries
+        : defaultConstitution.ministries,
+        // Fusion des objets ministres
+        ministers: {
+            ...defaultConstitution.ministers,
+            ...(savedOv?.ministers || {}),
+            ...(initialConstitution?.ministers || {})
+        },
+        presidency: {
+            ...defaultConstitution.presidency,
+            ...(savedOv?.presidency || {}),
+            ...(initialConstitution?.presidency || {})
+        }
+    };
+
+    const [constitution, setConstitution] = useState(mergedInitial);
 
     // États pour l'UI
+    const [selectedPresident, setSelectedPresident] = useState(null);
     const [selectedMinistry, setSelectedMinistry] = useState(null);
     const [selectedMinister, setSelectedMinister] = useState(null);
     const [activeTab, setActiveTab] = useState('presidency'); // 'presidency' | 'ministries' | 'ministers'
@@ -190,36 +209,152 @@ export default function useConstitutionModal(props) {
     }, []);
 
     /**
-     * Vérifie si un ministre est actif
-     * @param {string} ministerId - ID du ministre
-     * @returns {boolean} True si le ministre est actif
-     */
-    const isMinisterActive = useCallback((ministerId) => {
-        // 🔥 Sécurisation
-        const activeMinsters = constitution.activeMinsters || [];
-        return activeMinsters.length === 0 || activeMinsters.includes(ministerId);
-    }, [constitution.activeMinsters]);
-
-    /**
      * Vérifie si un ministère est actif
      * @param {string} ministryId - ID du ministère
      * @returns {boolean} True si le ministère est actif
      */
     const isMinistryActive = useCallback((ministryId) => {
-        // 🔥 Sécurisation
         const activeMins = constitution.activeMins || [];
         return activeMins.length === 0 || activeMins.includes(ministryId);
     }, [constitution.activeMins]);
 
+    /**
+     * Met à jour l'essence d'un ministre
+     * @param {string} ministerId - ID du ministre
+     * @param {string} value - Nouvelle valeur
+     */
+    const updateMinisterEssence = useCallback((ministerId, value) => {
+        setConstitution(prev => ({
+            ...prev,
+            ministers: {
+                ...prev.ministers,
+                [ministerId]: {
+                    ...prev.ministers[ministerId],
+                    essence: value
+                }
+            }
+        }));
+    }, []);
+
+    /**
+     * Met à jour le style de communication d'un ministre
+     * @param {string} ministerId - ID du ministre
+     * @param {string} value - Nouvelle valeur
+     */
+    const updateMinisterComm = useCallback((ministerId, value) => {
+        setConstitution(prev => ({
+            ...prev,
+            ministers: {
+                ...prev.ministers,
+                [ministerId]: {
+                    ...prev.ministers[ministerId],
+                    comm: value
+                }
+            }
+        }));
+    }, []);
+
+    /**
+     * Met à jour l'angle d'annotation d'un ministre
+     * @param {string} ministerId - ID du ministre
+     * @param {string} value - Nouvelle valeur
+     */
+    const updateMinisterAnnotation = useCallback((ministerId, value) => {
+        setConstitution(prev => ({
+            ...prev,
+            ministers: {
+                ...prev.ministers,
+                [ministerId]: {
+                    ...prev.ministers[ministerId],
+                    annotation: value
+                }
+            }
+        }));
+    }, []);
+
+    /**
+     * Vérifie si un ministre est actif
+     * @param {string} ministerId - ID du ministre
+     * @returns {boolean} True si le ministre est actif
+     */
+    const isMinisterActive = useCallback((ministerId) => {
+        const activeMinsters = constitution.activeMinsters || [];
+        return activeMinsters.length === 0 || activeMinsters.includes(ministerId);
+    }, [constitution.activeMinsters]);
+
+    // Ajouter un nouveau ministère
+    const addMinistry = useCallback((newMinistry, onSuccess) => {
+        setConstitution(prev => {
+            const newMinistries = [
+                ...prev.ministries,
+                {
+                    ...newMinistry,
+                    id: newMinistry.id,
+                    keywords: [],
+                    questions: [],
+                    ministerPrompts: {}
+                }
+            ];
+            // Rendre le nouveau ministère actif
+            const newActiveMins = prev.activeMins === null
+            ? newMinistries.map(m => m.id)
+            : [...prev.activeMins, newMinistry.id];
+            return {
+                ...prev,
+                ministries: newMinistries,
+                activeMins: newActiveMins
+            };
+        });
+        // Appeler le callback après la mise à jour (pour ouvrir le détail)
+        if (onSuccess) setTimeout(() => onSuccess(newMinistry.id), 0);
+    }, []);
+
+    // Ajouter un nouveau ministre
+        const addMinister = useCallback((newMinister, onSuccess) => {
+            setConstitution(prev => {
+                const newMinisters = { ...prev.ministers, [newMinister.id]: newMinister };
+                // éventuellement rendre actif par défaut
+                const newActiveMinsters = prev.activeMinsters === null
+                ? Object.keys(newMinisters)
+                : [...prev.activeMinsters, newMinister.id];
+                return {
+                    ...prev,
+                    ministers: newMinisters,
+                    activeMinsters: newActiveMinsters
+                };
+            });
+            if (onSuccess) setTimeout(() => onSuccess(newMinister.id), 0);
+        }, []);
+
+    // Supprimer ministère custom
+    const deleteMinister = useCallback((ministerId) => {
+        setConstitution(prev => {
+            const newMinisters = { ...prev.ministers };
+            delete newMinisters[ministerId];
+            return { ...prev, ministers: newMinisters };
+        });
+    }, []);
+
+    // Supprimer ministre custom
+    const deleteMinistry = useCallback((ministryId) => {
+        setConstitution(prev => ({
+            ...prev,
+            ministries: prev.ministries.filter(m => m.id !== ministryId)
+        }));
+    }, []);
+
+
     return {
         // États
         constitution,
+        selectedPresident,
         selectedMinistry,
         selectedMinister,
         activeTab,
         openPromptEditor,
 
         // Setters UI
+        setSelectedPresident,
         setSelectedMinistry,
         setSelectedMinister,
         setActiveTab,
@@ -233,6 +368,11 @@ export default function useConstitutionModal(props) {
         toggleMinister,
         setAllMinistersActive,
         isMinisterActive,
+        updateMinisterEssence,
+        updateMinisterComm,
+        updateMinisterAnnotation,
+        addMinister,
+        deleteMinister,
 
         // Actions ministères
         toggleMinistry,
@@ -241,8 +381,11 @@ export default function useConstitutionModal(props) {
         assignMinisterToMinistry,
         updateMinisterPrompt,
         isMinistryActive,
+        addMinistry,
+        deleteMinistry,
 
         // Reset
         resetConstitution: () => setConstitution(initialConstitution)
     };
+
 }
