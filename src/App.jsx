@@ -12,9 +12,10 @@ import './App.css';
 import Dashboard        from './Dashboard_p3';
 import Settings         from './Settings';
 import InitScreen       from './InitScreen';
-import CountryPanel, { EmptyPanel } from './CountryPanel';
+import CountryPanel from './features/world/components/CountryPanel/CountryPanel';
+import EmptyPanel from './features/world/components/CountryPanel/CountryPanelEmpty';
 import LegitimiteOverlay from './LegitimiteOverlay';
-import { FONT, COLOR }  from './ariaTheme';
+import { FONT, COLOR }  from './shared/theme';
 import { loadLang, t, useLocale } from './ariaI18n';
 
 function getTabs() {
@@ -399,37 +400,54 @@ export default function App() {
       </main>
 
       {/* Panneau latéral */}
+
       <aside className="side-panel">
-        {selectedCountry === null
-          ? <EmptyPanel activeTab={activeTab} liveCountries={liveCountries} onSelectCountry={setSelectedCountry} />
-          : <CountryPanel
-              country={selectedCountry}
-              isCrisis={isCrisis}
-              activeTab={activeTab}
-              onClose={() => setSelectedCountry(null)}
-              onSecession={handleSecession}
-              onNextCycle={handleNextCycle}
-              onCrisisToggle={handleCrisisToggle}
-              onGoToCouncil={() => setActiveTab('council')}
-              onGoToMap={() => setActiveTab('map')}
-              onGoToTimeline={() => setActiveTab('timeline')}
-              onConstitution={() => ariaRef.current?.openConstitution?.()}
-              onSubmitQuestion={(q, mid) => ariaRef.current?.submitQuestion?.(q, mid)}
-              onAddFictionalCountry={() => ariaRef.current?.addFictionalCountry?.()}
-              countryIndex={countryIndex}
-              countryTotal={liveCountries.length}
-              onPrevCountry={() => {
-                if (liveCountries.length < 2) return;
-                const prev = (countryIndex - 1 + liveCountries.length) % liveCountries.length;
-                setSelectedCountry(liveCountries[prev]);
-              }}
-              onNextCountry={() => {
-                if (liveCountries.length < 2) return;
-                const next = (countryIndex + 1) % liveCountries.length;
-                setSelectedCountry(liveCountries[next]);
-              }}
-          />
-        }
+      {selectedCountry === null ? (
+        // CAS 1: Pas de pays sélectionné
+        <EmptyPanel
+        activeTab={activeTab}
+        liveCountries={liveCountries}
+        onSelectCountry={setSelectedCountry}
+        />
+      ) : (
+        // CAS 2: Un pays est sélectionné
+        <CountryPanel
+        // Données du pays
+        country={selectedCountry}
+
+        // États globaux
+        isCrisis={isCrisis}
+        activeTab={activeTab}
+
+        // Actions de navigation/fermeture
+        onClose={() => setSelectedCountry(null)}
+        onGoToCouncil={() => setActiveTab('council')}
+        onGoToMap={() => setActiveTab('map')}
+        onGoToTimeline={() => setActiveTab('timeline')}
+
+        // Actions métier (via ref)
+        onSecession={handleSecession}
+        onNextCycle={handleNextCycle}
+        onCrisisToggle={handleCrisisToggle}
+        onConstitution={() => ariaRef.current?.openConstitution?.()}
+        onSubmitQuestion={(q, mid) => ariaRef.current?.submitQuestion?.(q, mid)}
+        onAddFictionalCountry={() => ariaRef.current?.addFictionalCountry?.()}
+
+        // Navigation entre pays
+        countryIndex={countryIndex}
+        countryTotal={liveCountries.length}
+        onPrevCountry={() => {
+          if (liveCountries.length < 2) return;
+          const prev = (countryIndex - 1 + liveCountries.length) % liveCountries.length;
+          setSelectedCountry(liveCountries[prev]);
+        }}
+        onNextCountry={() => {
+          if (liveCountries.length < 2) return;
+          const next = (countryIndex + 1) % liveCountries.length;
+          setSelectedCountry(liveCountries[next]);
+        }}
+        />
+      )}
       </aside>
     </div>
   );
