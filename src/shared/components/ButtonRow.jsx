@@ -1,3 +1,7 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ButtonRow.jsx — Conteneur flex pleine largeur pour rangée de boutons
+// ═══════════════════════════════════════════════════════════════════════════
+
 export default function ButtonRow({ children }) {
   return (
     <div style={{

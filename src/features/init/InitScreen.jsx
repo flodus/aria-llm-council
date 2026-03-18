@@ -38,7 +38,7 @@ import {
   mCard,
   tag
 
-} from '../../ariaTheme';
+} from '../../shared/theme';
 import {
   PAYS_LOCAUX,
   getStats,

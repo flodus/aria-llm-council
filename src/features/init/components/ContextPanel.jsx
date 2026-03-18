@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ContextPanel.jsx — Panneau de contrôle du contexte de délibération
+//
+//  Permet de choisir ce qui est injecté dans les prompts pour un pays donné.
+//  Modes : '' (hérite global) | 'auto' | 'rich' | 'stats_only' | 'off'
+//  Prop `embedded` : masque le header accordéon (utilisé dans CountryContextAccordion)
+//
+//  Dépendances : aria_options.gameplay.context_mode (localStorage)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, INPUT_STYLE, BTN_SECONDARY } from '../../../shared/theme';
 
@@ -5,6 +15,7 @@ export default function ContextPanel({ countryName, open, onToggle, mode, setMod
   const { lang } = useLocale();
   const GOLD = 'rgba(200,164,74,0.88)';
   const DIM  = 'rgba(140,160,200,0.46)';
+  // Lecture du mode global pour afficher dans le label "Hérite du global"
   const _globalCtxMode = (() => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}').gameplay?.context_mode || 'auto'; } catch { return 'auto'; } })();
   const _globalCtxLabel = ({ auto:'🤖 Auto', rich: lang==='en'?'📖 Enriched':'📖 Enrichi', stats_only: lang==='en'?'📊 Stats only':'📊 Stats seules', off: lang==='en'?'🚫 Disabled':'🚫 Désactivé' })[_globalCtxMode] || '🤖 Auto';
   return (

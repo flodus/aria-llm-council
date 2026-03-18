@@ -1,3 +1,17 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  IAConfigAccordion.jsx — Accordéon de configuration du mode IA
+//
+//  Affiche un sélecteur de mode (ARIA / Solo / Custom / Board Game)
+//  et, selon le mode actif, les sélecteurs de provider/modèle par rôle.
+//
+//  Logique de filtrage des modes :
+//    - 0 provider → Board Game uniquement
+//    - 1 provider → Solo ou Board Game
+//    - 2+ providers → tous les modes disponibles
+//
+//  Dépendances : shared/constants/llmRegistry, ariaI18n
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, SELECT_STYLE, BTN_SECONDARY } from '../../../shared/theme';
@@ -43,6 +57,7 @@ export default function IAConfigAccordion({
                   { id: 'custom', label: t('INIT_CUSTOM_LABEL', lang) },
                   { id: 'none', label: '🎲 Board Game' },
             ]
+            // Filtre selon le nombre de providers disponibles
             .filter(m => {
                 if (availProviders.length === 0) return m.id === 'none';
                 if (ariaMode === 'none') return m.id === 'none';
@@ -104,6 +119,7 @@ export default function IAConfigAccordion({
             </div>
             )}
 
+            {/* Mode ARIA/Custom : grille provider+modèle pour chaque rôle de délibération */}
             {(ariaMode === 'aria' || ariaMode === 'custom') && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                 {[
@@ -142,6 +158,7 @@ export default function IAConfigAccordion({
                 </div>
             )}
 
+            {/* Mode Solo : 1 seul provider → chips modèles ; 2+ providers → sélecteurs */}
             {ariaMode === 'solo' && (
                 availProviders.length === 1 ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>

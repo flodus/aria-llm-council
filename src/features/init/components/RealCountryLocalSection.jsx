@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  RealCountryLocalSection.jsx — Sélecteur pays réel mode local (offline)
+//
+//  Dropdown sur getRealCountries() (liste statique locale).
+//  Une fois un pays choisi, terrain et régime restent ajustables.
+//  Affiche CountryInfoCard avec les données enrichies du pays sélectionné.
+//
+//  Dépendances : ariaI18n, shared/theme, features/init/services, CountryInfoCard
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale, t } from '../../../ariaI18n';
 import { CARD_STYLE, SELECT_STYLE, labelStyle } from '../../../shared/theme';
 import { getTerrainLabels, getRegimeLabels } from '../services/labels';

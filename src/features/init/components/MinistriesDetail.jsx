@@ -1,3 +1,14 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  MinistriesDetail.jsx — Onglet de configuration détaillée des ministères
+//
+//  Affiche une grille de sélection (actif/inactif) et, en dessous,
+//  la fiche éditable de chaque ministère : mission, liste de ministres assignés,
+//  et prompts ministériels individuels.
+//  Les ministères de base (BASE_IDS) ne peuvent pas être supprimés.
+//
+//  Dépendances : government/ (Hint, ActiveToggle, ColorPicker, EmojiPicker, DeleteButton)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
@@ -19,6 +30,9 @@ export default function MinistriesDetail({
     const { lang } = useLocale();
     const BASE_IDS = ['justice', 'economie', 'defense', 'sante', 'education', 'ecologie', 'chance'];
 
+    // ── Helpers grille ────────────────────────────────────────────────────
+
+    // Bascule un ministère actif/inactif ; repasse à null si tous sont actifs
     const toggleMinById = (id) => {
         const all = plAgents.ministries.map(x => x.id);
         const cur = activeMins || all;
@@ -27,6 +41,7 @@ export default function MinistriesDetail({
         setActiveMins(next.length === all.length ? null : next);
     };
 
+    // Clic sur la grille : premier clic sélectionne, second clic désactive/réactive
     const handleGridClickMin = (id) => {
         if (selectedMinistry !== id) {
             setSelectedMinistry(id);
@@ -41,13 +56,16 @@ export default function MinistriesDetail({
         }
     };
 
+    // null = tous actifs (héritage commun)
     const isMinOn = (id) => activeMins === null || activeMins.includes(id);
 
+    // Ordre grille : actifs en premier
     const gridMins = [
         ...plAgents.ministries.filter(m => isMinOn(m.id)),
         ...plAgents.ministries.filter(m => !isMinOn(m.id)),
     ];
 
+    // Ordre liste détaillée : sélectionné en tête, puis actifs, puis inactifs
     const sortedMins = [
         ...plAgents.ministries.filter(m => m.id === selectedMinistry),
         ...plAgents.ministries.filter(m => m.id !== selectedMinistry && isMinOn(m.id)),

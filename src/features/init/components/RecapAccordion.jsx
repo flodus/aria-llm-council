@@ -1,3 +1,14 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  RecapAccordion.jsx — Récapitulatif accordéon multi-pays avant lancement
+//
+//  Affiche un accordéon par pays avec : présidence active, ministères,
+//  ministres (emojis), mode de contexte de délibération.
+//  ✦ bleu si perGov[i] non nul (constitution indépendante).
+//  Constitution effective = perGov[i] si présent, sinon constitution commune.
+//
+//  Dépendances : ariaI18n, shared/theme, features/init/services/labels
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT } from '../../../shared/theme';

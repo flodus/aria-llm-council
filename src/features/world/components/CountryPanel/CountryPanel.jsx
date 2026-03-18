@@ -1,3 +1,14 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  CountryPanel.jsx — Composant racine du panneau latéral pays
+//
+//  Assemble Header + Tabs + contenu selon l'onglet actif (map/council/timeline).
+//  La logique d'état (question custom, soumission) est déléguée au hook
+//  useCountryPanel dans features/world/hooks/.
+//
+//  Dépendances : world/hooks/useCountryPanel, CountryPanel{Header,Tabs,Map,
+//                Council,Timeline,Empty}
+// ═══════════════════════════════════════════════════════════════════════════
+
 import useCountryPanel from '../../hooks/useCountryPanel';
 import CountryPanelHeader from './CountryPanelHeader';
 import CountryPanelTabs from './CountryPanelTabs';

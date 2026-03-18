@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  RealCountryAISection.jsx — Saisie libre d'un pays réel (mode IA)
+//
+//  Propose un dropdown des pays prédéfinis + saisie libre avec validation
+//  en temps réel via validateCountryWithAI (RestCountries, 3 passes).
+//  Si le pays est reconnu, récupère drapeau/population/région depuis l'API.
+//
+//  Dépendances : shared/services/country (validateCountryWithAI)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useState, useEffect, useRef } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, INPUT_STYLE, SELECT_STYLE, labelStyle } from '../../../shared/theme';
@@ -13,6 +23,8 @@ export default function RealCountryAISection({ country, onChange, setField }) {
     const rcTimer = useRef(null);
     const rcQueryRef = useRef('');
 
+    // Recherche un pays : d'abord local (getRealCountries), puis validation via RestCountries.
+    // Utilise rcQueryRef pour ignorer les réponses de requêtes obsolètes (race condition).
     const searchRestCountries = async (query) => {
         rcQueryRef.current = query;
         if (!query || query.length < 3) { setRcStatus(null); return; }

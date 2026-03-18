@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  APIKeyInline.jsx — Modale de gestion des clés API
+//
+//  Permet de saisir, tester et sauvegarder plusieurs clés par provider.
+//  Stockage dans localStorage (aria_api_keys + aria_api_keys_status).
+//  Providers : Claude, Gemini, Grok, OpenAI.
+//
+//  Dépendances : shared/services/storage, shared/constants/llmRegistry
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
@@ -48,7 +58,9 @@ const PROVIDERS = [
 },
 ];
 
-// Helper pour validation (à déplacer dans shared/services/llm plus tard)
+// ── Helpers de validation de clé ─────────────────────────────────────────
+
+// Vérifie le préfixe attendu par provider (format superficiel, pas d'appel API)
 const isValidKeyFormat = (provider, key) => {
   if (provider === 'claude') return key?.startsWith('sk-ant-');
   if (provider === 'gemini') return key?.startsWith('AIza');
@@ -57,6 +69,7 @@ const isValidKeyFormat = (provider, key) => {
   return false;
 };
 
+// Clé de debug : préfixe valide + marqueur -fake/-test/-debug/-demo → statut ⏳ sans appel API
 const isFakeKey = (provider, key) => {
   return key.includes('-fake-') || key.includes('-test-') || key.includes('-debug-') || key.includes('-demo-');
 };
@@ -101,9 +114,13 @@ export default function APIKeyInline({ onClose }) {
   const { provKeys, keyStatus } = keyState;
   const [hasDeleted, setHasDeleted] = useState(false);
 
+  // Helpers d'état imbriqué (provKeys + keyStatus dans un seul objet)
   const setPK = (fn) => setKeyState(s => ({ ...s, provKeys: typeof fn === 'function' ? fn(s.provKeys) : fn }));
   const setKS = (fn) => setKeyState(s => ({ ...s, keyStatus: typeof fn === 'function' ? fn(s.keyStatus) : fn }));
 
+  // ── Handlers clés ────────────────────────────────────────────────────────
+
+  // Ajoute une entrée vide pour un provider (multi-clé)
   const addKey = (provId) => {
     const prov = PROVIDERS.find(p => p.id === provId);
     const defModel = prov.versions.find(v => v.label.includes('★'))?.id || prov.versions[0]?.id || '';
@@ -111,11 +128,13 @@ export default function APIKeyInline({ onClose }) {
     setPK(pk => ({ ...pk, [provId]: [...(pk[provId] || []), { key: '', model: defModel, default: false, _id: id }] }));
   };
 
+  // Met à jour un champ d'une entrée (réinitialise le statut si la clé change)
   const updateEntry = (provId, _id, field, value) => {
     setPK(pk => ({ ...pk, [provId]: pk[provId].map(k => k._id === _id ? { ...k, [field]: value } : k) }));
     if (field === 'key') setKS(ks => ({ ...ks, [_id]: null }));
   };
 
+  // Supprime une entrée ; réassigne la clé par défaut si nécessaire
   const removeEntry = (provId, _id) => {
     setPK(pk => {
       let arr = pk[provId].filter(k => k._id !== _id);
@@ -126,10 +145,13 @@ export default function APIKeyInline({ onClose }) {
     setHasDeleted(true);
   };
 
+  // Marque une entrée comme clé par défaut pour ce provider (une seule à la fois)
   const setDefault = (provId, _id) => {
     setPK(pk => ({ ...pk, [provId]: pk[provId].map(k => ({ ...k, default: k._id === _id })) }));
   };
 
+  // ── Test de clé ──────────────────────────────────────────────────────────
+  // Vérifie format → fake → appel API réel. Statuts : 'testing'|'ok'|'error'|'debug'
   const testEntry = async (provId, _id, keyVal, modelVal) => {
     const k = keyVal?.trim();
     if (!k) return;
@@ -158,6 +180,8 @@ export default function APIKeyInline({ onClose }) {
   const hasAnyKey = Object.values(provKeys).some(arr => arr.some(k => k.key?.trim()));
   const canSave = anyOk || hasDeleted;
 
+  // ── Sauvegarde ───────────────────────────────────────────────────────────
+  // Persiste clés valides + statuts + modèle préféré par provider dans localStorage
   const save = () => {
     const toSave = {};
     const statusToSave = {};

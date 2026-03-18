@@ -1,3 +1,7 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  SubtitleCard.jsx — Texte sous-titre gris (0.47rem, opacité réduite)
+// ═══════════════════════════════════════════════════════════════════════════
+
 export default function SubtitleCard({ text }) {
   return (
     <div style={{

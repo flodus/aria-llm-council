@@ -1,3 +1,12 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  CustomizeButton.jsx — Bouton "Personnaliser ce pays" / "Constitution Commune"
+//
+//  hasOverride false → bouton bleu "✦ Personnaliser" (fork constitution)
+//  hasOverride true  → bouton rouge "↺ Constitution Commune" (reset)
+//
+//  Dépendances : ariaI18n, shared/theme (BTN_SECONDARY)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale } from '../../../ariaI18n';
 import { BTN_SECONDARY } from '../../../shared/theme';
 

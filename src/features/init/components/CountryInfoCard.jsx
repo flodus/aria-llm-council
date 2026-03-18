@@ -1,3 +1,11 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  CountryInfoCard.jsx — Carte d'info d'un pays réel prédéfini
+//
+//  Affiche : population, indice PIB, taux d'acceptation ARIA IRL,
+//  sociologie ARIA, et un accordéon contexte géopolitique.
+//  Utilisé dans FictionalCountrySection et RealCountryLocalSection.
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, labelStyle } from '../../../shared/theme';
@@ -6,7 +14,9 @@ export default function CountryInfoCard({ data }) {
   const { lang } = useLocale();
   const [open, setOpen] = useState(false);
   if (!data) return null;
+  // Formattage population : Md / M / k
   const fmtPop = (n) => n >= 1e9 ? (n/1e9).toFixed(1)+' Md' : n >= 1e6 ? (n/1e6).toFixed(1)+' M' : n >= 1e3 ? Math.round(n/1e3)+' k' : String(n);
+  // Couleur jauge ARIA IRL : violet (≥60%) → bleu (≥40%) → gris (<40%)
   const ariaCol = data.aria_acceptance_irl >= 60 ? 'rgba(140,100,220,0.80)'
                 : data.aria_acceptance_irl >= 40 ? 'rgba(100,130,200,0.70)'
                 :                                  'rgba(90,110,160,0.50)';

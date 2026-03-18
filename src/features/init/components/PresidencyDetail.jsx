@@ -1,3 +1,16 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  PresidencyDetail.jsx — Onglet de configuration détaillée de la présidence
+//
+//  Affiche les deux rôles présidentiels : Phare (☉) et Boussole (☽).
+//  Chaque rôle est éditable (nom, essence, rôle étendu) et peut être
+//  activé/désactivé indépendamment.
+//  La même itération sur ['phare','boussole'] est répétée deux fois :
+//    1. Toggles actif/inactif en haut
+//    2. Fiches éditables en dessous (opacité réduite si inactif)
+//
+//  Dépendances : shared/theme
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 

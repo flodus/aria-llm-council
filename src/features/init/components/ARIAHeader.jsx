@@ -1,3 +1,12 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ARIAHeader.jsx — Logo ARIA animé + sous-titre acronyme + citation optionnelle
+//
+//  showQuote : affiche la citation d'accroche (FR/EN) sous le logo.
+//  Animation CSS "float" définie globalement dans index.css.
+//
+//  Dépendances : ariaI18n, shared/theme (FONT)
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale } from '../../../ariaI18n';
 import { FONT, cinzel, mono } from '../../../shared/theme';
 

@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ActiveMinistriesSection.jsx — Chips togglables des ministères actifs
+//
+//  Affiche chaque ministère avec sa couleur propre ; bouton "Tous" pour
+//  réactiver l'ensemble. activeMins === null signifie tous actifs.
+//  Avertissement affiché si aucun ministère n'est sélectionné.
+//
+//  Dépendances : ariaI18n, shared/theme
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 

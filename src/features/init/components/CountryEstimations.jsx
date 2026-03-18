@@ -1,3 +1,13 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  CountryEstimations.jsx — Estimations pop / satisfaction / ARIA IRL
+//
+//  Calcule des valeurs indicatives selon régime + terrain à partir de
+//  tables locales (ARIA_BASE, POP_BASE, SAT_BASE). Ces données sont des
+//  estimations de départ — elles évoluent en cours de partie.
+//
+//  Dépendances : ariaI18n, shared/theme, features/init/services/labels
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { useLocale } from '../../../ariaI18n';
 import { FONT } from '../../../shared/theme';
 import { getTerrainLabels } from '../services/labels';
