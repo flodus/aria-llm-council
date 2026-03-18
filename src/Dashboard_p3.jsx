@@ -24,7 +24,7 @@ import {
   getStats,
   getApiKeys,
 } from './Dashboard_p1';
-import { getTerrainLabel, getRegimeLabel } from './ariaTheme';
+import { getTerrainLabel, getRegimeLabel } from './shared/theme';
 import { MapSVG } from './Dashboard_p2';
 import ConstitutionModal from './features/council/components/ConstitutionModal';
 import LLMCouncil from './LLMCouncil';
