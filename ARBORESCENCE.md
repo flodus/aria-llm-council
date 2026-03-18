@@ -90,7 +90,8 @@ aria/
 │   ├── shared/                      ← Composants et services transverses (jamais dépendant de features/)
 │   │   ├── components/              ← BackButton, ButtonRow, Card, HeaderTitle, SubtitleCard, TitleCard
 │   │   ├── constants/
-│   │   │   └── llmRegistry.js       ← Registre providers + modèles LLM
+│   │   │   ├── llmRegistry.js       ← Registre providers + modèles LLM (fallback offline)
+│   │   │   └── llm-registry.json    ← Données fallback local (source de vérité : Gist distant)
 │   │   ├── hooks/
 │   │   │   └── useAriaOptions.js
 │   │   ├── services/
