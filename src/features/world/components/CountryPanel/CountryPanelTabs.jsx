@@ -1,6 +1,6 @@
 // src/features/world/components/CountryPanel/components/TabNavigation.jsx
 import { useState, useEffect } from 'react';
-import { loadLang } from '../../../../../ariaI18n';
+import { loadLang } from '../../../../ariaI18n';
 
 export default function TabNavigation({ activeTab, onGoToMap, onGoToCouncil, onGoToTimeline }) {
     const [lang, setLang] = useState(() => loadLang());

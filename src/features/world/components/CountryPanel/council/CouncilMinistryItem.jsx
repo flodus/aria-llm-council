@@ -1,8 +1,8 @@
 // src/features/world/components/CountryPanel/components/council/MinistryItem.jsx
 
 import { FONT } from '../../../../../shared/theme';
-import MinistryQuestions from './council/CouncilMinistryQuestions';
-import CitizenQuestion from './council/CouncilCitizenQuestion';
+import MinistryQuestions from './CouncilMinistryQuestions';
+import CitizenQuestion from './CouncilCitizenQuestion';
 
 export default function MinistryItem({
     ministry,

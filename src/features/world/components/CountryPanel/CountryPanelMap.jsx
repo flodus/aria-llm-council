@@ -1,5 +1,5 @@
 // src/features/world/components/CountryPanel/components/map/MapView.jsx
-import { MARITIME } from '../../../../../shared/theme';
+import { MARITIME } from '../../../../shared/theme';
 import Demographics from './map/MapDemographics';
 import SatisfactionBar from './map/MapSatisfaction';
 import ARIAStats from './map/MapARIAStats';

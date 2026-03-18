@@ -1,6 +1,6 @@
 // src/features/world/components/CountryPanel/components/PanelHeader.jsx
-import { CountryNavArrows } from './index';
-import { getCountryEmoji, getLocalizedNom } from '../utils';
+import CountryNavArrows from './CountryPanelNavArrows';
+import { getCountryEmoji, getLocalizedNom } from '../../utils';
 
 export default function PanelHeader({
     country,

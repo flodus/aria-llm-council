@@ -1,6 +1,6 @@
 // src/features/world/components/CountryPanel/components/timeline/EventList.jsx
-
-import EventEntry from './timeline/TimelineEventEntry';
+import { FONT } from '../../../../../shared/theme';
+import EventEntry from './TimelineEventEntry';
 
 export default function EventList({ events, isEn }) {
     // Grouper les événements par année

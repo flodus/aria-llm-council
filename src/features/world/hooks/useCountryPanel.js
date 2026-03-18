@@ -1,7 +1,7 @@
 // src/features/world/components/CountryPanel/hooks/useCountryPanel.js
 
 import { useState, useEffect, useCallback } from 'react';
-import { loadLang } from '../../../../../ariaI18n';
+import { loadLang } from '../../../ariaI18n';
 
 export default function useCountryPanel({ onSubmitQuestion }) {
     // État de la langue

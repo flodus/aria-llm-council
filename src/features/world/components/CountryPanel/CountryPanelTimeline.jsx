@@ -1,8 +1,8 @@
 // src/features/world/components/CountryPanel/components/timeline/TimelineView.jsx
 
 import { useState, useEffect } from 'react';
-import { FONT } from '../../../../../shared/theme';
-import { loadLang } from '../../../../../ariaI18n';
+import { FONT } from '../../../../shared/theme';
+import { loadLang } from '../../../../ariaI18n';
 import TimelineHeader from './timeline/TimelineHeader';
 import EventList from './timeline/TimelineEventList';
 import EmptyTimeline from './timeline/TimelineEmpty';
