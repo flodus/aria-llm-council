@@ -48,11 +48,29 @@ Pas de code sans confirmation. Pas d'exception.
 4. **Validation** — `npm run build` doit passer avant de déclarer terminé
 5. **Git** — `git add + commit + push` automatiquement après chaque validation
 
+## Workflow Git — Branches
+
+Chaque chantier démarre sur une branche dédiée. Ne jamais commiter sur `main`.
+Format : `type/nom-court` (ex: `refactor/init-screen-move`, `docs/arborescence`)
+```bash
+# Début de chantier
+git checkout -b type/nom-court
+git push -u origin type/nom-court
+
+# Après chaque validation
+git add -A
+git commit -m "type: description courte"
+git push
+```
+
+Un chantier = une branche.
+La PR est créée manuellement sur GitHub par Flo après validation du chantier.
+
 ---
 
 ## Règles absolues
 
 - Ne jamais modifier `llmCouncilEngine.js`, `ariaData.js`, `ariaTheme.js` sans demande explicite
-- Styles inline uniquement — pas de CSS modules, pas de TypeScript
+- Ne jamais introduire de CSS modules, fichiers .css séparés, ou TypeScript
 - `perGov[i] = null` = héritage commun, ne jamais initialiser autrement
 - Commentaires et noms de variables en français

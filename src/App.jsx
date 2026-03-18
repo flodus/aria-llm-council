@@ -11,7 +11,7 @@ import './App.css';
 
 import Dashboard        from './Dashboard_p3';
 import Settings         from './Settings';
-import InitScreen       from './InitScreen';
+import InitScreen       from './features/init/InitScreen';
 import CountryPanel from './features/world/components/CountryPanel/CountryPanel';
 import EmptyPanel from './features/world/components/CountryPanel/CountryPanelEmpty';
 import LegitimiteOverlay from './LegitimiteOverlay';
