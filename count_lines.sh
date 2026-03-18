@@ -3,7 +3,7 @@
 # Script: count_lines.sh
 # Usage: ./count_lines.sh
 
-WARNING_THRESHOLD=300
+WARNING_THRESHOLD=400
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'

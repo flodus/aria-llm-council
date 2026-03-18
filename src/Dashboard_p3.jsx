@@ -14,8 +14,8 @@ import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './ariaData';
 import { loadLang, t, useLocale } from './ariaI18n';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useChronolog } from './useChronolog';
-import ChronologView   from './ChronologView';
+import { useChronolog } from './features/chronolog/useChronolog';
+import ChronologView   from './features/chronolog/ChronologView';
 import {
   useARIA,
   PAYS_LOCAUX,
