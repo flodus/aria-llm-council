@@ -1,5 +1,5 @@
 # ARBORESCENCE — ARIA
-_Mise à jour le 2026-03-18 · Exclut : `node_modules/` · `.git/` · `dist/`_
+_Mise à jour le 2026-03-19 · Exclut : `node_modules/` · `.git/` · `dist/`_
 
 ---
 
@@ -36,9 +36,16 @@ aria/
 │   │   │   │   └── CouncilContext.jsx
 │   │   │   ├── hooks/
 │   │   │   │   └── useConstitutionModal.js
-│   │   │   └── services/
-│   │   │       ├── constitutionValidator.js
-│   │   │       └── deliberationEngine.js
+│   │   │   └── services/            ← Pipeline délibération éclaté en modules
+│   │   │       ├── councilEngine.js         ← Orchestrateur principal (point d'entrée + re-exports)
+│   │   │       ├── deliberationEngine.js    ← Phases 1-4 : ministère, cercle, présidence (460 l.)
+│   │   │       ├── agentsManager.js         ← Agents, ministères, présidence par gouvernance (168 l.)
+│   │   │       ├── contextBuilder.js        ← buildCountryContext() — contexte géopolitique pays
+│   │   │       ├── routingEngine.js         ← routeQuestion() — routing question → ministère
+│   │   │       ├── voteEngine.js            ← computeVoteImpact() — calcul impact vote sur stats
+│   │   │       ├── fallbacks.js             ← FALLBACK_RESPONSES — réponses de secours hors-ligne
+│   │   │       ├── index.js                 ← Barrel export de tous les services
+│   │   │       └── constitutionValidator.js ← (vide — à implémenter)
 │   │   │
 │   │   ├── game/                    ← Cycle de jeu global
 │   │   │   ├── GameProvider.jsx
@@ -99,26 +106,27 @@ aria/
 │   │   │   ├── country/             ← validation.js : rcMatch, validateCountryWithAI…
 │   │   │   ├── llm/                 ← clients/ vides (claude, gemini, openai) — implémentation future
 │   │   │   └── storage.js           ← localStorage : loadOpts/saveOpts, loadKeys…
-│   │   └── theme/
-│   │       ├── ariaTheme.js         ← COLOR, FONT, CARD_STYLE, labelStyle, BTN_*, REGIME_LABELS, TERRAIN_LABELS…
-│   │       └── components.js        ← wrap, mCard, tag, wrapNarrow…
+│   │   └── theme/                   ← Design tokens centralisés
+│   │       ├── colors.js            ← COLORS / C / COLOR — palette rgba() complète (source de vérité)
+│   │       ├── ariaTheme.js         ← FONT, CARD_STYLE, labelStyle, BTN_*, REGIME_LABELS, TERRAIN_LABELS…
+│   │       ├── components.js        ← wrap, mCard, tag, wrapNarrow…
+│   │       └── index.js             ← Barrel : re-exporte colors + ariaTheme + components
 │   │
 │   ├── App.jsx                      ← Shell principal : routing, topbar, états globaux
 │   ├── App.css                      ← Styles globaux (topbar, layout, animations float)
 │   ├── main.jsx                     ← Point d'entrée Vite
-│   ├── index.css                    ← Reset + variables CSS globales
+│   ├── index.css                    ← Reset + variables CSS globales + classes .aria-accordion
 │   │
 │   ├── ariaData.js                  ← Données statiques (REAL_COUNTRIES_DATA, FALLBACK…)  ⚠ legacy
 │   ├── ariaI18n.js                  ← i18n FR/EN : t(), useLocale(), loadLang(), saveLang()
 │   │
-│   ├── Dashboard_p1.jsx             ← Moteur core : useARIA, callAI, generateWorld, doCycle  ⚠ monolithe
+│   ├── Dashboard_p1.jsx             ← Moteur core : useARIA, callAI, generateWorld, doCycle  ⚠ monolithe (1736 l.)
 │   ├── Dashboard_p2.jsx             ← Assembleur MapSVG (délègue à HexGrid + WorldEngine)
-│   ├── Dashboard_p3.jsx             ← Composant Dashboard final : modales, FAB, assemblage  ⚠ monolithe
+│   ├── Dashboard_p3.jsx             ← Composant Dashboard final : modales, FAB, assemblage  ⚠ monolithe (1942 l.)
 │   │
-│   ├── LLMCouncil.jsx               ← Vue onglet LLM COUNCIL (713 lignes — refactor à planifier)
-│   ├── Settings.jsx                 ← Page configuration 5 sections (2055 lignes — gros chantier)
-│   ├── Settings.css
-│   └── llmCouncilEngine.js          ← Pipeline délibération 6 phases  ⚠ ne pas modifier sans demande
+│   ├── LLMCouncil.jsx               ← Vue conseil LLM : 6 phases animées + VoteJauge (774 l.)
+│   ├── Settings.jsx                 ← Page configuration 5 sections (gros chantier)
+│   └── Settings.css
 │
 ├── templates/                        ← Données JSON de base (agents, stats)
 │   ├── base_agents.json              ← Agents FR : ministres, ministères, présidence
@@ -169,9 +177,10 @@ aria/
 
 | Fichier | Problème | Priorité |
 |---------|----------|----------|
-| `Dashboard_p1.jsx` (1736 lignes) | Monolithe — features importent depuis lui | Gros chantier |
-| `Dashboard_p3.jsx` (1869 lignes) | Monolithe | Gros chantier |
-| `Settings.jsx` (2055 lignes) | Trop gros, devrait aller dans `features/settings/` | Moyen |
-| `LLMCouncil.jsx` (713 lignes) | Trop gros, devrait aller dans `features/council/` | Moyen |
+| `Dashboard_p1.jsx` (1736 l.) | Monolithe — features importent depuis lui | Gros chantier |
+| `Dashboard_p3.jsx` (1942 l.) | Monolithe — VoteResultModal encore dedans | Gros chantier |
+| `Settings.jsx` | Trop gros, devrait aller dans `features/settings/` | Moyen |
+| `LLMCouncil.jsx` (774 l.) | Devrait aller dans `features/council/` | Moyen |
 | `ariaData.js` | Données statiques legacy couplées au monolithe | Gros chantier |
 | `shared/services/llm/clients/` | Clients claude/gemini/openai vides | À implémenter |
+| `features/council/services/constitutionValidator.js` | Vide — à implémenter | Bas |

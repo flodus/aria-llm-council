@@ -24,7 +24,6 @@ import {
   getStats,
   getApiKeys,
 } from './Dashboard_p1';
-import { getTerrainLabel, getRegimeLabel } from './shared/theme';
 import { MapSVG } from './Dashboard_p2';
 import ConstitutionModal from './features/council/components/ConstitutionModal';
 import LLMCouncil from './LLMCouncil';
@@ -36,7 +35,8 @@ import {
   computeVoteImpact,
   buildCountryContext,
   MINISTRIES_LIST,
-} from './llmCouncilEngine';
+} from './features/council/services/councilEngine';
+import { C, FONT, getTerrainLabel, getRegimeLabel } from './shared/theme'
 
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
@@ -77,132 +77,187 @@ function VoteResultModal({ session, onClose }) {
   const { question, voteResult, presidence } = session || {};
   if (!voteResult) return null;
 
-  const total   = (voteResult.oui || 0) + (voteResult.non || 0);
-  const ouiPct  = total > 0 ? Math.round((voteResult.oui / total) * 100) : 50;
-  const nonPct  = 100 - ouiPct;
-  const isOui   = voteResult.vote === 'oui';
-  const vColor  = isOui ? 'rgba(58,191,122,0.90)' : 'rgba(200,80,80,0.88)';
-  const MONO    = "'JetBrains Mono', monospace";
-  const SERIF   = "'Cinzel', serif";
+  // 🔍 DEBUG
+  console.log('🔥 VoteResultModal - voteResult:', JSON.stringify(voteResult, null, 2));
+  console.log('🔥 VoteResultModal - presidence.synthese:', JSON.stringify(presidence?.synthese, null, 2));
+  console.log('🔥 VoteResultModal - voteResult.voteType:', voteResult.voteType);
+  console.log('🔥 VoteResultModal - voteResult.vote:', voteResult.vote);
+
+  const isBinary = voteResult.voteType === 'binary';
+  const isPhare = voteResult.vote === 'phare';
+  const isOui = voteResult.vote === 'oui';
+
+  // Déterminer les couleurs et labels selon le type de vote
+  let vColor, vIcon, vLabel, vOptionLabel;
+
+  if (isBinary) {
+    vColor = isPhare ? C.gold : C.purple;
+    vIcon = isPhare ? '☉' : '☽';
+    vLabel = isPhare ? 'PHARE' : 'BOUSSOLE';
+    vOptionLabel = isPhare ? '☉ PHARE' : '☽ BOUSSOLE';
+  } else {
+    vColor = isOui ? C.green : C.red;
+    vIcon = isOui ? '✓' : '✕';
+    vLabel = isOui ? 'OUI' : 'NON';
+    vOptionLabel = isOui ? 'OUI — ADOPTER' : 'NON — REJETER';
+  }
+
+  // Calculs pour la jauge
+  let total, pct1, pct2, label1, label2, color1, color2, grad1, grad2, val1, val2;
+
+  if (isBinary) {
+    val1 = voteResult.phare || 0;
+    val2 = voteResult.boussole || 0;
+    total = val1 + val2;
+    pct1 = total > 0 ? Math.round((val1 / total) * 100) : 50;
+    pct2 = 100 - pct1;
+    label1 = '☉ PHARE';
+    label2 = '☽ BOUSSOLE';
+    color1 = C.gold;
+    color2 = C.purple;
+    grad1 = 'linear-gradient(180deg, rgb(218,182,88) 0%, rgb(138,105,28) 100%)';
+    grad2 = 'linear-gradient(180deg, rgb(158,118,242) 0%, rgb(85,50,158) 100%)';
+  } else {
+    val1 = voteResult.oui || 0;
+    val2 = voteResult.non || 0;
+    total = val1 + val2;
+    pct1 = total > 0 ? Math.round((val1 / total) * 100) : 50;
+    pct2 = 100 - pct1;
+    label1 = '✓ OUI';
+    label2 = '✕ NON';
+    color1 = C.green;
+    color2 = C.red;
+    grad1 = 'linear-gradient(180deg, rgb(72,205,140) 0%, rgb(28,118,70) 100%)';
+    grad2 = 'linear-gradient(180deg, rgb(215,88,88)  0%, rgb(138,42,42) 100%)';
+  }
 
   const fmt = n => n >= 1_000_000
-    ? (n/1_000_000).toFixed(1)+'M'
-    : n >= 1_000 ? (n/1_000).toFixed(0)+'k' : String(n);
+  ? (n/1_000_000).toFixed(1)+'M'
+  : n >= 1_000 ? (n/1_000).toFixed(0)+'k' : String(n);
 
   return (
     <div style={S.overlay} onClick={onClose}>
-      <div style={{ ...S.modal, width: '500px', maxHeight: '88vh', overflowY: 'auto' }}
-           onClick={e => e.stopPropagation()}>
+    <div style={{ ...S.modal, width: '500px', maxHeight: '88vh', overflowY: 'auto' }}
+    onClick={e => e.stopPropagation()}>
 
-        {/* Header */}
-        <div style={{ ...S.modalHeader, borderBottomColor: `${vColor}28` }}>
-          <span style={{ ...S.modalTitle, color: vColor }}>
-            ✦ RÉSULTAT DU CONSEIL
-          </span>
-          <button style={S.closeBtn} onClick={onClose}>✕</button>
-        </div>
+    {/* Header */}
+    <div style={{ ...S.modalHeader, borderBottomColor: `${vColor}28` }}>
+    <span style={{ ...S.modalTitle, color: vColor }}>
+    ✦ RÉSULTAT DU CONSEIL
+    </span>
+    <button style={S.closeBtn} onClick={onClose}>✕</button>
+    </div>
 
-        <div style={{ padding: '0.9rem 1.1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+    <div style={{ padding: '0.9rem 1.1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
 
-          {/* Question */}
-          <div>
-            <div style={{ fontFamily: MONO, fontSize: '0.38rem', letterSpacing: '0.18em', color: 'rgba(140,160,200,0.50)', marginBottom: '0.3rem' }}>
-              QUESTION SOUMISE
-            </div>
-            <p style={{ fontFamily: SERIF, fontSize: '0.54rem', color: 'rgba(200,215,240,0.80)', lineHeight: 1.55, margin: 0, fontStyle: 'italic' }}>
-              « {presidence?.synthese?.question_referendum || question} »
-            </p>
-          </div>
+    {/* Question */}
+    <div>
+    <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.18em', color: 'rgba(140,160,200,0.50)', marginBottom: '0.3rem' }}>
+    QUESTION SOUMISE
+    </div>
+    <p style={{ fontFamily: FONT.serif, fontSize: '0.54rem', color: 'rgba(200,215,240,0.80)', lineHeight: 1.55, margin: 0, fontStyle: 'italic' }}>
+    « {presidence?.synthese?.voteQuestion || presidence?.synthese?.question_referendum || question} »
+    </p>
+    </div>
 
-          {/* Choix du joueur */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '0.6rem',
-            padding: '0.55rem 0.75rem',
-            background: `${vColor}0C`, border: `1px solid ${vColor}30`,
-            borderRadius: '2px',
-          }}>
-            <span style={{ fontSize: '1.1rem' }}>{isOui ? '✓' : '✕'}</span>
-            <div>
-              <div style={{ fontFamily: MONO, fontSize: '0.38rem', letterSpacing: '0.14em', color: `${vColor}88`, marginBottom: '0.2rem' }}>
-                VOTRE CHOIX
-              </div>
-              <div style={{ fontFamily: MONO, fontSize: '0.54rem', color: vColor, letterSpacing: '0.08em' }}>
-                {isOui ? 'OUI — ADOPTER' : 'NON — REJETER'}
-              </div>
-            </div>
-          </div>
+    {/* Choix du joueur */}
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: '0.6rem',
+      padding: '0.55rem 0.75rem',
+      background: `${vColor}0C`, border: `1px solid ${vColor}30`,
+      borderRadius: '2px',
+    }}>
+    <span style={{ fontSize: '1.1rem', color: vColor }}>{vIcon}</span>
+    <div>
+    <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.14em', color: `${vColor}88`, marginBottom: '0.2rem' }}>
+    VOTRE CHOIX
+    </div>
+    <div style={{ fontFamily: FONT.mono, fontSize: '0.54rem', color: vColor, letterSpacing: '0.08em' }}>
+    {vOptionLabel}
+    </div>
+    </div>
+    </div>
 
-          {/* Jauge OUI / NON */}
-          <div>
-            <div style={{ fontFamily: MONO, fontSize: '0.38rem', letterSpacing: '0.16em', color: 'rgba(140,160,200,0.45)', marginBottom: '0.4rem' }}>
-              RÉSULTAT DU VOTE POPULAIRE · {fmt(total)} VOTANTS
-            </div>
-            <div style={{ display: 'flex', height: '1.6rem', borderRadius: '2px', overflow: 'hidden', border: '1px solid rgba(90,110,160,0.14)', background: 'rgba(0,0,0,0.3)' }}>
-              <div style={{
-                width: `${ouiPct}%`, background: 'rgba(58,191,122,0.72)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'width 0.8s ease',
-                fontFamily: MONO, fontSize: '0.44rem', color: 'rgba(220,240,228,0.95)', fontWeight: 700,
-              }}>
-                {ouiPct >= 12 && `✓ ${ouiPct}%`}
-              </div>
-              <div style={{
-                flex: 1, background: 'rgba(200,80,80,0.55)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: MONO, fontSize: '0.44rem', color: 'rgba(240,210,210,0.95)', fontWeight: 700,
-              }}>
-                {nonPct >= 12 && `✕ ${nonPct}%`}
-              </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
-              <span style={{ fontFamily: MONO, fontSize: '0.38rem', color: 'rgba(58,191,122,0.55)' }}>OUI · {fmt(voteResult.oui)}</span>
-              <span style={{ fontFamily: MONO, fontSize: '0.38rem', color: 'rgba(200,80,80,0.55)' }}>NON · {fmt(voteResult.non)}</span>
-            </div>
-          </div>
+    {/* Jauge conditionnelle */}
+    <div>
+    <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.16em', color: 'rgba(140,160,200,0.45)', marginBottom: '0.4rem' }}>
+    RÉSULTAT DU VOTE POPULAIRE · {fmt(total)} VOTANTS
+    </div>
+    <div style={{ position: 'relative', height: '24px', borderRadius: '2px', overflow: 'hidden', border: '1px solid rgba(90,110,160,0.20)', background: 'rgba(0,0,0,0.3)' }}>
+    <div style={{
+      position: 'absolute', left: 0, top: 0, bottom: 0,
+      width: `${pct1}%`, background: grad1,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      transition: 'width 0.8s ease',
+      fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(255,255,255,0.90)', fontWeight: 700,
+    }}>
+    {pct1 >= 12 && `${vIcon} ${pct1}%`}
+    </div>
+    <div style={{
+      position: 'absolute', right: 0, top: 0, bottom: 0,
+      width: `${pct2}%`, background: grad2,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      transition: 'width 0.8s ease',
+      fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(255,255,255,0.90)', fontWeight: 700,
+    }}>
+    {pct2 >= 12 && `${isBinary ? (isPhare ? '☽' : '☉') : '✕'} ${pct2}%`}
+    </div>
+    </div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
+    <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: color1 }}>
+    {label1} · {fmt(val1)}
+    </span>
+    <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: color2 }}>
+    {label2} · {fmt(val2)}
+    </span>
+    </div>
+    </div>
 
-          {/* Label décision */}
-          {voteResult.label && (
-            <div style={{
-              fontFamily: MONO, fontSize: '0.50rem', color: 'rgba(200,215,240,0.80)',
-              lineHeight: 1.65, padding: '0.5rem 0.75rem',
-              background: 'rgba(14,20,36,0.60)', borderRadius: '2px',
-              border: '1px solid rgba(90,110,160,0.12)',
-            }}>
-              {voteResult.label}
-            </div>
-          )}
-
-          {/* Impacts stats */}
-          {(voteResult.impact?.satisfaction !== undefined || voteResult.impact?.aria_current_delta !== undefined) && (
-            <div>
-              <div style={{ fontFamily: MONO, fontSize: '0.38rem', letterSpacing: '0.16em', color: 'rgba(140,160,200,0.45)', marginBottom: '0.4rem' }}>
-                IMPLICATIONS — CHANGEMENTS D'ÉTAT
-              </div>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {voteResult.impact?.satisfaction !== 0 && voteResult.impact?.satisfaction !== undefined && (
-                  <ImpactPill label="SATISFACTION" delta={voteResult.impact.satisfaction} />
-                )}
-                {voteResult.impact?.aria_current_delta !== 0 && voteResult.impact?.aria_current_delta !== undefined && (
-                  <ImpactPill label={t('COUNCIL_ADHESION', uiLang)} delta={voteResult.impact.aria_current_delta} />
-                )}
-              </div>
-              {/* Texte conséquences */}
-              {presidence?.synthese && (
-                <p style={{ fontFamily: MONO, fontSize: '0.46rem', color: 'rgba(140,160,200,0.60)', lineHeight: 1.6, margin: '0.5rem 0 0', fontStyle: 'italic' }}>
-                  {isOui
-                    ? presidence.synthese.position_phare_resume
-                    : presidence.synthese.position_boussole_resume}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div style={S.modalFooter}>
-          <button style={S.saveBtn} onClick={onClose}>OK — CONTINUER</button>
-        </div>
+    {/* Label décision */}
+    {voteResult.label && (
+      <div style={{
+        fontFamily: FONT.mono, fontSize: '0.50rem',
+        color: voteResult.chosenOption === 'phare' ? C.gold :
+        voteResult.chosenOption === 'boussole' ? C.purple : vColor,
+        lineHeight: 1.65, padding: '0.5rem 0.75rem',
+        background: 'rgba(14,20,36,0.60)', borderRadius: '2px',
+                          border: '1px solid rgba(90,110,160,0.12)',
+      }}>
+      {voteResult.label}
       </div>
+    )}
+
+    {/* Impacts stats */}
+    {(voteResult.impact?.satisfaction !== undefined || voteResult.impact?.aria_current_delta !== undefined) && (
+      <div>
+      <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.16em', color: 'rgba(140,160,200,0.45)', marginBottom: '0.4rem' }}>
+      IMPLICATIONS — CHANGEMENTS D'ÉTAT
+      </div>
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      {voteResult.impact?.satisfaction !== 0 && voteResult.impact?.satisfaction !== undefined && (
+        <ImpactPill label="SATISFACTION" delta={voteResult.impact.satisfaction} />
+      )}
+      {voteResult.impact?.aria_current_delta !== 0 && voteResult.impact?.aria_current_delta !== undefined && (
+        <ImpactPill label={t('COUNCIL_ADHESION', uiLang)} delta={voteResult.impact.aria_current_delta} />
+      )}
+      </div>
+      {/* Texte conséquences */}
+      {presidence?.synthese && (
+        <p style={{ fontFamily: FONT.mono, fontSize: '0.46rem', color: 'rgba(140,160,200,0.60)', lineHeight: 1.6, margin: '0.5rem 0 0', fontStyle: 'italic' }}>
+        {isBinary
+          ? (isPhare ? presidence.synthese.position_phare_resume : presidence.synthese.position_boussole_resume)
+          : (isOui ? presidence.synthese.position_phare_resume : presidence.synthese.position_boussole_resume)}
+          </p>
+      )}
+      </div>
+    )}
+    </div>
+
+    {/* Footer */}
+    <div style={S.modalFooter}>
+    <button style={S.saveBtn} onClick={onClose}>OK — CONTINUER</button>
+    </div>
+    </div>
     </div>
   );
 }
@@ -1272,24 +1327,42 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   const handleVote = useCallback((vote) => {
     if (!councilSession?.presidence || !selectedCountry) return;
     const impact = computeVoteImpact(vote, councilSession.presidence, selectedCountry);
+    const total = Math.max(Math.round(selectedCountry.population / 1_000_000 * 10) * 10_000, 500_000);
+    const bias = (vote === 'oui' || vote === 'phare')
+    ? 0.55 + Math.random() * 0.25   // si vote pour l'option "gagnante" par défaut
+    : 0.55 + Math.random() * 0.20;  // si vote contre
+    let ouiVotes, nonVotes, phareVotes, boussoleVotes;
 
-    // Distribution simulée biaisée vers le choix du joueur
-    const total     = Math.max(Math.round(selectedCountry.population / 1_000_000 * 10) * 10_000, 500_000);
-    const bias      = vote === 'oui' ? 0.55 + Math.random() * 0.25 : 0.55 + Math.random() * 0.20;
-    const ouiVotes  = vote === 'oui' ? Math.round(total * bias) : Math.round(total * (1 - bias));
-    const nonVotes  = total - ouiVotes;
+    if (vote === 'phare' || vote === 'boussole') {
+      // Vote binaire
+      phareVotes = vote === 'phare'
+      ? Math.round(total * bias)      // phare gagne
+      : Math.round(total * (1 - bias)); // boussole gagne
+      boussoleVotes = total - phareVotes;
+
+      // Pour compatibilité avec l'ancien code qui utilise oui/non
+      ouiVotes = phareVotes;
+      nonVotes = boussoleVotes;
+    } else {
+      // Vote référendum
+      ouiVotes = vote === 'oui'
+      ? Math.round(total * bias)      // oui gagne
+      : Math.round(total * (1 - bias)); // non gagne
+      nonVotes = total - ouiVotes;
+
+      // Pour compatibilité avec le nouveau code qui utilise phare/boussole
+      phareVotes = ouiVotes;
+      boussoleVotes = nonVotes;
+    }
 
     const voteResult = {
+      ...impact,
       vote,
-      label:  impact.label,
-      impact: {
-        satisfaction:       impact.satisfaction,
-        aria_current_delta: impact.aria_current - (selectedCountry.aria_current ?? 40),
-      },
       oui: ouiVotes,
       non: nonVotes,
+      phare: phareVotes,
+      boussole: boussoleVotes,
     };
-
     setCouncilSession(prev => ({ ...prev, voteResult, voteReady: false }));
 
     // ── Persistance chronolog ─────────────────────────────────────────────
@@ -1376,7 +1449,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     // Ouvrir le popup résultat
     setModalVoteResult(true);
 
-  }, [councilSession, selectedCountry, aria, pushEvent, cycleNumRef]);
+}, [councilSession, selectedCountry, aria, pushEvent, cycleNumRef]);
 
   // Expose les fonctions du moteur au parent (App.jsx) dès que le hook est prêt
   useEffect(() => {
