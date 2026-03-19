@@ -483,6 +483,56 @@
         "miracle",
         "anomaly"
       ]
+    },
+    {
+      "id": "industrie",
+      "name": "Industry & Infrastructure",
+      "emoji": "⚙️",
+      "signs": "Capricorn – Aquarius – Virgo",
+      "color": "#7F8C8D",
+      "mission": "Drive the circulatory and productive system of the nation by modernizing infrastructure for maximum efficiency.",
+      "weight": 1,
+      "ministers": [
+        "stratege",
+        "inventeur",
+        "analyste"
+      ],
+      "ministerPrompts": {
+        "inventeur": "Optimize supply chains for sustainable growth.",
+        "stratege": "Strengthen critical networks to guarantee our lead.",
+        "analyste": "Audit every production flow to eliminate waste and maximize efficiency."
+      },
+      "keywords": [
+        "factory",
+        "production",
+        "network",
+        "digital",
+        "infrastructure",
+        "construction",
+        "logistics",
+        "transportation",
+        "industry",
+        "manufacturing",
+        "supply chain",
+        "energy",
+        "power grid",
+        "telecom",
+        "robotics",
+        "automation",
+        "machine",
+        "tool",
+        "equipment",
+        "industrial power grid",
+        "industrial transport",
+        "supply chain",
+        "production capacity",
+        "industrial site",
+        "industrial park",
+        "business park",
+        "industrial supply",
+        "industrial maintenance",
+        "industrial equipment"
+      ]
     }
   ]
 }

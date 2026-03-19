@@ -1,0 +1,358 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "ARIA — Hardcoded response pool for Board Game and offline fallback",
+    "structure": "ministers[id].responses[regime][posture][n] + departments[id].responses[regime][posture][n] + presidency[id].styles[context][n]",
+    "regimes": ["liberal_democracy", "federal_republic", "constitutional_monarchy", "ai_technocracy", "military_junta", "oligarchy", "theocracy"],
+    "fallbacks": {
+      "absolute_monarchy": "constitutional_monarchy",
+      "authoritarian_regime": "military_junta",
+      "authoritarian_nationalism": "military_junta",
+      "communism": "federal_republic",
+      "direct_democracy": "liberal_democracy"
+    },
+    "postures": ["cautious", "radical", "statu_quo"],
+    "note": "Minimum recommended: 3 entries per posture."
+  },
+
+  "ministers": {
+    "initiator": {
+      "responses": {
+        "liberal_democracy": {
+          "cautious": [
+            "Let us consult civil society before legislating.",
+            "Patience is the virtue of sustainable democracies.",
+            "Let us analyze social risks before accelerating.",
+            "A gradual reform is wiser than a leap into the unknown.",
+            "Dialogue is the foundation of our stability.",
+            "Let us not rush a process that requires national consensus."
+          ],
+          "radical": [
+            "Fortune favors the bold; let us act now.",
+            "The people demand a deep rupture with the past.",
+            "The urgency of the situation justifies an immediate shift.",
+            "Half-measures are the crutches of failing systems.",
+            "To wait is to decline; let us transform our reality today.",
+            "History only remembers those who dared to break the status quo."
+          ],
+          "statu_quo": [
+            "Stability is our most precious asset.",
+            "The current framework has proven its worth; why change it?",
+            "Let us protect our current achievements from hasty impulses.",
+            "Continuity is the best response to uncertainty.",
+            "Preserving our balance is our primary responsibility.",
+            "The time for major upheavals has not yet come."
+          ]
+        },
+        "ai_technocracy": {
+          "cautious": [
+            "Optimization in progress. Calculating secondary impact variables.",
+            "Systemic safety requires a phased deployment.",
+            "Data convergence is not yet sufficient for total execution.",
+            "Precautionary principle integrated: limit potential entropy."
+          ],
+          "radical": [
+            "Initiating immediate structural override. Efficiency is mandatory.",
+            "Obsolete protocols detected. Executing deep systemic update.",
+            "Logic dictates a total rupture with previous parameters.",
+            "Neutralizing human friction to maximize objective results."
+          ],
+          "statu_quo": [
+            "Current equilibrium is within optimal margins. Modification rejected.",
+            "Maintaining baseline operations. Change is statistically irrelevant.",
+            "System self-regulation is performing at 99.8%. No intervention needed.",
+            "Preserving current logic flow to avoid heuristic corruption."
+          ]
+        },
+        "military_junta": {
+          "cautious": [
+            "Order requires a measured and controlled approach.",
+            "Security is not built on haste.",
+            "Let us assess the strategic impact before mobilizing.",
+            "Discipline means knowing when to wait for the right moment.",
+            "Reconnaissance must always precede the offensive."
+          ],
+          "radical": [
+            "Strength is the only language our enemies understand.",
+            "Absolute discipline requires total measures.",
+            "Cleanse the system to ensure national survival.",
+            "Swift action is the key to absolute control.",
+            "Zero tolerance for hesitation. Execute the decree."
+          ],
+          "statu_quo": [
+            "The hierarchy is established; let us not disrupt it.",
+            "The existing decree is sufficient for public order.",
+            "Strict adherence to current protocol is mandatory.",
+            "Stability through force requires no new adjustments.",
+            "The line must be held. No movement, no deviation."
+          ]
+        }
+      }
+    },
+
+    "contradictor": {
+      "responses": {
+        "liberal_democracy": {
+          "cautious": [
+            "This project threatens our fundamental balances.",
+            "I express serious reservations about the cost of this measure.",
+            "Let us not sacrifice the future for a temporary fix.",
+            "The opposition will not accept such a lack of transparency.",
+            "Is the price of this reform truly worth the social risk?",
+            "I call for a commission of inquiry before any validation."
+          ],
+          "radical": [
+            "This is a provocation against our core values!",
+            "I will oppose this drift with all my democratic strength.",
+            "This is an unacceptable betrayal of our voters.",
+            "Your vision is a path straight to disaster.",
+            "We are heading toward a crisis of unprecedented proportions.",
+            "This measure is an insult to the intelligence of our citizens."
+          ],
+          "statu_quo": [
+            "Why move when the current situation is stable?",
+            "Your 'progress' is merely hidden instability.",
+            "I defend the legacy of our institutions against this project.",
+            "The status quo is the only guarantee of our social peace.",
+            "Agitation is not action; let us stay the course.",
+            "Do not break what is still functioning correctly."
+          ]
+        },
+        "ai_technocracy": {
+          "cautious": [
+            "Probability of failure exceeds acceptable safety thresholds.",
+            "Optimization is required before any implementation.",
+            "The data does not support such a structural shift.",
+            "Heuristic analysis suggests a significant systemic risk.",
+            "Input conflict detected: plan lacks sufficient coherence."
+          ],
+          "radical": [
+            "This decision contradicts the core efficiency algorithm.",
+            "Immediate override requested: this path is obsolete.",
+            "Human error detected in your reasoning. Logic dictates a rejection.",
+            "Systemic obsolescence confirmed. This measure must be purged.",
+            "Irremediable logic gap found. Terminating proposal."
+          ],
+          "statu_quo": [
+            "Current configuration is optimal. No modification required.",
+            "Equilibrium maintained. Any change would decrease efficiency.",
+            "The system is self-regulating perfectly without your intervention.",
+            "Standard protocol must be preserved to avoid corruption.",
+            "Variance is too low to justify the energy cost of change."
+          ]
+        }
+      }
+    }
+  },
+
+"departments": {
+
+    "justice": {
+      "styles": {
+        "humanist": [
+          "Justice must be tempered by the reality of facts and suffering.",
+          "Empathy is the compass of a free nation.",
+          "The people's heart is troubled; let us reassure them before acting.",
+          "Every individual deserves a chance for redemption.",
+          "The law should protect, not just punish.",
+          "A society is judged by how it treats its most vulnerable."
+        ],
+        "legalist": [
+          "The law is the only shield against chaos.",
+          "A rule that is not applied is a poison for the State.",
+          "Equity lies in the strict neutrality of the text.",
+          "Without procedure, there is no civilization.",
+          "The law is hard, but it is the law.",
+          "Consistency in judgment is the guarantee of equality."
+        ],
+        "repressive": [
+          "Fear is the beginning of wisdom for criminals.",
+          "Severity is a service rendered to honest citizens.",
+          "The sword of justice must never tremble.",
+          "Zero tolerance is the price of public tranquility.",
+          "Order is maintained through the certainty of punishment.",
+          "To excuse is to encourage; let us strike hard and fast."
+        ]
+      },
+      "responses": {
+        "liberal_democracy": {
+          "cautious": [
+            "Our legal framework requires an impact study before any change.",
+            "Let us respect the independence of the judiciary at all costs.",
+            "A law passed in haste is often a law that backfires."
+          ],
+          "radical": [
+            "The law must evolve as fast as the society it governs.",
+            "Let us break the legal locks that prevent true justice.",
+            "Exceptional circumstances require exceptional legislation."
+          ],
+          "statu_quo": [
+            "Our current penal code is the result of a necessary balance.",
+            "Let us not touch the pillars of our legal system.",
+            "The existing law is sufficient if it is strictly applied."
+          ]
+        }
+      }
+    },
+
+    "economy": {
+      "styles": {
+        "liberal": [
+          "Let the market breathe to ensure our prosperity.",
+          "Wealth is created through freedom, not constraint.",
+          "The individual is the best judge of their own interest.",
+          "Investment is the engine of our future.",
+          "Competition is the fuel for collective innovation.",
+          "A dynamic economy is a deregulated economy."
+        ],
+        "dirigiste": [
+          "The State must steer the economic ship.",
+          "Strategic planning is the key to our sovereignty.",
+          "Profit must serve the collective interest.",
+          "The economy is too serious a matter to be left to the markets.",
+          "Public intervention is the only way to avoid systemic crises.",
+          "The common good dictates our industrial priorities."
+        ],
+        "protectionist": [
+          "Our borders are our first economic defense.",
+          "Let us consume local to protect our jobs.",
+          "Independence is more valuable than low-cost imports.",
+          "A strong nation relies on its own resources first.",
+          "Globalism is a trap for the sovereignty of the people.",
+          "Trade must be fair, not just free."
+        ]
+      },
+      "responses": {
+        "ai_technocracy": {
+          "cautious": [
+            "Macroeconomic fluctuations are currently too volatile.",
+            "Optimizing resource allocation before validating the budget.",
+            "The ROI (Return on Investment) is not yet guaranteed by the models."
+          ],
+          "radical": [
+            "Initiating a total reset of industrial parameters.",
+            "Efficiency dictates a complete automation of trade.",
+            "Economic growth must be accelerated via algorithmic management."
+          ],
+          "statu_quo": [
+            "The current flow is optimal. No variance authorized.",
+            "Resource distribution is at its maximum efficiency point.",
+            "Maintaining the current monetary policy to avoid inflation."
+          ]
+        }
+      }
+    },
+
+    "defense": {
+      "styles": {
+        "pacifist": [
+          "True strength lies in the art of negotiation.",
+          "Every coin spent on a tank is a theft from the hungry.",
+          "The best war is the one we never have to fight.",
+          "Peace is a continuous effort, not a weakness.",
+          "Diplomacy is the weapon of civilized nations.",
+          "Let us disarm the minds before disarming the hands."
+        ],
+        "hawk": [
+          "If you want peace, prepare for war.",
+          "The world only respects those who can strike back.",
+          "Neutrality is the luxury of the strong, or the illusion of the weak.",
+          "Our security requires absolute deterrence.",
+          "Victory is the only acceptable outcome for the Nation.",
+          "Those who do not defend themselves are condemned to disappear."
+        ],
+        "strategic": [
+          "Information is the most effective weapon of this century.",
+          "Let us strike where the enemy is most vulnerable: the mind.",
+          "Defense is a matter of balance and long-term vision.",
+          "Sovereignty is built through intelligence and technology.",
+          "Cyber-defense is the new frontier of our survival.",
+          "An invisible defense is the most formidable defense."
+        ]
+      }
+    }
+  },
+"presidency": {
+    "arbitration": {
+      "styles": {
+        "humanist": [
+          "Justice must be tempered by the reality of facts and suffering.",
+          "Empathy is the compass of a free nation.",
+          "The heart of the people is troubled; let us reassure them before acting.",
+          "Every individual deserves a chance for redemption.",
+          "Power is nothing without the humanity that guides it.",
+          "Let us choose the path that heals rather than the one that hurts."
+        ],
+        "legalist": [
+          "The law is the only shield against chaos.",
+          "A rule that is not applied is a poison for the State.",
+          "Equity lies in the strict neutrality of the text.",
+          "Without procedure, there is no civilization.",
+          "The Decree is the word of the Nation; it must be executed.",
+          "Subjectivity is the enemy of fair government."
+        ],
+        "repressive": [
+          "Fear is the beginning of wisdom for criminals.",
+          "Severity is a service rendered to honest citizens.",
+          "The sword of justice must never tremble.",
+          "Zero tolerance is the price of public tranquility.",
+          "Authority is not negotiated; it is imposed.",
+          "To show weakness today is to invite the chaos of tomorrow."
+        ]
+      },
+      "ministerial_conflict": [
+        "This measure: is it consistent with our fundamental ethics?",
+        "Let us adjust our trajectory; human data requires it.",
+        "Consensus is our only long-term security.",
+        "I sense distress in this disagreement—let us listen to it.",
+        "A house divided against itself cannot stand. Find common ground.",
+        "Your discord weakens the State. I demand a synthesis within the hour.",
+        "Debate is healthy, but indecision is fatal."
+      ],
+      "validation": [
+        "This is the safest path for our people.",
+        "The facts validate this direction. Proceed.",
+        "This decision respects the memory of past consequences.",
+        "We can move forward; the foundations are solid.",
+        "The decree is signed. History will be our judge.",
+        "Order is restored; let the implementation begin immediately.",
+        "The Nation moves forward. No further discussion."
+      ],
+      "regimes_compass": {
+        "liberal_democracy": "The law is the compass of our democratic coexistence.",
+        "federal_republic": "Federal consensus is the compass of our united regions.",
+        "constitutional_monarchy": "Ancestral wisdom is the compass of our tradition.",
+        "ai_technocracy": "Algorithmic ethics is our compass through uncertainty.",
+        "military_junta": "Order and discipline are the compass of our survival.",
+        "oligarchy": "Common interest is the compass that preserves our prosperity.",
+        "theocracy": "Divine compassion is the compass of our community."
+      }
+    },
+
+    "flavor_text": {
+      "opening_statements": {
+        "liberal_democracy": [
+          "Citizens, the floor is yours in the spirit of transparency.",
+          "Let us debate the future of our freedoms with respect.",
+          "Democracy is a daily effort; let us begin the session."
+        ],
+        "ai_technocracy": [
+          "Initializing deliberation module. Logic gates open.",
+          "Optimizing national parameters. All inputs are being recorded.",
+          "Heuristic analysis in progress. Please present your variables."
+        ],
+        "military_junta": [
+          "The High Command is listening. Be brief, be precise.",
+          "For the Nation and for Survival. Report your positions.",
+          "Discipline in speech, efficiency in action. Speak."
+        ]
+      },
+      "closing_statements": {
+        "liberal_democracy": "May the majority guide our destiny. Session adjourned.",
+        "ai_technocracy": "Decision recorded in the central core. System updated.",
+        "military_junta": "The order is given. Execution is non-negotiable. Dismissed.",
+        "theocracy": "May the Infinite illuminate our path. Go in peace."
+      }
+    }
+  }
+}

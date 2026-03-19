@@ -11,7 +11,6 @@ import { getMinistriesList } from '../../../council/services/councilEngine';
 import MinistryList from './council/CouncilMinistryList';
 import FreeQuestion from './council/CouncilFreeQuestion';
 import CouncilFooter from './council/CouncilFooter';
-
 export default function CountryPanelCouncil({
     country,
     lang,
@@ -160,6 +159,7 @@ export default function CountryPanelCouncil({
         onConstitution={onConstitution}
         onSecession={onSecession}
         />
+
         </>
     );
 }
