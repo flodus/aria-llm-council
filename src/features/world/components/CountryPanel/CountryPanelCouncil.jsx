@@ -28,8 +28,7 @@ export default function CountryPanelCouncil({
     cycleActuel,
     currentCycleQuestions,
     setMinistryCycleQuestion: externalSetMinistryCycleQuestion,
-    lastVoteTimestamp,
-    councilSession
+    lastVoteTimestamp
 }) {
     const isEn = lang === 'en';
     const ministries = getMinistriesList();
@@ -101,13 +100,11 @@ export default function CountryPanelCouncil({
         cycleActuel,
         getCurrentQuestionForMinistry,
         setMinistryCycleQuestion: updateCycleQuestion,
-        lastVoteTimestamp,
-        councilSession
+        lastVoteTimestamp
     }), [
         ministries, openMinistry, setOpenMinistry, customQ, setCustomQ,
         submitting, wrappedHandleSubmit, lang, countryId, cycleActuel,
-        getCurrentQuestionForMinistry, updateCycleQuestion, lastVoteTimestamp,
-        councilSession
+        getCurrentQuestionForMinistry, updateCycleQuestion, lastVoteTimestamp
     ]); // updateCycleQuestion reste pour CouncilCitizenQuestion via setMinistryCycleQuestion
 
     const freeQuestionProps = useMemo(() => ({
@@ -139,7 +136,7 @@ export default function CountryPanelCouncil({
         {isEn ? 'MINISTRIES' : 'MINISTÈRES'}
         </div>
 
-        <MinistryList {...ministryListProps} councilSession={councilSession} />
+        <MinistryList {...ministryListProps} />
 
         <div style={{
             height: '1px',

@@ -157,26 +157,42 @@ export function getQuestionState(question, countryId, ministryId = null) {
 
 /**
  * Retourne un échantillon de questions pour un ministère.
- * La question votée ce cycle apparaît en bas avec sa couleur de résultat.
- * Source de vérité : localStorage — pas de prop externe "question du cycle".
+ * - questionDuCycle fourni et pas encore voté → ⏳ en bas (délibération en cours)
+ * - vote trouvé dans localStorage → couleur du résultat en bas
+ * Gère les requalifications de routing (ministereId différent du panel ouvert).
  * @param {string} ministryId
  * @param {string|null} countryId
  * @param {number} cycleActuel
+ * @param {string|null} questionDuCycle  question soumise ce cycle (pour le ⏳)
  * @param {number} count  défaut 6
  * @returns {Array<{question: string, state: object|null}>}
  */
-export function getMinistryQuestionsSample(ministryId, countryId, cycleActuel, count = 6) {
+export function getMinistryQuestionsSample(ministryId, countryId, cycleActuel, questionDuCycle = null, count = 6) {
     const data = loadQuestions();
     const pool = data?.par_ministere?.[ministryId]?.questions || [];
     if (!pool.length) return [];
 
-    // Question votée ce cycle pour ce ministère (depuis le chronolog)
-    const history = getQuestionHistory(countryId, ministryId);
-    const votedThisCycle = history.find(h => h.cycle === cycleActuel) || null;
-    const votedQuestion  = votedThisCycle?.question || null;
+    // Chercher le vote de ce cycle dans localStorage
+    // Priorité : ministereId exact → puis question dans ce pool (gère le routing)
+    let votedEntry = null;
+    try {
+        const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        const cycleData = cycles.find(c => c.cycleNum === cycleActuel);
+        if (cycleData) {
+            const voteEvents = (cycleData.events || []).filter(e =>
+                e.type === 'vote' && e.countryId === countryId
+            );
+            votedEntry = voteEvents.find(e => e.ministereId === ministryId)
+                      || voteEvents.find(e => pool.includes(e.question))
+                      || null;
+        }
+    } catch {}
 
-    // Exclure la question votée du tirage aléatoire
-    const poolForRandom = votedQuestion ? pool.filter(q => q !== votedQuestion) : pool;
+    const votedQuestion  = votedEntry?.question || null;
+    const bottomQuestion = votedQuestion || questionDuCycle; // voted > en cours
+
+    // Exclure la question du bas du tirage
+    const poolForRandom = bottomQuestion ? pool.filter(q => q !== bottomQuestion) : pool;
     const shuffled = [...poolForRandom].sort(() => Math.random() - 0.5);
     const sample   = shuffled.slice(0, count);
 
@@ -185,13 +201,21 @@ export function getMinistryQuestionsSample(ministryId, countryId, cycleActuel, c
         state: getQuestionState(question, countryId, ministryId)
     }));
 
-    // Ajouter la question votée en bas avec son résultat et sa couleur
-    if (votedQuestion) {
-        const state = getQuestionState(votedQuestion, countryId, ministryId);
-        const enhancedState = state
-            ? { ...state, isCurrentCycle: true, cycle: cycleActuel }
-            : { isCurrentCycle: true, cycle: cycleActuel, color: '#C8A44A', vote: null };
-        result.push({ question: votedQuestion, state: enhancedState });
+    // Ajouter la question en bas avec son état
+    if (bottomQuestion) {
+        let state;
+        if (votedEntry) {
+            // Après le vote : couleur du résultat
+            let color = '#4CAF50';
+            if (votedEntry.vote === 'non')           color = '#F44336';
+            else if (votedEntry.vote === 'phare')    color = '#C8A44A';
+            else if (votedEntry.vote === 'boussole') color = '#9B7EC8';
+            state = { vote: votedEntry.vote, color, label: votedEntry.label || '', isCurrentCycle: true, cycle: cycleActuel };
+        } else {
+            // En cours de délibération : ⏳
+            state = { isCurrentCycle: true, cycle: cycleActuel, color: '#C8A44A', vote: null };
+        }
+        result.push({ question: bottomQuestion, state });
     }
 
     return result;

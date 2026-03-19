@@ -1687,7 +1687,6 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
         currentCycleQuestions={currentCycleQuestions}
         setMinistryCycleQuestion={setMinistryCycleQuestion}
         lastVoteTimestamp={lastVoteTimestamp}
-        councilSession={councilSession}
         />
       )}
 

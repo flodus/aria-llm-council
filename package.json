@@ -9,7 +9,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build"
+    "predeploy": "npm run build",
+    "check": "node scripts_maintenance/check_aria.js",
+    "check:data": "node scripts_maintenance/check_aria.js data/aria_responses.json",
+    "check:fix": "node scripts_maintenance/check_aria.js data/aria_responses.json --fix"
   },
   "dependencies": {
     "cors": "^2.8.6",
@@ -32,3 +35,4 @@
     "vite": "^7.3.1"
   }
 }
+
