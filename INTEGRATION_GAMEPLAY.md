@@ -105,6 +105,8 @@ La posture n'est pas configurée par le joueur. Elle est déterminée par l'arch
 **Fichiers touchés :** `responseService.js`, `fallbacks.js`, `templates/aria_reponses.json`
 **Fichiers NON touchés :** `deliberationEngine.js`, `agentsManager.js`
 
+> ⚠️ **Nettoyage inclus :** supprimer `LOCAL_DELIBERATION` dans `ariaData.js` (réponses hardcodées par ministre avec structure `cycle_normal/crise/secession` — remplacées par `aria_reponses.json`). Faire dans le même commit.
+
 ---
 
 ## Chantier 4 — ministerPrompts normal/crise ⚠️ touche deliberationEngine
