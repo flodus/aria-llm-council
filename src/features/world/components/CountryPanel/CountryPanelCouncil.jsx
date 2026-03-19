@@ -28,7 +28,6 @@ export default function CountryPanelCouncil({
     cycleActuel,
     currentCycleQuestions,
     setMinistryCycleQuestion: externalSetMinistryCycleQuestion,
-    lastVoteTimestamp
 }) {
     const isEn = lang === 'en';
     const ministries = getMinistriesList();
@@ -100,11 +99,10 @@ export default function CountryPanelCouncil({
         cycleActuel,
         getCurrentQuestionForMinistry,
         setMinistryCycleQuestion: updateCycleQuestion,
-        lastVoteTimestamp
     }), [
         ministries, openMinistry, setOpenMinistry, customQ, setCustomQ,
         submitting, wrappedHandleSubmit, lang, countryId, cycleActuel,
-        getCurrentQuestionForMinistry, updateCycleQuestion, lastVoteTimestamp
+        getCurrentQuestionForMinistry, updateCycleQuestion
     ]); // updateCycleQuestion reste pour CouncilCitizenQuestion via setMinistryCycleQuestion
 
     const freeQuestionProps = useMemo(() => ({

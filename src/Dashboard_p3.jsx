@@ -1424,6 +1424,11 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       voteCounts: { oui: ouiVotes, non: nonVotes },
     });
 
+    // Notifie CouncilMinistryQuestions (rendu dans App.jsx) que le vote est en localStorage
+    window.dispatchEvent(new CustomEvent('aria:vote-stored', {
+      detail: { cycleNum: cycleNumRef.current }
+    }));
+
     // Historique cycle courant (pour CycleConfirmModal + live ChronologView)
     const liveEntry = {
       type:         'vote',

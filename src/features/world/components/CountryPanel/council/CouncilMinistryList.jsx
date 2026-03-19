@@ -19,7 +19,6 @@ export default function MinistryList({
     cycleActuel,
     getCurrentQuestionForMinistry,
     setMinistryCycleQuestion,
-    lastVoteTimestamp
 }) {
     return (
         <>
@@ -38,7 +37,6 @@ export default function MinistryList({
             cycleActuel={cycleActuel}
             currentCycleQuestion={getCurrentQuestionForMinistry(m.id)}
             setMinistryCycleQuestion={setMinistryCycleQuestion}
-            lastVoteTimestamp={lastVoteTimestamp}
             />
         ))}
         </>

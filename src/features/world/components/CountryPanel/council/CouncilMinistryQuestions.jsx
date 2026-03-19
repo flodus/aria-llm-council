@@ -17,6 +17,16 @@ import { getQuestionState } from '../../../../../shared/services/boardgame/quest
 import QUESTIONS_FR from '../../../../../../templates/aria_questions.json';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
+// Dérive le numéro de cycle courant depuis localStorage quand la prop est absente
+function getCycleEffectif(cycleActuel) {
+    if (cycleActuel !== undefined && cycleActuel !== null) return cycleActuel;
+    try {
+        const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        if (!cycles.length) return 1;
+        return Math.max(...cycles.map(c => c.cycleNum));
+    } catch { return 1; }
+}
+
 function getPool(ministryId) {
     return QUESTIONS_FR?.par_ministere?.[ministryId]?.questions || [];
 }
@@ -27,23 +37,16 @@ function readVotedEntry(ministryId, countryId, cycleActuel) {
     try {
         const pool = getPool(ministryId);
         const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-        const cycleData = cycles.find(c => c.cycleNum === cycleActuel);
-        if (!cycleData) {
-            console.log('[readVoted] no cycleData — cycleActuel=', cycleActuel, 'stored=', cycles.map(c=>c.cycleNum));
-            return null;
-        }
+        const effectif = getCycleEffectif(cycleActuel);
+        const cycleData = cycles.find(c => c.cycleNum === effectif);
+        if (!cycleData) return null;
         const voteEvents = (cycleData.events || []).filter(e =>
             e.type === 'vote' && e.countryId === countryId
         );
-        const result = voteEvents.find(e => e.ministereId === ministryId)
+        return voteEvents.find(e => e.ministereId === ministryId)
             || voteEvents.find(e => pool.includes(e.question))
             || null;
-        console.log('[readVoted]', ministryId, countryId, cycleActuel, '→', result?.vote ?? 'null', 'voteEvents=', voteEvents.length);
-        return result;
-    } catch (err) {
-        console.log('[readVoted] error', err);
-        return null;
-    }
+    } catch { return null; }
 }
 
 export default function MinistryQuestions({
@@ -55,9 +58,9 @@ export default function MinistryQuestions({
     countryId,
     cycleActuel,
     currentCycleQuestion,
-    lastVoteTimestamp
 }) {
     const isEn = lang === 'en';
+    const effectifCycle = getCycleEffectif(cycleActuel);
 
     // ── Tirage aléatoire de base — uniquement quand cycle ou ministère change ──
     const [baseQuestions, setBaseQuestions] = useState([]);
@@ -66,16 +69,19 @@ export default function MinistryQuestions({
         const pool = getPool(ministryId);
         const shuffled = [...pool].sort(() => Math.random() - 0.5);
         setBaseQuestions(shuffled);
-    }, [ministryId, countryId, cycleActuel]);
+    }, [ministryId, countryId, effectifCycle]);
 
-    // ── Trigger de rendu synchrone dès qu'un vote est enregistré ──
-    const anyVoteTs = lastVoteTimestamp
-        ? Math.max(0, ...Object.values(lastVoteTimestamp))
-        : 0;
+    // ── Compteur incrémenté par le custom event 'aria:vote-stored' ──
+    const [voteCounter, setVoteCounter] = useState(0);
+    useEffect(() => {
+        const handler = () => setVoteCounter(n => n + 1);
+        window.addEventListener('aria:vote-stored', handler);
+        return () => window.removeEventListener('aria:vote-stored', handler);
+    }, []);
 
     // ── Overlay vote + ⏳ calculé EN RENDU (synchrone) ──
     const questions = useMemo(() => {
-        const votedEntry = readVotedEntry(ministryId, countryId, cycleActuel);
+        const votedEntry = readVotedEntry(ministryId, countryId, effectifCycle);
         const votedQuestion = votedEntry?.question || null;
 
         // Seul le vote déplace la question en bas
@@ -89,7 +95,7 @@ export default function MinistryQuestions({
             if (currentCycleQuestion && question === currentCycleQuestion && !votedEntry) {
                 return {
                     question,
-                    state: { isCurrentCycle: true, cycle: cycleActuel, color: '#C8A44A', vote: null }
+                    state: { isCurrentCycle: true, cycle: effectifCycle, color: '#C8A44A', vote: null }
                 };
             }
             return { question, state: getQuestionState(question, countryId, ministryId) };
@@ -108,14 +114,13 @@ export default function MinistryQuestions({
                     color,
                     label:          votedEntry.label || '',
                     isCurrentCycle: true,
-                    cycle:          cycleActuel
+                    cycle:          effectifCycle
                 }
             });
         }
 
         return result;
-    }, [baseQuestions, ministryId, countryId, cycleActuel, currentCycleQuestion, anyVoteTs]);
-    // anyVoteTs change dès pushEvent → localStorage déjà à jour → useMemo lit la bonne valeur
+    }, [baseQuestions, ministryId, countryId, effectifCycle, currentCycleQuestion, voteCounter]);
 
     const handleQuestionClick = useCallback((question, state) => {
         if (state?.isCurrentCycle) return;
