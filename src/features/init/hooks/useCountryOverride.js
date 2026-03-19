@@ -15,52 +15,51 @@ export default function useCountryOverride(perGov, setPerGov, commonAgents, comm
     const activePres = curGov?.activePres ?? commonPres;
     const activeMinsters = curGov?.activeMinsters ?? commonMinsters;
 
+    // Crée l'override à la volée si inexistant, puis applique la mise à jour
+    const ensureFork = (p) => {
+        if (p[plCountry]) return p[plCountry];
+        return {
+            agents: JSON.parse(JSON.stringify(commonAgents)),
+            activeMins: commonMins,
+            activePres: commonPres ? [...commonPres] : [],
+            activeMinsters: commonMinsters,
+        };
+    };
+
     const setPlAgents = (fn) => {
-        if (hasOverride) {
-            setPerGov(p => {
-                const a = [...p];
-                a[plCountry] = { ...a[plCountry], agents: typeof fn === 'function' ? fn(a[plCountry].agents) : fn };
-                return a;
-            });
-        } else {
-            // setCommonAgents(fn); // sera géré par le parent
-        }
+        setPerGov(p => {
+            const a = [...p];
+            const fork = ensureFork(p);
+            a[plCountry] = { ...fork, agents: typeof fn === 'function' ? fn(fork.agents) : fn };
+            return a;
+        });
     };
 
     const setActiveMins = (v) => {
-        if (hasOverride) {
-            setPerGov(p => {
-                const a = [...p];
-                a[plCountry] = { ...a[plCountry], activeMins: typeof v === 'function' ? v(a[plCountry].activeMins) : v };
-                return a;
-            });
-        } else {
-            // setCommonMins(v);
-        }
+        setPerGov(p => {
+            const a = [...p];
+            const fork = ensureFork(p);
+            a[plCountry] = { ...fork, activeMins: typeof v === 'function' ? v(fork.activeMins) : v };
+            return a;
+        });
     };
 
     const setActivePres = (v) => {
-        if (hasOverride) {
-            setPerGov(p => {
-                const a = [...p];
-                a[plCountry] = { ...a[plCountry], activePres: typeof v === 'function' ? v(a[plCountry].activePres) : v };
-                return a;
-            });
-        } else {
-            // setCommonPres(v);
-        }
+        setPerGov(p => {
+            const a = [...p];
+            const fork = ensureFork(p);
+            a[plCountry] = { ...fork, activePres: typeof v === 'function' ? v(fork.activePres) : v };
+            return a;
+        });
     };
 
     const setActiveMinsters = (v) => {
-        if (hasOverride) {
-            setPerGov(p => {
-                const a = [...p];
-                a[plCountry] = { ...a[plCountry], activeMinsters: typeof v === 'function' ? v(a[plCountry].activeMinsters) : v };
-                return a;
-            });
-        } else {
-            // setCommonMinsters(v);
-        }
+        setPerGov(p => {
+            const a = [...p];
+            const fork = ensureFork(p);
+            a[plCountry] = { ...fork, activeMinsters: typeof v === 'function' ? v(fork.activeMinsters) : v };
+            return a;
+        });
     };
 
     const forkCountry = () => {
