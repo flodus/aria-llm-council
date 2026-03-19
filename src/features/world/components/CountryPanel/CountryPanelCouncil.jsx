@@ -83,9 +83,8 @@ export default function CountryPanelCouncil({
     }, [externalSetMinistryCycleQuestion]);
 
     const wrappedHandleSubmit = useCallback((question, ministryId) => {
-        updateCycleQuestion(ministryId, question);
         handleSubmit(question, ministryId);
-    }, [handleSubmit, updateCycleQuestion]);
+    }, [handleSubmit]);
 
     const ministryListProps = useMemo(() => ({
         ministries,
@@ -105,7 +104,7 @@ export default function CountryPanelCouncil({
         ministries, openMinistry, setOpenMinistry, customQ, setCustomQ,
         submitting, wrappedHandleSubmit, lang, countryId, cycleActuel,
         getCurrentQuestionForMinistry, updateCycleQuestion, lastVoteTimestamp
-    ]);
+    ]); // updateCycleQuestion reste pour CouncilCitizenQuestion via setMinistryCycleQuestion
 
     const freeQuestionProps = useMemo(() => ({
         freeQ,

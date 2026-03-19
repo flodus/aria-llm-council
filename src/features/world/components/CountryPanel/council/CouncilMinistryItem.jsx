@@ -78,8 +78,6 @@ export default function MinistryItem({
             lang={lang}
             countryId={countryId}
             cycleActuel={cycleActuel}
-            currentCycleQuestion={currentCycleQuestion}
-            setMinistryCycleQuestion={setMinistryCycleQuestion}
             lastVoteTimestamp={lastVoteTimestamp}
             />
 
