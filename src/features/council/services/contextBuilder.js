@@ -21,8 +21,6 @@ export function buildCountryContext(country) {
     const en = loadLang() === 'en';
 
     // DEBUG — à retirer après validation
-    console.log('[ARIA CTX] buildCountryContext:', country?.nom, '| context_mode:', country?.context_mode, '| contextOverride:', country?.contextOverride ? 'OUI' : 'non', '| population:', country?.population, '| satisfaction:', country?.satisfaction);
-
     // 1. Override libre par pays
     if (country.contextOverride && country.contextOverride.trim()) {
         const lbl = en ? 'Context' : 'Contexte';

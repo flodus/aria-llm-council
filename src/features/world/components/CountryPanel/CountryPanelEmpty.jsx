@@ -11,7 +11,6 @@ export default function EmptyPanel({
 }) {
     // Validation des props obligatoires
     if (!liveCountries) {
-        console.warn('EmptyPanel: liveCountries prop is missing');
     }
 
     const [lang, setLang] = useState(() => loadLang());

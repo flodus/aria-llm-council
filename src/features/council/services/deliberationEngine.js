@@ -19,9 +19,6 @@ import { COLORS } from '../../../shared/theme';
  */
 export async function runMinisterePhase(ministry, question, country) {
     // DEBUG — à retirer après validation
-    console.log('[ARIA GOV DEBUG] governanceOverride:', JSON.stringify(country?.governanceOverride ?? 'NONE'));
-    console.log('[ARIA GOV DEBUG] country.id:', country?.id, '| active_ministries:', country?.governanceOverride?.active_ministries);
-
     // ── Question orpheline hors-ligne ────────────────────────────────────────
     if (!ministry) {
         const rA = FALLBACK_RESPONSES.ministerA;
@@ -314,9 +311,6 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         synthese = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
     }
     if (!synthese) {
-        console.log('[FALLBACK] phare.decision:', phare.decision);
-        console.log('[FALLBACK] boussole.decision:', boussole.decision);
-
         // Évaluation contextuelle de la convergence
         const phrA = phare.decision?.toLowerCase() || '';
         const phrB = boussole.decision?.toLowerCase() || '';
@@ -353,12 +347,7 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
             // Convergence si elles partagent au moins 2 mots significatifs
             convergence = commonWords.length >= 2;
 
-            console.log('[FALLBACK] Fallback par similarité - mots communs:', commonWords, 'convergence:', convergence);
         }
-
-        console.log('[FALLBACK] phareIsAction:', phareIsAction, 'phareIsCaution:', phareIsCaution);
-        console.log('[FALLBACK] boussoleIsAction:', boussoleIsAction, 'boussoleIsCaution:', boussoleIsCaution);
-        console.log('[FALLBACK] convergence:', convergence);
 
         // DÉTERMINATION DU TYPE DE VOTE
         let voteType = 'referendum';
@@ -391,7 +380,6 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
             };
         }
 
-        console.log('[ARIA PRES] FALLBACK SYNTHESE:', {
             convergence,
             voteQuestion,
             phare_decision: phare.decision,
@@ -415,9 +403,6 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         };
     }
 
-    console.log('[ARIA PRES] phare:', JSON.stringify(phare));
-    console.log('[ARIA PRES] phareData:', JSON.stringify(phareData));
-    console.log('[ARIA PRES] synthese:', JSON.stringify(synthese));
     return {
         phare:    { ...phareData,    ...phare },
         boussole: { ...boussoleData, ...boussole },

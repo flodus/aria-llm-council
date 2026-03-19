@@ -25,7 +25,6 @@ function loadCycles() {
 
 function saveCycles(cycles) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(cycles)); }
-  catch (e) { console.warn('[useChronolog] save failed:', e); }
 }
 
 function summarizeEvent(ev) {
