@@ -22,14 +22,19 @@
 
 ```
 src/shared/services/boardgame/
-  questionService.js    ← VIDE → Chantier 1
-  responseService.js    ← VIDE → Chantier 3
+  questionService.js    ← VIDE → Chantier 1 (charge FR ou EN selon loadLang())
+  responseService.js    ← VIDE → Chantier 3 (idem)
 
 templates/
-  base_agents.json      ← keywords + industrie → Chantier 2
-  aria_questions.json   ← copier depuis pour_integration/
-  aria_reponses.json    ← copier depuis pour_integration/
+  base_agents.json          ← keywords + industrie → Chantier 2
+  aria_questions.json       ← FR — copier depuis pour_integration/
+  aria_questions_en.json    ← EN — à traduire (même structure)
+  aria_reponses.json        ← FR — copier depuis pour_integration/
+  aria_reponses_en.json     ← EN — à traduire (même structure)
 ```
+
+**Convention i18n du projet :** fichiers `_en.json` séparés, pas de service dédié EN.
+Le service charge le bon fichier via `loadLang()` — même pattern que `agentsManager.js` avec `base_agents.json` / `base_agents_en.json`.
 
 ---
 
