@@ -1,3 +1,5 @@
+// src/features/world/services/WorldEngine.js
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  WorldEngine.js  —  Moteur de génération du monde ARIA
 //

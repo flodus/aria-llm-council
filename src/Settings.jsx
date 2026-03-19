@@ -1,10 +1,12 @@
+// src/Settings.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  Settings.jsx — Page de configuration complète ARIA
 //  5 sections : SYSTÈME · CONSTITUTION · GOUVERNEMENT · SIMULATION · À PROPOS
 //  Usage : <Settings onClose={() => setPage('dashboard')} />
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { getRegimeLabel, getTerrainLabel } from './shared/theme';
+import { getRegimeLabel, getTerrainLabel } from './shared/data/worldLabels';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
 import BASE_AGENTS    from '../templates/base_agents.json';

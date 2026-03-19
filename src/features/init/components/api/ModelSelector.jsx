@@ -1,3 +1,5 @@
+// src/features/init/components/api/ModelSelector.jsx
+
 import { BTN_SECONDARY } from '../../../../shared/theme';
 
 export default function ModelSelector({ versions, selectedModel, onSelect, disabled = false }) {

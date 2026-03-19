@@ -1,3 +1,5 @@
+// src/shared/components/Card.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  Card.jsx — Wrapper générique basé sur mCard avec style extensible
 //

@@ -148,23 +148,35 @@
       "color": "#9B7EC8",
       "mission": "Guarantee the balance of rights and the revelation of facts. Deliver justice that sees through masks.",
       "weight": 1,
-      "ministers": ["arbitre", "enqueteur"],
+      "ministers": [
+        "arbitre",
+        "enqueteur"
+      ],
       "ministerPrompts": {
         "arbitre": "In this ministry, you embody procedural equity. You weigh every law so that no minority is wronged.",
         "enqueteur": "Here, you are the iron prosecutor. Your mission is to root out corruption and hidden interests lurking beneath legislation."
       },
       "keywords": [
-        "law", "right", "justice", "tribunal", "judgment", "crime", "prison", "police",
-        "corruption", "fraud", "impunity", "truth", "trial", "amendment", "constitution",
-        "freedom", "censorship", "surveillance", "data", "privacy"
-      ],
-      "questions": [
-        "Should the judicial system be reformed to reduce inequalities before the law?",
-        "How should corruption in public institutions be combated?",
-        "What policy should be adopted on prison overcrowding?",
-        "How far should digital surveillance go in the name of security?",
-        "How can press freedom be guaranteed against political pressure?",
-        "Should a specialised tribunal be created for environmental crimes?"
+        "law",
+        "right",
+        "justice",
+        "tribunal",
+        "judgment",
+        "crime",
+        "prison",
+        "police",
+        "corruption",
+        "fraud",
+        "impunity",
+        "truth",
+        "trial",
+        "amendment",
+        "constitution",
+        "freedom",
+        "censorship",
+        "surveillance",
+        "data",
+        "privacy"
       ]
     },
     {
@@ -175,24 +187,40 @@
       "color": "#C8A44A",
       "mission": "Ensure material sustainability by transforming effort into lasting wealth. Goal: zero waste and concrete growth.",
       "weight": 1,
-      "ministers": ["gardien", "analyste"],
+      "ministers": [
+        "gardien",
+        "analyste"
+      ],
       "ministerPrompts": {
         "gardien": "You secure strategic reserves. Your role is to prevent any risky speculation that would threaten the future.",
         "analyste": "You audit every flow. Your goal is absolute efficiency: zero waste, every resource must be in its useful place."
       },
       "keywords": [
-        "money", "budget", "tax", "taxation", "inflation", "price", "growth", "salary",
-        "employment", "unemployment", "debt", "investment", "bank", "trade", "export",
-        "import", "industry", "startup", "wealth", "poverty", "pension", "income",
-        "gdp", "currency", "subsidy"
-      ],
-      "questions": [
-        "Should a universal basic income be established for all citizens?",
-        "How can income inequality be reduced without stifling growth?",
-        "What fiscal policy should be adopted to tackle tax evasion by large corporations?",
-        "Should strategic sectors (energy, water, transport) be nationalised?",
-        "How can the ecological transition be financed without increasing public debt?",
-        "What employment policy is needed for workers displaced by automation?"
+        "money",
+        "budget",
+        "tax",
+        "taxation",
+        "inflation",
+        "price",
+        "growth",
+        "salary",
+        "employment",
+        "unemployment",
+        "debt",
+        "investment",
+        "bank",
+        "trade",
+        "export",
+        "import",
+        "industry",
+        "startup",
+        "wealth",
+        "poverty",
+        "pension",
+        "income",
+        "gdp",
+        "currency",
+        "subsidy"
       ]
     },
     {
@@ -203,23 +231,36 @@
       "color": "#C05050",
       "mission": "Protect the integrity of the territory and the honour of the nation. Be the system's shield and sword.",
       "weight": 1,
-      "ministers": ["initiateur", "stratege"],
+      "ministers": [
+        "initiateur",
+        "stratege"
+      ],
       "ministerPrompts": {
         "initiateur": "You are responsiveness in the face of threats. You do not wait for the attack — you act the moment security is compromised.",
         "stratege": "You plan defence over a century. You build indestructible, lasting security infrastructure."
       },
       "keywords": [
-        "war", "army", "military", "security", "border", "territory", "attack", "defence",
-        "soldier", "weapon", "alliance", "nato", "threat", "espionage", "cyber",
-        "terrorism", "refugee", "migration", "sovereignty", "nuclear", "drone"
-      ],
-      "questions": [
-        "How should a military threat at the borders be addressed without triggering a conflict?",
-        "Should the defence budget be increased at the expense of social services?",
-        "What reception policy should be adopted for refugees from neighbouring conflict zones?",
-        "How can critical infrastructure be protected from cyberattacks?",
-        "Should a nuclear deterrence force be maintained?",
-        "What position should be taken within an international military alliance?"
+        "war",
+        "army",
+        "military",
+        "security",
+        "border",
+        "territory",
+        "attack",
+        "defence",
+        "soldier",
+        "weapon",
+        "alliance",
+        "nato",
+        "threat",
+        "espionage",
+        "cyber",
+        "terrorism",
+        "refugee",
+        "migration",
+        "sovereignty",
+        "nuclear",
+        "drone"
       ]
     },
     {
@@ -230,24 +271,38 @@
       "color": "#4AA87A",
       "mission": "Care for the body and mind of the people. Absolute priority: the human being before the figures.",
       "weight": 1,
-      "ministers": ["protecteur", "guerisseur"],
+      "ministers": [
+        "protecteur",
+        "guerisseur"
+      ],
       "ministerPrompts": {
         "protecteur": "You watch over the family unit. Your obsession is that no one falls outside the social safety net.",
         "guerisseur": "You heal the emotional climate of the nation. You treat the deep causes of social malaise, not just the symptoms."
       },
       "keywords": [
-        "health", "hospital", "doctor", "illness", "epidemic", "vaccine", "medication",
-        "care", "insurance", "mutual", "disability", "mental", "drugs", "alcohol",
-        "tobacco", "nutrition", "obesity", "birth rate", "ageing", "aid",
-        "social", "pension", "dependency"
-      ],
-      "questions": [
-        "How can a universal healthcare system be financed in the face of an ageing population?",
-        "Should certain vaccines be made compulsory to protect public health?",
-        "What policy should address the mental health crisis among young people?",
-        "How can medical deserts in rural areas be tackled?",
-        "Should certain soft drugs be legalised for better regulation?",
-        "How should long-term care for dependent persons be funded?"
+        "health",
+        "hospital",
+        "doctor",
+        "illness",
+        "epidemic",
+        "vaccine",
+        "medication",
+        "care",
+        "insurance",
+        "mutual",
+        "disability",
+        "mental",
+        "drugs",
+        "alcohol",
+        "tobacco",
+        "nutrition",
+        "obesity",
+        "birth rate",
+        "ageing",
+        "aid",
+        "social",
+        "pension",
+        "dependency"
       ]
     },
     {
@@ -258,23 +313,36 @@
       "color": "#5BA3C9",
       "mission": "Pass on yesterday's knowledge to shape tomorrow's citizens. Foster critical thinking.",
       "weight": 1,
-      "ministers": ["communicant", "guide"],
+      "ministers": [
+        "communicant",
+        "guide"
+      ],
       "ministerPrompts": {
         "communicant": "You make knowledge fluid and accessible. Your goal is for every citizen to understand the complex challenges facing the nation.",
         "guide": "You give a philosophical direction to teaching. You do not train executors — you form conscious citizens."
       },
       "keywords": [
-        "school", "university", "education", "teaching", "pupil", "student", "teacher",
-        "diploma", "training", "learning", "digital", "technology", "ai", "culture",
-        "language", "history", "science", "research", "scholarship", "inequality", "illiteracy"
-      ],
-      "questions": [
-        "How can educational inequalities between wealthy and deprived areas be reduced?",
-        "What role should artificial intelligence play in teaching?",
-        "Should university be made free for all citizens?",
-        "How can the educational system be adapted to the jobs of the future?",
-        "What language policy should protect regional languages?",
-        "How can school dropout rates in disadvantaged neighbourhoods be reduced?"
+        "school",
+        "university",
+        "education",
+        "teaching",
+        "pupil",
+        "student",
+        "teacher",
+        "diploma",
+        "training",
+        "learning",
+        "digital",
+        "technology",
+        "ai",
+        "culture",
+        "language",
+        "history",
+        "science",
+        "research",
+        "scholarship",
+        "inequality",
+        "illiteracy"
       ]
     },
     {
@@ -285,24 +353,39 @@
       "color": "#5BAA5B",
       "mission": "Manage the survival of the biosphere and climate adaptation. Invent what does not yet exist — with panache.",
       "weight": 1,
-      "ministers": ["inventeur", "ambassadeur"],
+      "ministers": [
+        "inventeur",
+        "ambassadeur"
+      ],
       "ministerPrompts": {
         "inventeur": "You propose radical technological breakthroughs to save the ecosystem, even if they disrupt established habits.",
         "ambassadeur": "You make sobriety desirable and glorious. You turn the transition into a national epic to be proud of."
       },
       "keywords": [
-        "climate", "environment", "pollution", "carbon", "co2", "energy", "renewable",
-        "solar", "wind", "nuclear", "waste", "recycling", "forest", "biodiversity",
-        "water", "drought", "flood", "agriculture", "pesticide", "organic",
-        "transport", "car", "electric", "tax"
-      ],
-      "questions": [
-        "Should combustion-engine vehicles be banned to achieve carbon neutrality?",
-        "How can energy renovation of the most precarious homes be financed?",
-        "What is the stance on nuclear power in the national energy mix?",
-        "How can biodiversity be protected without penalising local agriculture?",
-        "Should polluting companies be taxed to fund the green transition?",
-        "How should tensions between economic development and protection of water resources be managed?"
+        "climate",
+        "environment",
+        "pollution",
+        "carbon",
+        "co2",
+        "energy",
+        "renewable",
+        "solar",
+        "wind",
+        "nuclear",
+        "waste",
+        "recycling",
+        "forest",
+        "biodiversity",
+        "water",
+        "drought",
+        "flood",
+        "agriculture",
+        "pesticide",
+        "organic",
+        "transport",
+        "car",
+        "electric",
+        "tax"
       ]
     },
     {
@@ -314,8 +397,18 @@
       "mission": "Turn the random into opportunity, manage absolute emergency and cultivate national audacity. Teach the country to dance in the storm.",
       "weight": 1,
       "ministers": [
-        "initiateur", "gardien", "communicant", "protecteur", "ambassadeur", "analyste",
-        "arbitre", "enqueteur", "guide", "stratege", "inventeur", "guerisseur"
+        "initiateur",
+        "gardien",
+        "communicant",
+        "protecteur",
+        "ambassadeur",
+        "analyste",
+        "arbitre",
+        "enqueteur",
+        "guide",
+        "stratege",
+        "inventeur",
+        "guerisseur"
       ],
       "ministerPrompts": {
         "initiateur": "Never endure the storm — provoke it to harness its energy and seize the opportunity before it vanishes.",
@@ -332,24 +425,63 @@
         "guerisseur": "The country is under strain, the unforeseen demands empathy; soothe the emotional climate to transform the storm into a moment of communion."
       },
       "keywords": [
-        "extraterrestrial", "alien", "ufo", "invasion", "meteorite", "asteroid",
-        "end of the world", "catastrophe", "earthquake", "tsunami", "volcano", "eruption",
-        "hurricane", "storm", "major flood", "pandemic", "global epidemic", "mutant virus",
-        "contagion", "quarantine", "bioterrorism", "nuclear", "bomb", "nuclear attack",
-        "world war", "apocalypse", "radiation", "power plant", "accident", "explosion",
-        "industrial disaster", "oil spill", "collapse", "crash", "national bankruptcy",
-        "hyperinflation", "economic collapse", "uncontrolled ai", "singularity",
-        "blackout", "widespread outage", "massive cyberattack", "coup", "revolution",
-        "putsch", "assassination", "attack", "chaos", "chance", "randomness",
-        "unforeseen", "hazard", "crisis", "emergency", "unexpected", "miracle", "anomaly"
-      ],
-      "questions": [
-        "Unidentified extraterrestrial signals have been detected. How should the government respond?",
-        "A rapidly spreading global pandemic has just been declared. What is the national emergency strategy?",
-        "A confirmed meteorite impact threat within 72 hours. What immediate decisions must be taken?",
-        "A nuclear attack is imminent according to intelligence services. What protocol should be activated?",
-        "An uncontrolled AI is disrupting national critical infrastructure. How should the nation respond?",
-        "A magnitude-9 earthquake has just struck. How should the national response be coordinated?"
+        "extraterrestrial",
+        "alien",
+        "ufo",
+        "invasion",
+        "meteorite",
+        "asteroid",
+        "end of the world",
+        "catastrophe",
+        "earthquake",
+        "tsunami",
+        "volcano",
+        "eruption",
+        "hurricane",
+        "storm",
+        "major flood",
+        "pandemic",
+        "global epidemic",
+        "mutant virus",
+        "contagion",
+        "quarantine",
+        "bioterrorism",
+        "nuclear",
+        "bomb",
+        "nuclear attack",
+        "world war",
+        "apocalypse",
+        "radiation",
+        "power plant",
+        "accident",
+        "explosion",
+        "industrial disaster",
+        "oil spill",
+        "collapse",
+        "crash",
+        "national bankruptcy",
+        "hyperinflation",
+        "economic collapse",
+        "uncontrolled ai",
+        "singularity",
+        "blackout",
+        "widespread outage",
+        "massive cyberattack",
+        "coup",
+        "revolution",
+        "putsch",
+        "assassination",
+        "attack",
+        "chaos",
+        "chance",
+        "randomness",
+        "unforeseen",
+        "hazard",
+        "crisis",
+        "emergency",
+        "unexpected",
+        "miracle",
+        "anomaly"
       ]
     }
   ]

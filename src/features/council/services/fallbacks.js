@@ -1,4 +1,5 @@
 // src/features/council/services/fallbacks.js
+
 // ============================================================
 // RÉPONSES DE SECOURS POUR LA DÉLIBÉRATION
 // ============================================================

@@ -1,3 +1,5 @@
+// src/shared/components/BackButton.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  BackButton.jsx — Bouton RETOUR localisé (FR/EN)
 //

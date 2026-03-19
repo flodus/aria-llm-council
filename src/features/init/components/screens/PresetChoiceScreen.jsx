@@ -1,3 +1,5 @@
+// src/features/init/components/screens/PresetChoiceScreen.jsx
+
 import { useLocale, t } from '../../../../ariaI18n';
 import { wrap } from '../../../../shared/theme';
 import {

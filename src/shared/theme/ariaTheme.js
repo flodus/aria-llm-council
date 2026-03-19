@@ -1,3 +1,5 @@
+// src/shared/theme/ariaTheme.js
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ariaTheme.js — Tokens de design, helpers visuels, constantes UI
 //  Aucun JSX. Importé par tous les composants.
@@ -7,6 +9,7 @@
 //  getResourceLabel(key, lang) pour obtenir le bon label selon la langue.
 // ═══════════════════════════════════════════════════════════════════════════
 import { COLORS } from './colors';
+import { getTerrainLabel, getRegimeLabel, TERRAIN_LABELS, REGIME_LABELS } from '../data/worldLabels';
 
 export const FONT = {
     cinzel: "'Cinzel', serif",
@@ -70,56 +73,6 @@ export const fmtPop = (n, lang = 'fr') =>
     : n >= 1e6 ? (n/1e6).toFixed(1) + ' M'
     : n >= 1e3 ? Math.round(n/1e3) + ' k'
     : String(n);
-
-// ── Labels bilingues — données ────────────────────────────────────────────
-
-// Structure : { clé: { fr: '...', en: '...' } }
-export const TERRAIN_LABELS = {
-    coastal:     { fr: 'Côtier 🌊',      en: 'Coastal 🌊'      },
-    inland:      { fr: 'Continental 🏔',  en: 'Landlocked 🏔'   },
-    island:      { fr: 'Insulaire 🏝',    en: 'Island 🏝'       },
-    archipelago: { fr: 'Archipel ⛵',     en: 'Archipelago ⛵'  },
-    highland:    { fr: 'Montagneux ⛰',   en: 'Highland ⛰'     },
-    desert:      { fr: 'Désert 🏜',       en: 'Desert 🏜'       },
-    foret:       { fr: 'Forêt 🌲',        en: 'Forest 🌲'       },
-    tropical:    { fr: 'Tropical 🌴',     en: 'Tropical 🌴'     },
-    toundra:     { fr: 'Toundra ❄',       en: 'Tundra ❄'       },
-};
-
-export const REGIME_LABELS = {
-    democratie_liberale:         { fr: 'Démocratie libérale 🗳️',          en: 'Liberal Democracy 🗳️'          },
-    republique_federale:         { fr: 'République fédérale 🏛️',           en: 'Federal Republic 🏛️'           },
-    monarchie_constitutionnelle: { fr: 'Monarchie constitutionnelle 👑',   en: 'Constitutional Monarchy 👑'    },
-    monarchie_absolue:           { fr: 'Monarchie absolue 👑',             en: 'Absolute Monarchy 👑'          },
-    technocratie_ia:             { fr: 'Technocratie IA 🤖',               en: 'ARIA Technocracy 🤖'           },
-    oligarchie:                  { fr: 'Oligarchie 💼',                    en: 'Oligarchy 💼'                  },
-    junte_militaire:             { fr: 'Junte militaire 🎖️',               en: 'Military Junta 🎖️'             },
-    regime_autoritaire:          { fr: 'Régime autoritaire 🔒',            en: 'Authoritarian Regime 🔒'       },
-    theocracie:                  { fr: 'Théocratie 🕌',                    en: 'Theocracy 🕌'                  },
-    communisme:                  { fr: 'Parti communiste ☭',               en: 'Communist Party ☭'             },
-    nationalisme_autoritaire:    { fr: 'Nationalisme autoritaire ⚡',      en: 'Authoritarian Nationalism ⚡'  },
-    democratie_directe:          { fr: 'Démocratie directe 🗳️',            en: 'Direct Democracy 🗳️'           },
-};
-
-export const RESOURCE_DEFS = [
-    { key: 'agriculture', icon: '🌾', label: { fr: 'AGRICULTURE', en: 'AGRICULTURE' } },
-    { key: 'bois',        icon: '🪵', label: { fr: 'BOIS',        en: 'TIMBER'       } },
-    { key: 'eau',         icon: '💧', label: { fr: 'EAU DOUCE',   en: 'FRESH WATER'  } },
-    { key: 'energie',     icon: '⚡', label: { fr: 'ÉNERGIE',     en: 'ENERGY'       } },
-    { key: 'mineraux',    icon: '💎', label: { fr: 'MINÉRAUX',    en: 'MINERALS'     } },
-    { key: 'peche',       icon: '🐟', label: { fr: 'PÊCHE',       en: 'FISHING'      } },
-    { key: 'petrole',     icon: '🛢️', label: { fr: 'PÉTROLE',     en: 'OIL'          } },
-];
-
-// ── Getters i18n ──────────────────────────────────────────────────────────
-
-// Usage : getTerrainLabel('coastal', 'en') → 'Coastal 🌊'
-export const getTerrainLabel = (key, lang = 'fr') =>
-    TERRAIN_LABELS[key]?.[lang] ?? TERRAIN_LABELS[key]?.fr ?? key;
-
-// Usage : getRegimeLabel('democratie_liberale', 'en') → 'Liberal Democracy 🗳️'
-export const getRegimeLabel = (key, lang = 'fr') =>
-    REGIME_LABELS[key]?.[lang] ?? REGIME_LABELS[key]?.fr ?? key;
 
 // Usage : getResourceLabel('energie', 'en') → 'ENERGY'
 export const getResourceLabel = (key, lang = 'fr') => {

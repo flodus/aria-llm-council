@@ -1,3 +1,5 @@
+// src/features/init/components/ConfirmLaunchDialog.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ConfirmLaunchDialog.jsx — Modale de confirmation avant génération du monde
 //

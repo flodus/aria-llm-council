@@ -1,3 +1,5 @@
+// src/features/map/ariaHexWorld.js
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ariaHexWorld.js  —  Moteur hexagonal ARIA
 //

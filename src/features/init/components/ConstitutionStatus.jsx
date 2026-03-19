@@ -1,3 +1,5 @@
+// src/features/init/components/ConstitutionStatus.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ConstitutionStatus.jsx — Badge "Constitution Indépendante ✦" ou "Commune ◈"
 //

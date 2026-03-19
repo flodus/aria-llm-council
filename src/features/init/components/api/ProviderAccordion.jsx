@@ -1,3 +1,5 @@
+// src/features/init/components/api/ProviderAccordion.jsx
+
 import { useState } from 'react';
 import { useLocale } from '../../../../ariaI18n';
 import ProviderHeader from './ProviderHeader';

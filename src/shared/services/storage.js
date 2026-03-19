@@ -1,3 +1,5 @@
+// src/shared/services/storage.js
+
 // Centralisation de toutes les fonctions localStorage
 
 export const loadOpts = () => {

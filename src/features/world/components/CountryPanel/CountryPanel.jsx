@@ -1,3 +1,5 @@
+// src/features/world/components/CountryPanel/CountryPanel.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  CountryPanel.jsx — Composant racine du panneau latéral pays
 //

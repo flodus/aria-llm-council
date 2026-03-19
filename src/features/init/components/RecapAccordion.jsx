@@ -1,3 +1,5 @@
+// src/features/init/components/RecapAccordion.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  RecapAccordion.jsx — Récapitulatif accordéon multi-pays avant lancement
 //
@@ -12,7 +14,7 @@
 import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT } from '../../../shared/theme';
-import { getRegimeLabels, getTerrainLabels } from '../services/labels';
+import { getRegimeLabelMap,getTerrainLabelMap } from '../services/labels';
 
 export default function RecapAccordion({ pendingDefs, perGov, commonAgents, commonMins, commonPres, commonMinsters, lang, ctxModes, ctxOvrs }) {
     const [openIdx, setOpenIdx] = useState(null); // index du pays ouvert
@@ -61,11 +63,11 @@ export default function RecapAccordion({ pendingDefs, perGov, commonAgents, comm
                         </span>
                         <div style={{ display:'flex', gap:'0.5rem', marginLeft:'0.3rem' }}>
                         <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:'rgba(140,160,200,0.45)' }}>
-                        {getRegimeLabels()[regime] || regime}
+                        {getRegimeLabelMap(lang)[regime] || regime}
                         </span>
                         <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:'rgba(140,160,200,0.30)' }}>·</span>
                         <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:'rgba(140,160,200,0.45)' }}>
-                        {getTerrainLabels()[terrain] || terrain}
+                        {getTerrainLabelMap(lang)[terrain] || terrain}
                         </span>
                         </div>
                         <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(200,164,74,0.55)', marginLeft:'0.2rem' }}>

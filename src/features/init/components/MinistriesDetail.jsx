@@ -1,3 +1,5 @@
+// src/features/init/components/MinistriesDetail.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  MinistriesDetail.jsx — Onglet de configuration détaillée des ministères
 //

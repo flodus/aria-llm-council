@@ -1,3 +1,5 @@
+// src/features/init/components/flows/FlowTypeChoice.jsx
+
 import { useLocale, t } from '../../../../ariaI18n';
 import { mCard } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';

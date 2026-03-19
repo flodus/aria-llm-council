@@ -1,3 +1,5 @@
+// src/App.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  App.jsx — Shell principal ARIA
 //  Routing, états globaux, topbar.

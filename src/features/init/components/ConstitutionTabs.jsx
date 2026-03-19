@@ -1,3 +1,5 @@
+// src/features/init/components/ConstitutionTabs.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ConstitutionTabs.jsx — Onglets RÉSUMÉ / PRÉSIDENCE / MINISTÈRES / MINISTRES
 //

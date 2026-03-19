@@ -1,3 +1,5 @@
+// src/features/init/components/RealCountryLocalSection.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  RealCountryLocalSection.jsx — Sélecteur pays réel mode local (offline)
 //
@@ -10,7 +12,7 @@
 
 import { useLocale, t } from '../../../ariaI18n';
 import { CARD_STYLE, SELECT_STYLE, labelStyle } from '../../../shared/theme';
-import { getTerrainLabels, getRegimeLabels } from '../services/labels';
+import { getTerrainLabelMap,getRegimeLabelMap } from '../services/labels';
 import { getRealCountries } from '../services/realCountries';
 import { CountryInfoCard } from './index';
 
@@ -40,13 +42,13 @@ export default function RealCountryLocalSection({ country, onChange, setField })
             <div>
             <div style={{ ...labelStyle('0.42rem'), marginBottom: '0.25rem' }}>{t('TERRAIN', lang)}</div>
             <select style={SELECT_STYLE} value={country.terrain} onChange={e => setField('terrain', e.target.value)}>
-            {Object.entries(getTerrainLabels()).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(getTerrainLabelMap(lang)).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
             </div>
             <div>
             <div style={{ ...labelStyle('0.42rem'), marginBottom: '0.25rem' }}>{t('REGIME', lang)}</div>
             <select style={SELECT_STYLE} value={country.regime} onChange={e => setField('regime', e.target.value)}>
-            {Object.entries(getRegimeLabels()).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(getRegimeLabelMap(lang)).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
             </div>
             </div>

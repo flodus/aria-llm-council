@@ -1,4 +1,5 @@
 // src/features/council/services/deliberationEngine.js
+
 // ============================================================
 // PHASES DE DÉLIBÉRATION DU CONSEIL
 // ============================================================
@@ -18,7 +19,6 @@ import { COLORS } from '../../../shared/theme';
  * @returns {Promise<{ ministerA, ministerB, synthese, isOrphan? }>}
  */
 export async function runMinisterePhase(ministry, question, country) {
-    // DEBUG — à retirer après validation
     // ── Question orpheline hors-ligne ────────────────────────────────────────
     if (!ministry) {
         const rA = FALLBACK_RESPONSES.ministerA;
@@ -310,6 +310,9 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         const pSynth = buildSynthesePresidencePrompt(phare, boussole, question, country);
         synthese = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
     }
+    // src/features/council/services/deliberationEngine.js
+    // Vers la fin, autour de la ligne 380-410
+
     if (!synthese) {
         // Évaluation contextuelle de la convergence
         const phrA = phare.decision?.toLowerCase() || '';
@@ -346,7 +349,6 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
 
             // Convergence si elles partagent au moins 2 mots significatifs
             convergence = commonWords.length >= 2;
-
         }
 
         // DÉTERMINATION DU TYPE DE VOTE
@@ -380,12 +382,6 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
             };
         }
 
-            convergence,
-            voteQuestion,
-            phare_decision: phare.decision,
-            boussole_decision: boussole.decision
-        });
-
         // Construire l'enjeu
         const enjeu = country.satisfaction < 40
         ? `Cette décision intervient dans un contexte de tension sociale élevée (satisfaction : ${country.satisfaction}%). Son impact sera immédiatement ressenti par les ${Math.round(country.population/1e6*10)/10} M de citoyens.`
@@ -409,7 +405,6 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         synthese,
     };
 }
-
 function buildSynthesePresidencePrompt(phare, boussole, question, country) {
     const ctx = buildCountryContext(country);
     return `${langPrefix()}Tu es le système d'arbitrage présidentiel du gouvernement ARIA.

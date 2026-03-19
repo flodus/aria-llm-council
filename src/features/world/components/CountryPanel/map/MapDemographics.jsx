@@ -1,4 +1,5 @@
-// src/features/world/components/CountryPanel/components/map/Demographics.jsx
+// src/features/world/components/CountryPanel/map/MapDemographics.jsx
+
 import { fmtPop } from '../../../../../shared/theme';
 
 export default function Demographics({ country, isEn }) {

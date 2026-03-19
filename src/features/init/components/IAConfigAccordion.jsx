@@ -1,3 +1,5 @@
+// src/features/init/components/IAConfigAccordion.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  IAConfigAccordion.jsx — Accordéon de configuration du mode IA
 //

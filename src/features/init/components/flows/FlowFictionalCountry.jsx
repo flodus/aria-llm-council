@@ -1,3 +1,5 @@
+// src/features/init/components/flows/FlowFictionalCountry.jsx
+
 import { useState } from 'react';
 import { useLocale, t } from '../../../../ariaI18n';
 import {
@@ -5,7 +7,7 @@ import {
     BTN_PRIMARY, BTN_SECONDARY, labelStyle,
     wrapWide, mCard
 } from '../../../../shared/theme';
-import { getTerrainLabels, getRegimeLabels, getPaysLocaux } from '../../services/labels';
+import { getTerrainLabelMap, getRegimeLabelMap, getPaysLocaux } from '../../services/labels';
 import ARIAHeader from '../ARIAHeader';
 import CountryEstimations from '../CountryEstimations';
 
@@ -43,7 +45,7 @@ export default function FlowFictionalCountry({ worldName, onConfirm, onBack }) {
             onClick={() => { setDefautFictif(p.id); setDefautNom(''); }}>
             <div style={{ fontSize: '1.2rem' }}>{p.emoji}</div>
             <McTitle t={p.nom} />
-            <McSub t={`${getTerrainLabels()[p.terrain] || p.terrain} · ${getRegimeLabels()[p.regime] || p.regime.replace(/_/g,' ')}`} />
+            <McSub t={`${getTerrainLabelMap(lang)[p.terrain] || p.terrain} · ${getRegimeLabelMap(lang)[p.regime] || p.regime.replace(/_/g,' ')}`} />
             </MC>
         ))}
 
@@ -98,13 +100,13 @@ export default function FlowFictionalCountry({ worldName, onConfirm, onBack }) {
             <div>
             <div style={{ ...labelStyle('0.43rem'), marginBottom: '0.3rem' }}>{t('TERRAIN', lang)}</div>
             <select style={SELECT_STYLE} value={newFictifTerrain} onChange={e => setNewFictifTerrain(e.target.value)}>
-            {Object.entries(getTerrainLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(getTerrainLabelMap(lang)).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
             </select>
             </div>
             <div>
             <div style={{ ...labelStyle('0.43rem'), marginBottom: '0.3rem' }}>{t('REGIME', lang)}</div>
             <select style={SELECT_STYLE} value={newFictifRegime} onChange={e => setNewFictifRegime(e.target.value)}>
-            {Object.entries(getRegimeLabels()).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(getRegimeLabelMap(lang)).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
             </select>
             </div>
             </div>

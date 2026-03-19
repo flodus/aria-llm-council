@@ -1,3 +1,5 @@
+// src/features/council/components/constitution/PromptEditor.jsx
+
 /**
  * Éditeur de prompt pour un ministre ou un ministère
  * @param {Object} prompt - Données du prompt { id, title, content, type, color }

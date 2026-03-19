@@ -1,3 +1,5 @@
+// src/features/init/components/ContextPanel.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ContextPanel.jsx — Panneau de contrôle du contexte de délibération
 //

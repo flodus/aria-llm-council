@@ -1,3 +1,5 @@
+// src/features/init/components/screens/GeneratingScreen.jsx
+
 import { useLocale, t } from '../../../../ariaI18n';
 import { FONT, wrap } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';

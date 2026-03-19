@@ -1,3 +1,5 @@
+// src/features/init/components/APIKeyInline.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  APIKeyInline.jsx — Modale de gestion des clés API
 //

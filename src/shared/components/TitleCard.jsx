@@ -1,3 +1,5 @@
+// src/shared/components/TitleCard.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  TitleCard.jsx — Titre doré en police Cinzel (0.54rem, letterSpacing 0.14em)
 //

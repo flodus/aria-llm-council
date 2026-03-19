@@ -1,3 +1,5 @@
+// src/features/chronolog/ChronologView.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ChronologView.jsx  —  Journal du monde ARIA
 //  Vue 🌐 MONDE / 🗺 PAR PAYS

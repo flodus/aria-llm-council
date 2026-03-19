@@ -1,3 +1,5 @@
+// src/features/world/components/CountryPanel/council/index.js
+
 export { default as CouncilMinistryList } from './CouncilMinistryList';
 export { default as CouncilMinistryItem } from './CouncilMinistryItem';
 export { default as CouncilMinistryQuestions } from './CouncilMinistryQuestions';

@@ -1,3 +1,5 @@
+// src/features/map/HexGrid.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  HexGrid.jsx  —  Rendu SVG de la carte hexagonale ARIA
 //

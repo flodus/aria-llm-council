@@ -1,15 +1,18 @@
-// src/features/world/components/CountryPanel/components/map/ResourcesList.jsx
-import { getResourceDefs } from '../../../../../shared/theme';
+// src/features/world/components/CountryPanel/map/MapResources.jsx
+
+import { getResourceLabel, getResourceIcon, RESOURCE_DEFS } from '../../../../../shared/data/worldLabels';
 
 export default function ResourcesList({ country, isEn }) {
     const { ressources = {} } = country;
+    const lang = isEn ? 'en' : 'fr';
 
     return (
         <section>
         <div className="section-title">{isEn ? "RESOURCES" : "RESSOURCES"}</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.30rem' }}>
-        {getResourceDefs(isEn ? 'en' : 'fr').map(({ key, icon, label }) => {
+        {RESOURCE_DEFS.map(({ key, icon }) => {
             const present = !!ressources[key];
+            const label = getResourceLabel(key, lang);
             return (
                 <span
                 key={key}

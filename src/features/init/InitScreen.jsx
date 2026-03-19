@@ -1,3 +1,5 @@
+// src/features/init/InitScreen.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  InitScreen.jsx — Écran de démarrage ARIA
 //
@@ -77,12 +79,6 @@ import {
   PresetChoiceScreen
 } from './components/screens';
 import {
-  getTerrainLabels,
-  getRegimeLabels,
-  getPaysLocaux,
-  rcMatch,
-  rcDisplayName,
-  getAllCountries,
   validateCountryWithAI,
   getRealCountries
 } from './services';

@@ -1,3 +1,5 @@
+// src/features/init/components/government/ActiveToggle.jsx
+
 import { BTN_SECONDARY } from '../../../../shared/theme';
 
 export default function ActiveToggle({ isActive, color, onToggle, type = 'ministry' }) {

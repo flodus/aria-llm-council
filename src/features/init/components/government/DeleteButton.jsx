@@ -1,3 +1,5 @@
+// src/features/init/components/government/DeleteButton.jsx
+
 export default function DeleteButton({ onDelete, show = true }) {
     if (!show) return null;
 

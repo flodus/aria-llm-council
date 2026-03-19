@@ -1,3 +1,5 @@
+// src/features/init/components/api/AddKeyButton.jsx
+
 import { BTN_SECONDARY } from '../../../../shared/theme';
 import { useLocale } from '../../../../ariaI18n';
 

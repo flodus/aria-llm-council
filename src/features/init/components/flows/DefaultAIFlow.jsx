@@ -1,3 +1,5 @@
+// src/features/init/components/flows/DefaultAIFlow.jsx
+
 import { useState } from 'react';
 import { useLocale } from '../../../../ariaI18n';
 import FlowTypeChoice from './FlowTypeChoice';

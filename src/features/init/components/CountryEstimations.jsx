@@ -1,3 +1,5 @@
+// src/features/init/components/CountryEstimations.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  CountryEstimations.jsx — Estimations pop / satisfaction / ARIA IRL
 //
@@ -10,7 +12,7 @@
 
 import { useLocale } from '../../../ariaI18n';
 import { FONT } from '../../../shared/theme';
-import { getTerrainLabels } from '../services/labels';
+import { getTerrainLabelMap } from '../services/labels';
 
 // Constantes (pourraient être déplacées plus tard dans shared/constants/)
 const ARIA_BASE = {
@@ -72,7 +74,7 @@ export default function CountryEstimations({ regime, terrain }) {
         😊 ~{sat}% sat.
         </span>
         <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(140,160,200,0.50)' }}>
-        🌍 {getTerrainLabels()[terrain] || terrain}
+        🌍 {getTerrainLabelMap(lang)[terrain] || terrain}
         </span>
         <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: ariaCol }}>
         ◈ ARIA IRL ~{irl}%

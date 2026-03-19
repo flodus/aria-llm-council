@@ -1,3 +1,5 @@
+// src/ariaData.js
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ariaData.js
 //  Base de données locale complète du projet ARIA

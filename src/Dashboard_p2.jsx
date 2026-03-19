@@ -1,3 +1,5 @@
+// src/Dashboard_p2.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  Dashboard_p2.jsx  —  Assembleur MapSVG (nouvelle architecture hexagonale)
 //

@@ -1,3 +1,5 @@
+// src/features/init/components/CountryInfoCard.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  CountryInfoCard.jsx — Carte d'info d'un pays réel prédéfini
 //
