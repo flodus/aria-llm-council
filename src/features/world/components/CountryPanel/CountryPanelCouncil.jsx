@@ -83,8 +83,9 @@ export default function CountryPanelCouncil({
     }, [externalSetMinistryCycleQuestion]);
 
     const wrappedHandleSubmit = useCallback((question, ministryId) => {
+        updateCycleQuestion(ministryId, question);
         handleSubmit(question, ministryId);
-    }, [handleSubmit]);
+    }, [handleSubmit, updateCycleQuestion]);
 
     const ministryListProps = useMemo(() => ({
         ministries,

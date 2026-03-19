@@ -29,12 +29,13 @@ export default function MinistryQuestions({
     const [questions, setQuestions] = useState([]);
 
     useEffect(() => {
-        const sample = getMinistryQuestionsSample(ministryId, countryId, cycleActuel, 6);
+        const sample = getMinistryQuestionsSample(ministryId, countryId, cycleActuel, currentCycleQuestion, 6);
         setQuestions(sample);
     }, [
         ministryId,
         countryId,
         cycleActuel,
+        currentCycleQuestion,
         lastVoteTimestamp?.[ministryId]  // ← Change à chaque vote pour ce ministère
     ]);
 
