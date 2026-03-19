@@ -45,13 +45,17 @@ export default function MinistryQuestions({
 
     // Question du bas : councilSession si elle concerne ce ministère + ce pays
     const bottomQuestion = useMemo(() => {
+        console.log('[MinistryQ debug]', ministryId, { councilSession, countryId });
         if (!councilSession?.question) return null;
-        if (councilSession.countryId !== countryId) return null;
+        if (councilSession.countryId !== countryId) {
+            console.log('[MinistryQ] countryId mismatch', councilSession.countryId, '!==', countryId);
+            return null;
+        }
         const pool = getPool(ministryId);
-        // Correspondance directe ou par appartenance au pool (gère le routing mismatch)
         if (councilSession.ministryId === ministryId || pool.includes(councilSession.question)) {
             return councilSession.question;
         }
+        console.log('[MinistryQ] ministryId/pool mismatch', councilSession.ministryId, ministryId, pool.slice(0,2));
         return null;
     }, [councilSession, ministryId, countryId]);
 
