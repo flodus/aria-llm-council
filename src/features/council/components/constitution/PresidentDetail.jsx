@@ -1,4 +1,5 @@
 // src/features/council/components/constitution/PresidentDetail.jsx
+
 import { useLocale } from '../../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_SECONDARY, labelStyle } from '../../../../shared/theme';
 

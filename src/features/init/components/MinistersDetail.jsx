@@ -1,3 +1,5 @@
+// src/features/init/components/MinistersDetail.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  MinistersDetail.jsx — Onglet de configuration détaillée des ministres
 //

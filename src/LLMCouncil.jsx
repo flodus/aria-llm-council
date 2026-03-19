@@ -1,3 +1,5 @@
+// src/LLMCouncil.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════════
 //  LLMCouncil.jsx — Vue principale du Conseil ARIA
 //

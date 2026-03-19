@@ -1,3 +1,5 @@
+// src/features/init/components/RealCountryAISection.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  RealCountryAISection.jsx — Saisie libre d'un pays réel (mode IA)
 //

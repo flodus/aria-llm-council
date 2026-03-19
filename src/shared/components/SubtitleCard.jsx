@@ -1,3 +1,5 @@
+// src/shared/components/SubtitleCard.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  SubtitleCard.jsx — Texte sous-titre gris (0.47rem, opacité réduite)
 // ═══════════════════════════════════════════════════════════════════════════

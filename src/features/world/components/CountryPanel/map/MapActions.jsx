@@ -1,4 +1,4 @@
-// src/features/world/components/CountryPanel/components/map/MapActions.jsx
+// src/features/world/components/CountryPanel/map/MapActions.jsx
 
 export default function MapActions({
     isEn,

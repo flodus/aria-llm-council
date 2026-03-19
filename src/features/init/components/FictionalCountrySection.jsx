@@ -1,3 +1,5 @@
+// src/features/init/components/FictionalCountrySection.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  FictionalCountrySection.jsx — Sélection / création d'un pays fictif
 //
@@ -10,7 +12,7 @@
 
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
-import { getTerrainLabels, getRegimeLabels, getPaysLocaux } from '../services/labels';
+import { getTerrainLabelMap, getRegimeLabelMap, getPaysLocaux } from '../services/labels';
 import { CountryInfoCard, CountryEstimations } from './index';
 
 export default function FictionalCountrySection({ country, idx, onChange, setField }) {
@@ -107,13 +109,13 @@ export default function FictionalCountrySection({ country, idx, onChange, setFie
             <div>
             <div style={{ ...labelStyle('0.43rem'), marginBottom: '0.3rem' }}>{t('TERRAIN', lang)}</div>
             <select style={SELECT_STYLE} value={country.terrain} onChange={e => setField('terrain', e.target.value)}>
-            {Object.entries(getTerrainLabels()).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(getTerrainLabelMap(lang)).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
             </div>
             <div>
             <div style={{ ...labelStyle('0.43rem'), marginBottom: '0.3rem' }}>{t('REGIME', lang)}</div>
             <select style={SELECT_STYLE} value={country.regime} onChange={e => setField('regime', e.target.value)}>
-            {Object.entries(getRegimeLabels()).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(getRegimeLabelMap(lang)).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
             </div>
             </div>

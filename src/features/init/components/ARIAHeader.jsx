@@ -1,3 +1,5 @@
+// src/features/init/components/ARIAHeader.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ARIAHeader.jsx — Logo ARIA animé + sous-titre acronyme + citation optionnelle
 //

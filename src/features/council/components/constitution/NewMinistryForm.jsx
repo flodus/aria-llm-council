@@ -1,4 +1,5 @@
 // src/features/council/components/constitution/NewMinistryForm.jsx
+
 import { useLocale } from '../../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY } from '../../../../shared/theme';
 

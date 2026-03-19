@@ -1,4 +1,5 @@
 // src/features/council/services/contextBuilder.js
+
 // ============================================================
 // CONSTRUCTION DU CONTEXTE PAYS POUR LES PROMPTS
 // ============================================================

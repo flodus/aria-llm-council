@@ -1,4 +1,5 @@
-// src/features/world/components/CountryPanel/components/timeline/EventList.jsx
+// src/features/world/components/CountryPanel/timeline/TimelineEventList.jsx
+
 import { FONT } from '../../../../../shared/theme';
 import EventEntry from './TimelineEventEntry';
 

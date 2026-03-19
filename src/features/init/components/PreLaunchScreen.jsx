@@ -1,3 +1,5 @@
+// src/features/init/components/PreLaunchScreen.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  PreLaunchScreen.jsx — Écran de configuration pré-lancement (Constitution)
 //

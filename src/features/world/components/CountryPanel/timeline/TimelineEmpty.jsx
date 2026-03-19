@@ -1,4 +1,4 @@
-// src/features/world/components/CountryPanel/components/timeline/EmptyTimeline.jsx
+// src/features/world/components/CountryPanel/timeline/TimelineEmpty.jsx
 
 import { FONT } from '../../../../../shared/theme';
 

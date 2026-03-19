@@ -1,3 +1,5 @@
+// src/features/init/components/screens/NameScreen.jsx
+
 import { useLocale, t } from '../../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, labelStyle, wrap } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';

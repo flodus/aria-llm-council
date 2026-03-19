@@ -1,3 +1,5 @@
+// src/features/init/components/flows/CustomFlow.jsx
+
 import { useState } from 'react';
 import { useLocale, t } from '../../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../../shared/theme';

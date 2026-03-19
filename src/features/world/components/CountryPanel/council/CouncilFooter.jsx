@@ -1,4 +1,4 @@
-// src/features/world/components/CountryPanel/components/council/CouncilFooter.jsx
+// src/features/world/components/CountryPanel/council/CouncilFooter.jsx
 
 export default function CouncilFooter({
     isEn,

@@ -1,3 +1,5 @@
+// src/features/world/LegitimiteOverlay.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  LegitimiteOverlay.jsx — Rapport de Légitimité Globale ARIA
 //  Ouvert par clic sur le logo ARIA.

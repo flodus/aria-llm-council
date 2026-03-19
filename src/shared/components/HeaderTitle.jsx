@@ -1,3 +1,5 @@
+// src/shared/components/HeaderTitle.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  HeaderTitle.jsx — Titre de section au format "LABEL — NomDuMonde"
 //

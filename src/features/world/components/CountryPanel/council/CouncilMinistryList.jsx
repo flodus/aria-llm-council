@@ -1,4 +1,8 @@
-// src/features/world/components/CountryPanel/components/council/MinistryList.jsx
+// src/features/world/components/CountryPanel/council/CouncilMinistryList.jsx
+// ═══════════════════════════════════════════════════════════════════════════
+//  Composant : Liste des ministères
+//  Passe les props nécessaires à chaque item
+// ═══════════════════════════════════════════════════════════════════════════
 
 import MinistryItem from './CouncilMinistryItem';
 
@@ -10,8 +14,14 @@ export default function MinistryList({
     setCustomQ,
     submitting,
     handleSubmit,
-    lang
+    lang,
+    countryId,
+    cycleActuel,
+    getCurrentQuestionForMinistry,
+    setMinistryCycleQuestion
 }) {
+    console.log('setMinistryCycleQuestion dans MinistryList:', setMinistryCycleQuestion); // Debug
+
     return (
         <>
         {ministries.map(m => (
@@ -25,6 +35,10 @@ export default function MinistryList({
             submitting={submitting}
             handleSubmit={handleSubmit}
             lang={lang}
+            countryId={countryId}
+            cycleActuel={cycleActuel}
+            currentCycleQuestion={getCurrentQuestionForMinistry(m.id)}
+            setMinistryCycleQuestion={setMinistryCycleQuestion}
             />
         ))}
         </>

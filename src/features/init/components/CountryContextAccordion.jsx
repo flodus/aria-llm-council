@@ -1,3 +1,5 @@
+// src/features/init/components/CountryContextAccordion.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  CountryContextAccordion.jsx — Accordéon contexte de délibération multi-pays
 //

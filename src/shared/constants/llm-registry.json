@@ -1,3 +1,5 @@
+// src/shared/constants/llm-registry.json
+
 {
   "_comment": "ARIA LLM Registry — hébergé sur GitHub Gist. Mettre à jour quand de nouveaux modèles sortent.",
   "_last_updated": "2026-03",

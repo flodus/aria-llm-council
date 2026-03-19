@@ -1,3 +1,5 @@
+// src/features/init/components/api/ProviderHeader.jsx
+
 import { FONT } from '../../../../shared/theme';
 
 export default function ProviderHeader({ provider, isOpen, onToggle, hasKey, status }) {

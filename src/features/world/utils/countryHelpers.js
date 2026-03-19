@@ -1,4 +1,4 @@
-// src/features/world/components/CountryPanel/utils/countryHelpers.js
+// src/features/world/utils/countryHelpers.js
 
 import { loadLang } from '../../../ariaI18n';
 import { REAL_COUNTRIES_DATA_EN } from '../../../ariaData';
@@ -20,9 +20,4 @@ export function getLocalizedNom(country) {
     if (loadLang() !== 'en') return country?.nom || '';
     const enData = REAL_COUNTRIES_DATA_EN.find(r => r.id === country.id);
     return enData?.nom || country?.nom || '';
-}
-
-export function getTerrainLabel(key) {
-    const stats = getStats();
-    return stats?.terrains?.[key]?.name || key;
 }

@@ -1,4 +1,5 @@
 // src/features/council/services/index.js
+
 // ============================================================
 // Point d'entrée unique pour les services du Conseil
 // Tous les exports sont centralisés ici pour faciliter les imports

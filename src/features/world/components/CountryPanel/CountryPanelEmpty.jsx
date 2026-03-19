@@ -1,4 +1,4 @@
-// src/features/world/components/CountryPanel/components/EmptyPanel.jsx
+// src/features/world/components/CountryPanel/CountryPanelEmpty.jsx
 
 import { useState, useEffect } from 'react';
 import { loadLang } from '../../../../ariaI18n.js';

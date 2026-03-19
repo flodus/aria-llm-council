@@ -1,3 +1,5 @@
+// src/features/council/components/ConstitutionModal.jsx
+
 /**
  * Modale de modification de la constitution en cours de jeu
  * Permet de modifier le régime, la présidence, les ministères, les ministres et leurs prompts

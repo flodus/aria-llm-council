@@ -1,3 +1,5 @@
+// src/features/init/components/government/Hint.jsx
+
 import { useLocale } from '../../../../ariaI18n';
 import { FONT } from '../../../../shared/theme';
 

@@ -1,3 +1,5 @@
+// src/features/init/components/government/ColorPicker.jsx
+
 export default function ColorPicker({ color, onChange, disabled = false }) {
     return (
         <input

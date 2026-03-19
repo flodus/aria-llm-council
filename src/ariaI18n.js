@@ -1,3 +1,5 @@
+// src/ariaI18n.js
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ariaI18n.js — Internationalisation ARIA (FR / EN)
 //  Usage :

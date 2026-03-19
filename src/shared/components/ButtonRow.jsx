@@ -1,3 +1,5 @@
+// src/shared/components/ButtonRow.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ButtonRow.jsx — Conteneur flex pleine largeur pour rangée de boutons
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,3 +1,5 @@
+// src/features/init/hooks/useIAConfig.js
+
 import { useState, useEffect } from 'react';
 import { ARIA_FALLBACK_MODELS, ARIA_REGISTRY_URL } from '../../../shared/constants/llmRegistry';
 

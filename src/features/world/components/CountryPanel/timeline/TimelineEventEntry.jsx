@@ -1,4 +1,4 @@
-// src/features/world/components/CountryPanel/components/timeline/EventEntry.jsx
+// src/features/world/components/CountryPanel/timeline/TimelineEventEntry.jsx
 
 import { FONT } from '../../../../../shared/theme';
 

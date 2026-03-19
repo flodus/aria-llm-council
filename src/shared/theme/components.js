@@ -1,3 +1,5 @@
+// src/shared/theme/components.js
+
 import { FONT } from './ariaTheme';
 import { COLORS } from './colors';
 

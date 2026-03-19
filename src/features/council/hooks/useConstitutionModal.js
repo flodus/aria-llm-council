@@ -1,3 +1,5 @@
+// src/features/council/hooks/useConstitutionModal.js
+
 /**
  * Hook personnalisé pour gérer l'état et la logique de la modale de constitution
  *

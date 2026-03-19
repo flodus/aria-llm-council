@@ -1,4 +1,5 @@
-// src/features/world/components/CountryPanel/components/CountryNavArrows.jsx
+// src/features/world/components/CountryPanel/CountryPanelNavArrows.jsx
+
 export default function CountryNavArrows({ countryIndex, countryTotal, onPrevCountry, onNextCountry }) {
     if (!countryTotal || countryTotal < 2) return null;
 

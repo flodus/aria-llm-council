@@ -1,4 +1,5 @@
-// src/features/world/components/CountryPanel/components/map/SatisfactionBar.jsx
+// src/features/world/components/CountryPanel/map/MapSatisfaction.jsx
+
 import { satisfColor, FONT } from '../../../../../shared/theme';
 
 export default function SatisfactionBar({ country, isEn }) {

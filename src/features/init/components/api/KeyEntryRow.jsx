@@ -1,3 +1,5 @@
+// src/features/init/components/api/KeyEntryRow.jsx
+
 import { INPUT_STYLE, BTN_SECONDARY } from '../../../../shared/theme';
 import { useLocale } from '../../../../ariaI18n';
 import ModelSelector from './ModelSelector';

@@ -1,4 +1,5 @@
-// src/features/world/components/CountryPanel/components/map/MapView.jsx
+// src/features/world/components/CountryPanel/CountryPanelMap.jsx
+
 import { MARITIME } from '../../../../shared/theme';
 import Demographics from './map/MapDemographics';
 import SatisfactionBar from './map/MapSatisfaction';

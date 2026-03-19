@@ -1,3 +1,5 @@
+// src/features/init/hooks/useConstitution.js
+
 import { useState, useEffect } from 'react';
 import { loadLang } from '../../../ariaI18n';
 import { BASE_AGENTS, BASE_AGENTS_EN } from '../../../../templates';

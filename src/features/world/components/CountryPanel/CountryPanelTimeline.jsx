@@ -1,4 +1,4 @@
-// src/features/world/components/CountryPanel/components/timeline/TimelineView.jsx
+// src/features/world/components/CountryPanel/CountryPanelTimeline.jsx
 
 import { useState, useEffect } from 'react';
 import { FONT } from '../../../../shared/theme';

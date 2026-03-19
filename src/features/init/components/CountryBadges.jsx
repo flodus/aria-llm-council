@@ -1,3 +1,5 @@
+// src/features/init/components/CountryBadges.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  CountryBadges.jsx — Badges pays cliquables avec indicateur override ✦
 //

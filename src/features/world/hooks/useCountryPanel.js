@@ -1,4 +1,4 @@
-// src/features/world/components/CountryPanel/hooks/useCountryPanel.js
+// src/features/world/hooks/useCountryPanel.js
 
 import { useState, useEffect, useCallback } from 'react';
 import { loadLang } from '../../../ariaI18n';

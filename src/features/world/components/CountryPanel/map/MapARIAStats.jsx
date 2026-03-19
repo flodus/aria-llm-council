@@ -1,4 +1,5 @@
-// src/features/world/components/CountryPanel/components/map/ARIAStats.jsx
+// src/features/world/components/CountryPanel/map/MapARIAStats.jsx
+
 import { FONT, COLOR } from '../../../../../shared/theme';
 
 export default function ARIAStats({ country, isEn }) {

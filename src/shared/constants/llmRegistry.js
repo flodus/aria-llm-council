@@ -1,3 +1,5 @@
+// src/shared/constants/llmRegistry.js
+
 // ── Registry LLM — source de vérité partagée ─────────────────────────────
 // Le Gist public est la source de vérité : éditer le Gist pour ajouter un
 // modèle sans redéployer. Fallback local si offline ou Gist non configuré.

@@ -1,3 +1,5 @@
+// src/features/council/components/constitution/MinistryDetail.jsx
+
 /**
  * Carte détaillée d'un ministère
  * @param {Object} ministry - Données du ministère (id, name, emoji, color, mission, ministers, ministerPrompts)

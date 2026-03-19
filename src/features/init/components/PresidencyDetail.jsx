@@ -1,3 +1,5 @@
+// src/features/init/components/PresidencyDetail.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  PresidencyDetail.jsx — Onglet de configuration détaillée de la présidence
 //

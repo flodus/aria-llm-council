@@ -1,3 +1,5 @@
+// src/features/init/components/CustomizeButton.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  CustomizeButton.jsx — Bouton "Personnaliser ce pays" / "Constitution Commune"
 //

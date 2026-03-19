@@ -1,3 +1,5 @@
+// src/features/init/components/CountryConfig.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  CountryConfig.jsx — Formulaire de configuration d'un pays (mode personnalisé)
 //
@@ -17,7 +19,7 @@ import {
     wrap, mCard, tag
 } from '../../../shared/theme';
 // Services (chaque sous-dossier a son index)
-import { getTerrainLabels, getRegimeLabels, getPaysLocaux } from '../services/labels';
+import { getTerrainLabelMap, getRegimeLabelMap, getPaysLocaux } from '../services/labels';
 import { getRealCountries } from '../services/realCountries';
 import { validateCountryWithAI } from '../../../shared/services/country';
 // Composants (via index.js de components/)

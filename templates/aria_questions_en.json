@@ -1,0 +1,218 @@
+{
+  "_meta": {
+    "version": "1.1",
+    "description": "ARIA — Deliberation Questions. Single source of truth. Merged aria_questions.json + ministers.json (deduplicated).",
+    "structure": {
+      "by_ministry": "Questions indexed by ARIA ministry — direct routing",
+      "transversal_pool": "Questions without assigned ministry — routing via keywords or AI"
+    },
+    "aria_ministries": ["justice", "economy", "defense", "health", "education", "ecology", "industry"],
+    "pool_categories": ["daily_life", "crisis_and_fear", "ideological", "anomaly_and_scifi"],
+    "usage": {
+      "board_game": "Local routing via keywords (field 'keywords' in base_agents.json)",
+      "ia_mode": "Automatic routing by AI based on question content",
+      "duplicate_filter": "Check against chronolog before proposing an already debated question"
+    }
+  },
+
+  "by_ministry": {
+
+    "justice": {
+      "questions": [
+        "Should sentencing be automated to reduce court backlogs?",
+        "Should specific penalties be reinstated for crimes against the State?",
+        "How can we guarantee judicial independence from corporate influence?",
+        "Should we implement 'preventive detention' based on behavioral algorithms?",
+        "Should prison sentences be replaced by mandatory community service for minor crimes?",
+        "Should the right to strike be restricted for essential sovereign services?",
+        "Should digital surveillance be legalized for 'high-risk' individuals?",
+        "Is total transparency of private data required for public safety?",
+        "Should the legal age of criminal responsibility be lowered to 12?",
+        "Should cyber-criminals be banned from the network for life?",
+        "Should rehabilitation focus on psychological reprogramming?",
+        "Should we create a dedicated court for environmental crimes?"
+      ]
+    },
+
+    "economy": {
+      "questions": [
+        "Should a Universal Basic Income be implemented to counter automation?",
+        "Should we transition to a 100% digital, traceable currency?",
+        "Should the wealth of the richest 1% be capped to fund public services?",
+        "Should the State take control of critical strategic industries?",
+        "Should high taxes be imposed on non-essential consumption?",
+        "Should a maximum wage limit be enforced within companies?",
+        "Is global economic growth still a viable objective?",
+        "Should the work week be reduced to 25 hours to share employment?",
+        "Should raw material exports be banned to prioritize local needs?",
+        "Should financial speculation on food resources be outlawed?",
+        "Should we favor a local barter economy over the global market?",
+        "Should advertising for polluting products be prohibited?"
+      ]
+    },
+
+    "defense": {
+      "questions": [
+        "Should fully autonomous killer robots be deployed on our borders?",
+        "Should military service be made mandatory for all citizens?",
+        "Should we authorize preemptive strikes against identified threats?",
+        "Should the defense budget be doubled to face global instability?",
+        "Should a private orbital defense network be established?",
+        "Should tactical nuclear weapons be legalized as a deterrent?",
+        "Should the army be deployed to maintain order during civil protests?",
+        "Should citizen militias be armed to assist regular forces?",
+        "Should foreign satellite access be cut off in the event of a crisis?",
+        "Should special forces be authorized to operate outside of any legal framework?",
+        "Should we prioritize cyber-warfare over traditional military equipment?",
+        "Should military secrets take precedence over citizens' right to information?"
+      ]
+    },
+
+    "health": {
+      "questions": [
+        "Should genetic modification of embryos be legalized to eradicate diseases?",
+        "Should medical care be rationed based on a citizen's social contribution?",
+        "Should high-sugar or ultra-processed foods be banned?",
+        "Should mental health tracking via connected implants be mandatory?",
+        "Should the pharmaceutical industry be entirely nationalized?",
+        "Should we authorize human-animal hybridization for organ harvesting?",
+        "Should vaccination be mandatory for all, without exception?",
+        "Should we allow the commercialization of human memories?",
+        "Should artificial wombs become the default for childbirth?",
+        "Should end-of-life euthanasia be made accessible on simple request?",
+        "Should health insurance vary based on a citizen's lifestyle?",
+        "Should we limit the use of non-essential antibiotics?"
+      ]
+    },
+
+    "education": {
+      "questions": [
+        "Should human teachers be replaced by specialized AIs?",
+        "Should the curriculum be dictated solely by labor market needs?",
+        "Should memory-enhancing brain chips be mandatory for students?",
+        "Should school competition be abolished in favor of cooperation?",
+        "Should the State control all information taught in schools?",
+        "Should history be taught from a single, unified national perspective?",
+        "Should physical education be focused on military preparation?",
+        "Should homeschooling be strictly prohibited?",
+        "Should vocational training start at the age of 10?",
+        "Should philosophy and arts be removed to focus on STEM?",
+        "Should students be required to work for the State for 2 years after graduation?",
+        "Should access to higher education be reserved for the social elite?"
+      ]
+    },
+
+    "ecology": {
+      "questions": [
+        "Should private car ownership be banned in favor of public transit?",
+        "Should a carbon quota be imposed on every individual citizen?",
+        "Should we authorize geo-engineering to cool the climate?",
+        "Should the consumption of animal meat be outlawed?",
+        "Should entire regions be evacuated to allow nature to reclaim itself?",
+        "Should the State have the power to limit the number of children per family?",
+        "Should the use of any non-recycled plastic be prohibited?",
+        "Should nuclear energy be our primary source of power?",
+        "Should heavy taxes be applied to air travel?",
+        "Should heavy industry be relocated to other countries?",
+        "Should we grant legal personhood to rivers and forests?",
+        "Should water be managed as a common good, free for all?"
+      ]
+    },
+
+    "industrie": {
+      "questions": [
+        "Should space mining be our industrial priority?",
+        "Should we ban any technology that cannot be repaired by the user?",
+        "Should heavy industry be fully automated, even at the cost of jobs?",
+        "Should the State subsidize the creation of 'Smart Cities'?",
+        "Should mass production be limited to essential goods only?",
+        "Should we favor 3D printing over traditional factories?",
+        "Should deep-sea resource extraction be authorized?",
+        "Should we implement a 'repairability index' mandatory for all devices?",
+        "Should high-tech corporations be dismantled if they become too powerful?",
+        "Should the State own all industrial patents?",
+        "Should energy-intensive data centers be moved to the Arctic?",
+        "Should we prioritize the development of fusion energy over everything else?"
+      ]
+    }
+  },
+
+  "transversal_pool": {
+
+    "daily_life": {
+      "questions": [
+        "Should public space surveillance cameras be equipped with facial recognition?",
+        "Should noisy pets be banned in urban areas?",
+        "Should all shops be open 24/7?",
+        "Should paper mail be replaced by mandatory digital-only communication?",
+        "Should public transport be 100% free?",
+        "Should smoking in all public spaces, including outdoors, be banned?",
+        "Should we limit the time spent on social media per citizen?",
+        "Should working from home be a mandatory right for all desk jobs?",
+        "Should street lighting be turned off at night to save energy?",
+        "Should local urban gardens replace parking lots?",
+        "Should a 'civility tax' be created for antisocial behavior?",
+        "Should micro-donations to the State be automated at every purchase?"
+      ]
+    },
+
+    "crisis_and_fear": {
+      "questions": [
+        "Should we impose a total curfew following recent riots?",
+        "Should foreign travelers be quarantined systematically?",
+        "Should suspicious bank accounts be frozen without a warrant?",
+        "Should we cut off the national internet to prevent a cyber-attack?",
+        "Should the State requisition private homes to house refugees?",
+        "Should masks and gloves be mandatory in the metro for life?",
+        "Should we authorize the torture of suspects to prevent an imminent attack?",
+        "Should panic-mongering on social media be criminalized?",
+        "Should food be rationed to prevent shortages?",
+        "Should the army take control of hospitals in case of an outbreak?",
+        "Should the State be allowed to read private messages during 'red' alerts?",
+        "Should dissenters be exiled to remote zones during a crisis?"
+      ]
+    },
+
+    "ideological": {
+      "questions": [
+        "Is individual freedom more important than collective security?",
+        "Should the concept of 'Nationality' be replaced by a 'Global Citizen' status?",
+        "Should we ban all religions to promote state secularism?",
+        "Is the State always right, even when it makes mistakes?",
+        "Should we strive for total equality, even if it stifles ambition?",
+        "Should meritocracy replace democracy?",
+        "Should our culture be protected against any foreign influence?",
+        "Should humans be augmented with machines to stay competitive?",
+        "Should we allow the creation of private micronations within our territory?",
+        "Is a 'benevolent dictatorship' better than a 'failing democracy'?",
+        "Should the State define what is 'Moral' and what is not?",
+        "Should we forgive past crimes in the name of national unity?"
+      ]
+    },
+
+    "anomaly_and_scifi": {
+      "questions": [
+        "A coded radio signal from Alpha Centauri: how do we respond?",
+        "Unidentified objects are hovering over 12 world capitals.",
+        "An entire city has vanished from the map overnight.",
+        "Citizens report sightings of blue humanoids.",
+        "Gravity has been localized to zero within 5km of a power plant.",
+        "An infinite energy source has been discovered under Antarctica.",
+        "Time stopped for exactly one second nationwide.",
+        "Animals have started talking: how do we handle this discovery?",
+        "A space-time portal has opened in the desert.",
+        "Satellites show giant constructions at the bottom of the ocean.",
+        "Citizens have begun developing telepathic abilities.",
+        "The Moon has abruptly changed its orbit.",
+        "Plants are growing instantly across the entire territory.",
+        "Machines have started expressing human emotions.",
+        "A computer virus is turning citizen speech into binary code.",
+        "The dead seem to be coming back to life in a local hospital.",
+        "The sky turned pitch black in the middle of the day.",
+        "Echoes from our future are being picked up on radio waves.",
+        "Mythological creatures have been spotted in the deep forests.",
+        "Citizens' dreams have become synchronized across the country."
+      ]
+    }
+  }
+}

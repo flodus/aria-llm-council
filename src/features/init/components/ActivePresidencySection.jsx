@@ -1,3 +1,5 @@
+// src/features/init/components/ActivePresidencySection.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ActivePresidencySection.jsx — Toggle Phare (☉) / Boussole (☽) actif
 //

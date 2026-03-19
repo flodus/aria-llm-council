@@ -1,3 +1,5 @@
+// src/features/init/components/ActiveMinistriesSection.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  ActiveMinistriesSection.jsx — Chips togglables des ministères actifs
 //

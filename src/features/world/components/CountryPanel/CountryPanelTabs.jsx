@@ -1,4 +1,5 @@
-// src/features/world/components/CountryPanel/components/TabNavigation.jsx
+// src/features/world/components/CountryPanel/CountryPanelTabs.jsx
+
 import { useState, useEffect } from 'react';
 import { loadLang } from '../../../../ariaI18n';
 

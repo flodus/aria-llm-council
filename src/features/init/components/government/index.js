@@ -1,3 +1,5 @@
+// src/features/init/components/government/index.js
+
 export { default as Hint } from './Hint';
 export { default as ActiveToggle } from './ActiveToggle';
 export { default as ColorPicker } from './ColorPicker';

@@ -1,3 +1,5 @@
+// src/Dashboard_p3.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════════
 //  Dashboard_p3.jsx — Partie 3 / 3
 //  Composant Dashboard() final : assemblage useARIA + MapSVG + modales
@@ -26,6 +28,7 @@ import {
 } from './Dashboard_p1';
 import { MapSVG } from './Dashboard_p2';
 import ConstitutionModal from './features/council/components/ConstitutionModal';
+import CountryPanelCouncil from './features/world/components/CountryPanel/CountryPanelCouncil';
 import LLMCouncil from './LLMCouncil';
 import {
   routeQuestion,
@@ -36,7 +39,7 @@ import {
   buildCountryContext,
   MINISTRIES_LIST,
 } from './features/council/services/councilEngine';
-import { C, FONT, getTerrainLabel, getRegimeLabel } from './shared/theme'
+import { C, FONT, } from './shared/theme'
 
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
@@ -76,12 +79,6 @@ function VoteResultModal({ session, onClose }) {
   const { lang: uiLang } = useLocale();
   const { question, voteResult, presidence } = session || {};
   if (!voteResult) return null;
-
-  // 🔍 DEBUG
-  console.log('🔥 VoteResultModal - voteResult:', JSON.stringify(voteResult, null, 2));
-  console.log('🔥 VoteResultModal - presidence.synthese:', JSON.stringify(presidence?.synthese, null, 2));
-  console.log('🔥 VoteResultModal - voteResult.voteType:', voteResult.voteType);
-  console.log('🔥 VoteResultModal - voteResult.vote:', voteResult.vote);
 
   const isBinary = voteResult.voteType === 'binary';
   const isPhare = voteResult.vote === 'phare';
@@ -1193,6 +1190,7 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
 
 export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
+
   // Langue réactive (écoute event aria-lang-change émis par ariaI18n)
   const [uiLang, setUiLang] = useState(() => localStorage.getItem('aria_lang') || 'fr');
   useEffect(() => {
@@ -1204,6 +1202,19 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
 
   // Numéro de cycle courant — incrémenté à chaque confirmation de cycle
   const cycleNumRef = useRef(1);
+
+  // ── États pour le Conseil ─────────────────────────────────
+  const [openMinistry, setOpenMinistry] = useState(null);
+  const [customQ, setCustomQ] = useState('');
+  const [freeQ, setFreeQ] = useState('');
+  const [currentCycleQuestions, setCurrentCycleQuestions] = useState({});
+  const [lastVoteTimestamp, setLastVoteTimestamp] = useState({});
+  const setMinistryCycleQuestion = (ministryId, question) => {
+    setCurrentCycleQuestions(prev => ({
+      ...prev,
+      [ministryId]: question
+    }));
+  };
 
   // ── Modales ──
   const [modalSecession,    setModalSecession]    = useState(false);
@@ -1449,6 +1460,13 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     // Ouvrir le popup résultat
     setModalVoteResult(true);
 
+    if (selectedCountry && councilSession?.ministryId) {
+      setLastVoteTimestamp(prev => ({
+        ...prev,
+        [councilSession.ministryId]: Date.now()  // ← timestamp unique
+      }));
+    }
+
 }, [councilSession, selectedCountry, aria, pushEvent, cycleNumRef]);
 
   // Expose les fonctions du moteur au parent (App.jsx) dès que le hook est prêt
@@ -1646,6 +1664,28 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
           )}
         </div>
       )}
+      {/* ── Council View ── */}
+      {activeTab === 'council' && selectedCountry && (
+        <CountryPanelCouncil
+        country={selectedCountry}
+        lang={uiLang}
+        openMinistry={openMinistry}
+        setOpenMinistry={setOpenMinistry}
+        customQ={customQ}
+        setCustomQ={setCustomQ}
+        freeQ={freeQ}
+        setFreeQ={setFreeQ}
+        submitting={councilRunning}
+        handleSubmit={handleSubmitQuestion}
+        onNextCycle={() => setModalCycleConfirm(true)}
+        onConstitution={openConstitution}
+        onSecession={openSecession}
+        cycleActuel={cycleNumRef.current}
+        currentCycleQuestions={currentCycleQuestions}
+        setMinistryCycleQuestion={setMinistryCycleQuestion}
+        lastVoteTimestamp={lastVoteTimestamp}
+        />
+      )}
 
       {/* ── Modales — portées sur document.body pour échapper à overflow:hidden de .map-canvas ── */}
       {createPortal(
@@ -1691,6 +1731,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
                 );
                 closeCycle(cycleNumRef.current);
                 cycleNumRef.current += 1;
+                setCurrentCycleQuestion(null);
                 setModalCycleConfirm(false);
                 setCycleHistory([]);
                 aria.advanceCycle();

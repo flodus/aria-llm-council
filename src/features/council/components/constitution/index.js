@@ -1,3 +1,5 @@
+// src/features/council/components/constitution/index.js
+
 /**
  * Point d'entrée pour les composants de la constitution
  * Facilite les imports dans ConstitutionModal.jsx

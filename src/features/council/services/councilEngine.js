@@ -1,4 +1,5 @@
 // src/features/council/services/councilEngine.js
+
 // ═══════════════════════════════════════════════════════════════════════════════
 //  councilEngine.js — Orchestrateur principal du Conseil ARIA
 //

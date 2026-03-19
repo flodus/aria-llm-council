@@ -1,3 +1,5 @@
+// src/features/init/components/screens/ModeScreen.jsx
+
 import { useLocale, t } from '../../../../ariaI18n';
 import { FONT, wrap, mCard, tag, BTN_SECONDARY, labelStyle } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';

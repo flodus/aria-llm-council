@@ -1,3 +1,5 @@
+// src/Dashboard_p1.jsx
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  Dashboard.jsx — Partie 1 / 3
 //  Données · État global · Moteur de calcul · Générateurs
