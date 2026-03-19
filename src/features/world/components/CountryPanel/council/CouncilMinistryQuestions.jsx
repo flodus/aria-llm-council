@@ -28,14 +28,20 @@ function readVotedEntry(ministryId, countryId, cycleActuel) {
         const pool = getPool(ministryId);
         const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
         const cycleData = cycles.find(c => c.cycleNum === cycleActuel);
-        if (!cycleData) return null;
+        if (!cycleData) {
+            console.log('[readVoted] no cycleData — cycleActuel=', cycleActuel, 'stored=', cycles.map(c=>c.cycleNum));
+            return null;
+        }
         const voteEvents = (cycleData.events || []).filter(e =>
             e.type === 'vote' && e.countryId === countryId
         );
-        return voteEvents.find(e => e.ministereId === ministryId)
+        const result = voteEvents.find(e => e.ministereId === ministryId)
             || voteEvents.find(e => pool.includes(e.question))
             || null;
-    } catch {
+        console.log('[readVoted]', ministryId, countryId, cycleActuel, '→', result?.vote ?? 'null', 'voteEvents=', voteEvents.length);
+        return result;
+    } catch (err) {
+        console.log('[readVoted] error', err);
         return null;
     }
 }
