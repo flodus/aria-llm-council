@@ -27,7 +27,6 @@ export default function MinistryItem({
 
     const isEn = lang === 'en';
     const { id, emoji, name, color, questions = [] } = ministry;
-    if (isOpen) console.log('[MinistryItem debug]', id, { councilSession });
 
     return (
         <div style={{

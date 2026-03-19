@@ -34,7 +34,6 @@ export default function CountryPanelCouncil({
     const isEn = lang === 'en';
     const ministries = getMinistriesList();
     const countryId = country?.id;
-    console.log('[PanelCouncil debug] councilSession prop=', councilSession);
 
     // State local avec lazy initialization
     const [localState, setLocalState] = useState(() => ({
@@ -140,7 +139,7 @@ export default function CountryPanelCouncil({
         {isEn ? 'MINISTRIES' : 'MINISTÈRES'}
         </div>
 
-        <MinistryList {...ministryListProps} />
+        <MinistryList {...ministryListProps} councilSession={councilSession} />
 
         <div style={{
             height: '1px',
