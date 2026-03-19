@@ -360,8 +360,8 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
             voteType = 'referendum';
             voteQuestion = `Approuvez-vous la proposition suivante : "${phare.decision}" ?`;
             voteOptions = {
-                oui: { label: 'OUI — ADOPTER', color: '#4CAF50', icon: '✓' },
-                non: { label: 'NON — REJETER', color: '#F44336', icon: '✕' }
+                oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
+                non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' }
             };
         } else {
             voteType = 'binary';
@@ -369,13 +369,13 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
             voteOptions = {
                 phare: {
                     label: `☉ PHARE — ${phare.decision}`,
-                    color: '#C8A44A',
+                    color: COLORS.goldHex,
                     icon: '☉',
                     decision: phare.decision
                 },
                 boussole: {
                     label: `☽ BOUSSOLE — ${boussole.decision}`,
-                    color: '#9B7EC8',
+                    color: COLORS.purpleHex,
                     icon: '☽',
                     decision: boussole.decision
                 }

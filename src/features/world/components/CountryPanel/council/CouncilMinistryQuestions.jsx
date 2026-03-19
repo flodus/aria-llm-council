@@ -12,7 +12,7 @@
 //    Cx  Cycles précédents : badge discret dans la liste normale
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { FONT } from '../../../../../shared/theme';
+import { FONT, COLORS } from '../../../../../shared/theme';
 import { getQuestionState } from '../../../../../shared/services/boardgame/questionService';
 import QUESTIONS_FR from '../../../../../../templates/aria_questions.json';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -95,7 +95,7 @@ export default function MinistryQuestions({
             if (currentCycleQuestion && question === currentCycleQuestion && !votedEntry) {
                 return {
                     question,
-                    state: { isCurrentCycle: true, cycle: effectifCycle, color: '#C8A44A', vote: null }
+                    state: { isCurrentCycle: true, cycle: effectifCycle, color: COLORS.goldHex, vote: null }
                 };
             }
             return { question, state: getQuestionState(question, countryId, ministryId) };
@@ -103,10 +103,10 @@ export default function MinistryQuestions({
 
         // Question votée → bas avec couleur du résultat
         if (votedEntry && votedQuestion) {
-            let color = '#4CAF50';
-            if (votedEntry.vote === 'non')           color = '#F44336';
-            else if (votedEntry.vote === 'phare')    color = '#C8A44A';
-            else if (votedEntry.vote === 'boussole') color = '#9B7EC8';
+            let color = COLORS.greenHex;
+            if (votedEntry.vote === 'non')           color = COLORS.redHex;
+            else if (votedEntry.vote === 'phare')    color = COLORS.goldHex;
+            else if (votedEntry.vote === 'boussole') color = COLORS.purpleHex;
             result.push({
                 question: votedQuestion,
                 state: {
@@ -151,7 +151,7 @@ export default function MinistryQuestions({
             let leftIcon = null;
 
             if (state) {
-                const stateColor = state.color || (isCurrentCycle ? '#C8A44A' : '#4CAF50');
+                const stateColor = state.color || (isCurrentCycle ? COLORS.goldHex : COLORS.greenHex);
                 borderColor = stateColor + '40';
                 bgColor     = stateColor + '08';
                 textColor   = stateColor + 'cc';

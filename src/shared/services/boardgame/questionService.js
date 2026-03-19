@@ -8,6 +8,7 @@
 
 import QUESTIONS_FR from '../../../../templates/aria_questions.json';
 import { loadLang } from '../../../ariaI18n';
+import { COLORS } from '../../theme';
 
 const FALLBACK_QUESTIONS = [
     "Faut-il réformer le système judiciaire en profondeur ?",
@@ -129,10 +130,10 @@ export function getQuestionHistory(countryId, ministryId = null) {
                 if (event.type === 'vote'
                     && event.countryId === countryId
                     && (!ministryId || event.ministereId === ministryId)) {
-                    let color = '#4CAF50';
-                    if (event.vote === 'non')      color = '#F44336';
-                    else if (event.vote === 'phare')    color = '#C8A44A';
-                    else if (event.vote === 'boussole') color = '#9B7EC8';
+                    let color = COLORS.greenHex;
+                    if (event.vote === 'non')      color = COLORS.redHex;
+                    else if (event.vote === 'phare')    color = COLORS.goldHex;
+                    else if (event.vote === 'boussole') color = COLORS.purpleHex;
                     history.push({
                         question: event.question,
                         date:     event.ts,
@@ -206,14 +207,14 @@ export function getMinistryQuestionsSample(ministryId, countryId, cycleActuel, q
         let state;
         if (votedEntry) {
             // Après le vote : couleur du résultat
-            let color = '#4CAF50';
-            if (votedEntry.vote === 'non')           color = '#F44336';
-            else if (votedEntry.vote === 'phare')    color = '#C8A44A';
-            else if (votedEntry.vote === 'boussole') color = '#9B7EC8';
+            let color = COLORS.greenHex;
+            if (votedEntry.vote === 'non')           color = COLORS.redHex;
+            else if (votedEntry.vote === 'phare')    color = COLORS.goldHex;
+            else if (votedEntry.vote === 'boussole') color = COLORS.purpleHex;
             state = { vote: votedEntry.vote, color, label: votedEntry.label || '', isCurrentCycle: true, cycle: cycleActuel };
         } else {
             // En cours de délibération : ⏳
-            state = { isCurrentCycle: true, cycle: cycleActuel, color: '#C8A44A', vote: null };
+            state = { isCurrentCycle: true, cycle: cycleActuel, color: COLORS.goldHex, vote: null };
         }
         result.push({ question: bottomQuestion, state });
     }
