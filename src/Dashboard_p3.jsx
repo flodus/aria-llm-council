@@ -1312,7 +1312,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
 
     // Phase 0 : question visible immédiatement
     const countryContext = buildCountryContext(selectedCountry);
-    setCouncilSession({ question, ministryId: resolvedId, countryContext, countryNom: selectedCountry?.nom });
+    setCouncilSession({ question, ministryId: resolvedId, countryId: selectedCountry?.id, countryContext, countryNom: selectedCountry?.nom });
 
     try {
       // Phase 1 : ministère (ou fallback orphelin)
@@ -1684,6 +1684,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
         currentCycleQuestions={currentCycleQuestions}
         setMinistryCycleQuestion={setMinistryCycleQuestion}
         lastVoteTimestamp={lastVoteTimestamp}
+        councilSession={councilSession}
         />
       )}
 

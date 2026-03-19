@@ -21,7 +21,8 @@ export default function MinistryItem({
     cycleActuel,
     currentCycleQuestion,
     setMinistryCycleQuestion,
-    lastVoteTimestamp
+    lastVoteTimestamp,
+    councilSession
 }) {
 
     const isEn = lang === 'en';
@@ -78,9 +79,7 @@ export default function MinistryItem({
             lang={lang}
             countryId={countryId}
             cycleActuel={cycleActuel}
-            currentCycleQuestion={currentCycleQuestion}
-            setMinistryCycleQuestion={setMinistryCycleQuestion}
-            lastVoteTimestamp={lastVoteTimestamp}
+            councilSession={councilSession}
             />
 
             <CitizenQuestion
