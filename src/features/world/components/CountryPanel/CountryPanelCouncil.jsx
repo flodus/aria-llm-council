@@ -34,6 +34,7 @@ export default function CountryPanelCouncil({
     const isEn = lang === 'en';
     const ministries = getMinistriesList();
     const countryId = country?.id;
+    console.log('[PanelCouncil debug] councilSession prop=', councilSession);
 
     // State local avec lazy initialization
     const [localState, setLocalState] = useState(() => ({
