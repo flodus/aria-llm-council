@@ -27,7 +27,8 @@ export default function CountryPanelCouncil({
     onSecession,
     cycleActuel,
     currentCycleQuestions,
-    setMinistryCycleQuestion: externalSetMinistryCycleQuestion
+    setMinistryCycleQuestion: externalSetMinistryCycleQuestion,
+    lastVoteTimestamp
 }) {
     const isEn = lang === 'en';
     const ministries = getMinistriesList();
@@ -64,8 +65,6 @@ export default function CountryPanelCouncil({
     }, [localState.cycleQuestions]);
 
     const updateCycleQuestion = useCallback((ministryId, question) => {
-        console.log(`📝 [CountryPanelCouncil] Mise à jour ${ministryId}:`, question);
-
         setLocalState(prev => {
             const newQuestions = {
                 ...prev.cycleQuestions,
@@ -79,16 +78,11 @@ export default function CountryPanelCouncil({
         });
 
         if (typeof externalSetMinistryCycleQuestion === 'function') {
-            try {
-                externalSetMinistryCycleQuestion(ministryId, question);
-            } catch (error) {
-                console.error('Erreur sync parent:', error);
-            }
+            externalSetMinistryCycleQuestion(ministryId, question);
         }
     }, [externalSetMinistryCycleQuestion]);
 
     const wrappedHandleSubmit = useCallback((question, ministryId) => {
-        console.log('📝 Soumission:', { ministryId, question });
         updateCycleQuestion(ministryId, question);
         handleSubmit(question, ministryId);
     }, [handleSubmit, updateCycleQuestion]);
@@ -105,11 +99,12 @@ export default function CountryPanelCouncil({
         countryId,
         cycleActuel,
         getCurrentQuestionForMinistry,
-        setMinistryCycleQuestion: updateCycleQuestion
+        setMinistryCycleQuestion: updateCycleQuestion,
+        lastVoteTimestamp
     }), [
         ministries, openMinistry, setOpenMinistry, customQ, setCustomQ,
         submitting, wrappedHandleSubmit, lang, countryId, cycleActuel,
-        getCurrentQuestionForMinistry, updateCycleQuestion
+        getCurrentQuestionForMinistry, updateCycleQuestion, lastVoteTimestamp
     ]);
 
     const freeQuestionProps = useMemo(() => ({

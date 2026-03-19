@@ -29,8 +29,6 @@ export default function MinistryQuestions({
     const [questions, setQuestions] = useState([]);
 
     useEffect(() => {
-        console.log(`🔄 Rechargement ${ministryId} - timestamp:`, lastVoteTimestamp?.[ministryId]);
-
         const sample = getMinistryQuestionsSample(
             ministryId,
             countryId,

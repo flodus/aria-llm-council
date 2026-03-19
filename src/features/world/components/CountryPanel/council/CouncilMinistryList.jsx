@@ -18,10 +18,9 @@ export default function MinistryList({
     countryId,
     cycleActuel,
     getCurrentQuestionForMinistry,
-    setMinistryCycleQuestion
+    setMinistryCycleQuestion,
+    lastVoteTimestamp
 }) {
-    console.log('setMinistryCycleQuestion dans MinistryList:', setMinistryCycleQuestion); // Debug
-
     return (
         <>
         {ministries.map(m => (
@@ -39,6 +38,7 @@ export default function MinistryList({
             cycleActuel={cycleActuel}
             currentCycleQuestion={getCurrentQuestionForMinistry(m.id)}
             setMinistryCycleQuestion={setMinistryCycleQuestion}
+            lastVoteTimestamp={lastVoteTimestamp}
             />
         ))}
         </>
