@@ -369,13 +369,13 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
             voteOptions = {
                 phare: {
                     label: `☉ PHARE — ${phare.decision}`,
-                    color: COLORS.gold,
+                    color: '#C8A44A',
                     icon: '☉',
                     decision: phare.decision
                 },
                 boussole: {
                     label: `☽ BOUSSOLE — ${boussole.decision}`,
-                    color: COLORS.purple,
+                    color: '#9B7EC8',
                     icon: '☽',
                     decision: boussole.decision
                 }

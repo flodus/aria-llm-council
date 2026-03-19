@@ -604,12 +604,12 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             <div style={{ display: 'flex', gap: '0.7rem' }}>
             <VoteButton
             label={presidence.synthese.voteOptions?.phare?.label || "☉ PHARE"}
-            color={presidence.synthese.voteOptions?.phare?.color || C.gold}
+            color={presidence.synthese.voteOptions?.phare?.color || '#C8A44A'}
             onClick={() => onVote?.('phare')}
             />
             <VoteButton
             label={presidence.synthese.voteOptions?.boussole?.label || "☽ BOUSSOLE"}
-            color={presidence.synthese.voteOptions?.boussole?.color || C.purple}
+            color={presidence.synthese.voteOptions?.boussole?.color || '#9B7EC8'}
             onClick={() => onVote?.('boussole')}
             />
             </div>
