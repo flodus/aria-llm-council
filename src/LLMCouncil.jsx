@@ -18,33 +18,8 @@
 
 import { loadLang, t, useLocale } from './ariaI18n';
 import { useState, useEffect, useRef } from 'react';
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  CONSTANTES VISUELLES
-// ─────────────────────────────────────────────────────────────────────────────
-
-const MONO  = "'JetBrains Mono', monospace";
-const SERIF = "'Cinzel', serif";
-
-const C = {
-  gold:     'rgba(200,164,74,1)',
-  goldDim:  'rgba(200,164,74,0.55)',
-  goldFaint:'rgba(200,164,74,0.12)',
-  blue:     'rgba(74,126,200,0.85)',
-  blueDim:  'rgba(74,126,200,0.35)',
-  green:    'rgba(58,191,122,0.85)',
-  red:      'rgba(200,80,80,0.85)',
-  purple:   'rgba(140,100,220,0.85)',
-  purpleDim:'rgba(140,100,220,0.35)',
-  text:     'rgba(200,215,240,0.88)',
-  textDim:  'rgba(140,160,200,0.55)',
-  textFaint:'rgba(90,110,160,0.38)',
-  border:   'rgba(90,110,160,0.14)',
-  borderGold:'rgba(200,164,74,0.22)',
-  bg:       'rgba(8,14,26,0.92)',
-  bgCard:   'rgba(14,20,36,0.85)',
-  bgDeep:   'rgba(6,10,18,0.95)',
-};
+import { C } from './shared/theme';
+import { FONT } from './shared/theme';
 
 // Phase definitions
 const PHASES = {
@@ -72,7 +47,7 @@ const card = (extra = {}) => ({
 });
 
 const sectionTitle = (color = C.goldDim) => ({
-  fontFamily: MONO,
+  fontFamily: FONT.mono,
   fontSize: '0.42rem',
   letterSpacing: '0.18em',
   color,
@@ -153,12 +128,12 @@ function MinisterBlock({ minister }) {
       }}>
         <span style={{ fontSize: '0.9rem' }}>{minister.emoji}</span>
         <div>
-          <span style={{ fontFamily: MONO, fontSize: '0.48rem', color, letterSpacing: '0.08em' }}>
+          <span style={{ fontFamily: FONT.mono, fontSize: '0.48rem', color, letterSpacing: '0.08em' }}>
             {minister.name}
           </span>
           {minister.mot_cle && (
             <span style={{
-              fontFamily: MONO, fontSize: '0.38rem', marginLeft: '0.5rem',
+              fontFamily: FONT.mono, fontSize: '0.38rem', marginLeft: '0.5rem',
               padding: '0.1rem 0.35rem', borderRadius: '2px',
               background: `${color}18`, border: `1px solid ${color}28`,
               color: `${color}BB`, letterSpacing: '0.10em',
@@ -169,7 +144,7 @@ function MinisterBlock({ minister }) {
         </div>
       </div>
       <p style={{
-        fontFamily: MONO, fontSize: '0.47rem', color: C.text,
+        fontFamily: FONT.mono, fontSize: '0.47rem', color: C.text,
         lineHeight: 1.65, margin: 0,
       }}>
         {minister.position}
@@ -202,17 +177,17 @@ function MinistereSyntheseBlock({ synthese, ministry }) {
           {conv ? 'CONVERGENCE' : 'DIVERGENCE'}
         </span>
       </div>
-      <p style={{ fontFamily: MONO, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: '0 0 0.5rem' }}>
+      <p style={{ fontFamily: FONT.mono, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: '0 0 0.5rem' }}>
         {synthese.synthese}
       </p>
       {synthese.tension_residuelle && (
-        <p style={{ fontFamily: MONO, fontSize: '0.44rem', color: 'rgba(200,164,74,0.65)', lineHeight: 1.5, margin: '0 0 0.4rem', fontStyle: 'italic' }}>
+        <p style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(200,164,74,0.65)', lineHeight: 1.5, margin: '0 0 0.4rem', fontStyle: 'italic' }}>
           ⚡ {synthese.tension_residuelle}
         </p>
       )}
       {synthese.recommandation && (
         <div style={{
-          fontFamily: MONO, fontSize: '0.44rem', color: C.textDim,
+          fontFamily: FONT.mono, fontSize: '0.44rem', color: C.textDim,
           borderTop: `1px solid ${C.border}`, paddingTop: '0.4rem', marginTop: '0.2rem',
         }}>
           → {synthese.recommandation}
@@ -237,12 +212,12 @@ function CercleAnnotation({ annotation, index }) {
       <span style={{ fontSize: '1rem', flexShrink: 0 }}>{annotation.ministryEmoji}</span>
       <div>
         <span style={{
-          fontFamily: MONO, fontSize: '0.40rem', color: annotation.ministryColor || C.textFaint,
+          fontFamily: FONT.mono, fontSize: '0.40rem', color: annotation.ministryColor || C.textFaint,
           letterSpacing: '0.10em', display: 'block', marginBottom: '0.2rem',
         }}>
           {annotation.ministryName}
         </span>
-        <span style={{ fontFamily: MONO, fontSize: '0.46rem', color: C.textDim, lineHeight: 1.55 }}>
+        <span style={{ fontFamily: FONT.mono, fontSize: '0.46rem', color: C.textDim, lineHeight: 1.55 }}>
           {annotation.annotation}
         </span>
       </div>
@@ -257,21 +232,21 @@ function PresidenceBlock({ agent, data, accent }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
         <span style={{ fontSize: '1.1rem', color: accent }}>{agent.symbol}</span>
         <div>
-          <span style={{ fontFamily: SERIF, fontSize: '0.55rem', color: accent, letterSpacing: '0.12em' }}>
+          <span style={{ fontFamily: FONT.cinzel, fontSize: '0.55rem', color: accent, letterSpacing: '0.12em' }}>
             {agent.name}
           </span>
-          <span style={{ fontFamily: MONO, fontSize: '0.38rem', color: C.textFaint, marginLeft: '0.5rem' }}>
+          <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: C.textFaint, marginLeft: '0.5rem' }}>
             {agent.subtitle}
           </span>
         </div>
       </div>
-      <p style={{ fontFamily: MONO, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: '0 0 0.4rem' }}>
+      <p style={{ fontFamily: FONT.mono, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: '0 0 0.4rem' }}>
         {data?.position}
       </p>
       {data?.decision && (
         <div style={{
           borderTop: `1px solid ${accent}22`, paddingTop: '0.35rem',
-          fontFamily: MONO, fontSize: '0.44rem', color: accent,
+          fontFamily: FONT.mono, fontSize: '0.44rem', color: accent,
         }}>
           → {data.decision}
         </div>
@@ -280,31 +255,72 @@ function PresidenceBlock({ agent, data, accent }) {
   );
 }
 
-/** Jauge de vote OUI/NON */
-function VoteJauge({ oui, non }) {
-  const total = oui + non;
-  const ouiPct = total > 0 ? Math.round((oui / total) * 100) : 50;
-  const nonPct = 100 - ouiPct;
+// Dégradés verticaux par segment (clair en haut → foncé en bas, effet relief)
+const VOTE_GRAD = {
+  green:  'linear-gradient(180deg, rgb(72,205,140) 0%, rgb(28,118,70) 100%)',
+  red:    'linear-gradient(180deg, rgb(215,88,88)  0%, rgb(138,42,42) 100%)',
+  gold:   'linear-gradient(180deg, rgb(218,182,88) 0%, rgb(138,105,28) 100%)',
+  purple: 'linear-gradient(180deg, rgb(158,118,242) 0%, rgb(85,50,158) 100%)',
+};
+
+/** Jauge de vote — supporte OUI/NON et PHARE/BOUSSOLE */
+function VoteJauge({ oui, non, phare, boussole, type = 'referendum' }) {
+  const isBinary = type === 'binary';
+
+  let val1, val2, label1, label2, grad1, grad2, color1, color2, icon1, icon2;
+  if (isBinary) {
+    val1   = phare    || 0;  val2   = boussole || 0;
+    label1 = '☉ PHARE';     label2 = '☽ BOUSSOLE';
+    grad1  = VOTE_GRAD.gold; grad2  = VOTE_GRAD.purple;
+    color1 = C.gold;         color2 = C.purple;
+    icon1  = '☉';            icon2  = '☽';
+  } else {
+    val1   = oui || 0;       val2   = non || 0;
+    label1 = '✓ OUI';        label2 = '✕ NON';
+    grad1  = VOTE_GRAD.green; grad2 = VOTE_GRAD.red;
+    color1 = C.green;        color2 = C.red;
+    icon1  = '✓';            icon2  = '✕';
+  }
+
+  const total = val1 + val2;
+  const pct1  = total > 0 ? Math.round((val1 / total) * 100) : 50;
+  const pct2  = 100 - pct1;
+  const fmt   = n => n >= 1_000_000 ? (n / 1_000_000).toFixed(1) + 'M'
+                   : n >= 1_000     ? (n / 1_000).toFixed(0) + 'k'
+                   : String(n);
+
   return (
     <div style={{ marginTop: '0.8rem' }}>
-      <div style={{ display: 'flex', height: '1.2rem', borderRadius: '2px', overflow: 'hidden', border: `1px solid ${C.border}` }}>
-        <div style={{
-          width: `${ouiPct}%`, background: `linear-gradient(90deg, ${C.green}60, ${C.green}90)`,
-          transition: 'width 0.8s cubic-bezier(0.25,0.46,0.45,0.94)',
-        }} />
-        <div style={{
-          width: `${nonPct}%`, background: `linear-gradient(90deg, ${C.red}60, ${C.red}80)`,
-          transition: 'width 0.8s cubic-bezier(0.25,0.46,0.45,0.94)',
-        }} />
+      <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.16em', color: 'rgba(140,160,200,0.45)', marginBottom: '0.4rem' }}>
+        RÉSULTAT DU VOTE POPULAIRE · {fmt(total)} VOTANTS
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.3rem' }}>
-        <span style={{ fontFamily: MONO, fontSize: '0.44rem', color: C.green }}>OUI — {ouiPct}%</span>
-        <span style={{ fontFamily: MONO, fontSize: '0.44rem', color: C.red   }}>NON — {nonPct}%</span>
+      <div style={{ position: 'relative', height: '24px', borderRadius: '2px', overflow: 'hidden', border: '1px solid rgba(90,110,160,0.20)', background: 'rgba(0,0,0,0.3)' }}>
+        <div style={{
+          position: 'absolute', left: 0, top: 0, bottom: 0,
+          width: `${pct1}%`, background: grad1,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'width 0.8s ease',
+          fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(255,255,255,0.90)', fontWeight: 700,
+        }}>
+          {pct1 >= 12 && `${icon1} ${pct1}%`}
+        </div>
+        <div style={{
+          position: 'absolute', right: 0, top: 0, bottom: 0,
+          width: `${pct2}%`, background: grad2,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'width 0.8s ease',
+          fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(255,255,255,0.90)', fontWeight: 700,
+        }}>
+          {pct2 >= 12 && `${icon2} ${pct2}%`}
+        </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
+        <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: color1 }}>{label1} · {fmt(val1)}</span>
+        <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: color2 }}>{label2} · {fmt(val2)}</span>
       </div>
     </div>
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 //  COMPOSANT PRINCIPAL
 // ─────────────────────────────────────────────────────────────────────────────
@@ -326,7 +342,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
           {ctxNom ? ` — ${ctxNom}` : ''}
         </span>
         {ctxMode && (
-          <span style={{ fontFamily: MONO, fontSize: '0.38rem', color: 'rgba(140,160,200,0.45)',
+          <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: 'rgba(140,160,200,0.45)',
             background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: '2px', padding: '0.08rem 0.35rem', whiteSpace: 'nowrap' }}>
             {ctxMode.icon} {ctxMode.label}
@@ -335,7 +351,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
       </button>
       {openCtx && (
         <div className="aria-accordion__body" style={{
-          fontFamily: MONO, fontSize: '0.42rem', lineHeight: 1.7,
+          fontFamily: FONT.mono, fontSize: '0.42rem', lineHeight: 1.7,
           color: 'rgba(140,160,200,0.60)', whiteSpace: 'pre-wrap',
         }}>
           {ctxText}
@@ -375,7 +391,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '0.8rem 1.2rem', overflow: 'hidden' }}>
         {renderCtxAccordion()}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: C.textFaint, fontFamily: MONO }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: C.textFaint, fontFamily: FONT.mono }}>
           <div style={{ fontSize: '2.5rem', opacity: 0.12 }}>⚖️</div>
           <div style={{ fontSize: '0.52rem', letterSpacing: '0.18em', opacity: 0.4 }}>CONSEIL EN ATTENTE</div>
           <p style={{ fontSize: '0.44rem', color: C.textFaint, textAlign: 'center', maxWidth: '320px', lineHeight: 1.6 }}>
@@ -418,10 +434,10 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
             <div style={bubble(C.blue)}>
-              <div style={{ fontFamily: MONO, fontSize: '0.40rem', color: C.blueDim, letterSpacing: '0.14em', marginBottom: '0.4rem' }}>
+              <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: C.blueDim, letterSpacing: '0.14em', marginBottom: '0.4rem' }}>
                 QUESTION SOUMISE AU CONSEIL
               </div>
-              <p style={{ fontFamily: SERIF, fontSize: '0.62rem', color: C.text, lineHeight: 1.6, margin: 0, letterSpacing: '0.04em' }}>
+              <p style={{ fontFamily: FONT.cinzel, fontSize: '0.62rem', color: C.text, lineHeight: 1.6, margin: 0, letterSpacing: '0.04em' }}>
                 « {question} »
               </p>
             </div>
@@ -441,7 +457,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
           >
             {ministere.isOrphan && (
               <div style={{
-                fontFamily: MONO, fontSize: '0.40rem', letterSpacing: '0.12em',
+                fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.12em',
                 color: 'rgba(120,140,180,0.55)', marginBottom: '0.6rem',
                 padding: '0.3rem 0.5rem',
                 background: 'rgba(40,50,80,0.35)',
@@ -513,15 +529,15 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
                     {convergence ? 'CONSENSUS' : 'DIVERGENCE'}
                   </span>
                 </div>
-                <p style={{ fontFamily: MONO, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: '0 0 0.4rem' }}>
+                <p style={{ fontFamily: FONT.mono, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: '0 0 0.4rem' }}>
                   {presidence.synthese.enjeu_principal}
                 </p>
                 <div style={{
                   padding: '0.5rem 0.6rem', marginTop: '0.3rem',
                   background: 'rgba(0,0,0,0.25)', borderRadius: '2px',
-                  fontFamily: SERIF, fontSize: '0.55rem', color: C.goldDim, lineHeight: 1.6,
+                  fontFamily: FONT.cinzel, fontSize: '0.55rem', color: C.goldDim, lineHeight: 1.6,
                 }}>
-                  « {presidence.synthese.question_referendum} »
+                « {presidence.synthese.voteQuestion || presidence.synthese.question_referendum || ''} »
                 </div>
               </div>
             )}
@@ -531,45 +547,77 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
         {/* ── PHASE 5 : VOTE ───────────────────────────────────────────────── */}
         {show.PEUPLE_VOTE && voteReady && !voteResult && (
           <PhaseBlock
-            phase="PEUPLE_VOTE"
-            label="VOTE DU PEUPLE"
-            icon="🗳️"
-            accentColor={C.blue}
-            style={{ animation: 'fadeSlideIn 0.5s ease both' }}
+          phase="PEUPLE_VOTE"
+          label="VOTE DU PEUPLE"
+          icon="🗳️"
+          accentColor={C.blue}
+          style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
-            {/* Résumé des deux positions */}
-            {presidence?.synthese && (
-              <div style={{ marginBottom: '0.7rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                  <span style={{ color: C.gold, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☉</span>
-                  <span style={{ fontFamily: MONO, fontSize: '0.43rem', color: 'rgba(200,180,100,0.70)', lineHeight: 1.5 }}>
-                    {presidence.synthese.position_phare_resume}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                  <span style={{ color: C.purple, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☽</span>
-                  <span style={{ fontFamily: MONO, fontSize: '0.43rem', color: 'rgba(160,130,220,0.70)', lineHeight: 1.5 }}>
-                    {presidence.synthese.position_boussole_resume}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Proposition soumise au vote */}
-            <div style={bubble(C.blue, { marginBottom: '0.8rem' })}>
-              <div style={{ fontFamily: MONO, fontSize: '0.40rem', color: C.blueDim, letterSpacing: '0.14em', marginBottom: '0.5rem' }}>
-                PROPOSITION SOUMISE AU VOTE
-              </div>
-              <p style={{ fontFamily: SERIF, fontSize: '0.60rem', color: C.text, lineHeight: 1.65, margin: 0, letterSpacing: '0.02em' }}>
-                {presidence?.synthese?.question_referendum || question}
-              </p>
+          {/* Résumé des deux positions */}
+          {presidence?.synthese && (
+            <div style={{ marginBottom: '0.7rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+            <span style={{ color: C.gold, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☉</span>
+            <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(200,180,100,0.70)', lineHeight: 1.5 }}>
+            {presidence.synthese.position_phare_resume}
+            </span>
             </div>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+            <span style={{ color: C.purple, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☽</span>
+            <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(160,130,220,0.70)', lineHeight: 1.5 }}>
+            {presidence.synthese.position_boussole_resume}
+            </span>
+            </div>
+            </div>
+          )}
 
-            {/* Boutons OUI / NON */}
+          {/* Proposition soumise au vote */}
+
+          {console.log('🔥 synthese complete:', presidence?.synthese)}
+          {console.log('  → voteQuestion:', presidence?.synthese?.voteQuestion)}
+          {console.log('  → question_referendum:', presidence?.synthese?.question_referendum)}
+          {console.log('  → position_phare_resume:', presidence?.synthese?.position_phare_resume)}
+          {console.log('  → position_boussole_resume:', presidence?.synthese?.position_boussole_resume)}
+
+          <div style={bubble(C.blue, { marginBottom: '0.8rem' })}>
+          <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: C.blueDim, letterSpacing: '0.14em', marginBottom: '0.5rem' }}>
+          PROPOSITION SOUMISE AU VOTE
+          </div>
+          <p style={{ fontFamily: FONT.cinzel, fontSize: '0.60rem', color: C.text, lineHeight: 1.65, margin: 0, letterSpacing: '0.02em' }}>
+          {presidence?.synthese?.voteQuestion || presidence?.synthese?.question_referendum || question}
+          </p>
+          </div>
+
+          {/* Boutons de vote conditionnels selon le type */}
+          {presidence?.synthese?.voteType === 'referendum' ? (
+            // Vote OUI/NON classique
             <div style={{ display: 'flex', gap: '0.7rem' }}>
-              <VoteButton label="✓  OUI — ADOPTER" color={C.green} onClick={() => onVote?.('oui')} />
-              <VoteButton label="✕  NON — REJETER" color={C.red}   onClick={() => onVote?.('non')} />
+            <VoteButton
+            label={presidence.synthese.voteOptions?.oui?.label || "✓  OUI — ADOPTER"}
+            color={presidence.synthese.voteOptions?.oui?.color || C.green}
+            onClick={() => onVote?.('oui')}
+            />
+            <VoteButton
+            label={presidence.synthese.voteOptions?.non?.label || "✕  NON — REJETER"}
+            color={presidence.synthese.voteOptions?.non?.color || C.red}
+            onClick={() => onVote?.('non')}
+            />
             </div>
+          ) : (
+            //Vote binaire PHARE/BOUSSOLE
+            <div style={{ display: 'flex', gap: '0.7rem' }}>
+            <VoteButton
+            label={presidence.synthese.voteOptions?.phare?.label || "☉ PHARE"}
+            color={presidence.synthese.voteOptions?.phare?.color || C.gold}
+            onClick={() => onVote?.('phare')}
+            />
+            <VoteButton
+            label={presidence.synthese.voteOptions?.boussole?.label || "☽ BOUSSOLE"}
+            color={presidence.synthese.voteOptions?.boussole?.color || C.purple}
+            onClick={() => onVote?.('boussole')}
+            />
+            </div>
+          )}
           </PhaseBlock>
         )}
 
@@ -579,36 +627,49 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             phase="RESULT"
             label={t('COUNCIL_PHASE_RESULT', loadLang())}
             icon="✦"
-            accentColor={C.green}
+            accentColor={voteResult.vote === 'phare' ? C.gold :
+              voteResult.vote === 'boussole' ? C.purple :
+              voteResult.vote === 'oui' ? C.green : C.red}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
-            <div style={bubble(C.green, { marginBottom: '0.7rem' })}>
-              <div style={{ fontFamily: MONO, fontSize: '0.40rem', color: C.green, letterSpacing: '0.14em', marginBottom: '0.5rem' }}>
-                DÉCISION DU PEUPLE — {voteResult.vote?.toUpperCase()}
+            <div style={bubble(
+              voteResult.vote === 'phare' ? C.gold :
+              voteResult.vote === 'boussole' ? C.purple :
+              voteResult.vote === 'oui' ? C.green : C.red,
+              { marginBottom: '0.7rem' }
+            )}>
+              <div style={{
+                fontFamily: FONT.mono, fontSize: '0.40rem',
+                color: voteResult.vote === 'phare' ? C.gold :
+                voteResult.vote === 'boussole' ? C.purple :
+                voteResult.vote === 'oui' ? C.green : C.red,
+                letterSpacing: '0.14em', marginBottom: '0.5rem',
+              }}>
+                DÉCISION DU PEUPLE — {
+                  voteResult.vote === 'phare' ? '☉ PHARE' :
+                  voteResult.vote === 'boussole' ? '☽ BOUSSOLE' :
+                  voteResult.vote === 'oui' ? '✓ OUI' : '✕ NON'
+                }
               </div>
-              <p style={{ fontFamily: MONO, fontSize: '0.50rem', color: C.text, lineHeight: 1.6, margin: 0 }}>
+              <p style={{ fontFamily: FONT.mono, fontSize: '0.50rem', color: C.text, lineHeight: 1.6, margin: 0 }}>
                 {voteResult.label}
               </p>
             </div>
 
-            {/* Jauge toujours OUI/NON */}
-            <VoteJauge oui={voteResult.oui || 0} non={voteResult.non || 0} />
+            <VoteJauge
+              type={voteResult.voteType || 'referendum'}
+              oui={voteResult.oui}
+              non={voteResult.non}
+              phare={voteResult.phare}
+              boussole={voteResult.boussole}
+            />
 
-            {/* Impact stats */}
-            <div style={{
-              marginTop: '0.8rem', display: 'flex', gap: '0.6rem', flexWrap: 'wrap',
-            }}>
-              <StatImpact label="SATISFACTION" delta={voteResult.impact?.satisfaction} />
-              <StatImpact label={t('COUNCIL_ADHESION', loadLang())} delta={voteResult.impact?.aria_current_delta} />
-            </div>
+            {isRunning && (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
+                <LoadingPulse label={t('COUNCIL_DELIB_LOADING', loadLang())} />
+              </div>
+            )}
           </PhaseBlock>
-        )}
-
-        {/* Loading interphase */}
-        {isRunning && !show.RESULT && (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
-            <LoadingPulse label={t('COUNCIL_DELIB_LOADING', loadLang())} />
-          </div>
         )}
 
       </div>
@@ -641,7 +702,7 @@ function PhaseBlock({ children, label, icon, accentColor, style }) {
       }}>
         <span style={{ fontSize: '1rem' }}>{icon}</span>
         <span style={{
-          fontFamily: MONO, fontSize: '0.42rem', letterSpacing: '0.18em',
+          fontFamily: FONT.mono, fontSize: '0.42rem', letterSpacing: '0.18em',
           color: accentColor, textTransform: 'uppercase',
         }}>
           {label}
@@ -659,7 +720,7 @@ function VoteButton({ label, color, onClick }) {
       onClick={onClick}
       style={{
         flex: 1, padding: '0.65rem 0.5rem',
-        fontFamily: MONO, fontSize: '0.48rem', letterSpacing: '0.08em',
+        fontFamily: FONT.mono, fontSize: '0.48rem', letterSpacing: '0.08em',
         color, background: `${color}0D`,
         border: `1px solid ${color}44`,
         borderRadius: '2px', cursor: 'pointer',
@@ -681,7 +742,7 @@ function StatImpact({ label, delta }) {
   const color = positive ? C.green : C.red;
   return (
     <div style={{
-      fontFamily: MONO, fontSize: '0.42rem', color: C.textFaint,
+      fontFamily: FONT.mono, fontSize: '0.42rem', color: C.textFaint,
       display: 'flex', alignItems: 'center', gap: '0.35rem',
       padding: '0.3rem 0.5rem',
       background: `${color}0A`, border: `1px solid ${color}22`, borderRadius: '2px',
@@ -698,7 +759,7 @@ function LoadingPulse({ label }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', gap: '0.5rem',
-      fontFamily: MONO, fontSize: '0.44rem',
+      fontFamily: FONT.mono, fontSize: '0.44rem',
       color: C.textFaint, padding: '0.4rem 0',
       animation: 'pulse 1.4s ease-in-out infinite',
     }}>

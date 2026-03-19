@@ -6,25 +6,7 @@
 //  Utiliser getTerrainLabel(key, lang), getRegimeLabel(key, lang),
 //  getResourceLabel(key, lang) pour obtenir le bon label selon la langue.
 // ═══════════════════════════════════════════════════════════════════════════
-
-export const COLOR = {
-    gold:       'rgba(200,164,74,0.88)',
-    goldMid:    'rgba(200,164,74,0.55)',
-    goldDim:    'rgba(200,164,74,0.30)',
-    goldFaint:  'rgba(200,164,74,0.08)',
-    goldBorder: 'rgba(200,164,74,0.22)',
-    blue:       'rgba(140,160,200,0.70)',
-    blueDim:    'rgba(140,160,200,0.45)',
-    blueFaint:  'rgba(90,110,160,0.35)',
-    violet:     'rgba(140,100,220,0.85)',
-    violetDim:  'rgba(140,100,220,0.50)',
-    red:        '#FF3A3A',
-    redDim:     'rgba(200,80,80,0.65)',
-    green:      'rgba(100,200,120,0.70)',
-    bg:         'rgba(4,8,18,0.97)',
-    bgCard:     'rgba(255,255,255,0.025)',
-    border:     'rgba(255,255,255,0.07)',
-};
+import { COLORS } from './colors';
 
 export const FONT = {
     cinzel: "'Cinzel', serif",
@@ -32,25 +14,25 @@ export const FONT = {
 };
 
 // Inline style helpers
-export const cinzel = (size, color = COLOR.gold, extra = {}) =>
+export const cinzel = (size, color = COLORS.gold, extra = {}) =>
 ({ fontFamily: FONT.cinzel, fontSize: size, color, ...extra });
 
-export const mono = (size, color = COLOR.blueDim, extra = {}) =>
+export const mono = (size, color = COLORS.blueDim, extra = {}) =>
 ({ fontFamily: FONT.mono, fontSize: size, color, letterSpacing: '0.12em', ...extra });
 
 export const labelStyle = (size = '0.48rem') => ({
     fontFamily: FONT.mono, fontSize: size,
-    letterSpacing: '0.18em', color: COLOR.goldMid, textTransform: 'uppercase',
+    letterSpacing: '0.18em', color: COLORS.goldMid, textTransform: 'uppercase',
 });
 
 // Styles réutilisables
 export const CARD_STYLE = {
-    background: COLOR.bgCard, border: `1px solid ${COLOR.border}`,
+    background: COLORS.bgCard, border: `1px solid ${COLORS.border}`,
     borderRadius: '2px', padding: '1.2rem 1.4rem',
 };
 
 export const INPUT_STYLE = {
-    background: 'rgba(255,255,255,0.04)', border: `1px solid ${COLOR.goldBorder}`,
+    background: 'rgba(255,255,255,0.04)', border: `1px solid ${COLORS.goldBorder}`,
     borderRadius: '2px', padding: '0.55rem 0.8rem',
     color: 'rgba(220,228,240,0.88)', fontFamily: FONT.mono,
     fontSize: '0.60rem', outline: 'none', width: '100%', boxSizing: 'border-box',

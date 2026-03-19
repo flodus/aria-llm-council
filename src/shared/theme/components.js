@@ -1,4 +1,5 @@
-import { COLOR, FONT } from './ariaTheme';
+import { FONT } from './ariaTheme';
+import { COLORS } from './colors';
 
 // Styles de mise en page (wrap, mCard, tag)
 export const wrap = (wide) => ({

@@ -1,6 +1,6 @@
 // src/features/world/components/CountryPanel/components/council/CouncilView.jsx
 
-import { getMinistriesList } from '../../../../llmCouncilEngine';
+import { getMinistriesList } from '../../../council/services/councilEngine';
 import { FONT } from '../../../../shared/theme';
 import MinistryList from './council/CouncilMinistryList';
 import FreeQuestion from './council/CouncilFreeQuestion';
