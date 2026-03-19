@@ -51,6 +51,8 @@ templates/
 **Fichiers touchés :** `questionService.js`, `templates/aria_questions.json`
 **Fichiers NON touchés :** moteur, agents, fallbacks
 
+> ⚠️ **Nettoyage inclus :** supprimer les champs `questions: []` hardcodés dans `templates/base_agents.json` (chaque ministère en a un — ils sont remplacés par `aria_questions.json`). Faire dans le même commit.
+
 ---
 
 ## Chantier 2 — keywords + ministère industrie dans base_agents.json
