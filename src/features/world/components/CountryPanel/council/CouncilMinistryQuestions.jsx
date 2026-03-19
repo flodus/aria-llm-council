@@ -1,16 +1,44 @@
 // src/features/world/components/CountryPanel/council/CouncilMinistryQuestions.jsx
 // ═══════════════════════════════════════════════════════════════════════════
 //  Composant : Liste des questions fréquentes d'un ministère
-//  Features :
-//    - Affiche 6 questions échantillonnées
-//    - La question du cycle actuel est en bas avec ⏳ (via currentCycleQuestion)
-//    - Après le vote : couleur immédiate via lastVoteTimestamp (any ministry)
-//    - Les votes des cycles précédents : badge Cx + icône couleur
+//
+//  Architecture :
+//    - useEffect    → tirage aléatoire de base (uniquement si cycle/ministère change)
+//    - useMemo      → overlay vote en rendu synchrone (pas de délai)
+//
+//  UX :
+//    ⏳  La question cliquée reste EN PLACE avec sablier + encadré doré
+//    ✓✕☉☽  Au vote : glisse en bas avec la couleur du résultat
+//    Cx  Cycles précédents : badge discret dans la liste normale
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { FONT } from '../../../../../shared/theme';
-import { getMinistryQuestionsSample } from '../../../../../shared/services/boardgame/questionService';
-import { useState, useEffect, useCallback } from 'react';
+import { getQuestionState } from '../../../../../shared/services/boardgame/questionService';
+import QUESTIONS_FR from '../../../../../../templates/aria_questions.json';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+function getPool(ministryId) {
+    return QUESTIONS_FR?.par_ministere?.[ministryId]?.questions || [];
+}
+
+const LS_KEY = 'aria_chronolog_cycles';
+
+function readVotedEntry(ministryId, countryId, cycleActuel) {
+    try {
+        const pool = getPool(ministryId);
+        const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        const cycleData = cycles.find(c => c.cycleNum === cycleActuel);
+        if (!cycleData) return null;
+        const voteEvents = (cycleData.events || []).filter(e =>
+            e.type === 'vote' && e.countryId === countryId
+        );
+        return voteEvents.find(e => e.ministereId === ministryId)
+            || voteEvents.find(e => pool.includes(e.question))
+            || null;
+    } catch {
+        return null;
+    }
+}
 
 export default function MinistryQuestions({
     ministryId,
@@ -24,24 +52,64 @@ export default function MinistryQuestions({
     lastVoteTimestamp
 }) {
     const isEn = lang === 'en';
-    const [questions, setQuestions] = useState([]);
 
-    // Déclenché par : changement de cycle, de ministère, de question en cours,
-    // ou n'importe quel vote (max timestamp global — résout le routing mismatch)
+    // ── Tirage aléatoire de base — uniquement quand cycle ou ministère change ──
+    const [baseQuestions, setBaseQuestions] = useState([]);
+
+    useEffect(() => {
+        const pool = getPool(ministryId);
+        const shuffled = [...pool].sort(() => Math.random() - 0.5);
+        setBaseQuestions(shuffled);
+    }, [ministryId, countryId, cycleActuel]);
+
+    // ── Trigger de rendu synchrone dès qu'un vote est enregistré ──
     const anyVoteTs = lastVoteTimestamp
         ? Math.max(0, ...Object.values(lastVoteTimestamp))
         : 0;
 
-    useEffect(() => {
-        const sample = getMinistryQuestionsSample(ministryId, countryId, cycleActuel, currentCycleQuestion, 6);
-        setQuestions(sample);
-    }, [
-        ministryId,
-        countryId,
-        cycleActuel,
-        currentCycleQuestion,
-        anyVoteTs   // ← change dès qu'un vote est enregistré, quel que soit le ministère
-    ]); // eslint-disable-line react-hooks/exhaustive-deps
+    // ── Overlay vote + ⏳ calculé EN RENDU (synchrone) ──
+    const questions = useMemo(() => {
+        const votedEntry = readVotedEntry(ministryId, countryId, cycleActuel);
+        const votedQuestion = votedEntry?.question || null;
+
+        // Seul le vote déplace la question en bas
+        const poolExclude = votedQuestion ? [votedQuestion] : [];
+        const sample = baseQuestions
+            .filter(q => !poolExclude.includes(q))
+            .slice(0, 6);
+
+        const result = sample.map(question => {
+            // ⏳ en place : question soumise mais pas encore votée
+            if (currentCycleQuestion && question === currentCycleQuestion && !votedEntry) {
+                return {
+                    question,
+                    state: { isCurrentCycle: true, cycle: cycleActuel, color: '#C8A44A', vote: null }
+                };
+            }
+            return { question, state: getQuestionState(question, countryId, ministryId) };
+        });
+
+        // Question votée → bas avec couleur du résultat
+        if (votedEntry && votedQuestion) {
+            let color = '#4CAF50';
+            if (votedEntry.vote === 'non')           color = '#F44336';
+            else if (votedEntry.vote === 'phare')    color = '#C8A44A';
+            else if (votedEntry.vote === 'boussole') color = '#9B7EC8';
+            result.push({
+                question: votedQuestion,
+                state: {
+                    vote:           votedEntry.vote,
+                    color,
+                    label:          votedEntry.label || '',
+                    isCurrentCycle: true,
+                    cycle:          cycleActuel
+                }
+            });
+        }
+
+        return result;
+    }, [baseQuestions, ministryId, countryId, cycleActuel, currentCycleQuestion, anyVoteTs]);
+    // anyVoteTs change dès pushEvent → localStorage déjà à jour → useMemo lit la bonne valeur
 
     const handleQuestionClick = useCallback((question, state) => {
         if (state?.isCurrentCycle) return;
@@ -58,9 +126,6 @@ export default function MinistryQuestions({
             letterSpacing: '0.12em',
             color: 'rgba(140,160,200,0.75)',
             marginBottom: '0.35rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
         }}>
         <span>{isEn ? 'QUESTIONS' : 'QUESTIONS'}</span>
         </div>
@@ -77,17 +142,12 @@ export default function MinistryQuestions({
             if (state) {
                 const stateColor = state.color || (isCurrentCycle ? '#C8A44A' : '#4CAF50');
                 borderColor = stateColor + '40';
-                bgColor = stateColor + '08';
-                textColor = stateColor + 'cc';
+                bgColor     = stateColor + '08';
+                textColor   = stateColor + 'cc';
 
                 if (state.vote) {
                     leftIcon = (
-                        <span style={{
-                            color: stateColor,
-                            fontSize: '0.5rem',
-                            minWidth: '1.2rem',
-                            textAlign: 'center',
-                        }}>
+                        <span style={{ color: stateColor, fontSize: '0.5rem', minWidth: '1.2rem', textAlign: 'center' }}>
                         {state.vote === 'phare' ? '☉' :
                             state.vote === 'boussole' ? '☽' :
                             state.vote === 'oui' ? '✓' : '✕'}
@@ -95,12 +155,7 @@ export default function MinistryQuestions({
                     );
                 } else if (isCurrentCycle) {
                     leftIcon = (
-                        <span style={{
-                            color: stateColor,
-                            fontSize: '0.5rem',
-                            minWidth: '1.2rem',
-                            textAlign: 'center',
-                        }}>⏳</span>
+                        <span style={{ color: stateColor, fontSize: '0.5rem', minWidth: '1.2rem', textAlign: 'center' }}>⏳</span>
                     );
                 }
             }
