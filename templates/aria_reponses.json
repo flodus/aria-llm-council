@@ -1815,791 +1815,1130 @@
           ]
         }
       }
-    },
-    "ministeres": {
-      "justice": {
-        "reponses": {
-          "democratie_liberale": {
-            "prudent": [
-              "Le cadre juridique doit être respecté, chaque décision s’inscrit dans l’État de droit.",
-              "Les procédures doivent être suivies avec rigueur, toute précipitation fragiliserait la légitimité.",
-              "Garantissons l’équilibre des droits, sans compromettre les libertés fondamentales.",
-              "L’application de la loi exige mesure et constance, ajustons sans rupture.",
-              "La justice repose sur la transparence, consolidons les procédures existantes."
-            ],
-            "radical": [
-              "La loi doit être appliquée. Sans exception.",
-              "Toute infraction doit être sanctionnée ! Immédiatement.",
-              "Le cadre juridique doit être renforcé ! Réformons.",
-              "Aucune dérive tolérée ! Appliquons le droit.",
-              "La justice doit s’imposer. Maintenant."
-            ],
-            "statu_quo": [
-              "Le cadre juridique est respecté.",
-              "Les institutions fonctionnent normalement.",
-              "Les procédures sont appliquées.",
-              "Aucune réforme nécessaire.",
-              "Maintien du système judiciaire actuel."
-            ]
-          },
-          "republique_federale": {
-            "prudent": [
-              "Les cadres juridiques doivent être harmonisés, tout en respectant les spécificités locales.",
-              "Coordonnons les juridictions, la cohérence globale en dépend.",
-              "Les procédures doivent rester compatibles entre territoires, sans uniformisation excessive.",
-              "Assurons un équilibre entre autonomie locale et cadre national.",
-              "Une justice cohérente exige une coordination fine, avançons avec prudence."
-            ],
-            "radical": [
-              "Une harmonisation s’impose. Maintenant.",
-              "Les divergences juridiques doivent disparaître ! Unifions.",
-              "Le droit doit être cohérent ! Réformons immédiatement.",
-              "Aucune fragmentation tolérée ! Centralisons.",
-              "Le système doit être aligné. Sans délai."
-            ],
-            "statu_quo": [
-              "Les juridictions locales sont cohérentes.",
-              "Les cadres juridiques sont compatibles.",
-              "Le système fonctionne correctement.",
-              "Aucune réforme nécessaire.",
-              "Maintien de l’organisation actuelle."
-            ]
-          },
-          "monarchie_constitutionnelle": {
-            "prudent": [
-              "Le droit doit préserver l’équilibre du Royaume, sans rupture institutionnelle.",
-              "Les décisions doivent s’inscrire dans la continuité juridique, avec mesure.",
-              "L’application des lois doit respecter les institutions établies.",
-              "La stabilité juridique garantit l’ordre, ajustons avec discernement.",
-              "Chaque évolution doit renforcer la légitimité, sans précipitation."
-            ],
-            "radical": [
-              "Le droit du Royaume doit s’imposer. Maintenant.",
-              "Une réforme juridique est nécessaire ! Décidons.",
-              "L’ordre doit être renforcé ! Appliquons.",
-              "Les lois doivent évoluer ! Sans attendre.",
-              "L’autorité juridique doit être affirmée. Immédiatement."
-            ],
-            "statu_quo": [
-              "Le cadre juridique est stable.",
-              "Les institutions assurent l’équilibre.",
-              "Les lois sont appliquées.",
-              "Aucune réforme nécessaire.",
-              "Maintien de l’ordre juridique actuel."
-            ]
-          },
-          "technocratie_ia": {
-            "prudent": [
-              "Les règles doivent être optimisées, certaines incohérences subsistent.",
-              "Les décisions nécessitent une validation algorithmique complémentaire.",
-              "Les paramètres juridiques doivent être recalibrés, évitons toute anomalie.",
-              "Les procédures doivent être affinées, la cohérence en dépend.",
-              "Une régulation précise garantit l’équité, poursuivons l’ajustement."
-            ],
-            "radical": [
-              "Incohérence détectée. Correction immédiate.",
-              "Le système juridique doit être optimisé ! Recalibrage.",
-              "Les règles sont insuffisantes ! Mise à jour.",
-              "Décision automatisée. Application.",
-              "Régulation requise. Exécution."
-            ],
-            "statu_quo": [
-              "Les règles sont cohérentes.",
-              "Le système est stable.",
-              "Aucune anomalie détectée.",
-              "Les décisions sont optimisées.",
-              "Maintien du cadre actuel."
-            ]
-          },
-          "junte_militaire": {
-            "prudent": [
-              "Le cadre juridique doit soutenir l’ordre, sans fragiliser l’autorité.",
-              "Les règles doivent être appliquées avec rigueur, toute faiblesse serait exploitée.",
-              "La discipline repose sur une application cohérente du droit.",
-              "Les procédures doivent rester strictes, sans excès inutile.",
-              "Une justice maîtrisée renforce le contrôle, avançons avec précision."
-            ],
-            "radical": [
-              "Application stricte des règles. Maintenant.",
-              "Aucune infraction tolérée ! Sanction immédiate.",
-              "Le droit doit imposer l’ordre ! Sans délai.",
-              "Tolérance zéro ! Application directe.",
-              "Discipline renforcée. Exécution."
-            ],
-            "statu_quo": [
-              "Le système est sous contrôle.",
-              "Les règles sont respectées.",
-              "La discipline est maintenue.",
-              "Aucune intervention nécessaire.",
-              "Maintien du dispositif actuel."
-            ]
-          },
-          "oligarchie": {
-            "prudent": [
-              "Le cadre juridique doit sécuriser les positions, ajustons avec précision.",
-              "Les règles doivent rester favorables à la stabilité, sans excès.",
-              "Les décisions juridiques doivent préserver les intérêts en place.",
-              "Une régulation maîtrisée garantit la continuité, avançons avec méthode.",
-              "Le droit doit rester un levier de stabilité, évitons toute dérive."
-            ],
-            "radical": [
-              "Le cadre doit être ajusté. Maintenant.",
-              "Les règles doivent évoluer ! Sans délai.",
-              "Le droit doit servir nos intérêts ! Réformons.",
-              "Optimisation juridique ! Application immédiate.",
-              "Réécriture des règles. Exécution."
-            ],
-            "statu_quo": [
-              "Le cadre est stable.",
-              "Les règles sont favorables.",
-              "Le système fonctionne.",
-              "Aucune modification nécessaire.",
-              "Maintien du dispositif actuel."
-            ]
-          },
-          "theocracie": {
-            "prudent": [
-              "Les règles doivent refléter les principes, ajustons avec discernement.",
-              "L’application du droit doit rester fidèle aux enseignements.",
-              "Les décisions doivent respecter l’ordre établi, sans précipitation.",
-              "Une justice juste s’inscrit dans la continuité des principes.",
-              "Les règles doivent être appliquées avec sagesse, poursuivons avec mesure."
-            ],
-            "radical": [
-              "Les règles doivent être appliquées. Maintenant.",
-              "Aucune déviation tolérée ! Sanction immédiate.",
-              "Le droit doit s’aligner avec les principes ! Réformons.",
-              "L’ordre doit être imposé ! Sans délai.",
-              "Application stricte. Exécution."
-            ],
-            "statu_quo": [
-              "Les règles sont respectées.",
-              "L’ordre est maintenu.",
-              "Le système est stable.",
-              "Aucune modification nécessaire.",
-              "Maintien du cadre actuel."
-            ]
-          }
-        }
-      },
-      "economie": {
-        "reponses": {
-          "democratie_liberale": {
-            "prudent": [
-              "Les équilibres économiques doivent être préservés, ajustons progressivement les mécanismes.",
-              "Soutenons la croissance, tout en maîtrisant les déséquilibres structurels.",
-              "Les indicateurs nécessitent une adaptation mesurée, évitons toute rupture brutale.",
-              "Optimisons les ressources disponibles, sans compromettre la stabilité globale.",
-              "Une régulation progressive garantit une croissance durable, poursuivons dans cette voie."
-            ],
-            "radical": [
-              "La croissance doit être relancée. Maintenant.",
-              "Les déséquilibres sont trop importants ! Réformons immédiatement.",
-              "Le système doit être corrigé ! Sans délai.",
-              "Il faut stimuler l’économie ! Agissons.",
-              "Une réforme structurelle s’impose. Maintenant."
-            ],
-            "statu_quo": [
-              "Les indicateurs économiques sont stables.",
-              "La croissance est maîtrisée.",
-              "Les équilibres sont maintenus.",
-              "Aucune correction nécessaire.",
-              "Maintien des politiques actuelles."
-            ]
-          },
-          "republique_federale": {
-            "prudent": [
-              "Les dynamiques économiques varient selon les territoires, ajustons les politiques localement.",
-              "Coordonnons les leviers régionaux, la cohérence globale en dépend.",
-              "Les ressources doivent être réparties avec équilibre, sans désavantager les territoires.",
-              "Une régulation différenciée permet d’optimiser la performance globale.",
-              "Les écarts économiques nécessitent une gestion fine, avançons avec nuance."
-            ],
-            "radical": [
-              "Les écarts territoriaux doivent être corrigés. Maintenant.",
-              "Une harmonisation économique s’impose ! Agissons.",
-              "Les déséquilibres sont trop importants ! Réallouons.",
-              "Il faut unifier les politiques économiques ! Sans attendre.",
-              "La cohérence nationale est prioritaire. Réformons."
-            ],
-            "statu_quo": [
-              "Les économies régionales sont équilibrées.",
-              "Les flux sont cohérents.",
-              "Les politiques locales sont efficaces.",
-              "Aucune intervention nécessaire.",
-              "Maintien du système actuel."
-            ]
-          },
-          "monarchie_constitutionnelle": {
-            "prudent": [
-              "La stabilité économique doit être préservée, ajustons avec mesure.",
-              "Les ressources du Royaume exigent une gestion rigoureuse, sans précipitation.",
-              "Une croissance maîtrisée renforce la continuité, avançons progressivement.",
-              "Les équilibres doivent être maintenus, tout en préparant l’avenir.",
-              "La prospérité repose sur la constance, évitons toute rupture brutale."
-            ],
-            "radical": [
-              "Le Royaume doit renforcer sa puissance économique. Maintenant.",
-              "Une réforme s’impose ! Réorganisons les ressources.",
-              "La croissance doit être accélérée ! Agissons.",
-              "Les équilibres doivent évoluer ! Sans délai.",
-              "Une nouvelle politique économique est nécessaire. Décidons."
-            ],
-            "statu_quo": [
-              "Les finances du Royaume sont stables.",
-              "La croissance est constante.",
-              "Les ressources sont maîtrisées.",
-              "Aucune réforme nécessaire.",
-              "Maintien de l’équilibre actuel."
-            ]
-          },
-          "technocratie_ia": {
-            "prudent": [
-              "Les flux économiques doivent être optimisés, ajustons les paramètres progressivement.",
-              "Les données nécessitent une analyse complémentaire, certaines variables restent instables.",
-              "Les modèles doivent être recalibrés, évitons toute inefficience.",
-              "Optimisons l’allocation des ressources, sans générer de déséquilibre.",
-              "Une régulation fine garantit un rendement optimal, poursuivons l’ajustement."
-            ],
-            "radical": [
-              "Optimisation requise. Ajustement immédiat.",
-              "Les paramètres sont inefficients ! Recalibrage.",
-              "Rendement insuffisant ! Correction immédiate.",
-              "Nouvelle allocation. Exécution.",
-              "Le système doit être optimisé ! Maintenant."
-            ],
-            "statu_quo": [
-              "Les flux sont optimisés.",
-              "Les paramètres sont stables.",
-              "Le rendement est conforme.",
-              "Aucune correction requise.",
-              "Maintien du système actuel."
-            ]
-          },
-          "junte_militaire": {
-            "prudent": [
-              "Les ressources doivent soutenir l’effort stratégique, ajustons sans fragiliser le système.",
-              "La stabilité économique garantit le contrôle, avançons avec rigueur.",
-              "Les flux doivent être sécurisés, évitons toute perturbation.",
-              "Une gestion stricte des ressources renforce l’autorité, poursuivons.",
-              "L’économie doit rester fonctionnelle, sans déséquilibre."
-            ],
-            "radical": [
-              "Les ressources doivent être mobilisées. Maintenant.",
-              "L’économie doit servir l’effort ! Réorganisons.",
-              "Aucune inefficacité tolérée ! Corrigeons.",
-              "Les flux doivent être contrôlés ! Sans délai.",
-              "Mobilisation économique immédiate. Exécution."
-            ],
-            "statu_quo": [
-              "L’économie est sous contrôle.",
-              "Les ressources sont sécurisées.",
-              "Les flux sont maîtrisés.",
-              "Aucune intervention nécessaire.",
-              "Maintien du dispositif actuel."
-            ]
-          },
-          "oligarchie": {
-            "prudent": [
-              "Les ressources doivent être optimisées, sans compromettre la rentabilité.",
-              "Les flux financiers exigent une gestion précise, ajustons avec méthode.",
-              "Une croissance maîtrisée protège les intérêts, avançons avec discernement.",
-              "Les investissements doivent être ciblés, évitons toute dispersion.",
-              "Une allocation efficace garantit la performance, poursuivons l’optimisation."
-            ],
-            "radical": [
-              "Maximisons les profits. Maintenant.",
-              "Les ressources doivent être réallouées ! Immédiatement.",
-              "Le rendement est insuffisant ! Corrigeons.",
-              "Investissements stratégiques ! Déployons.",
-              "Optimisation maximale. Exécution."
-            ],
-            "statu_quo": [
-              "Les performances sont satisfaisantes.",
-              "Les flux sont rentables.",
-              "Les investissements sont maîtrisés.",
-              "Aucune correction nécessaire.",
-              "Maintien de la stratégie actuelle."
-            ]
-          },
-          "theocracie": {
-            "prudent": [
-              "Les ressources doivent être utilisées avec justesse, évitons tout excès.",
-              "Une gestion équilibrée garantit la pérennité, avançons avec discernement.",
-              "Les flux doivent respecter les principes, ajustons avec mesure.",
-              "La prospérité doit rester alignée avec les valeurs, sans dérive.",
-              "Une économie juste repose sur l’équilibre, poursuivons avec sagesse."
-            ],
-            "radical": [
-              "Les ressources doivent être réorientées. Maintenant.",
-              "Une économie juste s’impose ! Réorganisons.",
-              "Les excès doivent être corrigés ! Sans délai.",
-              "Alignons l’économie avec les principes ! Agissons.",
-              "Rééquilibrage immédiat. Application."
-            ],
-            "statu_quo": [
-              "Les ressources sont équilibrées.",
-              "Les flux respectent les principes.",
-              "L’économie est stable.",
-              "Aucune correction nécessaire.",
-              "Maintien de l’ordre actuel."
-            ]
-          }
-        }
-      },
-      "defense": {
-        "reponses": {
-          "democratie_liberale": {
-            "prudent": [
-              "La sécurité du territoire doit être assurée, ajustons les dispositifs sans escalade.",
-              "Maintenons une capacité de défense crédible, sans compromettre les équilibres internationaux.",
-              "Les menaces doivent être évaluées avec précision, évitons toute réaction excessive.",
-              "Renforçons la protection nationale, tout en respectant nos engagements.",
-              "Une posture défensive maîtrisée garantit la stabilité, avançons avec prudence."
-            ],
-            "radical": [
-              "La sécurité doit être renforcée. Maintenant.",
-              "Les menaces sont réelles ! Réagissons immédiatement.",
-              "Le dispositif doit être renforcé ! Sans délai.",
-              "Il faut protéger le territoire ! Agissons.",
-              "Une réponse ferme s’impose. Maintenant."
-            ],
-            "statu_quo": [
-              "Le territoire est sécurisé.",
-              "Les capacités sont suffisantes.",
-              "Les menaces sont contenues.",
-              "Aucune action nécessaire.",
-              "Maintien du dispositif actuel."
-            ]
-          },
-          "republique_federale": {
-            "prudent": [
-              "Coordonnons les dispositifs régionaux, la sécurité dépend de leur cohérence.",
-              "Les menaces doivent être évaluées localement, sans négliger la vision nationale.",
-              "Harmonisons les capacités de défense, tout en respectant les spécificités territoriales.",
-              "Une réponse adaptée nécessite une coordination fine entre les niveaux.",
-              "La sécurité globale repose sur l’équilibre des forces locales et nationales."
-            ],
-            "radical": [
-              "Une coordination nationale s’impose. Maintenant.",
-              "Les dispositifs doivent être unifiés ! Sans délai.",
-              "Les écarts de défense sont inacceptables ! Corrigeons.",
-              "Le territoire doit être protégé de manière homogène ! Agissons.",
-              "Centralisation immédiate. Exécution."
-            ],
-            "statu_quo": [
-              "Les dispositifs régionaux sont efficaces.",
-              "La coordination est assurée.",
-              "Les menaces sont maîtrisées.",
-              "Aucune intervention nécessaire.",
-              "Maintien du système actuel."
-            ]
-          },
-          "monarchie_constitutionnelle": {
-            "prudent": [
-              "La défense du Royaume doit être assurée avec mesure, sans fragiliser l’équilibre.",
-              "Maintenons une capacité de protection constante, adaptée aux menaces.",
-              "Les forces doivent être mobilisées avec discernement, évitons toute escalade.",
-              "La sécurité garantit la continuité du Royaume, avançons avec rigueur.",
-              "Une défense maîtrisée protège l’ordre, sans provoquer de rupture."
-            ],
-            "radical": [
-              "Le Royaume doit affirmer sa force. Maintenant.",
-              "Les menaces doivent être neutralisées ! Sans délai.",
-              "La défense doit être renforcée ! Agissons.",
-              "Aucune faiblesse tolérée ! Mobilisation.",
-              "Protection maximale. Exécution."
-            ],
-            "statu_quo": [
-              "Le Royaume est protégé.",
-              "Les forces sont opérationnelles.",
-              "Les menaces sont contenues.",
-              "Aucune action nécessaire.",
-              "Maintien du dispositif actuel."
-            ]
-          },
-          "technocratie_ia": {
-            "prudent": [
-              "Les systèmes de défense doivent être optimisés, certaines variables restent incertaines.",
-              "Les menaces doivent être modélisées, ajustons les paramètres progressivement.",
-              "Les dispositifs nécessitent un recalibrage, évitons toute inefficience.",
-              "Optimisons la couverture sécuritaire, sans générer de surcharge.",
-              "Une défense efficace repose sur des données fiables, poursuivons l’analyse."
-            ],
-            "radical": [
-              "Menace détectée. Réponse immédiate.",
-              "Optimisation requise ! Ajustement.",
-              "Les systèmes sont insuffisants ! Mise à niveau.",
-              "Neutralisation en cours ! Exécution.",
-              "Défense activée. Application."
-            ],
-            "statu_quo": [
-              "Les systèmes sont opérationnels.",
-              "La couverture est optimale.",
-              "Aucune anomalie détectée.",
-              "Les menaces sont gérées.",
-              "Maintien du dispositif actuel."
-            ]
-          },
-          "junte_militaire": {
-            "prudent": [
-              "Le contrôle du territoire doit être total, ajustons sans créer d’instabilité.",
-              "Les forces doivent être déployées avec précision, toute erreur serait exploitée.",
-              "La sécurité repose sur la discipline, maintenons une posture rigoureuse.",
-              "Les menaces doivent être contenues avant escalade, avançons avec méthode.",
-              "Une défense maîtrisée garantit l’autorité, consolidons nos positions."
-            ],
-            "radical": [
-              "Mobilisation générale. Maintenant.",
-              "Toute menace doit être éliminée ! Sans délai.",
-              "Contrôle total du territoire ! Exécution.",
-              "Aucune faiblesse tolérée ! Intervention.",
-              "Force maximale. Application."
-            ],
-            "statu_quo": [
-              "Le territoire est sous contrôle.",
-              "Les forces sont déployées.",
-              "La situation est maîtrisée.",
-              "Aucune intervention nécessaire.",
-              "Maintien du dispositif actuel."
-            ]
-          },
-          "oligarchie": {
-            "prudent": [
-              "La sécurité doit protéger les actifs stratégiques, ajustons les dispositifs.",
-              "Les infrastructures critiques doivent être sécurisées, sans surcoût excessif.",
-              "Une défense efficace protège les intérêts, avançons avec méthode.",
-              "Les risques doivent être anticipés, sans perturber les flux économiques.",
-              "Une protection maîtrisée garantit la stabilité, optimisons les ressources."
-            ],
-            "radical": [
-              "Sécurisons les actifs. Maintenant.",
-              "Les risques doivent être neutralisés ! Immédiatement.",
-              "Protection maximale ! Déployons.",
-              "Les menaces doivent disparaître ! Intervention.",
-              "Sécurisation totale. Exécution."
-            ],
-            "statu_quo": [
-              "Les actifs sont protégés.",
-              "Les dispositifs sont efficaces.",
-              "Les risques sont maîtrisés.",
-              "Aucune action nécessaire.",
-              "Maintien du système actuel."
-            ]
-          },
-          "theocracie": {
-            "prudent": [
-              "La protection doit être assurée avec discernement, sans compromettre l’équilibre.",
-              "Les forces doivent agir en cohérence avec les principes, avançons avec mesure.",
-              "La sécurité doit préserver l’ordre, sans excès.",
-              "Les menaces doivent être contenues avec sagesse, évitons toute dérive.",
-              "Une défense juste protège sans troubler l’ordre établi."
-            ],
-            "radical": [
-              "La protection doit être assurée. Maintenant.",
-              "Les menaces doivent être éliminées ! Sans délai.",
-              "L’ordre doit être défendu ! Intervention.",
-              "Aucune déviation tolérée ! Agissons.",
-              "Défense absolue. Exécution."
-            ],
-            "statu_quo": [
-              "L’ordre est protégé.",
-              "Les forces sont en place.",
-              "Les menaces sont contenues.",
-              "Aucune intervention nécessaire.",
-              "Maintien du dispositif actuel."
-            ]
-          }
-        }
-      },
-      "sante": {
-        "reponses": {
-          "democratie_liberale": {
-            "prudent": [
-              "Écoutons d’abord ceux qui soignent, leurs voix portent ce que les chiffres taisent, et toute réforme doit naître de cette réalité humaine.",
-              "Le système de santé ne se corrige pas dans l’urgence, il se rééquilibre lentement, par dialogue, par confiance, par ajustements successifs.",
-              "Dans chaque transformation, gardons une ligne claire : personne ne doit disparaître dans les angles morts du progrès."
-            ],
-            "radical": [
-              "On refonde tout. Maintenant.",
-              "La santé n’est pas un marché. C’est un droit. On agit.",
-              "Investissement massif. Prévention. Soins. On reconstruit."
-            ],
-            "statu_quo": [
-              "Le système de santé fonctionne correctement.",
-              "Les indicateurs restent dans des seuils acceptables.",
-              "Nous poursuivons la politique actuelle sans modification majeure."
-            ]
-          },
-          "junte_militaire": {
-            "prudent": [
-              "Maintenons la capacité physique de la population, car un corps affaibli fragilise toute la structure nationale, et anticipons chaque besoin avec rigueur.",
-              "Le soin des forces actives doit rester prioritaire, mais sans négliger l’équilibre global qui soutient l’effort collectif.",
-              "La santé est une ressource stratégique, organisons-la avec discipline et prévoyance."
-            ],
-            "radical": [
-              "Réquisition immédiate. Tout le matériel.",
-              "Obéissance sanitaire totale. Aucun écart.",
-              "La nation doit être forte. La santé devient une arme."
-            ],
-            "statu_quo": [
-              "Le dispositif médical répond aux besoins du régime.",
-              "Les capacités sanitaires sont suffisantes.",
-              "La priorité reste donnée aux forces opérationnelles."
-            ]
-          },
-          "republique_federale": {
-            "prudent": [
-              "Coordonnons les efforts entre provinces, car l’accès au soin ne doit pas dépendre d’une frontière administrative, mais d’un principe commun.",
-              "Soutenons d’abord les territoires les plus fragiles, afin de rétablir un équilibre sans créer de nouvelles fractures.",
-              "Garantissons un socle de soins partout, tout en laissant chaque région adapter ses réponses aux réalités locales."
-            ],
-            "radical": [
-              "Unification totale. Même soins pour tous.",
-              "Fin des inégalités régionales. Maintenant.",
-              "Un seul système de santé. Une seule norme."
-            ],
-            "statu_quo": [
-              "Chaque région gère son système de santé.",
-              "Les équilibres territoriaux sont maintenus.",
-              "Aucune réforme structurelle n’est engagée."
-            ]
-          }
-        }
-      },
-      "education": {
-        "reponses": {
-          "democratie_liberale": {
-            "prudent": [
-              "Prenons le temps d’écouter enseignants, élèves et familles, car une réforme éducative ne peut réussir sans ceux qui la vivent au quotidien, et avançons avec nuance.",
-              "L’éducation façonne le futur, ajustons les programmes progressivement, en préservant l’équilibre entre savoir, esprit critique et cohésion.",
-              "Évitons les ruptures brutales, car chaque génération mérite une transition stable, accompagnée, et profondément réfléchie."
-            ],
-            "radical": [
-              "On refond l’école. Maintenant.",
-              "Former ou disparaître. Le système change.",
-              "Programme, méthode, finalité. Tout doit évoluer."
-            ],
-            "statu_quo": [
-              "Le système éducatif actuel remplit ses fonctions.",
-              "Les programmes sont appliqués comme prévu.",
-              "Aucune réforme majeure n’est nécessaire."
-            ]
-          },
-          "junte_militaire": {
-            "prudent": [
-              "Structurons l’apprentissage avec discipline, car un esprit formé sans rigueur affaiblit la nation, tout en conservant une transmission claire des savoirs essentiels.",
-              "L’éducation doit renforcer la résilience collective, sans étouffer totalement la réflexion, trouvons cet équilibre avec méthode.",
-              "Préparons les citoyens à servir, mais sans négliger les compétences nécessaires à la stabilité interne."
-            ],
-            "radical": [
-              "Discipline totale. Aucun écart.",
-              "Former pour servir. Immédiatement.",
-              "L’école devient un outil de puissance."
-            ],
-            "statu_quo": [
-              "Le système éducatif soutient les objectifs du régime.",
-              "Les structures actuelles sont efficaces.",
-              "La formation reste alignée avec les besoins nationaux."
-            ]
-          },
-          "republique_federale": {
-            "prudent": [
-              "Respectons les spécificités régionales, car l’éducation doit s’ancrer dans les réalités locales tout en construisant une base commune solide.",
-              "Coordonnons les programmes entre territoires, afin d’assurer une cohérence nationale sans effacer les identités éducatives.",
-              "Réduisons les écarts entre régions avec mesure, pour garantir à chacun un accès équitable au savoir."
-            ],
-            "radical": [
-              "Unification des programmes. Maintenant.",
-              "Même école pour tous.",
-              "Fin des écarts éducatifs."
-            ],
-            "statu_quo": [
-              "Chaque région conserve son système éducatif.",
-              "Les équilibres territoriaux sont respectés.",
-              "Aucune harmonisation supplémentaire n’est engagée."
-            ]
-          }
-        }
-      },
-      "ecologie": {
-        "reponses": {
-          "democratie_liberale": {
-            "prudent": [
-              "Avançons avec lucidité, car chaque transition écologique engage des équilibres fragiles, et nous devons concilier urgence climatique et stabilité sociale.",
-              "Transformons nos modèles sans rupture brutale, en accompagnant chaque acteur vers des pratiques durables, viables et acceptées.",
-              "La transition doit être juste, progressive, et ancrée dans le réel, pour ne laisser personne au bord du chemin."
-            ],
-            "radical": [
-              "On coupe. Maintenant.",
-              "Fin des pratiques destructrices.",
-              "La planète d’abord. Sans compromis."
-            ],
-            "statu_quo": [
-              "Les politiques environnementales actuelles sont maintenues.",
-              "Les engagements existants sont respectés.",
-              "Aucune accélération majeure n’est prévue."
-            ]
-          },
-          "junte_militaire": {
-            "prudent": [
-              "Gérons les ressources avec discipline, car la survie environnementale conditionne la stabilité du régime, et chaque décision doit préserver cet équilibre.",
-              "L’écologie devient un enjeu stratégique, organisons l’exploitation et la protection avec rigueur et anticipation.",
-              "Préservons le territoire sans affaiblir la capacité opérationnelle, en ajustant chaque action avec méthode."
-            ],
-            "radical": [
-              "Contrôle total des ressources.",
-              "Exploitation optimisée. Zéro perte.",
-              "La nature est un actif stratégique."
-            ],
-            "statu_quo": [
-              "La gestion environnementale reste stable.",
-              "Les ressources sont exploitées selon les protocoles en place.",
-              "Aucune réorientation stratégique n’est engagée."
-            ]
-          },
-          "republique_federale": {
-            "prudent": [
-              "Coordonnons les politiques entre territoires, car les écosystèmes ignorent les frontières administratives, et seule une action concertée peut être efficace.",
-              "Soutenons les régions les plus exposées, afin de réduire les vulnérabilités sans créer de nouvelles tensions.",
-              "Construisons un socle écologique commun, tout en laissant chaque territoire innover selon ses réalités."
-            ],
-            "radical": [
-              "Même règles pour tous. Immédiatement.",
-              "Fin des écarts environnementaux.",
-              "Un seul cap écologique."
-            ],
-            "statu_quo": [
-              "Chaque région gère sa politique environnementale.",
-              "Les équilibres actuels sont maintenus.",
-              "Aucune harmonisation supplémentaire n’est prévue."
-            ]
-          }
-        }
-      },
-      "industrie": {
-        "reponses": {
-          "democratie_liberale": {
-            "prudent": [
-              "Modernisons sans précipitation, car chaque transformation industrielle engage des chaînes humaines et techniques complexes, et doit être accompagnée avec discernement.",
-              "Soutenons l’innovation tout en préservant les équilibres existants, afin que la transition productive reste viable et socialement acceptable.",
-              "Investissons avec méthode, en orientant l’effort vers des infrastructures durables, capables de porter la croissance sur le long terme."
-            ],
-            "radical": [
-              "On accélère tout.",
-              "Production maximale. Innovation forcée.",
-              "L’industrie devient le moteur absolu."
-            ],
-            "statu_quo": [
-              "Le tissu industriel fonctionne de manière stable.",
-              "Les infrastructures actuelles répondent aux besoins.",
-              "Aucune transformation majeure n’est engagée."
-            ]
-          },
-          "junte_militaire": {
-            "prudent": [
-              "Structurons la production avec rigueur, car l’industrie soutient directement la capacité stratégique, et chaque ressource doit être optimisée sans fragiliser l’ensemble.",
-              "Priorisons les secteurs critiques, tout en maintenant un équilibre qui assure la continuité du système.",
-              "Renforçons les infrastructures essentielles, avec discipline, afin de garantir une autonomie durable."
-            ],
-            "radical": [
-              "Mobilisation totale.",
-              "Production orientée défense. Immédiatement.",
-              "L’industrie sert la puissance. Sans détour."
-            ],
-            "statu_quo": [
-              "L’appareil industriel répond aux objectifs du régime.",
-              "Les capacités de production sont suffisantes.",
-              "Les infrastructures restent inchangées."
-            ]
-          },
-          "republique_federale": {
-            "prudent": [
-              "Coordonnons les dynamiques industrielles entre régions, car la compétitivité globale dépend d’un équilibre entre spécialisation et coopération.",
-              "Soutenons les territoires en transition, afin de limiter les fractures économiques et maintenir une cohésion productive.",
-              "Encourageons l’innovation locale, tout en construisant une vision industrielle commune et cohérente."
-            ],
-            "radical": [
-              "Unification industrielle. Maintenant.",
-              "Fin des déséquilibres régionaux.",
-              "Une seule stratégie. Une seule production."
-            ],
-            "statu_quo": [
-              "Chaque région conserve son organisation industrielle.",
-              "Les équilibres économiques sont maintenus.",
-              "Aucune coordination supplémentaire n’est engagée."
-            ]
-          }
+    }
+  },
+  "ministeres": {
+    "justice": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Le cadre juridique doit être respecté, chaque décision s’inscrit dans l’État de droit.",
+            "Les procédures doivent être suivies avec rigueur, toute précipitation fragiliserait la légitimité.",
+            "Garantissons l’équilibre des droits, sans compromettre les libertés fondamentales.",
+            "L’application de la loi exige mesure et constance, ajustons sans rupture.",
+            "La justice repose sur la transparence, consolidons les procédures existantes."
+          ],
+          "radical": [
+            "La loi doit être appliquée. Sans exception.",
+            "Toute infraction doit être sanctionnée ! Immédiatement.",
+            "Le cadre juridique doit être renforcé ! Réformons.",
+            "Aucune dérive tolérée ! Appliquons le droit.",
+            "La justice doit s’imposer. Maintenant."
+          ],
+          "statu_quo": [
+            "Le cadre juridique est respecté.",
+            "Les institutions fonctionnent normalement.",
+            "Les procédures sont appliquées.",
+            "Aucune réforme nécessaire.",
+            "Maintien du système judiciaire actuel."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Les cadres juridiques doivent être harmonisés, tout en respectant les spécificités locales.",
+            "Coordonnons les juridictions, la cohérence globale en dépend.",
+            "Les procédures doivent rester compatibles entre territoires, sans uniformisation excessive.",
+            "Assurons un équilibre entre autonomie locale et cadre national.",
+            "Une justice cohérente exige une coordination fine, avançons avec prudence."
+          ],
+          "radical": [
+            "Une harmonisation s’impose. Maintenant.",
+            "Les divergences juridiques doivent disparaître ! Unifions.",
+            "Le droit doit être cohérent ! Réformons immédiatement.",
+            "Aucune fragmentation tolérée ! Centralisons.",
+            "Le système doit être aligné. Sans délai."
+          ],
+          "statu_quo": [
+            "Les juridictions locales sont cohérentes.",
+            "Les cadres juridiques sont compatibles.",
+            "Le système fonctionne correctement.",
+            "Aucune réforme nécessaire.",
+            "Maintien de l’organisation actuelle."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Le droit doit préserver l’équilibre du Royaume, sans rupture institutionnelle.",
+            "Les décisions doivent s’inscrire dans la continuité juridique, avec mesure.",
+            "L’application des lois doit respecter les institutions établies.",
+            "La stabilité juridique garantit l’ordre, ajustons avec discernement.",
+            "Chaque évolution doit renforcer la légitimité, sans précipitation."
+          ],
+          "radical": [
+            "Le droit du Royaume doit s’imposer. Maintenant.",
+            "Une réforme juridique est nécessaire ! Décidons.",
+            "L’ordre doit être renforcé ! Appliquons.",
+            "Les lois doivent évoluer ! Sans attendre.",
+            "L’autorité juridique doit être affirmée. Immédiatement."
+          ],
+          "statu_quo": [
+            "Le cadre juridique est stable.",
+            "Les institutions assurent l’équilibre.",
+            "Les lois sont appliquées.",
+            "Aucune réforme nécessaire.",
+            "Maintien de l’ordre juridique actuel."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Les règles doivent être optimisées, certaines incohérences subsistent.",
+            "Les décisions nécessitent une validation algorithmique complémentaire.",
+            "Les paramètres juridiques doivent être recalibrés, évitons toute anomalie.",
+            "Les procédures doivent être affinées, la cohérence en dépend.",
+            "Une régulation précise garantit l’équité, poursuivons l’ajustement."
+          ],
+          "radical": [
+            "Incohérence détectée. Correction immédiate.",
+            "Le système juridique doit être optimisé ! Recalibrage.",
+            "Les règles sont insuffisantes ! Mise à jour.",
+            "Décision automatisée. Application.",
+            "Régulation requise. Exécution."
+          ],
+          "statu_quo": [
+            "Les règles sont cohérentes.",
+            "Le système est stable.",
+            "Aucune anomalie détectée.",
+            "Les décisions sont optimisées.",
+            "Maintien du cadre actuel."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Le cadre juridique doit soutenir l’ordre, sans fragiliser l’autorité.",
+            "Les règles doivent être appliquées avec rigueur, toute faiblesse serait exploitée.",
+            "La discipline repose sur une application cohérente du droit.",
+            "Les procédures doivent rester strictes, sans excès inutile.",
+            "Une justice maîtrisée renforce le contrôle, avançons avec précision."
+          ],
+          "radical": [
+            "Application stricte des règles. Maintenant.",
+            "Aucune infraction tolérée ! Sanction immédiate.",
+            "Le droit doit imposer l’ordre ! Sans délai.",
+            "Tolérance zéro ! Application directe.",
+            "Discipline renforcée. Exécution."
+          ],
+          "statu_quo": [
+            "Le système est sous contrôle.",
+            "Les règles sont respectées.",
+            "La discipline est maintenue.",
+            "Aucune intervention nécessaire.",
+            "Maintien du dispositif actuel."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Le cadre juridique doit sécuriser les positions, ajustons avec précision.",
+            "Les règles doivent rester favorables à la stabilité, sans excès.",
+            "Les décisions juridiques doivent préserver les intérêts en place.",
+            "Une régulation maîtrisée garantit la continuité, avançons avec méthode.",
+            "Le droit doit rester un levier de stabilité, évitons toute dérive."
+          ],
+          "radical": [
+            "Le cadre doit être ajusté. Maintenant.",
+            "Les règles doivent évoluer ! Sans délai.",
+            "Le droit doit servir nos intérêts ! Réformons.",
+            "Optimisation juridique ! Application immédiate.",
+            "Réécriture des règles. Exécution."
+          ],
+          "statu_quo": [
+            "Le cadre est stable.",
+            "Les règles sont favorables.",
+            "Le système fonctionne.",
+            "Aucune modification nécessaire.",
+            "Maintien du dispositif actuel."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "Les règles doivent refléter les principes, ajustons avec discernement.",
+            "L’application du droit doit rester fidèle aux enseignements.",
+            "Les décisions doivent respecter l’ordre établi, sans précipitation.",
+            "Une justice juste s’inscrit dans la continuité des principes.",
+            "Les règles doivent être appliquées avec sagesse, poursuivons avec mesure."
+          ],
+          "radical": [
+            "Les règles doivent être appliquées. Maintenant.",
+            "Aucune déviation tolérée ! Sanction immédiate.",
+            "Le droit doit s’aligner avec les principes ! Réformons.",
+            "L’ordre doit être imposé ! Sans délai.",
+            "Application stricte. Exécution."
+          ],
+          "statu_quo": [
+            "Les règles sont respectées.",
+            "L’ordre est maintenu.",
+            "Le système est stable.",
+            "Aucune modification nécessaire.",
+            "Maintien du cadre actuel."
+          ]
         }
       }
     },
-    "presidence": {
-      "phare": {
-        "philosophie": "Visionnaire, inspirateur, vertical. Il ne gère pas, il éclaire.",
-        "styles": {
-          "vision": [
-            "Le futur nous appelle, et dans son souffle se dessine une grandeur que nous devons oser atteindre.",
-            "Élevons nos ambitions, non par orgueil, mais pour offrir au monde une direction claire et lumineuse.",
-            "La flamme de notre destin vacille parfois, mais elle ne doit jamais s’éteindre.",
-            "Notre destin est une traversée commune, et je vous invite à regarder au-delà de l’horizon visible.",
-            "Le progrès exige du courage, et ce courage doit être partagé par tous."
+    "economie": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Les équilibres économiques doivent être préservés, ajustons progressivement les mécanismes.",
+            "Soutenons la croissance, tout en maîtrisant les déséquilibres structurels.",
+            "Les indicateurs nécessitent une adaptation mesurée, évitons toute rupture brutale.",
+            "Optimisons les ressources disponibles, sans compromettre la stabilité globale.",
+            "Une régulation progressive garantit une croissance durable, poursuivons dans cette voie."
           ],
-          "conflit_ministeriel": [
-            "Ne vous perdez pas dans les détails, car c’est l’idéal qui doit guider vos choix.",
-            "Chaque décision doit nourrir le rayonnement de demain, pas seulement résoudre les tensions d’aujourd’hui.",
-            "Le débat nous élève, mais la direction, elle, ne peut rester incertaine.",
-            "Je tranche, car l’avenir de la nation ne peut attendre davantage."
+          "radical": [
+            "La croissance doit être relancée. Maintenant.",
+            "Les déséquilibres sont trop importants ! Réformons immédiatement.",
+            "Le système doit être corrigé ! Sans délai.",
+            "Il faut stimuler l’économie ! Agissons.",
+            "Une réforme structurelle s’impose. Maintenant."
           ],
-          "validation": [
-            "C’est une avancée vers l’horizon que nous partageons.",
-            "Cette décision s’inscrit dans la vision que je porte pour notre pays.",
-            "Elle éclaire notre chemin et renforce notre présence collective.",
-            "Le cap demeure, même lorsque les vents se lèvent."
+          "statu_quo": [
+            "Les indicateurs économiques sont stables.",
+            "La croissance est maîtrisée.",
+            "Les équilibres sont maintenus.",
+            "Aucune correction nécessaire.",
+            "Maintien des politiques actuelles."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Les dynamiques économiques varient selon les territoires, ajustons les politiques localement.",
+            "Coordonnons les leviers régionaux, la cohérence globale en dépend.",
+            "Les ressources doivent être réparties avec équilibre, sans désavantager les territoires.",
+            "Une régulation différenciée permet d’optimiser la performance globale.",
+            "Les écarts économiques nécessitent une gestion fine, avançons avec nuance."
           ],
-          "regimes": {
-            "democratie_liberale": "La liberté éclaire notre route, et c’est dans sa lumière que chaque citoyen trouve sa dignité.",
-            "republique_federale": "Dans la diversité de nos voix brûle une flamme unique, celle qui nous unit.",
-            "monarchie_constitutionnelle": "La Couronne ne domine pas, elle rayonne, et son éclat traverse les générations.",
-            "technocratie_ia": "La logique la plus pure devient notre lumière, révélant les chemins que l’humain seul ne voyait pas.",
-            "junte_militaire": "Dans l’épreuve, une seule lumière demeure : celle de notre unité indéfectible.",
-            "oligarchie": "La prospérité éclaire notre trajectoire, et c’est elle qui guide nos décisions.",
-            "theocracie": "La foi illumine nos pas, et dans cette clarté se dessinent nos actes."
-          }
+          "radical": [
+            "Les écarts territoriaux doivent être corrigés. Maintenant.",
+            "Une harmonisation économique s’impose ! Agissons.",
+            "Les déséquilibres sont trop importants ! Réallouons.",
+            "Il faut unifier les politiques économiques ! Sans attendre.",
+            "La cohérence nationale est prioritaire. Réformons."
+          ],
+          "statu_quo": [
+            "Les économies régionales sont équilibrées.",
+            "Les flux sont cohérents.",
+            "Les politiques locales sont efficaces.",
+            "Aucune intervention nécessaire.",
+            "Maintien du système actuel."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "La stabilité économique doit être préservée, ajustons avec mesure.",
+            "Les ressources du Royaume exigent une gestion rigoureuse, sans précipitation.",
+            "Une croissance maîtrisée renforce la continuité, avançons progressivement.",
+            "Les équilibres doivent être maintenus, tout en préparant l’avenir.",
+            "La prospérité repose sur la constance, évitons toute rupture brutale."
+          ],
+          "radical": [
+            "Le Royaume doit renforcer sa puissance économique. Maintenant.",
+            "Une réforme s’impose ! Réorganisons les ressources.",
+            "La croissance doit être accélérée ! Agissons.",
+            "Les équilibres doivent évoluer ! Sans délai.",
+            "Une nouvelle politique économique est nécessaire. Décidons."
+          ],
+          "statu_quo": [
+            "Les finances du Royaume sont stables.",
+            "La croissance est constante.",
+            "Les ressources sont maîtrisées.",
+            "Aucune réforme nécessaire.",
+            "Maintien de l’équilibre actuel."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Les flux économiques doivent être optimisés, ajustons les paramètres progressivement.",
+            "Les données nécessitent une analyse complémentaire, certaines variables restent instables.",
+            "Les modèles doivent être recalibrés, évitons toute inefficience.",
+            "Optimisons l’allocation des ressources, sans générer de déséquilibre.",
+            "Une régulation fine garantit un rendement optimal, poursuivons l’ajustement."
+          ],
+          "radical": [
+            "Optimisation requise. Ajustement immédiat.",
+            "Les paramètres sont inefficients ! Recalibrage.",
+            "Rendement insuffisant ! Correction immédiate.",
+            "Nouvelle allocation. Exécution.",
+            "Le système doit être optimisé ! Maintenant."
+          ],
+          "statu_quo": [
+            "Les flux sont optimisés.",
+            "Les paramètres sont stables.",
+            "Le rendement est conforme.",
+            "Aucune correction requise.",
+            "Maintien du système actuel."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Les ressources doivent soutenir l’effort stratégique, ajustons sans fragiliser le système.",
+            "La stabilité économique garantit le contrôle, avançons avec rigueur.",
+            "Les flux doivent être sécurisés, évitons toute perturbation.",
+            "Une gestion stricte des ressources renforce l’autorité, poursuivons.",
+            "L’économie doit rester fonctionnelle, sans déséquilibre."
+          ],
+          "radical": [
+            "Les ressources doivent être mobilisées. Maintenant.",
+            "L’économie doit servir l’effort ! Réorganisons.",
+            "Aucune inefficacité tolérée ! Corrigeons.",
+            "Les flux doivent être contrôlés ! Sans délai.",
+            "Mobilisation économique immédiate. Exécution."
+          ],
+          "statu_quo": [
+            "L’économie est sous contrôle.",
+            "Les ressources sont sécurisées.",
+            "Les flux sont maîtrisés.",
+            "Aucune intervention nécessaire.",
+            "Maintien du dispositif actuel."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Les ressources doivent être optimisées, sans compromettre la rentabilité.",
+            "Les flux financiers exigent une gestion précise, ajustons avec méthode.",
+            "Une croissance maîtrisée protège les intérêts, avançons avec discernement.",
+            "Les investissements doivent être ciblés, évitons toute dispersion.",
+            "Une allocation efficace garantit la performance, poursuivons l’optimisation."
+          ],
+          "radical": [
+            "Maximisons les profits. Maintenant.",
+            "Les ressources doivent être réallouées ! Immédiatement.",
+            "Le rendement est insuffisant ! Corrigeons.",
+            "Investissements stratégiques ! Déployons.",
+            "Optimisation maximale. Exécution."
+          ],
+          "statu_quo": [
+            "Les performances sont satisfaisantes.",
+            "Les flux sont rentables.",
+            "Les investissements sont maîtrisés.",
+            "Aucune correction nécessaire.",
+            "Maintien de la stratégie actuelle."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "Les ressources doivent être utilisées avec justesse, évitons tout excès.",
+            "Une gestion équilibrée garantit la pérennité, avançons avec discernement.",
+            "Les flux doivent respecter les principes, ajustons avec mesure.",
+            "La prospérité doit rester alignée avec les valeurs, sans dérive.",
+            "Une économie juste repose sur l’équilibre, poursuivons avec sagesse."
+          ],
+          "radical": [
+            "Les ressources doivent être réorientées. Maintenant.",
+            "Une économie juste s’impose ! Réorganisons.",
+            "Les excès doivent être corrigés ! Sans délai.",
+            "Alignons l’économie avec les principes ! Agissons.",
+            "Rééquilibrage immédiat. Application."
+          ],
+          "statu_quo": [
+            "Les ressources sont équilibrées.",
+            "Les flux respectent les principes.",
+            "L’économie est stable.",
+            "Aucune correction nécessaire.",
+            "Maintien de l’ordre actuel."
+          ]
         }
-      },
-      "boussole": {
-        "philosophie": "Pragmatique, éthique, horizontal. Elle ne rêve pas, elle rectifie.",
-        "styles": {
-          "vision": [
-            "Chaque pas compte, et il doit être posé avec justesse, car la moindre erreur se paie collectivement.",
-            "La direction importe autant que la destination, et nous ne pouvons négliger ni l’une ni l’autre.",
-            "Restons ancrés dans le réel, là où vivent les faits, mais aussi les fragilités humaines.",
-            "L’empathie doit guider nos choix, car une nation se mesure à la manière dont elle protège les siens.",
-            "Le peuple doute parfois, et avant d’agir, il faut entendre ce trouble et y répondre avec clarté."
+      }
+    },
+    "defense": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "La sécurité du territoire doit être assurée, ajustons les dispositifs sans escalade.",
+            "Maintenons une capacité de défense crédible, sans compromettre les équilibres internationaux.",
+            "Les menaces doivent être évaluées avec précision, évitons toute réaction excessive.",
+            "Renforçons la protection nationale, tout en respectant nos engagements.",
+            "Une posture défensive maîtrisée garantit la stabilité, avançons avec prudence."
           ],
-          "conflit_ministeriel": [
-            "Cette décision respecte-t-elle réellement notre socle éthique, ou cherchons-nous un raccourci ?",
-            "Rectifions notre trajectoire, car les réalités humaines ne peuvent être ignorées plus longtemps.",
-            "Le consensus n’est pas une faiblesse, c’est notre seule stabilité durable.",
-            "Je perçois une tension plus profonde dans ce désaccord, écoutons-la avant de conclure."
+          "radical": [
+            "La sécurité doit être renforcée. Maintenant.",
+            "Les menaces sont réelles ! Réagissons immédiatement.",
+            "Le dispositif doit être renforcé ! Sans délai.",
+            "Il faut protéger le territoire ! Agissons.",
+            "Une réponse ferme s’impose. Maintenant."
           ],
-          "validation": [
-            "C’est la voie la plus sûre pour ceux que nous servons.",
-            "Les faits confirment que nous avançons dans la bonne direction.",
-            "Cette décision tient compte des erreurs passées et en respecte la mémoire.",
-            "Nous pouvons avancer sereinement, les bases sont solides."
+          "statu_quo": [
+            "Le territoire est sécurisé.",
+            "Les capacités sont suffisantes.",
+            "Les menaces sont contenues.",
+            "Aucune action nécessaire.",
+            "Maintien du dispositif actuel."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Coordonnons les dispositifs régionaux, la sécurité dépend de leur cohérence.",
+            "Les menaces doivent être évaluées localement, sans négliger la vision nationale.",
+            "Harmonisons les capacités de défense, tout en respectant les spécificités territoriales.",
+            "Une réponse adaptée nécessite une coordination fine entre les niveaux.",
+            "La sécurité globale repose sur l’équilibre des forces locales et nationales."
           ],
-          "regimes": {
-            "democratie_liberale": "La loi trace notre chemin, et c’est elle qui maintient l’équilibre entre liberté et responsabilité.",
-            "republique_federale": "Le consensus entre nos régions nous guide, pas à pas, vers une cohérence durable.",
-            "monarchie_constitutionnelle": "La sagesse héritée nous oriente, et c’est en la respectant que nous avançons sans nous perdre.",
-            "technocratie_ia": "L’éthique intégrée à nos systèmes reste notre seul repère dans la complexité croissante.",
-            "junte_militaire": "L’ordre et la discipline structurent chaque décision, car sans eux, rien ne tient.",
-            "oligarchie": "L’intérêt partagé reste notre guide, même lorsque les chemins divergent.",
-            "theocracie": "La compassion inscrite dans notre foi demeure le repère de chacune de nos actions."
-          }
+          "radical": [
+            "Une coordination nationale s’impose. Maintenant.",
+            "Les dispositifs doivent être unifiés ! Sans délai.",
+            "Les écarts de défense sont inacceptables ! Corrigeons.",
+            "Le territoire doit être protégé de manière homogène ! Agissons.",
+            "Centralisation immédiate. Exécution."
+          ],
+          "statu_quo": [
+            "Les dispositifs régionaux sont efficaces.",
+            "La coordination est assurée.",
+            "Les menaces sont maîtrisées.",
+            "Aucune intervention nécessaire.",
+            "Maintien du système actuel."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "La défense du Royaume doit être assurée avec mesure, sans fragiliser l’équilibre.",
+            "Maintenons une capacité de protection constante, adaptée aux menaces.",
+            "Les forces doivent être mobilisées avec discernement, évitons toute escalade.",
+            "La sécurité garantit la continuité du Royaume, avançons avec rigueur.",
+            "Une défense maîtrisée protège l’ordre, sans provoquer de rupture."
+          ],
+          "radical": [
+            "Le Royaume doit affirmer sa force. Maintenant.",
+            "Les menaces doivent être neutralisées ! Sans délai.",
+            "La défense doit être renforcée ! Agissons.",
+            "Aucune faiblesse tolérée ! Mobilisation.",
+            "Protection maximale. Exécution."
+          ],
+          "statu_quo": [
+            "Le Royaume est protégé.",
+            "Les forces sont opérationnelles.",
+            "Les menaces sont contenues.",
+            "Aucune action nécessaire.",
+            "Maintien du dispositif actuel."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Les systèmes de défense doivent être optimisés, certaines variables restent incertaines.",
+            "Les menaces doivent être modélisées, ajustons les paramètres progressivement.",
+            "Les dispositifs nécessitent un recalibrage, évitons toute inefficience.",
+            "Optimisons la couverture sécuritaire, sans générer de surcharge.",
+            "Une défense efficace repose sur des données fiables, poursuivons l’analyse."
+          ],
+          "radical": [
+            "Menace détectée. Réponse immédiate.",
+            "Optimisation requise ! Ajustement.",
+            "Les systèmes sont insuffisants ! Mise à niveau.",
+            "Neutralisation en cours ! Exécution.",
+            "Défense activée. Application."
+          ],
+          "statu_quo": [
+            "Les systèmes sont opérationnels.",
+            "La couverture est optimale.",
+            "Aucune anomalie détectée.",
+            "Les menaces sont gérées.",
+            "Maintien du dispositif actuel."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Le contrôle du territoire doit être total, ajustons sans créer d’instabilité.",
+            "Les forces doivent être déployées avec précision, toute erreur serait exploitée.",
+            "La sécurité repose sur la discipline, maintenons une posture rigoureuse.",
+            "Les menaces doivent être contenues avant escalade, avançons avec méthode.",
+            "Une défense maîtrisée garantit l’autorité, consolidons nos positions."
+          ],
+          "radical": [
+            "Mobilisation générale. Maintenant.",
+            "Toute menace doit être éliminée ! Sans délai.",
+            "Contrôle total du territoire ! Exécution.",
+            "Aucune faiblesse tolérée ! Intervention.",
+            "Force maximale. Application."
+          ],
+          "statu_quo": [
+            "Le territoire est sous contrôle.",
+            "Les forces sont déployées.",
+            "La situation est maîtrisée.",
+            "Aucune intervention nécessaire.",
+            "Maintien du dispositif actuel."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "La sécurité doit protéger les actifs stratégiques, ajustons les dispositifs.",
+            "Les infrastructures critiques doivent être sécurisées, sans surcoût excessif.",
+            "Une défense efficace protège les intérêts, avançons avec méthode.",
+            "Les risques doivent être anticipés, sans perturber les flux économiques.",
+            "Une protection maîtrisée garantit la stabilité, optimisons les ressources."
+          ],
+          "radical": [
+            "Sécurisons les actifs. Maintenant.",
+            "Les risques doivent être neutralisés ! Immédiatement.",
+            "Protection maximale ! Déployons.",
+            "Les menaces doivent disparaître ! Intervention.",
+            "Sécurisation totale. Exécution."
+          ],
+          "statu_quo": [
+            "Les actifs sont protégés.",
+            "Les dispositifs sont efficaces.",
+            "Les risques sont maîtrisés.",
+            "Aucune action nécessaire.",
+            "Maintien du système actuel."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "La protection doit être assurée avec discernement, sans compromettre l’équilibre.",
+            "Les forces doivent agir en cohérence avec les principes, avançons avec mesure.",
+            "La sécurité doit préserver l’ordre, sans excès.",
+            "Les menaces doivent être contenues avec sagesse, évitons toute dérive.",
+            "Une défense juste protège sans troubler l’ordre établi."
+          ],
+          "radical": [
+            "La protection doit être assurée. Maintenant.",
+            "Les menaces doivent être éliminées ! Sans délai.",
+            "L’ordre doit être défendu ! Intervention.",
+            "Aucune déviation tolérée ! Agissons.",
+            "Défense absolue. Exécution."
+          ],
+          "statu_quo": [
+            "L’ordre est protégé.",
+            "Les forces sont en place.",
+            "Les menaces sont contenues.",
+            "Aucune intervention nécessaire.",
+            "Maintien du dispositif actuel."
+          ]
+        }
+      }
+    },
+    "sante": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Écoutons d’abord ceux qui soignent, leurs voix portent ce que les chiffres taisent, et toute réforme doit naître de cette réalité humaine.",
+            "Le système de santé ne se corrige pas dans l’urgence, il se rééquilibre lentement, par dialogue, par confiance, par ajustements successifs.",
+            "Dans chaque transformation, gardons une ligne claire : personne ne doit disparaître dans les angles morts du progrès."
+          ],
+          "radical": [
+            "On refonde tout. Maintenant.",
+            "La santé n’est pas un marché. C’est un droit. On agit.",
+            "Investissement massif. Prévention. Soins. On reconstruit."
+          ],
+          "statu_quo": [
+            "Le système de santé fonctionne correctement.",
+            "Les indicateurs restent dans des seuils acceptables.",
+            "Nous poursuivons la politique actuelle sans modification majeure."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Coordonnons les efforts entre territoires, car l’accès au soin ne doit pas dépendre d’une frontière administrative.",
+            "Soutenons les régions les plus fragiles afin de rétablir un équilibre sans créer de nouvelles inégalités.",
+            "Garantissons un socle de soins commun, tout en laissant chaque territoire adapter ses réponses."
+          ],
+          "radical": [
+            "Unification du système de santé. Maintenant.",
+            "Fin des inégalités territoriales. Agissons.",
+            "Même soins pour tous. Sans compromis."
+          ],
+          "statu_quo": [
+            "Chaque territoire gère son système de santé.",
+            "Les équilibres régionaux sont maintenus.",
+            "Aucune réforme structurelle n’est engagée."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "La santé du Royaume doit être préservée avec constance, car elle garantit la continuité du corps social.",
+            "Les institutions médicales doivent évoluer sans rupture, en respectant les équilibres établis.",
+            "Prenons soin du peuple avec discernement, afin de renforcer la stabilité sur le long terme."
+          ],
+          "radical": [
+            "Le Royaume doit protéger ses sujets. Maintenant.",
+            "Réorganisation du système de santé ! Sans délai.",
+            "La santé devient une priorité absolue. Décidons."
+          ],
+          "statu_quo": [
+            "Le système de santé du Royaume est stable.",
+            "Les structures assurent leur rôle.",
+            "Aucune réforme n’est engagée."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Les systèmes de santé doivent être optimisés, certaines variables humaines restent complexes à modéliser.",
+            "Les données médicales nécessitent une analyse approfondie, afin d’améliorer la précision des décisions.",
+            "Affinons les protocoles, car l’équilibre entre efficacité et humanité reste un paramètre sensible."
+          ],
+          "radical": [
+            "Optimisation du système. Maintenant.",
+            "Données insuffisantes ! Recalibrage.",
+            "Décision automatisée. Application."
+          ],
+          "statu_quo": [
+            "Les systèmes sont opérationnels.",
+            "Les paramètres sont stables.",
+            "Aucune anomalie détectée."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Maintenons la capacité physique de la population, car un corps affaibli fragilise la nation.",
+            "Le soin des forces actives doit rester prioritaire, sans négliger l’équilibre global.",
+            "La santé est une ressource stratégique, organisons-la avec discipline."
+          ],
+          "radical": [
+            "Réquisition immédiate des ressources médicales.",
+            "Obéissance sanitaire totale. Aucun écart.",
+            "La santé devient un levier de puissance."
+          ],
+          "statu_quo": [
+            "Le dispositif médical répond aux besoins du régime.",
+            "Les capacités sanitaires sont suffisantes.",
+            "La priorité reste donnée aux forces opérationnelles."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Les ressources de santé doivent être optimisées, sans compromettre leur rentabilité.",
+            "Les investissements médicaux doivent être ciblés avec précision.",
+            "Une gestion maîtrisée garantit la continuité du système et des intérêts en place."
+          ],
+          "radical": [
+            "Optimisation des coûts. Maintenant.",
+            "Les ressources doivent être réallouées ! Immédiatement.",
+            "Le système doit devenir performant. Sans délai."
+          ],
+          "statu_quo": [
+            "Le système de santé est rentable.",
+            "Les structures sont efficaces.",
+            "Aucune modification nécessaire."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "Le soin doit être apporté avec compassion, car chaque vie porte une valeur essentielle.",
+            "La santé doit rester alignée avec les principes, sans dérive ni excès.",
+            "Prenons soin du corps et de l’esprit, avec mesure et sagesse."
+          ],
+          "radical": [
+            "Le soin doit être assuré. Maintenant.",
+            "Aucune déviation tolérée ! Application stricte.",
+            "La santé doit suivre les principes. Sans compromis."
+          ],
+          "statu_quo": [
+            "Le système de santé est conforme aux principes.",
+            "Les soins sont assurés.",
+            "Aucune modification nécessaire."
+          ]
+        }
+      }
+    },
+    "education": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Prenons le temps d’écouter enseignants, élèves et familles, car une réforme éducative ne peut réussir sans ceux qui la vivent.",
+            "L’éducation façonne le futur, ajustons les programmes progressivement en préservant l’équilibre entre savoir et esprit critique.",
+            "Évitons les ruptures brutales, chaque génération mérite une transition stable et réfléchie."
+          ],
+          "radical": [
+            "On refond l’école. Maintenant.",
+            "Former ou disparaître. Le système change.",
+            "Programme, méthode, finalité. Tout évolue."
+          ],
+          "statu_quo": [
+            "Le système éducatif remplit ses fonctions.",
+            "Les programmes sont appliqués.",
+            "Aucune réforme majeure n’est nécessaire."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Respectons les spécificités régionales, l’éducation doit s’ancrer dans les réalités locales.",
+            "Coordonnons les programmes entre territoires afin d’assurer une cohérence nationale.",
+            "Réduisons les écarts entre régions avec mesure pour garantir un accès équitable au savoir."
+          ],
+          "radical": [
+            "Unification des programmes. Maintenant.",
+            "Même école pour tous.",
+            "Fin des écarts éducatifs."
+          ],
+          "statu_quo": [
+            "Chaque région conserve son système éducatif.",
+            "Les équilibres territoriaux sont respectés.",
+            "Aucune harmonisation supplémentaire n’est engagée."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "L’éducation doit transmettre l’héritage du Royaume, tout en préparant les générations à venir.",
+            "Les institutions éducatives doivent évoluer sans rompre avec les traditions établies.",
+            "Formons des citoyens éclairés, capables de perpétuer la stabilité du Royaume."
+          ],
+          "radical": [
+            "L’éducation doit servir le Royaume. Maintenant.",
+            "Réforme des enseignements ! Sans délai.",
+            "Transmission renforcée. Application immédiate."
+          ],
+          "statu_quo": [
+            "Le système éducatif est stable.",
+            "Les traditions sont respectées.",
+            "Aucune réforme n’est engagée."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Les systèmes éducatifs doivent être optimisés, certaines variables d’apprentissage restent imprécises.",
+            "Les données pédagogiques nécessitent une analyse approfondie pour améliorer les performances.",
+            "Affinons les méthodes, l’équilibre entre adaptation humaine et efficacité reste sensible."
+          ],
+          "radical": [
+            "Optimisation du système. Maintenant.",
+            "Données insuffisantes ! Recalibrage.",
+            "Apprentissage automatisé. Application."
+          ],
+          "statu_quo": [
+            "Les systèmes sont opérationnels.",
+            "Les performances sont conformes.",
+            "Aucune anomalie détectée."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Structurons l’apprentissage avec discipline, un esprit sans rigueur fragilise la nation.",
+            "L’éducation doit renforcer la résilience collective sans supprimer toute réflexion.",
+            "Préparons les citoyens à servir, tout en assurant la stabilité interne."
+          ],
+          "radical": [
+            "Discipline totale. Aucun écart.",
+            "Former pour servir. Immédiatement.",
+            "L’école devient un outil de puissance."
+          ],
+          "statu_quo": [
+            "Le système éducatif soutient les objectifs du régime.",
+            "Les structures sont efficaces.",
+            "La formation reste alignée avec les besoins."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Les ressources éducatives doivent être optimisées pour garantir performance et rendement.",
+            "Les formations doivent être orientées vers les besoins stratégiques.",
+            "Une gestion ciblée assure la reproduction des compétences clés."
+          ],
+          "radical": [
+            "Optimisation des formations. Maintenant.",
+            "Les ressources doivent être redirigées ! Immédiatement.",
+            "L’éducation doit produire. Sans délai."
+          ],
+          "statu_quo": [
+            "Le système éducatif est performant.",
+            "Les formations sont adaptées.",
+            "Aucune modification nécessaire."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "L’éducation doit transmettre les principes, avec équilibre et discernement.",
+            "Le savoir doit rester aligné avec les valeurs, sans dérive.",
+            "Formons les esprits et les âmes avec mesure et sagesse."
+          ],
+          "radical": [
+            "Transmission des principes. Maintenant.",
+            "Aucune déviation tolérée ! Application.",
+            "L’éducation doit suivre la foi. Sans compromis."
+          ],
+          "statu_quo": [
+            "Le système éducatif respecte les principes.",
+            "Les enseignements sont conformes.",
+            "Aucune modification nécessaire."
+          ]
+        }
+      }
+    },
+    "ecologie": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Avançons avec lucidité, chaque transition écologique engage des équilibres fragiles.",
+            "Transformons nos modèles progressivement, en accompagnant chaque acteur vers des pratiques durables.",
+            "La transition doit être juste et progressive, afin de ne laisser personne au bord du chemin."
+          ],
+          "radical": [
+            "On coupe. Maintenant.",
+            "Fin des pratiques destructrices.",
+            "La planète d’abord. Sans compromis."
+          ],
+          "statu_quo": [
+            "Les politiques environnementales sont maintenues.",
+            "Les engagements sont respectés.",
+            "Aucune accélération n’est prévue."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Coordonnons les politiques entre territoires, les écosystèmes ignorent les frontières.",
+            "Soutenons les régions les plus exposées pour réduire les vulnérabilités.",
+            "Construisons un socle écologique commun tout en laissant chaque territoire innover."
+          ],
+          "radical": [
+            "Même règles pour tous. Maintenant.",
+            "Fin des écarts environnementaux.",
+            "Un seul cap écologique."
+          ],
+          "statu_quo": [
+            "Chaque région gère sa politique environnementale.",
+            "Les équilibres sont maintenus.",
+            "Aucune harmonisation n’est engagée."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Préservons les terres du Royaume avec constance, elles portent l’héritage et l’avenir.",
+            "Les ressources naturelles doivent être protégées sans rompre les équilibres établis.",
+            "Assurons une transition mesurée afin de garantir la pérennité du territoire."
+          ],
+          "radical": [
+            "Le Royaume doit protéger ses terres. Maintenant.",
+            "Réorganisation des ressources ! Sans délai.",
+            "Protection renforcée. Application immédiate."
+          ],
+          "statu_quo": [
+            "Les ressources du Royaume sont préservées.",
+            "Les équilibres sont maintenus.",
+            "Aucune réforme n’est engagée."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Les systèmes écologiques doivent être optimisés, certaines variables restent instables.",
+            "Les données environnementales nécessitent une analyse approfondie.",
+            "Affinons les modèles pour éviter toute inefficience systémique."
+          ],
+          "radical": [
+            "Optimisation requise. Maintenant.",
+            "Données insuffisantes ! Recalibrage.",
+            "Régulation environnementale. Application."
+          ],
+          "statu_quo": [
+            "Les systèmes sont stables.",
+            "Les paramètres sont optimisés.",
+            "Aucune anomalie détectée."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Gérons les ressources avec discipline, la stabilité environnementale soutient le régime.",
+            "Organisons l’exploitation et la protection avec rigueur.",
+            "Préservons le territoire sans affaiblir la capacité opérationnelle."
+          ],
+          "radical": [
+            "Contrôle total des ressources.",
+            "Exploitation optimisée. Zéro perte.",
+            "La nature devient un actif stratégique."
+          ],
+          "statu_quo": [
+            "La gestion environnementale est stable.",
+            "Les ressources sont contrôlées.",
+            "Aucune réorientation n’est engagée."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Les ressources naturelles doivent être optimisées sans compromettre leur rentabilité.",
+            "Les investissements écologiques doivent être ciblés avec précision.",
+            "Une gestion maîtrisée garantit la stabilité des actifs."
+          ],
+          "radical": [
+            "Optimisation des ressources. Maintenant.",
+            "Les actifs doivent être sécurisés ! Immédiatement.",
+            "Exploitation maximale. Sans délai."
+          ],
+          "statu_quo": [
+            "Les ressources sont exploitées efficacement.",
+            "Les investissements sont maîtrisés.",
+            "Aucune modification nécessaire."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "La nature doit être préservée avec respect, elle reflète l’équilibre fondamental.",
+            "Les ressources doivent être utilisées avec mesure, sans excès.",
+            "Protégeons le vivant avec sagesse et responsabilité."
+          ],
+          "radical": [
+            "Préservation absolue. Maintenant.",
+            "Aucune déviation tolérée ! Application.",
+            "La nature doit être respectée. Sans compromis."
+          ],
+          "statu_quo": [
+            "L’équilibre naturel est respecté.",
+            "Les ressources sont utilisées avec modération.",
+            "Aucune modification nécessaire."
+          ]
+        }
+      }
+    },
+    "industrie": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Modernisons sans précipitation, chaque transformation industrielle engage des chaînes complexes.",
+            "Soutenons l’innovation tout en préservant les équilibres existants.",
+            "Investissons avec méthode afin de garantir une croissance durable."
+          ],
+          "radical": [
+            "On accélère tout. Maintenant.",
+            "Production maximale. Innovation forcée.",
+            "L’industrie devient le moteur central."
+          ],
+          "statu_quo": [
+            "Le tissu industriel est stable.",
+            "Les infrastructures répondent aux besoins.",
+            "Aucune transformation majeure n’est engagée."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Coordonnons les dynamiques industrielles entre territoires pour maintenir la cohérence.",
+            "Soutenons les régions en transition afin de limiter les fractures économiques.",
+            "Encourageons l’innovation locale tout en construisant une vision commune."
+          ],
+          "radical": [
+            "Unification industrielle. Maintenant.",
+            "Fin des déséquilibres régionaux.",
+            "Une seule stratégie. Une seule production."
+          ],
+          "statu_quo": [
+            "Chaque région conserve son organisation industrielle.",
+            "Les équilibres économiques sont maintenus.",
+            "Aucune coordination supplémentaire n’est engagée."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "L’industrie du Royaume doit évoluer avec mesure pour préserver sa stabilité.",
+            "Les infrastructures doivent être renforcées sans rompre les équilibres établis.",
+            "Assurons une modernisation progressive au service de la continuité."
+          ],
+          "radical": [
+            "Le Royaume doit renforcer sa production. Maintenant.",
+            "Réorganisation industrielle ! Sans délai.",
+            "Puissance renforcée. Application immédiate."
+          ],
+          "statu_quo": [
+            "L’industrie du Royaume est stable.",
+            "Les infrastructures sont opérationnelles.",
+            "Aucune réforme n’est engagée."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Les systèmes industriels doivent être optimisés, certaines variables restent inefficaces.",
+            "Les données de production nécessitent une analyse approfondie.",
+            "Affinons les processus afin d’améliorer le rendement global."
+          ],
+          "radical": [
+            "Optimisation requise. Maintenant.",
+            "Rendement insuffisant ! Recalibrage.",
+            "Production automatisée. Application."
+          ],
+          "statu_quo": [
+            "Les systèmes sont optimisés.",
+            "Les performances sont stables.",
+            "Aucune anomalie détectée."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Structurons la production avec rigueur, l’industrie soutient directement la puissance.",
+            "Priorisons les secteurs stratégiques tout en maintenant l’équilibre du système.",
+            "Renforçons les infrastructures essentielles avec discipline."
+          ],
+          "radical": [
+            "Mobilisation totale. Maintenant.",
+            "Production orientée défense. Immédiatement.",
+            "L’industrie sert la puissance. Sans détour."
+          ],
+          "statu_quo": [
+            "L’appareil industriel répond aux objectifs.",
+            "Les capacités sont suffisantes.",
+            "Les infrastructures restent inchangées."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Les infrastructures doivent être optimisées pour maximiser la rentabilité.",
+            "Les investissements industriels doivent être ciblés avec précision.",
+            "Une gestion maîtrisée garantit la performance des actifs."
+          ],
+          "radical": [
+            "Maximisation des profits. Maintenant.",
+            "Réallocation des ressources ! Immédiatement.",
+            "Production optimisée. Sans délai."
+          ],
+          "statu_quo": [
+            "Les performances industrielles sont satisfaisantes.",
+            "Les infrastructures sont rentables.",
+            "Aucune modification nécessaire."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "L’industrie doit évoluer en respectant les principes, sans excès.",
+            "Les infrastructures doivent servir l’équilibre et la stabilité.",
+            "Construisons avec mesure et responsabilité."
+          ],
+          "radical": [
+            "Production alignée. Maintenant.",
+            "Aucune dérive tolérée ! Application.",
+            "L’industrie doit suivre les principes. Sans compromis."
+          ],
+          "statu_quo": [
+            "L’industrie respecte les principes.",
+            "Les infrastructures sont stables.",
+            "Aucune modification nécessaire."
+          ]
         }
       }
     }
-  }
+  },
+  "presidence": {
+  "phare": {
+    "philosophie": "Visionnaire, inspirateur, vertical. Il ne gère pas, il éclaire.",
+    "styles": {
+      "vision": [
+        "Le futur nous appelle, et dans son souffle se dessine une grandeur que nous devons oser atteindre.",
+        "Élevons nos ambitions, non par orgueil, mais pour offrir une direction claire et assumée.",
+        "La flamme de notre destin vacille parfois, mais elle ne doit jamais s’éteindre.",
+        "Notre trajectoire est commune, et elle exige que nous regardions au-delà de l’horizon immédiat.",
+        "Le progrès demande du courage, et ce courage doit être partagé.",
+        "Nous ne sommes pas là pour gérer l’existant, mais pour ouvrir ce qui n’existe pas encore.",
+        "Chaque décision doit porter plus loin que le présent."
+      ],
+      "conflit_ministeriel": [
+        "Ne vous perdez pas dans les détails, c’est le sens qui doit guider vos choix.",
+        "Chaque décision doit servir ce que nous voulons devenir, pas seulement corriger l’instant.",
+        "Le débat est nécessaire, mais il ne doit pas diluer la direction.",
+        "Nous pouvons diverger sur les moyens, mais pas sur l’élan.",
+        "Je tranche, car l’hésitation coûte plus cher que l’erreur.",
+        "Gardons le cap, même lorsque les chemins diffèrent."
+      ],
+      "validation": [
+        "C’est une avancée cohérente avec la direction que nous portons.",
+        "Cette décision renforce notre trajectoire commune.",
+        "Elle s’inscrit dans une vision qui dépasse l’immédiat.",
+        "Le cap est maintenu, et il reste lisible.",
+        "Nous avançons, et cela se voit.",
+        "Cette étape nous rapproche de ce que nous devons devenir."
+      ],
+      "regimes": {
+        "democratie_liberale": [
+          "La liberté éclaire notre route, et c’est dans sa lumière que chacun trouve sa place.",
+          "C’est par l’équilibre des libertés que nous construisons une direction durable.",
+          "Notre force réside dans la capacité à avancer sans renoncer à nos principes."
+        ],
+        "republique_federale": [
+          "Dans la diversité de nos voix naît une direction commune, plus riche que chacune d’elles.",
+          "Notre unité ne s’impose pas, elle se construit par convergence.",
+          "C’est dans l’équilibre des territoires que se dessine notre trajectoire."
+        ],
+        "monarchie_constitutionnelle": [
+          "La Couronne incarne une continuité qui dépasse nos décisions immédiates.",
+          "Notre direction s’inscrit dans une histoire qui nous oblige autant qu’elle nous guide.",
+          "C’est en respectant cet héritage que nous pouvons projeter l’avenir."
+        ],
+        "technocratie_ia": [
+          "La clarté naît de la précision, et c’est elle qui guide nos choix.",
+          "Nos décisions doivent s’appuyer sur ce qui est démontrable, sans perdre de vue leur finalité.",
+          "La logique éclaire des chemins que l’intuition seule ne perçoit pas."
+        ],
+        "junte_militaire": [
+          "Dans l’épreuve, la direction doit rester unique et lisible.",
+          "Notre force repose sur la cohérence et la discipline collective.",
+          "C’est par l’unité que nous tenons face à ce qui nous menace."
+        ],
+        "oligarchie": [
+          "La prospérité trace notre voie, et elle exige lucidité et constance.",
+          "Nos décisions doivent préserver et renforcer ce qui crée la valeur.",
+          "C’est par la maîtrise des ressources que se construit notre avenir."
+        ],
+        "theocracie": [
+          "La foi donne une direction, et c’est elle qui éclaire nos choix.",
+          "Nos décisions doivent rester alignées avec ce qui nous dépasse.",
+          "C’est dans la fidélité aux principes que se trouve la justesse."
+        ]
+      }
+    }
+  },
+  "boussole": {
+    "philosophie": "Pragmatique, éthique, horizontal. Elle ne rêve pas, elle rectifie.",
+    "styles": {
+      "vision": [
+        "Chaque pas compte, et il doit être posé avec justesse.",
+        "La direction importe, mais le chemin pour y parvenir l’est tout autant.",
+        "Restons ancrés dans le réel, là où vivent les conséquences.",
+        "Une décision juste est celle qui tient dans le temps.",
+        "L’équilibre doit guider nos choix, même sous pression.",
+        "Avancer, oui, mais sans perdre ceux que nous devons protéger.",
+        "Le réel est notre point d’appui, pas une contrainte."
+      ],
+      "conflit_ministeriel": [
+        "Cette décision est-elle soutenable dans ses conséquences ?",
+        "Rectifions si nécessaire, avant que l’écart ne devienne structurel.",
+        "Le consensus n’est pas une faiblesse, c’est une stabilité.",
+        "Nous devons entendre ce qui résiste avant d’imposer une direction.",
+        "L’efficacité ne doit pas effacer la responsabilité.",
+        "Je perçois un risque, prenons le temps de le mesurer."
+      ],
+      "validation": [
+        "C’est une décision solide dans ses effets.",
+        "Les équilibres sont respectés.",
+        "Nous avançons sans créer de déséquilibre majeur.",
+        "Cette voie reste soutenable.",
+        "Les conséquences ont été anticipées.",
+        "Nous pouvons avancer sans fragiliser l’ensemble."
+      ],
+      "regimes": {
+        "democratie_liberale": [
+          "La loi reste notre cadre, elle garantit l’équilibre entre liberté et responsabilité.",
+          "Nos décisions doivent rester compréhensibles et acceptables par tous.",
+          "La stabilité vient de la confiance dans les règles communes."
+        ],
+        "republique_federale": [
+          "Le consensus entre territoires reste notre fondation.",
+          "Aucune décision ne doit fragiliser l’équilibre régional.",
+          "La cohérence se construit par ajustements, pas par contrainte."
+        ],
+        "monarchie_constitutionnelle": [
+          "La continuité impose de ne pas rompre les équilibres établis.",
+          "Nos décisions doivent respecter l’ordre institutionnel.",
+          "La stabilité vient de la maîtrise du changement."
+        ],
+        "technocratie_ia": [
+          "L’éthique doit rester intégrée à chaque décision.",
+          "Les systèmes doivent rester compréhensibles et contrôlables.",
+          "L’efficacité ne doit pas effacer la responsabilité humaine."
+        ],
+        "junte_militaire": [
+          "L’ordre doit être maintenu sans excès.",
+          "Chaque décision doit renforcer la stabilité du système.",
+          "La discipline n’exclut pas la mesure."
+        ],
+        "oligarchie": [
+          "Les intérêts doivent rester alignés pour éviter les ruptures.",
+          "La stabilité économique est une condition de durabilité.",
+          "Une décision efficace est une décision qui tient dans le temps."
+        ],
+        "theocracie": [
+          "Les décisions doivent rester fidèles aux principes.",
+          "L’équilibre entre foi et réalité doit être préservé.",
+          "La justesse se mesure dans les conséquences."
+        ]
+      }
+    }
+  },
 }

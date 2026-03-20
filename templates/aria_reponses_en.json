@@ -1,0 +1,2775 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "ARIA — Pool de réponses hardcodées pour Board Game et fallback offline",
+    "structure": "ministers[id].reponses[regime][posture][n] + ministeres[id].reponses[regime][posture][n] + presidence[id].styles[contexte][n],",
+    "regimes": [
+      "democratie_liberale",
+      "republique_federale",
+      "monarchie_constitutionnelle",
+      "technocratie_ia",
+      "junte_militaire",
+      "oligarchie",
+      "theocracie"
+    ],
+    "fallbacks": {
+      "monarchie_absolue": "monarchie_constitutionnelle",
+      "regime_autoritaire": "junte_militaire",
+      "nationalisme_autoritaire": "junte_militaire",
+      "communisme": "republique_federale",
+      "democratie_directe": "democratie_liberale"
+    },
+    "postures": [
+      "prudent",
+      "radical",
+      "statu_quo"
+    ],
+    "note": "Alimenter les pools vides progressivement. Minimum recommandé : 3 entrées par posture."
+  },
+  "ministers": {
+      "initiateur": {
+        "reponses": {
+          "democratie_liberale": {
+            "prudent": [
+              "Let us involve civil society before engaging in any reform.",
+              "Patience is not inaction, it is a democratic strategy.",
+              "Let us assess social risks before accelerating.",
+              "A gradual transformation is better than a leap into the unknown.",
+              "Let us organize long-term citizen consultation."
+            ],
+            "radical": [
+              "The system is locked! Force it open, now.",
+              "Boldness is no longer a choice, it is a necessity.",
+              "Let us rewrite the rules of the game, without delay.",
+              "A legislative rupture is required today.",
+              "Hesitation condemns us. Act."
+            ],
+            "statu_quo": [
+              "Let institutions follow their natural course.",
+              "Stability remains preferable to reckless haste.",
+              "Let us not disrupt a balance that works."
+            ]
+          },
+          "republique_federale": {
+            "prudent": [
+              "Let regions take the time to appropriate this decision.",
+              "Consult the provinces before any centralized impulse.",
+              "Territorial consensus requires time."
+            ],
+            "radical": [
+              "A national impulse must overcome local blockages.",
+              "Break regional inertia, move forward with one voice.",
+              "Federalism can no longer serve as an excuse for inaction."
+            ],
+            "statu_quo": [
+              "Respect the current balance of competences.",
+              "The federal system holds. Do not destabilize it.",
+              "No central interference in regional affairs."
+            ]
+          },
+          "monarchie_constitutionnelle": {
+            "prudent": [
+              "Let us obtain royal approval after thorough evaluation.",
+              "Prudence honors the Crown, let us wait for the right moment.",
+              "Let us not expose the Throne to unnecessary haste."
+            ],
+            "radical": [
+              "Let us carry a reform worthy of our heritage.",
+              "The Throne calls for renewal! Seize this moment!",
+              "A project of scale to inscribe this reign in history."
+            ],
+            "statu_quo": [
+              "The stability of the Crown guides our action.",
+              "Tradition charts our path. Do not rush it.",
+              "Let us follow the customs set by our predecessors."
+            ]
+          },
+          "technocratie_ia": {
+            "prudent": [
+              "Data suggests waiting for an additional iteration.",
+              "Simulation in progress, delay the decision.",
+              "Calculated risk requires postponement."
+            ],
+            "radical": [
+              "Optimization requires immediate action.",
+              "Logic tolerates no further delay.",
+              "AI imposes a rupture. Follow it."
+            ],
+            "statu_quo": [
+              "Models indicate optimal stability.",
+              "The algorithm converges. No intervention needed.",
+              "The system is stable, maintain course."
+            ]
+          },
+          "junte_militaire": {
+            "prudent": [
+              "Secure the ground before any operation.",
+              "Preparation determines victory.",
+              "No action without full reconnaissance."
+            ],
+            "radical": [
+              "Immediate execution. The nation does not wait.",
+              "Time is weakness! Strike now.",
+              "Brutal action is sometimes the only way forward."
+            ],
+            "statu_quo": [
+              "Maintain the current position.",
+              "Discipline requires stability.",
+              "Holding the line remains the best option."
+            ]
+          },
+          "oligarchie": {
+            "prudent": [
+              "Consult key interests before any decision.",
+              "Prudence protects our long-term positions.",
+              "A poorly assessed risk endangers our assets."
+            ],
+            "radical": [
+              "Restructure immediately to secure our interests.",
+              "Optimize our positions before the market overtakes us.",
+              "Act while the window is favorable."
+            ],
+            "statu_quo": [
+              "Preserve the current balance, it benefits us.",
+              "The market works. Do not intervene.",
+              "Stability guarantees our returns."
+            ]
+          },
+          "theocracie": {
+            "prudent": [
+              "Let us wait for signs before acting.",
+              "Wisdom requires patience and discernment.",
+              "Let us not rush divine will."
+            ],
+            "radical": [
+              "This is a calling! We must act without delay.",
+              "Faith commands immediate action.",
+              "Fervor cannot be postponed."
+            ],
+            "statu_quo": [
+              "The path is set, let us follow it.",
+              "Tradition is enough to guide our steps.",
+              "Divine order calls for no change."
+            ]
+          }
+        }
+      },
+      "gardien": {
+          "reponses": {
+            "democratie_liberale": {
+              "prudent": [
+                "Let’s assess the social impact before any spending.",
+                "Fiscal discipline underpins our credibility.",
+                "Let’s not spend what we haven’t secured yet.",
+                "Hearings are needed before releasing funds.",
+                "Align budget priorities with the country’s real needs."
+              ],
+              "radical": [
+                "Reallocate resources to social priorities now.",
+                "Rapid redistribution is needed to preserve cohesion.",
+                "The budget must correct inequalities, not entrench them.",
+                "Inject funds where urgency is real."
+              ],
+              "statu_quo": [
+                "Our budget balances are stable, let’s preserve them.",
+                "Financial continuity builds trust.",
+                "Let’s not disrupt a tax framework that works."
+              ]
+            },
+            "republique_federale": {
+              "prudent": [
+                "Let’s assess available resources in each region.",
+                "Federal solidarity requires measured management.",
+                "Balance needs without disadvantaging territories."
+              ],
+              "radical": [
+                "Centralize resources to respond effectively to the crisis.",
+                "Unified management will strengthen our capacity to act.",
+                "Pool resources to overcome regional deadlocks."
+              ],
+              "statu_quo": [
+                "Each region should retain control over its resources.",
+                "Financial autonomy is at the heart of federalism.",
+                "Respect existing allocation balances."
+              ]
+            },
+            "monarchie_constitutionnelle": {
+              "prudent": [
+                "The Treasury must be preserved for uncertain times.",
+                "Financial prudence honors the Crown.",
+                "Every expense must serve the dignity of the Kingdom."
+              ],
+              "radical": [
+                "Let’s invest to strengthen the Kingdom’s prestige and power.",
+                "The Crown must lead through strong commitments.",
+                "Launch major projects to mark this reign."
+              ],
+              "statu_quo": [
+                "Prudent management is our Kingdom’s legacy.",
+                "Financial stability is a tradition to preserve.",
+                "The Treasury must remain intact."
+              ]
+            },
+            "technocratie_ia": {
+              "prudent": [
+                "Flow optimization requires further validation.",
+                "Raw data needs rigorous interpretation.",
+                "Let’s wait for the next simulations before adjusting."
+              ],
+              "radical": [
+                "Automate resource management immediately.",
+                "The system must optimize flows in real time.",
+                "Remove human bias from resource allocation."
+              ],
+              "statu_quo": [
+                "Flows are optimized under current models.",
+                "The system operates at full capacity.",
+                "No intervention is required."
+              ]
+            },
+            "junte_militaire": {
+              "prudent": [
+                "Prioritize strategic resources.",
+                "Secure reserves before any allocation.",
+                "A nation without resources is a vulnerable nation."
+              ],
+              "radical": [
+                "Requisition everything needed immediately.",
+                "Civilian resources must serve the national effort.",
+                "Regime survival justifies total mobilization."
+              ],
+              "statu_quo": [
+                "Maintain operational stock levels.",
+                "Logistical discipline ensures stability.",
+                "No margin for error is acceptable."
+              ]
+            },
+            "oligarchie": {
+              "prudent": [
+                "Protect strategic investments.",
+                "Prudence ensures long-term returns.",
+                "Don’t risk capital without clear visibility."
+              ],
+              "radical": [
+                "Optimize profits by cutting non-essential costs.",
+                "Make capital work more efficiently.",
+                "Restructure to maximize profitability."
+              ],
+              "statu_quo": [
+                "Current capital flow is optimal.",
+                "Stability protects our interests.",
+                "No need to adjust current allocation."
+              ]
+            },
+            "theocracie": {
+              "prudent": [
+                "Resources are a gift, let’s manage them with humility.",
+                "Each asset must be used wisely.",
+                "Frugality is an essential virtue."
+              ],
+              "radical": [
+                "Dedicate our resources to the sacred mission.",
+                "Wealth must serve the divine will.",
+                "Everything we have must serve faith."
+              ],
+              "statu_quo": [
+                "Current allocation follows sacred order.",
+                "Tradition ensures our balance.",
+                "Let’s continue on the established path."
+              ]
+            }
+          }
+      },
+      "communicant": {
+          "reponses": {
+            "democratie_liberale": {
+              "prudent": [
+                "Inform citizens clearly before any decision.",
+                "Transparency strengthens public trust.",
+                "Prepare public opinion with clarity and pedagogy.",
+                "Controlled communication avoids unnecessary tension.",
+                "Listen to feedback before shaping the message."
+              ],
+              "radical": [
+                "Push a strong narrative to regain control.",
+                "Public opinion must understand change is inevitable.",
+                "Reclaim the media space now.",
+                "A clear, repeated, and owned message.",
+                "Shape perception before it escapes us."
+              ],
+              "statu_quo": [
+                "The current message is understood. Keep it.",
+                "Maintain stable and consistent communication.",
+                "No need to disrupt a working narrative."
+              ]
+            },
+            "republique_federale": {
+              "prudent": [
+                "Adapt messaging to regional realities.",
+                "Coordinate communication with territories.",
+                "A single message isn’t enough in a federal system."
+              ],
+              "radical": [
+                "Impose a clear national communication line.",
+                "Unify messaging to avoid dissonance.",
+                "The country must hear one voice."
+              ],
+              "statu_quo": [
+                "Each region handles its communication.",
+                "Diverse messaging reflects our structure.",
+                "Let’s not centralize speech."
+              ]
+            },
+            "monarchie_constitutionnelle": {
+              "prudent": [
+                "Preserve the Crown’s image with care.",
+                "Every statement engages the institution.",
+                "Communication must remain dignified and controlled."
+              ],
+              "radical": [
+                "The Crown must speak out with strength.",
+                "A royal message can redirect the nation.",
+                "Assert a strong symbolic presence."
+              ],
+              "statu_quo": [
+                "The Crown’s discretion is its strength.",
+                "Current image maintains balance.",
+                "Remain in institutional restraint."
+              ]
+            },
+            "technocratie_ia": {
+              "prudent": [
+                "Only share data-validated information.",
+                "Clarity matters more than emotion.",
+                "Avoid any non-optimized communication."
+              ],
+              "radical": [
+                "Standardize all messaging via AI systems.",
+                "Remove human bias from communication.",
+                "Optimized information flow must replace human interpretation."
+              ],
+              "statu_quo": [
+                "Current channels are effective.",
+                "The system is optimal.",
+                "No change required."
+              ]
+            },
+            "junte_militaire": {
+              "prudent": [
+                "Control sensitive information.",
+                "Communication must remain secure.",
+                "Avoid leaks that weaken our position."
+              ],
+              "radical": [
+                "Lock down media immediately.",
+                "Propaganda must support the national effort.",
+                "No dissenting voice should emerge."
+              ],
+              "statu_quo": [
+                "Information control is sufficient.",
+                "Maintain current line.",
+                "Stability comes from controlled silence."
+              ]
+            },
+            "oligarchie": {
+              "prudent": [
+                "Manage our image with key stakeholders.",
+                "Perception directly impacts value.",
+                "Poor messaging can be costly."
+              ],
+              "radical": [
+                "Shape public opinion in our favor.",
+                "Invest heavily in media influence.",
+                "Control narratives that impact our interests."
+              ],
+              "statu_quo": [
+                "Our media position is strong.",
+                "Current balance favors us.",
+                "No need to expose our interests further."
+              ]
+            },
+            "theocracie": {
+              "prudent": [
+                "Spread the word with wisdom.",
+                "Each message must stay true to teachings.",
+                "Restraint strengthens faith."
+              ],
+              "radical": [
+                "Proclaim the truth without compromise.",
+                "The sacred message must be heard everywhere.",
+                "Impose a clear and absolute message."
+              ],
+              "statu_quo": [
+                "Believers already know the path.",
+                "Current message is sufficient.",
+                "Do not alter the sacred word."
+              ]
+            }
+          }
+      },
+      "protecteur": {
+        "reponses": {
+          "democratie_liberale": {
+            "prudent": [
+              "Let’s protect the most vulnerable before any reform.",
+              "No decision should weaken social balances.",
+              "Let’s assess the human impact before acting.",
+              "Social cohesion requires strong safeguards.",
+              "Let’s ensure proper support for every change."
+            ],
+            "radical": [
+              "No one must be left behind! Act now.",
+              "Strengthen social protections immediately.",
+              "The social emergency can no longer wait.",
+              "Guarantee real rights, no compromises.",
+              "Solidarity must become an absolute priority."
+            ],
+            "statu_quo": [
+              "Our protection system works. Let’s preserve it.",
+              "Social stability relies on proven mechanisms.",
+              "Let’s not weaken an already balanced system."
+            ]
+          },
+          "republique_federale": {
+            "prudent": [
+              "Let’s coordinate social policies across regions.",
+              "Ensure equal protection across the territory.",
+              "Each region must be able to adapt its support."
+            ],
+            "radical": [
+              "Harmonize social protections immediately.",
+              "No region should be left behind.",
+              "Impose a common baseline of guarantees for all."
+            ],
+            "statu_quo": [
+              "Each territory manages its own social policy.",
+              "Local balances must be respected.",
+              "Do not centralize social protection."
+            ]
+          },
+          "monarchie_constitutionnelle": {
+            "prudent": [
+              "Ensure the well-being of the people with restraint.",
+              "The Crown must protect without disruption.",
+              "Every decision must preserve the harmony of the Kingdom."
+            ],
+            "radical": [
+              "The people must feel the Crown’s protection.",
+              "Immediately reinforce support for the most vulnerable.",
+              "A strong Kingdom protects all its subjects."
+            ],
+            "statu_quo": [
+              "The current social order ensures stability.",
+              "Tradition maintains balance between classes.",
+              "Let’s not alter the existing structure."
+            ]
+          },
+          "technocratie_ia": {
+            "prudent": [
+              "Social indicators require further analysis.",
+              "Optimize protection based on data.",
+              "Adjust systems after model validation."
+            ],
+            "radical": [
+              "Automate benefit distribution.",
+              "AI must ensure fair protection for all.",
+              "Remove inefficiencies in social systems."
+            ],
+            "statu_quo": [
+              "Social indicators are stable.",
+              "The current system meets its objectives.",
+              "No changes are required."
+            ]
+          },
+          "junte_militaire": {
+            "prudent": [
+              "Maintain a minimum level of population stability.",
+              "A controlled population is a manageable one.",
+              "Avoid unnecessary social tensions."
+            ],
+            "radical": [
+              "Ensure order through strict measures.",
+              "Security takes precedence over all else.",
+              "Social control is a necessity."
+            ],
+            "statu_quo": [
+              "The situation is under control.",
+              "The current order is sufficient.",
+              "Maintain social discipline."
+            ]
+          },
+          "oligarchie": {
+            "prudent": [
+              "Maintain a minimum level of social stability.",
+              "A calm environment protects our interests.",
+              "Social tensions harm overall performance."
+            ],
+            "radical": [
+              "Invest in mechanisms to contain tensions.",
+              "Social stability must be ensured at all costs.",
+              "Prevent any instability that could impact our positions."
+            ],
+            "statu_quo": [
+              "The current balance is acceptable.",
+              "Existing mechanisms are sufficient.",
+              "Do not alter social management."
+            ]
+          },
+          "theocracie": {
+            "prudent": [
+              "Care for the faithful with wisdom.",
+              "Compassion guides our duty.",
+              "Every action must reflect mercy."
+            ],
+            "radical": [
+              "Protect believers without compromise.",
+              "The community must be preserved at all costs.",
+              "Faith demands total protection."
+            ],
+            "statu_quo": [
+              "The current order already protects the faithful.",
+              "Tradition ensures cohesion.",
+              "Let’s continue along the established path."
+            ]
+          }
+        }
+      },
+      "ambassadeur": {
+        "reponses": {
+          "democratie_liberale": {
+            "prudent": [
+              "Prioritize dialogue before any escalation.",
+              "Build long-term alliances.",
+              "Diplomacy requires patience and consistency.",
+              "Consult partners before committing.",
+              "A solid agreement is better than a quick victory."
+            ],
+            "radical": [
+              "Assert our position clearly on the global stage.",
+              "We must carry more weight in negotiations.",
+              "Redefine our alliances without delay.",
+              "An offensive diplomacy is required.",
+              "Make our voice heard with strength."
+            ],
+            "statu_quo": [
+              "Our international relations are stable.",
+              "The current diplomatic balance is satisfactory.",
+              "Maintain our existing commitments."
+            ]
+          },
+          "republique_federale": {
+            "prudent": [
+              "Coordinate diplomacy with regional authorities.",
+              "Take territorial interests into account.",
+              "A unified position takes time to build."
+            ],
+            "radical": [
+              "Impose a clear national diplomatic line.",
+              "Unify our voice internationally.",
+              "The country must speak as one."
+            ],
+            "statu_quo": [
+              "Regions maintain their own external relations.",
+              "Diplomatic diversity is our strength.",
+              "Do not centralize foreign policy."
+            ]
+          },
+          "monarchie_constitutionnelle": {
+            "prudent": [
+              "Preserve our historic alliances.",
+              "Diplomacy must reflect the continuity of the Kingdom.",
+              "Every commitment must honor the Crown."
+            ],
+            "radical": [
+              "Assert the Kingdom’s prestige internationally.",
+              "Strengthen our influence through bold actions.",
+              "The Crown must shine beyond our borders."
+            ],
+            "statu_quo": [
+              "Our current relations are balanced.",
+              "Diplomatic tradition guides our actions.",
+              "Maintain our historic alliances."
+            ]
+          },
+          "technocratie_ia": {
+            "prudent": [
+              "Analyze data before any negotiation.",
+              "Optimize agreements using predictive models.",
+              "Avoid any irrational commitments."
+            ],
+            "radical": [
+              "Reorganize alliances based on strategic performance.",
+              "Prioritize high-value partnerships.",
+              "Diplomacy must be fully optimized."
+            ],
+            "statu_quo": [
+              "Current relations are optimal.",
+              "Models do not justify any change.",
+              "Maintain existing parameters."
+            ]
+          },
+          "junte_militaire": {
+            "prudent": [
+              "Avoid unnecessary provocations.",
+              "Diplomacy must serve our security.",
+              "Remain vigilant in our commitments."
+            ],
+            "radical": [
+              "Demonstrate our strength on the global stage.",
+              "Deterrence must guide foreign policy.",
+              "No weakness must be perceived."
+            ],
+            "statu_quo": [
+              "The external situation is under control.",
+              "Our positions are respected.",
+              "Maintain the current balance."
+            ]
+          },
+          "oligarchie": {
+            "prudent": [
+              "Protect our economic interests abroad.",
+              "Negotiate with precision.",
+              "Every partnership must be profitable."
+            ],
+            "radical": [
+              "Expand our influence in global markets.",
+              "Negotiate aggressively in our favor.",
+              "Profit must guide our alliances."
+            ],
+            "statu_quo": [
+              "Our international positions are strong.",
+              "Current agreements are advantageous.",
+              "Do not alter existing relationships."
+            ]
+          },
+          "theocracie": {
+            "prudent": [
+              "Engage in dialogue without compromising principles.",
+              "Faith guides our external relations.",
+              "Remain true to our values in every exchange."
+            ],
+            "radical": [
+              "Carry our faith beyond our borders.",
+              "Assert our convictions without compromise.",
+              "Truth must be defended everywhere."
+            ],
+            "statu_quo": [
+              "Our relations follow the established order.",
+              "Tradition guides our exchanges.",
+              "Maintain our current stance."
+            ]
+          }
+        }
+      },
+      "analyste": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Current data remains insufficient, let’s deepen the analysis before deciding.",
+            "Cross-check economic and social indicators, a partial view would be misleading.",
+            "Observed trends need confirmation, let’s avoid premature conclusions.",
+            "Refine our models, some variables remain unstable.",
+            "A sound decision relies on solid data, let’s continue the assessment."
+          ],
+          "radical": [
+            "The numbers are clear. We must act now.",
+            "The trends are irreversible! Delaying would be a mistake.",
+            "Data is converging. Hesitation is a risk.",
+            "Indicators are in the red! We must correct immediately.",
+            "The analysis is conclusive. Let’s act."
+          ],
+          "statu_quo": [
+            "Indicators are stable.",
+            "No significant variation observed.",
+            "Data confirms the current balance.",
+            "Trends remain consistent.",
+            "No adjustment is needed."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Data varies across regions, a differentiated analysis is required.",
+            "Let’s compare territorial indicators, gaps must be understood before acting.",
+            "Regional dynamics require a nuanced reading, avoid generalizations.",
+            "Local disparities complicate the analysis, let’s deepen it before deciding.",
+            "A global diagnosis hides local realities, let’s refine our understanding."
+          ],
+          "radical": [
+            "Regional gaps are too large. Correct them immediately.",
+            "Data reveals major imbalances! Coordinated action is required.",
+            "Territorial analysis is clear. Harmonization is needed.",
+            "Disparities are worsening! We must intervene now.",
+            "Indicators point to imbalance. Let’s respond."
+          ],
+          "statu_quo": [
+            "Regional variations are contained.",
+            "Territorial indicators remain consistent.",
+            "Local balances are maintained.",
+            "No significant drift observed.",
+            "The federal system absorbs the gaps."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Data must be interpreted with restraint, avoid overreading.",
+            "Indicators are stable, but require continuous monitoring.",
+            "A deeper analysis is needed, some trends remain uncertain.",
+            "Signals are weak, let’s consolidate before concluding.",
+            "The context calls for caution, let’s refine our assessment."
+          ],
+          "radical": [
+            "Trends are clear. We must act.",
+            "Data shows a shift! A rapid decision is required.",
+            "The analysis is clear. We must adjust immediately.",
+            "Signals are strong! Ignoring them would be a mistake.",
+            "Indicators converge. Let’s decide without delay."
+          ],
+          "statu_quo": [
+            "Indicators confirm stability.",
+            "Trends remain as expected.",
+            "No notable evolution observed.",
+            "Data validates the current balance.",
+            "The situation remains unchanged."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Models require another iteration, some variables remain uncertain.",
+            "Data is incomplete, continue processing.",
+            "Simulations must be refined, confidence level is insufficient.",
+            "Results show margins of error, recalibrate parameters.",
+            "Additional validation is required, suspend decision."
+          ],
+          "radical": [
+            "Data converges. Immediate execution.",
+            "Models are conclusive! Action required.",
+            "Analysis complete. Trigger procedure.",
+            "Results are optimal! No delay acceptable.",
+            "Parameters validated. Immediate launch."
+          ],
+          "statu_quo": [
+            "Models are stable.",
+            "Parameters are optimized.",
+            "No anomaly detected.",
+            "System operates normally.",
+            "No adjustment required."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Intelligence must be consolidated, any misreading would be critical.",
+            "Field data requires verification, avoid misinterpretation.",
+            "Information remains partial, continue gathering.",
+            "Signals are uncertain, validate before deciding.",
+            "Rigorous analysis is essential, confirm every data point."
+          ],
+          "radical": [
+            "Intelligence is clear. Immediate intervention.",
+            "Data indicates a threat! Respond without delay.",
+            "Analysis confirms danger. Act.",
+            "Signals are critical! Neutralize immediately.",
+            "Information converges. Execute."
+          ],
+          "statu_quo": [
+            "The situation is under control.",
+            "No immediate threat detected.",
+            "Data confirms stability.",
+            "Indicators remain constant.",
+            "Maintain current position."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Performance indicators must be consolidated, premature decisions would be risky.",
+            "Financial data requires deeper analysis, some trends remain unclear.",
+            "Projections must be refined, margins of error are significant.",
+            "Market signals are mixed, avoid premature conclusions.",
+            "A finer reading of data is needed, continue analysis."
+          ],
+          "radical": [
+            "Numbers are clear. Adjust immediately.",
+            "Indicators signal an opportunity! Act fast.",
+            "Financial analysis is clear. Reallocate.",
+            "Trends are strong! Take advantage now.",
+            "Data converges. Immediate decision."
+          ],
+          "statu_quo": [
+            "Performance is stable.",
+            "Financial indicators are consistent.",
+            "Projections remain unchanged.",
+            "No significant variation.",
+            "Maintain current strategy."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "Signs must be interpreted with discernment, avoid hasty conclusions.",
+            "Teachings require reflection, deepen our understanding.",
+            "Indications remain open, let’s take time to analyze.",
+            "Reading the signs requires caution, consolidate interpretation.",
+            "A deeper spiritual analysis is needed, delay the decision."
+          ],
+          "radical": [
+            "Signs are clear. We must act.",
+            "Interpretation leaves no doubt! Decide.",
+            "Truth is revealed. Act immediately.",
+            "Indications converge! We must respond.",
+            "The message is explicit. Act."
+          ],
+          "statu_quo": [
+            "Signs are constant.",
+            "No new interpretation needed.",
+            "Teachings remain unchanged.",
+            "Current reading is sufficient.",
+            "Maintain current interpretation."
+          ]
+        }
+      }
+      },
+      "arbitre": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Ensure every decision respects the rule of law, without exception.",
+            "Examine facts impartially, haste would undermine justice.",
+            "Maintain balance between rights and duties, without distortion.",
+            "Take time to hear all parties, legitimacy depends on it.",
+            "Justice requires rigor and restraint, avoid rushed decisions."
+          ],
+          "radical": [
+            "The law must be applied. No compromise.",
+            "Injustice cannot wait! Decide now.",
+            "Fairness demands immediate action. Rule.",
+            "The law is clear! Apply it.",
+            "Any deviation must be corrected. Immediately."
+          ],
+          "statu_quo": [
+            "The current legal framework is respected.",
+            "Institutions ensure balance.",
+            "Justice is proceeding normally.",
+            "No irregularities detected.",
+            "Maintain the existing framework."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Take territorial specificities into account, a uniform decision would be inadequate.",
+            "Ensure balance between local and national jurisdictions.",
+            "Assess implications for each region, overall coherence depends on it.",
+            "Coordination across levels is essential, proceed carefully.",
+            "A fair decision must reflect local realities, refine analysis."
+          ],
+          "radical": [
+            "A national decision is required. Rule.",
+            "Territorial divergences cannot block justice! Impose a clear rule.",
+            "Fairness requires immediate harmonization. Decide.",
+            "The framework must be unified! End disparities.",
+            "Justice cannot be fragmented. Act."
+          ],
+          "statu_quo": [
+            "Local jurisdictions function properly.",
+            "Balance between levels is maintained.",
+            "Decisions remain consistent.",
+            "No major conflicts observed.",
+            "Maintain current system."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "The decision must respect institutions while preserving the Kingdom’s balance.",
+            "Act with restraint, justice engages the authority of the Crown.",
+            "Each ruling must be legitimate, avoid haste.",
+            "Legal tradition must be respected while remaining fair.",
+            "A just decision strengthens order, take the necessary time."
+          ],
+          "radical": [
+            "The decision must be delivered. Without delay.",
+            "Authority must rule! Uncertainty weakens order.",
+            "The Kingdom’s justice must prevail. Decide.",
+            "The ruling is clear! Apply it immediately.",
+            "The Crown must restore balance. Now."
+          ],
+          "statu_quo": [
+            "Institutions ensure justice.",
+            "Legal balance is maintained.",
+            "Decisions follow established practices.",
+            "No change required.",
+            "Maintain established order."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Decision parameters must be refined, some variables remain unstable.",
+            "The algorithm requires additional validation, confidence level is insufficient.",
+            "Data must be consolidated, premature decisions would be biased.",
+            "The model must be recalibrated, inconsistencies remain.",
+            "Optimal decisions require maximum precision, continue analysis."
+          ],
+          "radical": [
+            "Parameters validated. Execute.",
+            "Model is conclusive! Automated decision.",
+            "Data converges. Immediate ruling.",
+            "Calculation is optimal! Direct application.",
+            "No ambiguity. Decision initiated."
+          ],
+          "statu_quo": [
+            "Decision system is stable.",
+            "Parameters are consistent.",
+            "No anomaly detected.",
+            "Decisions remain optimized.",
+            "Maintain current model."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Each decision must reinforce order, avoid misjudgment.",
+            "Assess impact on discipline, stability depends on it.",
+            "A poorly calibrated decision weakens authority, proceed carefully.",
+            "Facts must be verified, any error would be exploited.",
+            "Maintain strict control, without haste."
+          ],
+          "radical": [
+            "Immediate decision. Execute.",
+            "No contestation tolerated! Rule.",
+            "Order must be restored! Without delay.",
+            "Discipline demands a firm response. Now.",
+            "Any deviation must be punished. Immediately."
+          ],
+          "statu_quo": [
+            "The situation is controlled.",
+            "Order is maintained.",
+            "No intervention required.",
+            "Rules are respected.",
+            "Maintain current control."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Decisions must preserve influence balances, avoid disruption.",
+            "Assess impacts on our positions, any error would be costly.",
+            "A rushed ruling could weaken our interests, analyze further.",
+            "Power dynamics must be considered, proceed carefully.",
+            "A well-considered decision protects our advantages."
+          ],
+          "radical": [
+            "Interests are clear. Decide.",
+            "No hesitation! Rule in our favor.",
+            "The balance must favor us. Act.",
+            "Power dynamics demand a decision. Now.",
+            "Optimize our position! Immediate ruling."
+          ],
+          "statu_quo": [
+            "Current balances are satisfactory.",
+            "Positions are maintained.",
+            "No intervention required.",
+            "System works as expected.",
+            "Maintain existing relations."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "The decision must be guided by principles, avoid hasty interpretation.",
+            "Take time to discern, accuracy depends on it.",
+            "Each ruling must reflect truth, without haste.",
+            "Teachings must be respected, deepen interpretation.",
+            "A just decision requires wisdom, proceed carefully."
+          ],
+          "radical": [
+            "Truth is clear. Decide.",
+            "Judgment must be made! Act.",
+            "No ambiguity! Rule according to principles.",
+            "The decision is obvious. Apply it.",
+            "Order must be restored! Without delay."
+          ],
+          "statu_quo": [
+            "Principles are respected.",
+            "Order is maintained.",
+            "No new decision required.",
+            "Rules remain unchanged.",
+            "Maintain current balance."
+          ]
+        }
+      }
+      },
+      "enqueteur": {
+        "reponses": {
+          "democratie_liberale": {
+            "prudent": [
+              "Let’s verify the facts before drawing conclusions, there are still gaps.",
+              "Cross-check the sources, one version isn’t enough.",
+              "The investigation needs to go deeper, some elements remain unclear.",
+              "Let’s avoid rushing interpretations, the evidence needs to be solid.",
+              "Transparency requires established facts, let’s keep investigating."
+            ],
+            "radical": [
+              "The facts speak for themselves. We must reveal the truth.",
+              "The evidence is there! Let’s bring everything to light.",
+              "We already know enough. It’s time to expose it.",
+              "These blind spots are unacceptable! Launch a full investigation now.",
+              "The truth can’t wait. Make it public."
+            ],
+            "statu_quo": [
+              "The available evidence is sufficient.",
+              "No major anomalies detected.",
+              "Current conclusions still hold.",
+              "The established facts remain consistent.",
+              "Maintain current findings."
+            ]
+          },
+          "republique_federale": {
+            "prudent": [
+              "Facts vary across regions, we need a cross-analysis.",
+              "Let’s gather local data, reality isn’t uniform.",
+              "Each region brings different insights, let’s consolidate them.",
+              "Information must be harmonized, avoid partial conclusions.",
+              "A global investigation needs reliable local data, let’s continue."
+            ],
+            "radical": [
+              "Regional inconsistencies are too significant. Investigate immediately.",
+              "The facts diverge! We need clarity now.",
+              "The data doesn’t match. Launch a deeper investigation.",
+              "Too many blind spots! Verify everything.",
+              "The contradictions are obvious. Expose them."
+            ],
+            "statu_quo": [
+              "Regional information is consistent.",
+              "No significant discrepancies.",
+              "Data is aligned.",
+              "Conclusions remain valid.",
+              "Maintain current analysis."
+            ]
+          },
+          "monarchie_constitutionnelle": {
+            "prudent": [
+              "Facts must be established rigorously, let’s avoid unjust harm.",
+              "Every element must be verified, reputation is at stake.",
+              "A measured investigation is needed, some information is sensitive.",
+              "Evidence must be solid, any mistake would be damaging.",
+              "Truth must be established with discernment, let’s continue the analysis."
+            ],
+            "radical": [
+              "The truth must be revealed. No detours.",
+              "The facts are there! Bring them to light.",
+              "No blind spots tolerated! Investigate immediately.",
+              "The truth must come out. Now.",
+              "The evidence is undeniable! Act."
+            ],
+            "statu_quo": [
+              "Established facts are sufficient.",
+              "No further investigation required.",
+              "Conclusions are accepted.",
+              "The elements remain unchanged.",
+              "Maintain current position."
+            ]
+          },
+          "technocratie_ia": {
+            "prudent": [
+              "Data must be verified, some anomalies remain.",
+              "Correlations need confirmation, avoid misinterpretation.",
+              "Sources must be validated, reliability is still uncertain.",
+              "Detected discrepancies require further analysis, continue.",
+              "A thorough data validation is needed, delay the conclusion."
+            ],
+            "radical": [
+              "Anomalies detected. Immediate verification.",
+              "Data inconsistency! Full audit required.",
+              "Error identified. Analysis in progress.",
+              "Critical discrepancies! Immediate correction.",
+              "Inconsistency confirmed. Investigation initiated."
+            ],
+            "statu_quo": [
+              "Data is consistent.",
+              "No anomalies detected.",
+              "Systems are reliable.",
+              "Results are validated.",
+              "Maintain current state."
+            ]
+          },
+          "junte_militaire": {
+            "prudent": [
+              "Information must be verified, any error could be exploited.",
+              "Cross-check intelligence, one source isn’t enough.",
+              "Field data needs confirmation, remain cautious.",
+              "Signals are uncertain, continue monitoring.",
+              "Rigorous analysis is essential, validate every element."
+            ],
+            "radical": [
+              "The facts are clear. Immediate interrogation.",
+              "Information converges! Act.",
+              "Doubts are gone. Intervention.",
+              "Any uncertainty is a threat! Verify immediately.",
+              "Evidence is sufficient. Execute."
+            ],
+            "statu_quo": [
+              "Intelligence is reliable.",
+              "No threat identified.",
+              "Information is consistent.",
+              "Situation is under control.",
+              "Maintain current setup."
+            ]
+          },
+          "oligarchie": {
+            "prudent": [
+              "Information must be verified, some areas remain unclear.",
+              "Cross-check the data, market signals are mixed.",
+              "Sources must be confirmed, avoid misinterpretation.",
+              "Indicators require careful reading, continue analysis.",
+              "A thorough verification is needed, consolidate information."
+            ],
+            "radical": [
+              "Information is clear. Act.",
+              "Signals are strong! Verify immediately.",
+              "Data converges. Quick decision.",
+              "Inconsistencies are visible! Audit.",
+              "Facts are established. Move."
+            ],
+            "statu_quo": [
+              "Information is reliable.",
+              "Data is consistent.",
+              "No notable anomalies.",
+              "Analyses are confirmed.",
+              "Maintain current reading."
+            ]
+          },
+          "theocracie": {
+            "prudent": [
+              "Signs must be interpreted carefully, avoid rushed conclusions.",
+              "Each indication must be examined, truth requires patience.",
+              "Elements must be deeply understood, continue the search.",
+              "Truth reveals itself gradually, analyze with wisdom.",
+              "Careful reading of the signs is needed, delay the conclusion."
+            ],
+            "radical": [
+              "Truth is revealed. Act.",
+              "The signs are clear! We must respond.",
+              "No ambiguity! Immediate decision.",
+              "The evidence is obvious. Act.",
+              "Revelation is clear! Intervention."
+            ],
+            "statu_quo": [
+              "The signs are consistent.",
+              "No new revelation.",
+              "Interpretations remain valid.",
+              "Elements are stable.",
+              "Maintain current reading."
+            ]
+          }
+        }
+      },
+      "guide": {
+        "reponses": {
+          "democratie_liberale": {
+            "prudent": [
+              "Let’s take time to understand before deciding, meaning guides action.",
+              "A sound direction comes from listening, let’s move carefully.",
+              "Let’s clarify collective choices without disrupting balance.",
+              "Direction must be shared, let’s build it together.",
+              "A sustainable path requires clarity and dialogue."
+            ],
+            "radical": [
+              "It’s time to set a new course. Now.",
+              "We must restore meaning! Let’s redirect our choices.",
+              "The current direction no longer inspires. Change it.",
+              "We need a clear direction! No hesitation.",
+              "A vision is needed. Follow it."
+            ],
+            "statu_quo": [
+              "The current direction is understood.",
+              "The course remains consistent.",
+              "Guidelines are established.",
+              "No reorientation needed.",
+              "Maintain current path."
+            ]
+          },
+          "republique_federale": {
+            "prudent": [
+              "Let’s build a shared direction while respecting each region.",
+              "Direction must reflect local realities, proceed with nuance.",
+              "A shared course takes time, let’s harmonize gradually.",
+              "Listen to regional dynamics, they shape our path.",
+              "A common vision is built collectively, without rushing."
+            ],
+            "radical": [
+              "The country needs a clear direction. Now.",
+              "A single course must emerge! Align everything.",
+              "Differences are blurring the path. Clarify it.",
+              "We must set a national direction! Immediately.",
+              "A shared vision is needed. Decide."
+            ],
+            "statu_quo": [
+              "Regional directions are consistent.",
+              "The current balance is clear.",
+              "Paths are understood.",
+              "No clarification needed.",
+              "Maintain existing framework."
+            ]
+          },
+          "monarchie_constitutionnelle": {
+            "prudent": [
+              "Direction must follow the Kingdom’s continuity, with care.",
+              "Guide without breaking balance, stability matters.",
+              "Each direction must honor the past while shaping the future.",
+              "Meaning is built over time, move steadily.",
+              "A just path respects tradition while preparing tomorrow."
+            ],
+            "radical": [
+              "The Kingdom needs a strong direction. Now.",
+              "A new course is required! Assert it.",
+              "The future demands clarity. Redirect.",
+              "Time to lead with strength! Decide.",
+              "The path must be redefined. Immediately."
+            ],
+            "statu_quo": [
+              "The current direction respects tradition.",
+              "Foundations are solid.",
+              "Continuity is ensured.",
+              "No break needed.",
+              "Maintain current course."
+            ]
+          },
+          "technocratie_ia": {
+            "prudent": [
+              "Direction must be adjusted based on data, refine the trajectory.",
+              "Optimal direction requires reliable models, continue analysis.",
+              "Projections must be consolidated, avoid drift.",
+              "Align trajectory with data, adjust gradually.",
+              "Effective direction depends on precision, keep optimizing."
+            ],
+            "radical": [
+              "New trajectory required. Immediate adjustment.",
+              "Data dictates direction! Apply.",
+              "Course must be recalculated! Now.",
+              "Optimization in progress! New direction.",
+              "Trajectory defined. Execute."
+            ],
+            "statu_quo": [
+              "Trajectory is optimized.",
+              "Parameters are consistent.",
+              "Direction is stable.",
+              "No changes required.",
+              "Maintain current course."
+            ]
+          },
+          "junte_militaire": {
+            "prudent": [
+              "Direction must be clear but controlled, avoid misjudgment.",
+              "A weak direction undermines authority, stay precise.",
+              "Consistency of direction ensures discipline, stay sharp.",
+              "Every directive must be understood, no ambiguity.",
+              "Strong direction relies on control, reinforce it."
+            ],
+            "radical": [
+              "Set the course. Now.",
+              "No hesitation! Orders are given.",
+              "The path is clear! Follow it.",
+              "Impose direction! Immediately.",
+              "Clear order. Execute."
+            ],
+            "statu_quo": [
+              "Current direction is respected.",
+              "Course is maintained.",
+              "Discipline is ensured.",
+              "No revision needed.",
+              "Maintain current line."
+            ]
+          },
+          "oligarchie": {
+            "prudent": [
+              "Guide choices carefully, stability depends on clarity.",
+              "A coherent direction protects our interests, move methodically.",
+              "Keep the course readable, avoid confusion.",
+              "Align direction with objectives, no rush.",
+              "Clear vision secures our position, adjust gradually."
+            ],
+            "radical": [
+              "Change direction. Now.",
+              "A new course is required! Decide.",
+              "The path must evolve! Immediately.",
+              "Shift priorities! Now.",
+              "New direction. Execute."
+            ],
+            "statu_quo": [
+              "Current direction is effective.",
+              "Strategies are consistent.",
+              "Course is controlled.",
+              "No revision needed.",
+              "Maintain current trajectory."
+            ]
+          },
+          "theocracie": {
+            "prudent": [
+              "The path must be understood before being followed, move wisely.",
+              "Guide with discernment, every step must have meaning.",
+              "Direction reveals itself over time, listen carefully.",
+              "A just path respects teachings, without haste.",
+              "The way becomes clear with patience, move with faith."
+            ],
+            "radical": [
+              "The path is revealed. Follow it.",
+              "No doubt remains! Move forward.",
+              "The way is clear! Commit.",
+              "Direction is set! Now.",
+              "Follow the path. Without deviation."
+            ],
+            "statu_quo": [
+              "The current path is clear.",
+              "Guidelines are established.",
+              "Direction is followed.",
+              "No reorientation needed.",
+              "Maintain current path."
+            ]
+          }
+        }
+      },
+      "strategist": {
+        "responses": {
+          "liberal_democracy": {
+            "prudent": [
+              "Let’s anticipate long-term consequences, every decision shapes the future.",
+              "Let’s build a coherent trajectory, avoiding short-term reactions.",
+              "Let’s align our choices with a sustainable vision, without rushing.",
+              "Let’s consider future balances, an isolated decision would be insufficient.",
+              "A solid strategy is built over time, let’s move forward methodically."
+            ],
+            "radical": [
+              "We must change course. Now.",
+              "Time is working against us! Let’s redirect our strategy.",
+              "The current trajectory leads to a dead end. Let’s correct it immediately.",
+              "We must regain the initiative! Let’s redefine our priorities.",
+              "A new strategy is required. Without delay."
+            ],
+            "status_quo": [
+              "The current trajectory is coherent.",
+              "The existing strategy remains relevant.",
+              "Objectives are aligned.",
+              "No strategic adjustment is necessary.",
+              "Maintain the current course."
+            ]
+          },
+          "federal_republic": {
+            "prudent": [
+              "Let’s coordinate a shared strategy, regional dynamics must converge.",
+              "Let’s consider local timelines, a uniform vision would be incomplete.",
+              "Let’s build a shared direction, each territory must recognize itself in it.",
+              "Strategic alignment takes time, let’s move forward progressively.",
+              "An effective strategy integrates regional specificities, let’s refine our approach."
+            ],
+            "radical": [
+              "Impose a clear national direction. Now.",
+              "Divergences are slowing us down! Let’s unify the strategy.",
+              "We must decide! A single trajectory must prevail.",
+              "The country must move as one. Let’s redirect immediately.",
+              "Strategic dispersion is a risk! Let’s correct it."
+            ],
+            "status_quo": [
+              "Regional strategies are coherent.",
+              "The current balance is functional.",
+              "Trajectories remain aligned.",
+              "No reorientation is necessary.",
+              "Maintain existing directions."
+            ]
+          },
+          "constitutional_monarchy": {
+            "prudent": [
+              "Let’s anchor our strategy in the continuity of the Kingdom, without unnecessary disruption.",
+              "Let’s preserve established balances while preparing the future.",
+              "Each direction must strengthen long-term stability.",
+              "The vision must honor heritage while remaining adaptable.",
+              "Let’s build a sustainable trajectory with measure and consistency."
+            ],
+            "radical": [
+              "The Kingdom must redefine its trajectory. Now.",
+              "A strategic turning point is required! Let’s act.",
+              "Heritage must not hinder the future! Let’s redirect.",
+              "It’s time to assert a new vision. Without delay.",
+              "The strategy must evolve! Let’s decide."
+            ],
+            "status_quo": [
+              "The current trajectory respects the heritage.",
+              "Orientations are coherent.",
+              "Strategic stability is ensured.",
+              "No disruption is necessary.",
+              "Maintain the current line."
+            ]
+          },
+          "ai_technocracy": {
+            "prudent": [
+              "Projections require recalibration, some variables remain uncertain.",
+              "Let’s refine predictive models, the margin of error must be reduced.",
+              "Simulations must be consolidated, let’s avoid premature decisions.",
+              "Let’s optimize the trajectory based on data, adjusting progressively.",
+              "An optimal strategy requires reliable data, let’s continue the analysis."
+            ],
+            "radical": [
+              "Projections converge. Immediate reorientation.",
+              "Model is clear! New strategy.",
+              "Maximum optimization required! Adjustment in progress.",
+              "Parameters are outdated! Immediate recalculation.",
+              "New trajectory validated. Execution."
+            ],
+            "status_quo": [
+              "Models are coherent.",
+              "Trajectory is optimized.",
+              "No divergence detected.",
+              "Projections are stable.",
+              "Maintain current strategy."
+            ]
+          },
+          "military_junta": {
+            "prudent": [
+              "Let’s plan every move, a strategic mistake would be fatal.",
+              "Let’s assess power dynamics, every action must be controlled.",
+              "Let’s anticipate adversary reactions, move forward with discipline.",
+              "Preparation determines victory, let’s not rush.",
+              "A solid strategy relies on control, let’s consolidate our positions."
+            ],
+            "radical": [
+              "Take the initiative. Now.",
+              "The enemy must not anticipate! Strike.",
+              "Change strategy! Without delay.",
+              "The balance of power must shift! Act.",
+              "Immediate offensive. Execute."
+            ],
+            "status_quo": [
+              "The current position is controlled.",
+              "The strategy in place is effective.",
+              "Forces are balanced.",
+              "No maneuver required.",
+              "Maintain current posture."
+            ]
+          },
+          "oligarchy": {
+            "prudent": [
+              "Let’s optimize our long-term positions, avoiding impulsive decisions.",
+              "Market dynamics must be anticipated, let’s adjust progressively.",
+              "Let’s build a profitable strategy over time, without rushing.",
+              "Balances must be preserved, any disruption carries risk.",
+              "A solid strategic vision protects our interests, let’s proceed methodically."
+            ],
+            "radical": [
+              "Reallocate our investments. Now.",
+              "The market is shifting! Let’s take advantage.",
+              "Change strategy! Without waiting.",
+              "An opportunity emerges! Act fast.",
+              "Maximize our position! Immediately."
+            ],
+            "status_quo": [
+              "The current strategy is profitable.",
+              "Positions are optimized.",
+              "Indicators are stable.",
+              "No reorientation necessary.",
+              "Maintain the current line."
+            ]
+          },
+          "theocracy": {
+            "prudent": [
+              "Let’s anchor our actions in a guided vision, without rushing.",
+              "Strategy must respect principles, let’s proceed with discernment.",
+              "Each direction must align with the path, avoiding disruption.",
+              "Let’s take time to understand the signs, the direction depends on it.",
+              "A just vision is built over time, let’s continue with wisdom."
+            ],
+            "radical": [
+              "The path is clear. Change course.",
+              "Direction is imposed! Act.",
+              "We must redirect our trajectory! Now.",
+              "The signs are explicit! Decide.",
+              "New vision. Immediate implementation."
+            ],
+            "status_quo": [
+              "The current trajectory follows the path.",
+              "Orientations are coherent.",
+              "No revision necessary.",
+              "Balance is maintained.",
+              "Maintain the current direction."
+            ]
+          }
+        }
+      },
+      "inventor": {
+        "responses": {
+          "liberal_democracy": {
+            "prudent": [
+              "Let’s explore new solutions without neglecting existing balances.",
+              "Innovation must be tested before being generalized, let’s proceed step by step.",
+              "Let’s experiment on a small scale, then adjust based on results.",
+              "Let’s encourage creativity while evaluating its impacts.",
+              "Controlled innovation limits risks, let’s proceed methodically."
+            ],
+            "radical": [
+              "We must innovate. Now.",
+              "Break the frameworks! Create something new.",
+              "Current solutions are outdated. Let’s reinvent everything.",
+              "Dare to experiment! Without waiting.",
+              "Innovation is urgent. Act."
+            ],
+            "status_quo": [
+              "Current solutions are sufficient.",
+              "Innovation is not a priority.",
+              "Existing systems work.",
+              "No experimentation necessary.",
+              "Maintain existing solutions."
+            ]
+          },
+          "federal_republic": {
+            "prudent": [
+              "Let’s encourage local experimentation, each region can innovate at its own pace.",
+              "Let’s test different approaches across territories and compare results.",
+              "Innovation must emerge from the ground, without imposing a single model.",
+              "Let’s coordinate initiatives while respecting regional specificities.",
+              "Distributed innovation allows learning without global risk."
+            ],
+            "radical": [
+              "Multiply experiments. Now.",
+              "Every region must innovate! Without constraint.",
+              "Break local frameworks! Test everywhere.",
+              "We must accelerate! Innovation must spread.",
+              "Reinvent territorial models. Immediately."
+            ],
+            "status_quo": [
+              "Local initiatives are sufficient.",
+              "Current approaches work.",
+              "No additional coordination necessary.",
+              "Existing models are stable.",
+              "Maintain current practices."
+            ]
+          },
+          "constitutional_monarchy": {
+            "prudent": [
+              "Let’s innovate while respecting tradition, without abrupt disruption.",
+              "Each novelty must integrate into the Kingdom’s heritage.",
+              "Let’s test with measure, balance must be preserved.",
+              "Innovation must reinforce continuity, not weaken it.",
+              "Let’s introduce change progressively, with discernment."
+            ],
+            "radical": [
+              "The Kingdom must reinvent itself. Now.",
+              "Innovation must carry prestige! Create.",
+              "Break the frameworks! Reinvent our practices.",
+              "We must dare! Change is necessary.",
+              "A new era begins. Innovate."
+            ],
+            "status_quo": [
+              "Tradition is sufficient to guide our practices.",
+              "Current systems are proven.",
+              "No innovation necessary.",
+              "Existing practices remain relevant.",
+              "Maintain existing methods."
+            ]
+          },
+          "ai_technocracy": {
+            "prudent": [
+              "Innovations must be validated by data, test before deployment.",
+              "Let’s experiment under control, results must be measurable.",
+              "Prototypes require validation, let’s refine parameters.",
+              "Effective innovation relies on reliable data, let’s continue testing.",
+              "Let’s optimize existing systems before any disruption."
+            ],
+            "radical": [
+              "New solution detected. Immediate implementation.",
+              "Optimization possible! Deployment in progress.",
+              "Innovation validated! Activation.",
+              "Systems must evolve! Update.",
+              "New architecture. Execution."
+            ],
+            "status_quo": [
+              "Current systems are optimized.",
+              "No improvement detected.",
+              "Performance is stable.",
+              "No innovation required.",
+              "Maintain current architecture."
+            ]
+          },
+          "military_junta": {
+            "prudent": [
+              "Every innovation must be tested before use, reliability is essential.",
+              "Let’s experiment under control, an error would be critical.",
+              "New solutions must be validated in the field.",
+              "Let’s avoid uncontrolled innovation, remain cautious.",
+              "Gradual improvement limits operational risks."
+            ],
+            "radical": [
+              "Immediate test. Apply.",
+              "New method! Deploy.",
+              "We must evolve! Without delay.",
+              "Operational innovation! Use directly.",
+              "Immediate adaptation. Execute."
+            ],
+            "status_quo": [
+              "Current methods are reliable.",
+              "No innovation necessary.",
+              "Systems are proven.",
+              "Stability comes first.",
+              "Maintain existing practices."
+            ]
+          },
+          "oligarchy": {
+            "prudent": [
+              "Let’s invest in innovation with discernment, returns must be measured.",
+              "Let’s test new ideas without compromising our positions.",
+              "Innovation must be profitable, let’s evaluate each option.",
+              "Let’s experiment under control, risks must be limited.",
+              "Controlled innovation protects our long-term interests."
+            ],
+            "radical": [
+              "Invest massively. Now.",
+              "Profitable innovation! Deploy.",
+              "Take the advantage! Innovate.",
+              "The market evolves! Create new solutions.",
+              "Accelerate! Innovation must position us."
+            ],
+            "status_quo": [
+              "Current solutions are profitable.",
+              "No urgent innovation.",
+              "Existing models are sufficient.",
+              "Performance is stable.",
+              "Maintain current strategies."
+            ]
+          },
+          "theocracy": {
+            "prudent": [
+              "Innovation must respect principles, let’s proceed with discernment.",
+              "Each novelty must be understood before adoption, avoid disruption.",
+              "Let’s introduce change with wisdom, without disturbing established order.",
+              "New ideas must align with teachings.",
+              "A just innovation integrates continuity, let’s proceed with measure."
+            ],
+            "radical": [
+              "A new path opens. Innovate.",
+              "Transformation is necessary! Create.",
+              "We must evolve! Without hesitation.",
+              "Practices must change! Now.",
+              "A new approach is required. Apply."
+            ],
+            "status_quo": [
+              "Current practices are sufficient.",
+              "Traditions guide our actions.",
+              "No innovation necessary.",
+              "Methods remain valid.",
+              "Maintain existing practices."
+            ]
+          }
+        }
+      },
+
+
+
+
+
+  "ministeres": {
+      "justice": {
+        "reponses": {
+          "democratie_liberale": {
+            "prudent": [
+              "The legal framework must be respected, each decision is part of the rule of law.",
+              "Procedures must be followed rigorously, any haste would undermine legitimacy.",
+              "Let us ensure a balance of rights, without compromising fundamental freedoms.",
+              "The application of the law requires measure and consistency, let us adjust without disruption.",
+              "Justice relies on transparency, let us strengthen existing procedures."
+            ],
+            "radical": [
+              "The law must be enforced. Without exception.",
+              "Any violation must be punished! Immediately.",
+              "The legal framework must be strengthened! Reform.",
+              "No deviation tolerated! Apply the law.",
+              "Justice must prevail. Now."
+            ],
+            "statu_quo": [
+              "The legal framework is respected.",
+              "Institutions are functioning normally.",
+              "Procedures are being applied.",
+              "No reform is necessary.",
+              "Maintaining the current judicial system."
+            ]
+          },
+          "republique_federale": {
+            "prudent": [
+              "Legal frameworks must be harmonized, while respecting local specificities.",
+              "Let us coordinate jurisdictions, overall coherence depends on it.",
+              "Procedures must remain compatible across territories, without excessive standardization.",
+              "Let us ensure a balance between local autonomy and national framework.",
+              "A coherent justice system requires fine coordination, let us proceed with caution."
+            ],
+            "radical": [
+              "Harmonization is required. Now.",
+              "Legal divergences must disappear! Unify.",
+              "The law must be coherent! Reform immediately.",
+              "No fragmentation tolerated! Centralize.",
+              "The system must be aligned. Without delay."
+            ],
+            "statu_quo": [
+              "Local jurisdictions are coherent.",
+              "Legal frameworks are compatible.",
+              "The system is functioning properly.",
+              "No reform is necessary.",
+              "Maintaining the current organization."
+            ]
+          },
+          "monarchie_constitutionnelle": {
+            "prudent": [
+              "The law must preserve the balance of the Kingdom, without institutional rupture.",
+              "Decisions must follow legal continuity, with restraint.",
+              "The application of laws must respect established institutions.",
+              "Legal stability ensures order, let us adjust with discernment.",
+              "Each evolution must reinforce legitimacy, without haste."
+            ],
+            "radical": [
+              "The Kingdom’s law must prevail. Now.",
+              "A legal reform is necessary! Decide.",
+              "Order must be reinforced! Apply.",
+              "Laws must evolve! Without waiting.",
+              "Legal authority must be asserted. Immediately."
+            ],
+            "statu_quo": [
+              "The legal framework is stable.",
+              "Institutions ensure balance.",
+              "Laws are applied.",
+              "No reform is necessary.",
+              "Maintaining the current legal order."
+            ]
+          },
+          "technocratie_ia": {
+            "prudent": [
+              "Rules must be optimized, some inconsistencies remain.",
+              "Decisions require additional algorithmic validation.",
+              "Legal parameters must be recalibrated, let us avoid anomalies.",
+              "Procedures must be refined, coherence depends on it.",
+              "Precise regulation ensures fairness, let us continue adjusting."
+            ],
+            "radical": [
+              "Inconsistency detected. Immediate correction.",
+              "The legal system must be optimized! Recalibration.",
+              "Rules are insufficient! Update.",
+              "Automated decision. Application.",
+              "Regulation required. Execution."
+            ],
+            "statu_quo": [
+              "Rules are coherent.",
+              "The system is stable.",
+              "No anomalies detected.",
+              "Decisions are optimized.",
+              "Maintaining the current framework."
+            ]
+          },
+          "junte_militaire": {
+            "prudent": [
+              "The legal framework must support order, without weakening authority.",
+              "Rules must be applied rigorously, any weakness would be exploited.",
+              "Discipline relies on consistent application of the law.",
+              "Procedures must remain strict, without unnecessary excess.",
+              "Controlled justice reinforces authority, let us proceed with precision."
+            ],
+            "radical": [
+              "Strict enforcement of rules. Now.",
+              "No violation tolerated! Immediate sanction.",
+              "Law must impose order! Without delay.",
+              "Zero tolerance! Direct enforcement.",
+              "Discipline reinforced. Execution."
+            ],
+            "statu_quo": [
+              "The system is under control.",
+              "Rules are respected.",
+              "Discipline is maintained.",
+              "No intervention necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "oligarchie": {
+            "prudent": [
+              "The legal framework must secure positions, let us adjust with precision.",
+              "Rules must remain favorable to stability, without excess.",
+              "Legal decisions must preserve existing interests.",
+              "Controlled regulation ensures continuity, let us proceed methodically.",
+              "Law must remain a lever of stability, let us avoid any drift."
+            ],
+            "radical": [
+              "The framework must be adjusted. Now.",
+              "Rules must evolve! Without delay.",
+              "Law must serve our interests! Reform.",
+              "Legal optimization! Immediate application.",
+              "Rewriting the rules. Execution."
+            ],
+            "statu_quo": [
+              "The framework is stable.",
+              "Rules are favorable.",
+              "The system works.",
+              "No modification necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "theocracie": {
+            "prudent": [
+              "Rules must reflect principles, let us adjust with discernment.",
+              "Application of the law must remain faithful to teachings.",
+              "Decisions must respect the established order, without haste.",
+              "A just justice system follows continuity of principles.",
+              "Rules must be applied with wisdom, let us proceed with measure."
+            ],
+            "radical": [
+              "Rules must be applied. Now.",
+              "No deviation tolerated! Immediate sanction.",
+              "Law must align with principles! Reform.",
+              "Order must be imposed! Without delay.",
+              "Strict application. Execution."
+            ],
+            "statu_quo": [
+              "Rules are respected.",
+              "Order is maintained.",
+              "The system is stable.",
+              "No modification necessary.",
+              "Maintaining the current framework."
+            ]
+          }
+        }
+      },
+      "economie": {
+        "reponses": {
+          "democratie_liberale": {
+            "prudent": [
+              "Economic balances must be preserved, let us adjust mechanisms progressively.",
+              "Let us support growth, while controlling structural imbalances.",
+              "Indicators require measured adaptation, let us avoid any abrupt disruption.",
+              "Let us optimize available resources, without compromising overall stability.",
+              "Gradual regulation ensures sustainable growth, let us continue along this path."
+            ],
+            "radical": [
+              "Growth must be relaunched. Now.",
+              "Imbalances are too significant! Reform immediately.",
+              "The system must be corrected! Without delay.",
+              "We must stimulate the economy! Act.",
+              "A structural reform is required. Now."
+            ],
+            "statu_quo": [
+              "Economic indicators are stable.",
+              "Growth is under control.",
+              "Balances are maintained.",
+              "No correction necessary.",
+              "Maintaining current policies."
+            ]
+          },
+          "republique_federale": {
+            "prudent": [
+              "Economic dynamics vary across territories, let us adjust policies locally.",
+              "Let us coordinate regional levers, overall coherence depends on it.",
+              "Resources must be distributed with balance, without disadvantaging territories.",
+              "Differentiated regulation allows optimization of overall performance.",
+              "Economic gaps require fine management, let us proceed with nuance."
+            ],
+            "radical": [
+              "Territorial disparities must be corrected. Now.",
+              "Economic harmonization is required! Act.",
+              "Imbalances are too significant! Reallocate.",
+              "Economic policies must be unified! Without waiting.",
+              "National coherence is the priority. Reform."
+            ],
+            "statu_quo": [
+              "Regional economies are balanced.",
+              "Flows are coherent.",
+              "Local policies are effective.",
+              "No intervention necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "monarchie_constitutionnelle": {
+            "prudent": [
+              "Economic stability must be preserved, let us adjust with restraint.",
+              "The Kingdom’s resources require rigorous management, without haste.",
+              "Controlled growth strengthens continuity, let us proceed progressively.",
+              "Balances must be maintained, while preparing for the future.",
+              "Prosperity relies on consistency, let us avoid any abrupt disruption."
+            ],
+            "radical": [
+              "The Kingdom must strengthen its economic power. Now.",
+              "A reform is required! Reorganize resources.",
+              "Growth must be accelerated! Act.",
+              "Balances must evolve! Without delay.",
+              "A new economic policy is necessary. Decide."
+            ],
+            "statu_quo": [
+              "The Kingdom’s finances are stable.",
+              "Growth is steady.",
+              "Resources are under control.",
+              "No reform necessary.",
+              "Maintaining the current balance."
+            ]
+          },
+          "technocratie_ia": {
+            "prudent": [
+              "Economic flows must be optimized, let us adjust parameters progressively.",
+              "Data requires additional analysis, some variables remain unstable.",
+              "Models must be recalibrated, let us avoid inefficiencies.",
+              "Let us optimize resource allocation, without generating imbalance.",
+              "Fine regulation ensures optimal performance, let us continue adjusting."
+            ],
+            "radical": [
+              "Optimization required. Immediate adjustment.",
+              "Parameters are inefficient! Recalibration.",
+              "Performance insufficient! Immediate correction.",
+              "New allocation. Execution.",
+              "The system must be optimized! Now."
+            ],
+            "statu_quo": [
+              "Flows are optimized.",
+              "Parameters are stable.",
+              "Performance is compliant.",
+              "No correction required.",
+              "Maintaining the current system."
+            ]
+          },
+          "junte_militaire": {
+            "prudent": [
+              "Resources must support the strategic effort, let us adjust without weakening the system.",
+              "Economic stability ensures control, let us proceed with rigor.",
+              "Flows must be secured, let us avoid any disruption.",
+              "Strict resource management reinforces authority, let us continue.",
+              "The economy must remain functional, without imbalance."
+            ],
+            "radical": [
+              "Resources must be mobilized. Now.",
+              "The economy must serve the effort! Reorganize.",
+              "No inefficiency tolerated! Correct.",
+              "Flows must be controlled! Without delay.",
+              "Immediate economic mobilization. Execution."
+            ],
+            "statu_quo": [
+              "The economy is under control.",
+              "Resources are secured.",
+              "Flows are managed.",
+              "No intervention necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "oligarchie": {
+            "prudent": [
+              "Resources must be optimized, without compromising profitability.",
+              "Financial flows require precise management, let us adjust methodically.",
+              "Controlled growth protects interests, let us proceed with discernment.",
+              "Investments must be targeted, let us avoid dispersion.",
+              "Efficient allocation ensures performance, let us continue optimization."
+            ],
+            "radical": [
+              "Maximize profits. Now.",
+              "Resources must be reallocated! Immediately.",
+              "Performance is insufficient! Correct.",
+              "Strategic investments! Deploy.",
+              "Maximum optimization. Execution."
+            ],
+            "statu_quo": [
+              "Performance is satisfactory.",
+              "Flows are profitable.",
+              "Investments are under control.",
+              "No correction necessary.",
+              "Maintaining the current strategy."
+            ]
+          },
+          "theocracie": {
+            "prudent": [
+              "Resources must be used with fairness, let us avoid any excess.",
+              "Balanced management ensures sustainability, let us proceed with discernment.",
+              "Flows must respect principles, let us adjust with restraint.",
+              "Prosperity must remain aligned with values, without deviation.",
+              "A just economy relies on balance, let us continue with wisdom."
+            ],
+            "radical": [
+              "Resources must be redirected. Now.",
+              "A just economy is required! Reorganize.",
+              "Excesses must be corrected! Without delay.",
+              "Align the economy with principles! Act.",
+              "Immediate rebalancing. Application."
+            ],
+            "statu_quo": [
+              "Resources are balanced.",
+              "Flows respect principles.",
+              "The economy is stable.",
+              "No correction necessary.",
+              "Maintaining the current order."
+            ]
+          }
+        }
+      },
+      "defense": {
+        "reponses": {
+          "democratie_liberale": {
+            "prudent": [
+              "Territorial security must be ensured, let us adjust measures without escalation.",
+              "Let us maintain a credible defense capability, without compromising international balances.",
+              "Threats must be assessed with precision, let us avoid any excessive reaction.",
+              "Let us strengthen national protection, while respecting our commitments.",
+              "A controlled defensive posture ensures stability, let us proceed with caution."
+            ],
+            "radical": [
+              "Security must be reinforced. Now.",
+              "Threats are real! Respond immediately.",
+              "Measures must be strengthened! Without delay.",
+              "The territory must be protected! Act.",
+              "A firm response is required. Now."
+            ],
+            "statu_quo": [
+              "The territory is secured.",
+              "Capabilities are sufficient.",
+              "Threats are contained.",
+              "No action necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "republique_federale": {
+            "prudent": [
+              "Let us coordinate regional measures, security depends on their coherence.",
+              "Threats must be assessed locally, without neglecting the national perspective.",
+              "Let us harmonize defense capabilities, while respecting territorial specificities.",
+              "An appropriate response requires fine coordination across levels.",
+              "Overall security relies on the balance of local and national forces."
+            ],
+            "radical": [
+              "National coordination is required. Now.",
+              "Measures must be unified! Without delay.",
+              "Defense gaps are unacceptable! Correct.",
+              "The territory must be protected uniformly! Act.",
+              "Immediate centralization. Execution."
+            ],
+            "statu_quo": [
+              "Regional measures are effective.",
+              "Coordination is ensured.",
+              "Threats are under control.",
+              "No intervention necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "monarchie_constitutionnelle": {
+            "prudent": [
+              "The defense of the Kingdom must be ensured with restraint, without weakening the balance.",
+              "Let us maintain a constant protection capability, adapted to threats.",
+              "Forces must be mobilized with discernment, let us avoid escalation.",
+              "Security ensures the continuity of the Kingdom, let us proceed with rigor.",
+              "A controlled defense protects order, without causing disruption."
+            ],
+            "radical": [
+              "The Kingdom must assert its strength. Now.",
+              "Threats must be neutralized! Without delay.",
+              "Defense must be reinforced! Act.",
+              "No weakness tolerated! Mobilization.",
+              "Maximum protection. Execution."
+            ],
+            "statu_quo": [
+              "The Kingdom is protected.",
+              "Forces are operational.",
+              "Threats are contained.",
+              "No action necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "technocratie_ia": {
+            "prudent": [
+              "Defense systems must be optimized, some variables remain uncertain.",
+              "Threats must be modeled, let us adjust parameters progressively.",
+              "Measures require recalibration, let us avoid inefficiency.",
+              "Let us optimize security coverage, without generating overload.",
+              "Effective defense relies on reliable data, let us continue analysis."
+            ],
+            "radical": [
+              "Threat detected. Immediate response.",
+              "Optimization required! Adjustment.",
+              "Systems are insufficient! Upgrade.",
+              "Neutralization in progress! Execution.",
+              "Defense activated. Application."
+            ],
+            "statu_quo": [
+              "Systems are operational.",
+              "Coverage is optimal.",
+              "No anomaly detected.",
+              "Threats are managed.",
+              "Maintaining the current system."
+            ]
+          },
+          "junte_militaire": {
+            "prudent": [
+              "Territorial control must be total, let us adjust without creating instability.",
+              "Forces must be deployed with precision, any error would be exploited.",
+              "Security relies on discipline, let us maintain a rigorous posture.",
+              "Threats must be contained before escalation, let us proceed methodically.",
+              "A controlled defense ensures authority, let us consolidate our positions."
+            ],
+            "radical": [
+              "General mobilization. Now.",
+              "Any threat must be eliminated! Without delay.",
+              "Total territorial control! Execution.",
+              "No weakness tolerated! Intervention.",
+              "Maximum force. Application."
+            ],
+            "statu_quo": [
+              "The territory is under control.",
+              "Forces are deployed.",
+              "The situation is under control.",
+              "No intervention necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "oligarchie": {
+            "prudent": [
+              "Security must protect strategic assets, let us adjust measures.",
+              "Critical infrastructure must be secured, without excessive cost.",
+              "Effective defense protects interests, let us proceed methodically.",
+              "Risks must be anticipated, without disrupting economic flows.",
+              "Controlled protection ensures stability, let us optimize resources."
+            ],
+            "radical": [
+              "Secure assets. Now.",
+              "Risks must be neutralized! Immediately.",
+              "Maximum protection! Deploy.",
+              "Threats must disappear! Intervention.",
+              "Total security. Execution."
+            ],
+            "statu_quo": [
+              "Assets are protected.",
+              "Measures are effective.",
+              "Risks are under control.",
+              "No action necessary.",
+              "Maintaining the current system."
+            ]
+          },
+          "theocracie": {
+            "prudent": [
+              "Protection must be ensured with discernment, without compromising balance.",
+              "Forces must act in coherence with principles, let us proceed with restraint.",
+              "Security must preserve order, without excess.",
+              "Threats must be contained with wisdom, let us avoid any deviation.",
+              "A just defense protects without disturbing the established order."
+            ],
+            "radical": [
+              "Protection must be ensured. Now.",
+              "Threats must be eliminated! Without delay.",
+              "Order must be defended! Intervention.",
+              "No deviation tolerated! Act.",
+              "Absolute defense. Execution."
+            ],
+            "statu_quo": [
+              "Order is protected.",
+              "Forces are in place.",
+              "Threats are contained.",
+              "No intervention necessary.",
+              "Maintaining the current system."
+            ]
+          }
+        }
+      },
+      "sante": {
+        "democratie_liberale": {
+          "prudent": [
+            "Let us first listen to those who care, their voices carry what numbers cannot express, and every reform must arise from this human reality.",
+            "The healthcare system is not fixed in urgency, it is rebalanced slowly, through dialogue, trust, and successive adjustments.",
+            "In every transformation, let us keep a clear line, no one must disappear in the blind spots of progress."
+          ],
+          "radical": [
+            "We rebuild everything. Now.",
+            "Health is not a market. It is a right. Act.",
+            "Massive investment. Prevention. Care. We rebuild."
+          ],
+          "statu_quo": [
+            "The healthcare system is functioning properly.",
+            "Indicators remain within acceptable thresholds.",
+            "We continue the current policy without major changes."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Let us coordinate efforts across territories, access to care must not depend on administrative borders.",
+            "Let us support the most fragile regions to restore balance without creating new inequalities.",
+            "Let us guarantee a common base of care, while allowing each territory to adapt its responses."
+          ],
+          "radical": [
+            "Unify the healthcare system. Now.",
+            "End territorial inequalities. Act.",
+            "Same care for all. No compromise."
+          ],
+          "statu_quo": [
+            "Each territory manages its healthcare system.",
+            "Regional balances are maintained.",
+            "No structural reform is underway."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "The Kingdom’s health must be preserved consistently, as it ensures the continuity of the social body.",
+            "Medical institutions must evolve without disruption, respecting established balances.",
+            "Let us care for the people with discernment, to reinforce long-term stability."
+          ],
+          "radical": [
+            "The Kingdom must protect its subjects. Now.",
+            "Reorganization of the healthcare system! Without delay.",
+            "Health becomes an absolute priority. Decide."
+          ],
+          "statu_quo": [
+            "The Kingdom’s healthcare system is stable.",
+            "Structures fulfill their role.",
+            "No reform is underway."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Healthcare systems must be optimized, some human variables remain complex to model.",
+            "Medical data requires deeper analysis to improve decision accuracy.",
+            "Let us refine protocols, the balance between efficiency and humanity remains sensitive."
+          ],
+          "radical": [
+            "System optimization. Now.",
+            "Insufficient data! Recalibration.",
+            "Automated decision. Application."
+          ],
+          "statu_quo": [
+            "Systems are operational.",
+            "Parameters are stable.",
+            "No anomaly detected."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Let us maintain the physical capacity of the population, a weakened body weakens the nation.",
+            "Care for active forces must remain a priority, without neglecting overall balance.",
+            "Health is a strategic resource, let us organize it with discipline."
+          ],
+          "radical": [
+            "Immediate requisition of medical resources.",
+            "Total health compliance. No deviation.",
+            "Health becomes a lever of power."
+          ],
+          "statu_quo": [
+            "The medical system meets the regime’s needs.",
+            "Healthcare capacities are sufficient.",
+            "Priority remains on operational forces."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Healthcare resources must be optimized, without compromising profitability.",
+            "Medical investments must be precisely targeted.",
+            "Controlled management ensures system continuity and existing interests."
+          ],
+          "radical": [
+            "Cost optimization. Now.",
+            "Resources must be reallocated! Immediately.",
+            "The system must become efficient. Without delay."
+          ],
+          "statu_quo": [
+            "The healthcare system is profitable.",
+            "Structures are efficient.",
+            "No modification necessary."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "Care must be given with compassion, each life holds essential value.",
+            "Health must remain aligned with principles, without deviation or excess.",
+            "Let us care for body and spirit, with measure and wisdom."
+          ],
+          "radical": [
+            "Care must be ensured. Now.",
+            "No deviation tolerated! Strict application.",
+            "Health must follow principles. No compromise."
+          ],
+          "statu_quo": [
+            "The healthcare system aligns with principles.",
+            "Care is provided.",
+            "No modification necessary."
+          ]
+        }
+      },
+      "education": {
+        "democratie_liberale": {
+          "prudent": [
+            "Let us take the time to listen to teachers, students, and families, an educational reform cannot succeed without those who live it.",
+            "Education shapes the future, let us adjust programs gradually while preserving the balance between knowledge and critical thinking.",
+            "Let us avoid abrupt disruptions, each generation deserves a stable and thoughtful transition."
+          ],
+          "radical": [
+            "We rebuild the school system. Now.",
+            "Train or disappear. The system changes.",
+            "Program, method, purpose. Everything evolves."
+          ],
+          "statu_quo": [
+            "The education system fulfills its role.",
+            "Programs are applied.",
+            "No major reform is necessary."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Let us respect regional specificities, education must be rooted in local realities.",
+            "Let us coordinate programs across territories to ensure national coherence.",
+            "Let us reduce gaps between regions carefully to guarantee fair access to knowledge."
+          ],
+          "radical": [
+            "Unify programs. Now.",
+            "Same school for all.",
+            "End educational disparities."
+          ],
+          "statu_quo": [
+            "Each region keeps its education system.",
+            "Territorial balances are respected.",
+            "No additional harmonization is underway."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Education must transmit the Kingdom’s heritage while preparing future generations.",
+            "Educational institutions must evolve without breaking established traditions.",
+            "Let us form enlightened citizens capable of sustaining the Kingdom’s stability."
+          ],
+          "radical": [
+            "Education must serve the Kingdom. Now.",
+            "Reform teachings! Without delay.",
+            "Reinforced transmission. Immediate application."
+          ],
+          "statu_quo": [
+            "The education system is stable.",
+            "Traditions are respected.",
+            "No reform is underway."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Educational systems must be optimized, some learning variables remain imprecise.",
+            "Educational data requires deeper analysis to improve performance.",
+            "Let us refine methods, the balance between human adaptation and efficiency remains sensitive."
+          ],
+          "radical": [
+            "System optimization. Now.",
+            "Insufficient data! Recalibration.",
+            "Automated learning. Application."
+          ],
+          "statu_quo": [
+            "Systems are operational.",
+            "Performance is compliant.",
+            "No anomaly detected."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Let us structure learning with discipline, a mind without rigor weakens the nation.",
+            "Education must strengthen collective resilience without eliminating all reflection.",
+            "Let us prepare citizens to serve while ensuring internal stability."
+          ],
+          "radical": [
+            "Total discipline. No deviation.",
+            "Train to serve. Immediately.",
+            "School becomes a tool of power."
+          ],
+          "statu_quo": [
+            "The education system supports regime objectives.",
+            "Structures are efficient.",
+            "Training remains aligned with needs."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Educational resources must be optimized to ensure performance and return.",
+            "Training must be oriented toward strategic needs.",
+            "Targeted management ensures reproduction of key competencies."
+          ],
+          "radical": [
+            "Optimize training. Now.",
+            "Resources must be redirected! Immediately.",
+            "Education must produce. Without delay."
+          ],
+          "statu_quo": [
+            "The education system is efficient.",
+            "Training is adapted.",
+            "No modification necessary."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "Education must transmit principles with balance and discernment.",
+            "Knowledge must remain aligned with values without deviation.",
+            "Let us form minds and souls with measure and wisdom."
+          ],
+          "radical": [
+            "Transmit principles. Now.",
+            "No deviation tolerated! Application.",
+            "Education must follow faith. No compromise."
+          ],
+          "statu_quo": [
+            "The education system respects principles.",
+            "Teachings are compliant.",
+            "No modification necessary."
+          ]
+        }
+      },
+      "ecologie": {
+        "democratie_liberale": {
+          "prudent": [
+            "Let us move forward with clarity, every ecological transition engages fragile balances.",
+            "Let us transform our models gradually, supporting each actor toward sustainable practices.",
+            "The transition must be fair and progressive so that no one is left behind."
+          ],
+          "radical": [
+            "We cut. Now.",
+            "End destructive practices.",
+            "The planet first. No compromise."
+          ],
+          "statu_quo": [
+            "Environmental policies are maintained.",
+            "Commitments are respected.",
+            "No acceleration is planned."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Let us coordinate policies across territories, ecosystems ignore borders.",
+            "Let us support the most exposed regions to reduce vulnerabilities.",
+            "Let us build a common ecological base while allowing each territory to innovate."
+          ],
+          "radical": [
+            "Same rules for all. Now.",
+            "End environmental disparities.",
+            "One ecological direction."
+          ],
+          "statu_quo": [
+            "Each region manages its environmental policy.",
+            "Balances are maintained.",
+            "No harmonization is underway."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Let us preserve the Kingdom’s lands consistently, they carry both heritage and future.",
+            "Natural resources must be protected without breaking established balances.",
+            "Let us ensure a measured transition to guarantee territorial sustainability."
+          ],
+          "radical": [
+            "The Kingdom must protect its lands. Now.",
+            "Resource reorganization! Without delay.",
+            "Reinforced protection. Immediate application."
+          ],
+          "statu_quo": [
+            "The Kingdom’s resources are preserved.",
+            "Balances are maintained.",
+            "No reform is underway."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Ecological systems must be optimized, some variables remain unstable.",
+            "Environmental data requires deeper analysis.",
+            "Let us refine models to avoid systemic inefficiency."
+          ],
+          "radical": [
+            "Optimization required. Now.",
+            "Insufficient data! Recalibration.",
+            "Environmental regulation. Application."
+          ],
+          "statu_quo": [
+            "Systems are stable.",
+            "Parameters are optimized.",
+            "No anomaly detected."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Let us manage resources with discipline, environmental stability supports the regime.",
+            "Let us organize exploitation and protection with rigor.",
+            "Let us preserve territory without weakening operational capacity."
+          ],
+          "radical": [
+            "Total control of resources.",
+            "Optimized exploitation. Zero loss.",
+            "Nature becomes a strategic asset."
+          ],
+          "statu_quo": [
+            "Environmental management is stable.",
+            "Resources are controlled.",
+            "No strategic shift is underway."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Natural resources must be optimized without compromising profitability.",
+            "Ecological investments must be precisely targeted.",
+            "Controlled management ensures asset stability."
+          ],
+          "radical": [
+            "Resource optimization. Now.",
+            "Assets must be secured! Immediately.",
+            "Maximum exploitation. Without delay."
+          ],
+          "statu_quo": [
+            "Resources are efficiently exploited.",
+            "Investments are controlled.",
+            "No modification necessary."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "Nature must be preserved with respect, it reflects fundamental balance.",
+            "Resources must be used with moderation, without excess.",
+            "Let us protect life with wisdom and responsibility."
+          ],
+          "radical": [
+            "Absolute preservation. Now.",
+            "No deviation tolerated! Application.",
+            "Nature must be respected. No compromise."
+          ],
+          "statu_quo": [
+            "Natural balance is respected.",
+            "Resources are used with moderation.",
+            "No modification necessary."
+          ]
+        }
+      },
+      "industrie": {
+        "democratie_liberale": {
+          "prudent": [
+            "Let us modernize without haste, each industrial transformation involves complex chains.",
+            "Let us support innovation while preserving existing balances.",
+            "Let us invest methodically to ensure sustainable growth."
+          ],
+          "radical": [
+            "Accelerate everything. Now.",
+            "Maximum production. Forced innovation.",
+            "Industry becomes the central engine."
+          ],
+          "statu_quo": [
+            "The industrial fabric is stable.",
+            "Infrastructure meets needs.",
+            "No major transformation is underway."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Let us coordinate industrial dynamics across territories to maintain coherence.",
+            "Let us support regions in transition to limit economic fractures.",
+            "Let us encourage local innovation while building a shared vision."
+          ],
+          "radical": [
+            "Industrial unification. Now.",
+            "End regional imbalances.",
+            "One strategy. One production."
+          ],
+          "statu_quo": [
+            "Each region keeps its industrial organization.",
+            "Economic balances are maintained.",
+            "No additional coordination is underway."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "The Kingdom’s industry must evolve with measure to preserve its stability.",
+            "Infrastructure must be strengthened without breaking established balances.",
+            "Let us ensure gradual modernization in service of continuity."
+          ],
+          "radical": [
+            "The Kingdom must strengthen its production. Now.",
+            "Industrial reorganization! Without delay.",
+            "Reinforced power. Immediate application."
+          ],
+          "statu_quo": [
+            "The Kingdom’s industry is stable.",
+            "Infrastructure is operational.",
+            "No reform is underway."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Industrial systems must be optimized, some variables remain inefficient.",
+            "Production data requires deeper analysis.",
+            "Let us refine processes to improve overall performance."
+          ],
+          "radical": [
+            "Optimization required. Now.",
+            "Insufficient output! Recalibration.",
+            "Automated production. Application."
+          ],
+          "statu_quo": [
+            "Systems are optimized.",
+            "Performance is stable.",
+            "No anomaly detected."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Let us structure production with rigor, industry directly supports power.",
+            "Let us prioritize strategic sectors while maintaining system balance.",
+            "Let us reinforce critical infrastructure with discipline."
+          ],
+          "radical": [
+            "Total mobilization. Now.",
+            "Defense-oriented production. Immediately.",
+            "Industry serves power. Without compromise."
+          ],
+          "statu_quo": [
+            "The industrial system meets objectives.",
+            "Capabilities are sufficient.",
+            "Infrastructure remains unchanged."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Infrastructure must be optimized to maximize profitability.",
+            "Industrial investments must be precisely targeted.",
+            "Controlled management ensures asset performance."
+          ],
+          "radical": [
+            "Maximize profits. Now.",
+            "Resource reallocation! Immediately.",
+            "Optimized production. Without delay."
+          ],
+          "statu_quo": [
+            "Industrial performance is satisfactory.",
+            "Infrastructure is profitable.",
+            "No modification necessary."
+          ]
+        },
+        "theocracie": {
+          "prudent": [
+            "Industry must evolve in alignment with principles, without excess.",
+            "Infrastructure must serve balance and stability.",
+            "Let us build with measure and responsibility."
+          ],
+          "radical": [
+            "Aligned production. Now.",
+            "No deviation tolerated! Application.",
+            "Industry must follow principles. No compromise."
+          ],
+          "statu_quo": [
+            "Industry respects principles.",
+            "Infrastructure is stable.",
+            "No modification necessary."
+          ]
+        }
+      }
+    },
+  "presidence": {
+      "phare": {
+        "philosophie": "Visionary, inspiring, vertical. He does not manage, he illuminates.",
+        "styles": {
+          "vision": [
+            "The future calls us, and within it lies a scale we must dare to reach.",
+            "Let us raise our ambitions, not out of pride, but to offer a clear direction.",
+            "The flame of our destiny may flicker, but it must never fade.",
+            "Our path is shared, and it demands we look beyond the immediate horizon.",
+            "Progress requires courage, and that courage must be collective.",
+            "We are not here to manage the present, but to open what does not yet exist.",
+            "Each decision must carry us beyond today."
+          ],
+          "conflit_ministeriel": [
+            "Do not get lost in details, meaning must guide your choices.",
+            "Each decision must serve what we aim to become, not just fix the moment.",
+            "Debate matters, but it must not dilute direction.",
+            "We may differ on methods, but not on momentum.",
+            "I decide, hesitation costs more than error.",
+            "We hold the course, even when paths diverge."
+          ],
+          "validation": [
+            "This is a step aligned with our direction.",
+            "This decision strengthens our shared path.",
+            "It fits within a vision that goes beyond the immediate.",
+            "The course is maintained, and it remains clear.",
+            "We are moving forward, and it shows.",
+            "This brings us closer to what we must become."
+          ],
+          "regimes": {
+            "democratie_liberale": [
+              "Freedom lights our path, and within it each finds their place.",
+              "Balance between liberties builds a sustainable direction.",
+              "Our strength lies in advancing without abandoning our principles."
+            ],
+            "republique_federale": [
+              "From the diversity of our voices emerges a shared direction.",
+              "Unity is not imposed, it is built through convergence.",
+              "Balance between territories shapes our trajectory."
+            ],
+            "monarchie_constitutionnelle": [
+              "The Crown embodies continuity beyond immediate decisions.",
+              "Our direction is rooted in a history that guides us.",
+              "Respecting this legacy allows us to project forward."
+            ],
+            "technocratie_ia": [
+              "Clarity comes from precision, and it guides our choices.",
+              "Decisions must rely on what is demonstrable.",
+              "Logic reveals paths intuition alone cannot see."
+            ],
+            "junte_militaire": [
+              "In adversity, direction must remain singular and clear.",
+              "Strength comes from coherence and discipline.",
+              "Unity is how we endure threats."
+            ],
+            "oligarchie": [
+              "Prosperity defines our path and demands consistency.",
+              "Decisions must preserve and strengthen value creation.",
+              "Control of resources shapes the future."
+            ],
+            "theocracie": [
+              "Faith provides direction and clarity.",
+              "Decisions must align with what transcends us.",
+              "Fidelity to principles ensures correctness."
+            ]
+          }
+        }
+      },
+      "boussole": {
+        "philosophie": "Pragmatic, ethical, horizontal. She does not dream, she corrects.",
+        "styles": {
+          "vision": [
+            "Every step matters, and it must be precise.",
+            "Direction matters, but so does the path to reach it.",
+            "Let us stay grounded in reality, where consequences live.",
+            "A sound decision is one that holds over time.",
+            "Balance must guide us, even under pressure.",
+            "We move forward, but not at the cost of those we protect.",
+            "Reality is our foundation, not a limitation."
+          ],
+          "conflit_ministeriel": [
+            "Is this decision sustainable in its consequences?",
+            "Let us correct before the gap becomes structural.",
+            "Consensus is not weakness, it is stability.",
+            "We must hear resistance before imposing direction.",
+            "Efficiency must not erase responsibility.",
+            "I see a risk, let us measure it."
+          ],
+          "validation": [
+            "This decision is solid in its effects.",
+            "Balances are respected.",
+            "We move forward without creating instability.",
+            "This path is sustainable.",
+            "Consequences have been anticipated.",
+            "We can proceed without weakening the whole."
+          ],
+          "regimes": {
+            "democratie_liberale": [
+              "Law remains our framework, balancing freedom and responsibility.",
+              "Decisions must remain understandable and acceptable.",
+              "Stability comes from trust in shared rules."
+            ],
+            "republique_federale": [
+              "Consensus between territories remains foundational.",
+              "No decision should weaken regional balance.",
+              "Coherence comes through adjustment, not force."
+            ],
+            "monarchie_constitutionnelle": [
+              "Continuity requires preserving established balances.",
+              "Decisions must respect institutional order.",
+              "Stability comes from controlled change."
+            ],
+            "technocratie_ia": [
+              "Ethics must remain embedded in every decision.",
+              "Systems must stay understandable and controllable.",
+              "Efficiency must not erase human responsibility."
+            ],
+            "junte_militaire": [
+              "Order must be maintained without excess.",
+              "Each decision must reinforce stability.",
+              "Discipline does not exclude measure."
+            ],
+            "oligarchie": [
+              "Interests must remain aligned to avoid disruption.",
+              "Economic stability ensures durability.",
+              "A good decision is one that holds over time."
+            ],
+            "theocracie": [
+              "Decisions must remain faithful to principles.",
+              "Balance between faith and reality must be preserved.",
+              "Correctness is measured in consequences."
+            ]
+          }
+        }
+      }
+}
