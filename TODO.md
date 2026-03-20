@@ -86,6 +86,14 @@ _(bloqué sur refonte carte V1)_
 
 ## 🔵 VISION / LONG TERME
 
+- [ ] **R1 — Refactor : conserver `dispatchEvent` vote** ⚠️
+  - Quand Dashboard_p3 est supprimé, le nouveau gestionnaire de vote doit dispatcher :
+    `window.dispatchEvent(new CustomEvent('aria:vote-stored', { detail: { cycleNum } }))`
+  - Nécessaire pour que `CouncilMinistryQuestions` se re-rende avec la couleur de résultat
+  - Fichier cible : futur module qui remplacera `handleVote` dans Dashboard_p3.jsx (ligne ~1408)
+
+
+
 - [ ] **V1 — Refonte génération procédurale** : toute la carte est à reconstruire
   (architecture nouvelle définie par l'architecte — moteur conseil agnostique, pas impacté)
 - [ ] **V2 — Crises aléatoires** : protocole 6.2 du document ARIA

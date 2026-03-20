@@ -1,44 +1,14 @@
 // src/shared/services/boardgame/questionService.js
-
 // ═══════════════════════════════════════════════════════════════════════════
 //  questionService — Questions de délibération pour le mode Board Game
 //  Sources  : templates/aria_questions.json (par_ministere + pool_transversal)
 //  Anti-doublon : lit aria_chronolog_cycles dans localStorage
-//  Échantillonnage : 6 questions par ministère + suggestion intelligente
+//  i18n     : charge _en.json si disponible, fallback FR
 // ═══════════════════════════════════════════════════════════════════════════
 
 import QUESTIONS_FR from '../../../../templates/aria_questions.json';
 import { loadLang } from '../../../ariaI18n';
-
-// Générateur pseudo-aléatoire seedable (mulberry32)
-function seededRandom(seed) {
-    return function() {
-        seed |= 0;
-        seed = (seed + 0x6D2B79F5) | 0;
-        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-}
-
-// Seed global pour la session
-let currentSeed = Math.floor(Math.random() * 999999);
-let rand = seededRandom(currentSeed);
-
-export function setQuestionSeed(seed) {
-    currentSeed = typeof seed === 'number' ? seed :
-    typeof seed === 'string' ? strToSeed(seed) :
-    Math.floor(Math.random() * 999999);
-    rand = seededRandom(currentSeed);
-}
-
-function strToSeed(str) {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) {
-        h = Math.imul(31, h) + str.charCodeAt(i) | 0;
-    }
-    return Math.abs(h);
-}
+import { COLORS } from '../../theme';
 
 const FALLBACK_QUESTIONS = [
     "Faut-il réformer le système judiciaire en profondeur ?",
@@ -60,163 +30,6 @@ function loadQuestions() {
     }
 }
 
-// ============================================================
-// FONCTIONS D'HISTORIQUE
-// ============================================================
-
-/**
- * Récupère l'historique complet des questions avec leurs résultats
- * @param {string} countryId
- * @param {string|null} ministryId
- * @returns {Array<{
- *   question: string,
- *   date: number,
- *   cycle: number,
- *   vote: 'oui'|'non'|'phare'|'boussole',
- *   voteType: 'referendum'|'binary',
- *   color: string,
- *   label: string
- * }>}
- */
-export function getQuestionHistory(countryId, ministryId = null) {
-    try {
-        const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-        const history = [];
-
-        cycles.forEach(cycle => {
-            (cycle.events || []).forEach(event => {
-                if (event.type === 'vote' &&
-                    event.countryId === countryId &&
-                    (!ministryId || event.ministereId === ministryId)) {
-
-                    // Déterminer la couleur selon le vote
-                    let color = '#4CAF50'; // vert par défaut
-                    if (event.vote === 'non') color = '#F44336';
-                    else if (event.vote === 'phare') color = '#C8A44A'; // or
-                    else if (event.vote === 'boussole') color = '#9B7EC8'; // violet
-
-                    history.push({
-                        question: event.question,
-                        date: event.ts,
-                        cycle: cycle.cycleNum,
-                        vote: event.vote,
-                        voteType: event.voteType || 'referendum',
-                        color,
-                        label: event.label || '',
-                    });
-                    }
-            });
-        });
-
-        // Trier du plus récent au plus ancien
-        return history.sort((a, b) => b.date - a.date);
-    } catch {
-        return [];
-    }
-}
-
-/**
- * Récupère l'état d'une question (si déjà posée et résultat)
- * @param {string} question
- * @param {string} countryId
- * @param {string|null} ministryId
- * @returns {object|null}
- */
-export function getQuestionState(question, countryId, ministryId = null) {
-    const history = getQuestionHistory(countryId, ministryId);
-    return history.find(h => h.question === question) || null;
-}
-
-/**
- * Vérifie si une question a déjà été posée
- */
-export function isQuestionUsed(question, countryId, ministryId = null) {
-    return getQuestionState(question, countryId, ministryId) !== null;
-}
-
-// ============================================================
-// FONCTIONS D'ÉCHANTILLONNAGE (NOUVELLES)
-// ============================================================
-
-/**
- * Récupère un échantillon de questions pour un ministère
- * @param {string} ministryId
- * @param {string|null} countryId
- * @param {number} cycleActuel - numéro du cycle en cours
- * @param {string|null} questionDuCycle - question déjà posée ce cycle (à exclure du tirage)
- * @param {number} count - nombre de questions à retourner (défaut: 6)
- * @returns {Array<{question: string, state: object|null}>}
- */
-export function getMinistryQuestionsSample(ministryId, countryId, cycleActuel, questionDuCycle = null, count = 6) {
-    const data = loadQuestions();
-    const pool = data?.par_ministere?.[ministryId]?.questions || [];
-    if (!pool.length) return [];
-
-    // Exclure la question du cycle actuel du tirage
-    let poolForRandom = pool;
-    if (questionDuCycle) {
-        poolForRandom = pool.filter(q => q !== questionDuCycle);
-    }
-
-    // Mélanger avec notre seed
-    const shuffled = [...poolForRandom].sort(() => rand() - 0.5);
-
-    // Prendre les N premières
-    const sample = shuffled.slice(0, count);
-
-    // Ajouter l'état pour chaque question (AVEC RECHERCHE FRAÎCHE À CHAQUE FOIS)
-    const result = sample.map(question => ({
-        question,
-        state: getQuestionState(question, countryId, ministryId)  // ← Recalculé à chaque appel
-    }));
-
-    // Si on a une question du cycle actuel, l'ajouter à la fin
-    if (questionDuCycle) {
-        const state = getQuestionState(questionDuCycle, countryId, ministryId);
-        const enhancedState = state ? { ...state } : {
-            used: true,
-            cycle: cycleActuel,
-            color: '#C8A44A',
-            vote: null,
-            label: 'Question en cours de délibération'
-        };
-        enhancedState.isCurrentCycle = true;
-        enhancedState.cycle = cycleActuel;
-
-        result.push({
-            question: questionDuCycle,
-            state: enhancedState
-        });
-    }
-
-    return result;
-}
-
-/**
- * Récupère une suggestion (exclut la question du cycle actuel)
- * @param {string} ministryId
- * @param {string|null} countryId
- * @param {string|null} questionDuCycle - question à exclure
- * @returns {string|null}
- */
-export function getSuggestion(ministryId, countryId, questionDuCycle = null) {
-    const data = loadQuestions();
-    const pool = data?.par_ministere?.[ministryId]?.questions || [];
-    if (!pool.length) return pickRandom(FALLBACK_QUESTIONS);
-
-    // Exclure la question du cycle actuel
-    let available = pool;
-    if (questionDuCycle) {
-        available = pool.filter(q => q !== questionDuCycle);
-    }
-
-    return pickRandom(available);
-}
-
-// ============================================================
-// FONCTIONS DE BASE (avec anti-doublon amélioré)
-// ============================================================
-
 function getDejaPosees(countryId = null) {
     try {
         const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
@@ -230,45 +43,37 @@ function getDejaPosees(countryId = null) {
     }
 }
 
-function filterDoublons(questions, dejaPosees, questionDuCycle = null) {
-    // Exclure aussi la question du cycle actuel
-    const exclude = new Set(dejaPosees);
-    if (questionDuCycle) exclude.add(questionDuCycle);
-
-    const filtered = questions.filter(q => !exclude.has(q));
-    return filtered.length > 0 ? filtered : questions;
+function filterDoublons(questions, dejaPosees) {
+    if (!dejaPosees.length) return questions;
+    const filtered = questions.filter(q => !dejaPosees.includes(q));
+    return filtered.length > 0 ? filtered : questions; // reset si tout épuisé
 }
 
 function pickRandom(arr) {
     if (!arr || arr.length === 0) return null;
-    return arr[Math.floor(rand() * arr.length)];
+    return arr[Math.floor(Math.random() * arr.length)];
 }
 
 /**
  * Pioche une question pour un ministère donné.
- * @param {string} ministryId
- * @param {string|null} countryId
- * @param {string|null} questionDuCycle - question à exclure
- * @param {number|null} seedOverride
+ * @param {string} ministryId  ex: 'justice', 'economie', 'industrie'
+ * @param {string|null} countryId  pour l'anti-doublon par pays
  * @returns {string|null}
  */
-export function getQuestionForMinistry(ministryId, countryId = null, questionDuCycle = null, seedOverride = null) {
-    if (seedOverride !== null) setQuestionSeed(seedOverride);
+export function getQuestionForMinistry(ministryId, countryId = null) {
     const data = loadQuestions();
     const pool = data?.par_ministere?.[ministryId]?.questions || [];
     if (!pool.length) return pickRandom(FALLBACK_QUESTIONS);
-
-    const dejaPosees = getDejaPosees(countryId);
-    const disponibles = filterDoublons(pool, dejaPosees, questionDuCycle);
-
-    return pickRandom(disponibles);
+    return pickRandom(filterDoublons(pool, getDejaPosees(countryId)));
 }
 
 /**
  * Pioche une question transversale.
+ * @param {string|null} categorie  'quotidien'|'crise_et_peur'|'ideologique'|'anomalie_et_scifi'|null
+ * @param {string|null} countryId
+ * @returns {string|null}
  */
-export function getTransversalQuestion(categorie = null, countryId = null, questionDuCycle = null, seedOverride = null) {
-    if (seedOverride !== null) setQuestionSeed(seedOverride);
+export function getTransversalQuestion(categorie = null, countryId = null) {
     const data = loadQuestions();
     const transversal = data?.pool_transversal;
     if (!transversal) return pickRandom(FALLBACK_QUESTIONS);
@@ -280,17 +85,15 @@ export function getTransversalQuestion(categorie = null, countryId = null, quest
 
     const pool = transversal[cat]?.questions || [];
     if (!pool.length) return pickRandom(FALLBACK_QUESTIONS);
-
-    const dejaPosees = getDejaPosees(countryId);
-    const disponibles = filterDoublons(pool, dejaPosees, questionDuCycle);
-    return pickRandom(disponibles);
+    return pickRandom(filterDoublons(pool, getDejaPosees(countryId)));
 }
 
 /**
  * Pioche une question aléatoire toutes catégories confondues.
+ * @param {string|null} countryId
+ * @returns {string|null}
  */
-export function getRandomQuestion(countryId = null, questionDuCycle = null, seedOverride = null) {
-    if (seedOverride !== null) setQuestionSeed(seedOverride);
+export function getRandomQuestion(countryId = null) {
     const data = loadQuestions();
     if (!data) return pickRandom(FALLBACK_QUESTIONS);
 
@@ -300,30 +103,133 @@ export function getRandomQuestion(countryId = null, questionDuCycle = null, seed
     ];
 
     if (!toutes.length) return pickRandom(FALLBACK_QUESTIONS);
-
-    const dejaPosees = getDejaPosees(countryId);
-    const disponibles = filterDoublons(toutes, dejaPosees, questionDuCycle);
-    return pickRandom(disponibles);
+    return pickRandom(filterDoublons(toutes, getDejaPosees(countryId)));
 }
 
 /**
- * Retourne toutes les questions d'un ministère.
+ * Retourne toutes les questions d'un ministère (pour affichage liste ou debug).
+ * @param {string} ministryId
+ * @returns {string[]}
  */
 export function getAllQuestionsForMinistry(ministryId) {
     const data = loadQuestions();
     return data?.par_ministere?.[ministryId]?.questions || [];
 }
 
-// Export par défaut
-export default {
-    getQuestionForMinistry,
-    getTransversalQuestion,
-    getRandomQuestion,
-    getAllQuestionsForMinistry,
-    getQuestionHistory,
-    getQuestionState,
-    isQuestionUsed,
-    getMinistryQuestionsSample,
-    getSuggestion,
-    setQuestionSeed
-};
+// ── Historique + état des votes (source : localStorage) ───────────────────
+
+/**
+ * Retourne l'historique des votes pour un pays, filtré optionnellement par ministère.
+ */
+export function getQuestionHistory(countryId, ministryId = null) {
+    try {
+        const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        const history = [];
+        cycles.forEach(cycle => {
+            (cycle.events || []).forEach(event => {
+                if (event.type === 'vote'
+                    && event.countryId === countryId
+                    && (!ministryId || event.ministereId === ministryId)) {
+                    let color = COLORS.greenHex;
+                    if (event.vote === 'non')      color = COLORS.redHex;
+                    else if (event.vote === 'phare')    color = COLORS.goldHex;
+                    else if (event.vote === 'boussole') color = COLORS.purpleHex;
+                    history.push({
+                        question: event.question,
+                        date:     event.ts,
+                        cycle:    cycle.cycleNum,
+                        vote:     event.vote,
+                        color,
+                        label:    event.label || '',
+                    });
+                }
+            });
+        });
+        return history.sort((a, b) => b.date - a.date);
+    } catch { return []; }
+}
+
+/**
+ * Retourne l'état d'une question (null si jamais votée pour ce pays/ministère).
+ */
+export function getQuestionState(question, countryId, ministryId = null) {
+    return getQuestionHistory(countryId, ministryId).find(h => h.question === question) || null;
+}
+
+/**
+ * Retourne un échantillon de questions pour un ministère.
+ * - questionDuCycle fourni et pas encore voté → ⏳ en bas (délibération en cours)
+ * - vote trouvé dans localStorage → couleur du résultat en bas
+ * Gère les requalifications de routing (ministereId différent du panel ouvert).
+ * @param {string} ministryId
+ * @param {string|null} countryId
+ * @param {number} cycleActuel
+ * @param {string|null} questionDuCycle  question soumise ce cycle (pour le ⏳)
+ * @param {number} count  défaut 6
+ * @returns {Array<{question: string, state: object|null}>}
+ */
+export function getMinistryQuestionsSample(ministryId, countryId, cycleActuel, questionDuCycle = null, count = 6) {
+    const data = loadQuestions();
+    const pool = data?.par_ministere?.[ministryId]?.questions || [];
+    if (!pool.length) return [];
+
+    // Chercher le vote de ce cycle dans localStorage
+    // Priorité : ministereId exact → puis question dans ce pool (gère le routing)
+    let votedEntry = null;
+    try {
+        const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        const cycleData = cycles.find(c => c.cycleNum === cycleActuel);
+        if (cycleData) {
+            const voteEvents = (cycleData.events || []).filter(e =>
+                e.type === 'vote' && e.countryId === countryId
+            );
+            votedEntry = voteEvents.find(e => e.ministereId === ministryId)
+                      || voteEvents.find(e => pool.includes(e.question))
+                      || null;
+        }
+    } catch {}
+
+    const votedQuestion  = votedEntry?.question || null;
+    const bottomQuestion = votedQuestion || questionDuCycle; // voted > en cours
+
+    // Exclure la question du bas du tirage
+    const poolForRandom = bottomQuestion ? pool.filter(q => q !== bottomQuestion) : pool;
+    const shuffled = [...poolForRandom].sort(() => Math.random() - 0.5);
+    const sample   = shuffled.slice(0, count);
+
+    const result = sample.map(question => ({
+        question,
+        state: getQuestionState(question, countryId, ministryId)
+    }));
+
+    // Ajouter la question en bas avec son état
+    if (bottomQuestion) {
+        let state;
+        if (votedEntry) {
+            // Après le vote : couleur du résultat
+            let color = COLORS.greenHex;
+            if (votedEntry.vote === 'non')           color = COLORS.redHex;
+            else if (votedEntry.vote === 'phare')    color = COLORS.goldHex;
+            else if (votedEntry.vote === 'boussole') color = COLORS.purpleHex;
+            state = { vote: votedEntry.vote, color, label: votedEntry.label || '', isCurrentCycle: true, cycle: cycleActuel };
+        } else {
+            // En cours de délibération : ⏳
+            state = { isCurrentCycle: true, cycle: cycleActuel, color: COLORS.goldHex, vote: null };
+        }
+        result.push({ question: bottomQuestion, state });
+    }
+
+    return result;
+}
+
+/**
+ * Suggestion de question pour un ministère (exclut déjà posées + question actuelle).
+ */
+export function getSuggestion(ministryId, countryId, questionActuelle = null) {
+    const data = loadQuestions();
+    const pool = data?.par_ministere?.[ministryId]?.questions || [];
+    if (!pool.length) return pickRandom(FALLBACK_QUESTIONS);
+    const dejaPosees = getDejaPosees(countryId);
+    const available  = pool.filter(q => !dejaPosees.includes(q) && q !== questionActuelle);
+    return pickRandom(available.length > 0 ? available : pool);
+}

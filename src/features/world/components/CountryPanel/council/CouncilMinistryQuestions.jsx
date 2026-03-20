@@ -1,16 +1,53 @@
 // src/features/world/components/CountryPanel/council/CouncilMinistryQuestions.jsx
 // ═══════════════════════════════════════════════════════════════════════════
 //  Composant : Liste des questions fréquentes d'un ministère
-//  Features :
-//    - Affiche 6 questions échantillonnées
-//    - La question du cycle actuel est grisée et en bas
-//    - Les questions des cycles précédents ont un badge Cx avec la couleur du vote
-//    - Bouton actualiser (icône seule) pour changer l'échantillon
+//
+//  Architecture :
+//    - useEffect    → tirage aléatoire de base (uniquement si cycle/ministère change)
+//    - useMemo      → overlay vote en rendu synchrone (pas de délai)
+//
+//  UX :
+//    ⏳  La question cliquée reste EN PLACE avec sablier + encadré doré
+//    ✓✕☉☽  Au vote : glisse en bas avec la couleur du résultat
+//    Cx  Cycles précédents : badge discret dans la liste normale
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { FONT } from '../../../../../shared/theme';
-import { getMinistryQuestionsSample } from '../../../../../shared/services/boardgame/questionService';
-import { useState, useEffect, useCallback } from 'react';
+import { FONT, COLORS } from '../../../../../shared/theme';
+import { getQuestionState } from '../../../../../shared/services/boardgame/questionService';
+import QUESTIONS_FR from '../../../../../../templates/aria_questions.json';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+// Dérive le numéro de cycle courant depuis localStorage quand la prop est absente
+function getCycleEffectif(cycleActuel) {
+    if (cycleActuel !== undefined && cycleActuel !== null) return cycleActuel;
+    try {
+        const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        if (!cycles.length) return 1;
+        return Math.max(...cycles.map(c => c.cycleNum));
+    } catch { return 1; }
+}
+
+function getPool(ministryId) {
+    return QUESTIONS_FR?.par_ministere?.[ministryId]?.questions || [];
+}
+
+const LS_KEY = 'aria_chronolog_cycles';
+
+function readVotedEntry(ministryId, countryId, cycleActuel) {
+    try {
+        const pool = getPool(ministryId);
+        const cycles = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        const effectif = getCycleEffectif(cycleActuel);
+        const cycleData = cycles.find(c => c.cycleNum === effectif);
+        if (!cycleData) return null;
+        const voteEvents = (cycleData.events || []).filter(e =>
+            e.type === 'vote' && e.countryId === countryId
+        );
+        return voteEvents.find(e => e.ministereId === ministryId)
+            || voteEvents.find(e => pool.includes(e.question))
+            || null;
+    } catch { return null; }
+}
 
 export default function MinistryQuestions({
     ministryId,
@@ -21,42 +58,74 @@ export default function MinistryQuestions({
     countryId,
     cycleActuel,
     currentCycleQuestion,
-    setMinistryCycleQuestion,
-    onQuestionSelected,
-    lastVoteTimestamp
 }) {
     const isEn = lang === 'en';
-    const [questions, setQuestions] = useState([]);
+    const effectifCycle = getCycleEffectif(cycleActuel);
+
+    // ── Tirage aléatoire de base — uniquement quand cycle ou ministère change ──
+    const [baseQuestions, setBaseQuestions] = useState([]);
 
     useEffect(() => {
-        console.log(`🔄 Rechargement ${ministryId} - timestamp:`, lastVoteTimestamp?.[ministryId]);
+        const pool = getPool(ministryId);
+        const shuffled = [...pool].sort(() => Math.random() - 0.5);
+        setBaseQuestions(shuffled);
+    }, [ministryId, countryId, effectifCycle]);
 
-        const sample = getMinistryQuestionsSample(
-            ministryId,
-            countryId,
-            cycleActuel,
-            currentCycleQuestion,
-            6
-        );
+    // ── Compteur incrémenté par le custom event 'aria:vote-stored' ──
+    const [voteCounter, setVoteCounter] = useState(0);
+    useEffect(() => {
+        const handler = () => setVoteCounter(n => n + 1);
+        window.addEventListener('aria:vote-stored', handler);
+        return () => window.removeEventListener('aria:vote-stored', handler);
+    }, []);
 
-        setQuestions(sample);
-    }, [
-        ministryId,
-        countryId,
-        cycleActuel,
-        currentCycleQuestion,
-        lastVoteTimestamp?.[ministryId]  // ← Change à chaque vote pour ce ministère
-    ]);
+    // ── Overlay vote + ⏳ calculé EN RENDU (synchrone) ──
+    const questions = useMemo(() => {
+        const votedEntry = readVotedEntry(ministryId, countryId, effectifCycle);
+        const votedQuestion = votedEntry?.question || null;
+
+        // Seul le vote déplace la question en bas
+        const poolExclude = votedQuestion ? [votedQuestion] : [];
+        const sample = baseQuestions
+            .filter(q => !poolExclude.includes(q))
+            .slice(0, 6);
+
+        const result = sample.map(question => {
+            // ⏳ en place : question soumise mais pas encore votée
+            if (currentCycleQuestion && question === currentCycleQuestion && !votedEntry) {
+                return {
+                    question,
+                    state: { isCurrentCycle: true, cycle: effectifCycle, color: COLORS.goldHex, vote: null }
+                };
+            }
+            return { question, state: getQuestionState(question, countryId, ministryId) };
+        });
+
+        // Question votée → bas avec couleur du résultat
+        if (votedEntry && votedQuestion) {
+            let color = COLORS.greenHex;
+            if (votedEntry.vote === 'non')           color = COLORS.redHex;
+            else if (votedEntry.vote === 'phare')    color = COLORS.goldHex;
+            else if (votedEntry.vote === 'boussole') color = COLORS.purpleHex;
+            result.push({
+                question: votedQuestion,
+                state: {
+                    vote:           votedEntry.vote,
+                    color,
+                    label:          votedEntry.label || '',
+                    isCurrentCycle: true,
+                    cycle:          effectifCycle
+                }
+            });
+        }
+
+        return result;
+    }, [baseQuestions, ministryId, countryId, effectifCycle, currentCycleQuestion, voteCounter]);
 
     const handleQuestionClick = useCallback((question, state) => {
         if (state?.isCurrentCycle) return;
-
-        if (onQuestionSelected) {
-            onQuestionSelected(question);
-        }
-
         handleSubmit(question, ministryId);
-    }, [handleSubmit, ministryId, onQuestionSelected]);
+    }, [handleSubmit, ministryId]);
 
     if (questions.length === 0) return null;
 
@@ -68,9 +137,6 @@ export default function MinistryQuestions({
             letterSpacing: '0.12em',
             color: 'rgba(140,160,200,0.75)',
             marginBottom: '0.35rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
         }}>
         <span>{isEn ? 'QUESTIONS' : 'QUESTIONS'}</span>
         </div>
@@ -85,34 +151,24 @@ export default function MinistryQuestions({
             let leftIcon = null;
 
             if (state) {
-                const stateColor = state.color || (isCurrentCycle ? '#C8A44A' : '#4CAF50');
+                const stateColor = state.color || (isCurrentCycle ? COLORS.goldHex : COLORS.greenHex);
                 borderColor = stateColor + '40';
-                bgColor = stateColor + '08';
-                textColor = stateColor + 'cc';
+                bgColor     = stateColor + '08';
+                textColor   = stateColor + 'cc';
 
-        if (state.vote) {
-            leftIcon = (
-                <span style={{
-                    color: stateColor,
-                    fontSize: '0.5rem',
-                    minWidth: '1.2rem',
-                    textAlign: 'center',
-                }}>
-                {state.vote === 'phare' ? '☉' :
-                    state.vote === 'boussole' ? '☽' :
-                    state.vote === 'oui' ? '✓' : '✕'}
-                    </span>
-            );
-        } else if (isCurrentCycle) {
-            leftIcon = (
-                <span style={{
-                    color: stateColor,
-                    fontSize: '0.5rem',
-                    minWidth: '1.2rem',
-                    textAlign: 'center',
-                }}>⏳</span>
-            );
-        }
+                if (state.vote) {
+                    leftIcon = (
+                        <span style={{ color: stateColor, fontSize: '0.5rem', minWidth: '1.2rem', textAlign: 'center' }}>
+                        {state.vote === 'phare' ? '☉' :
+                            state.vote === 'boussole' ? '☽' :
+                            state.vote === 'oui' ? '✓' : '✕'}
+                        </span>
+                    );
+                } else if (isCurrentCycle) {
+                    leftIcon = (
+                        <span style={{ color: stateColor, fontSize: '0.5rem', minWidth: '1.2rem', textAlign: 'center' }}>⏳</span>
+                    );
+                }
             }
 
             return (
@@ -147,9 +203,9 @@ export default function MinistryQuestions({
                         color: state.color + 'aa',
                         fontFamily: FONT.mono,
                         background: 'rgba(0,0,0,0.2)',
-                                              padding: '0.1rem 0.3rem',
-                                              borderRadius: '2px',
-                                              whiteSpace: 'nowrap',
+                        padding: '0.1rem 0.3rem',
+                        borderRadius: '2px',
+                        whiteSpace: 'nowrap',
                     }}>
                     C{state.cycle}
                     </span>
@@ -160,9 +216,9 @@ export default function MinistryQuestions({
                         color: borderColor,
                         fontFamily: FONT.mono,
                         background: 'rgba(0,0,0,0.2)',
-                                                    padding: '0.1rem 0.3rem',
-                                                    borderRadius: '2px',
-                                                    whiteSpace: 'nowrap',
+                        padding: '0.1rem 0.3rem',
+                        borderRadius: '2px',
+                        whiteSpace: 'nowrap',
                     }}>
                     {isEn ? 'this cycle' : 'ce cycle'}
                     </span>

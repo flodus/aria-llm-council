@@ -20,9 +20,8 @@ export default function MinistryItem({
     countryId,
     cycleActuel,
     currentCycleQuestion,
-    setMinistryCycleQuestion
+    setMinistryCycleQuestion,
 }) {
-    console.log('setMinistryCycleQuestion dans MinistryItem:', setMinistryCycleQuestion); // Debug
 
     const isEn = lang === 'en';
     const { id, emoji, name, color, questions = [] } = ministry;
@@ -79,7 +78,6 @@ export default function MinistryItem({
             countryId={countryId}
             cycleActuel={cycleActuel}
             currentCycleQuestion={currentCycleQuestion}
-            setMinistryCycleQuestion={setMinistryCycleQuestion}
             />
 
             <CitizenQuestion

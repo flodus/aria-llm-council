@@ -575,12 +575,6 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
 
           {/* Proposition soumise au vote */}
 
-          {console.log('🔥 synthese complete:', presidence?.synthese)}
-          {console.log('  → voteQuestion:', presidence?.synthese?.voteQuestion)}
-          {console.log('  → question_referendum:', presidence?.synthese?.question_referendum)}
-          {console.log('  → position_phare_resume:', presidence?.synthese?.position_phare_resume)}
-          {console.log('  → position_boussole_resume:', presidence?.synthese?.position_boussole_resume)}
-
           <div style={bubble(C.blue, { marginBottom: '0.8rem' })}>
           <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: C.blueDim, letterSpacing: '0.14em', marginBottom: '0.5rem' }}>
           PROPOSITION SOUMISE AU VOTE
@@ -610,12 +604,12 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             <div style={{ display: 'flex', gap: '0.7rem' }}>
             <VoteButton
             label={presidence.synthese.voteOptions?.phare?.label || "☉ PHARE"}
-            color={presidence.synthese.voteOptions?.phare?.color || C.gold}
+            color={presidence.synthese.voteOptions?.phare?.color || C.goldHex}
             onClick={() => onVote?.('phare')}
             />
             <VoteButton
             label={presidence.synthese.voteOptions?.boussole?.label || "☽ BOUSSOLE"}
-            color={presidence.synthese.voteOptions?.boussole?.color || C.purple}
+            color={presidence.synthese.voteOptions?.boussole?.color || C.purpleHex}
             onClick={() => onVote?.('boussole')}
             />
             </div>

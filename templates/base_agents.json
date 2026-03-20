@@ -389,6 +389,57 @@
       ]
     },
     {
+      "id": "industrie",
+      "name": "Industrie et Infrastructures",
+      "emoji": "⚙️",
+      "signs": "Capricorne – Verseau – Vierge",
+      "color": "#7F8C8D",
+      "mission": "Animer le système circulatoire et productif de la nation en modernisant les infrastructures pour une efficacité maximale.",
+      "weight": 1,
+      "ministers": [
+        "stratege",
+        "inventeur",
+        "analyste"
+      ],
+      "ministerPrompts": {
+        "inventeur": "Optimise les chaînes logistiques pour une croissance durable.",
+        "stratege": "Renforce les réseaux critiques pour garantir notre avance.",
+        "analyste": "Audite chaque flux de production pour éliminer le gaspillage et maximiser l efficience."
+      },
+      "keywords": [
+        "usine",
+        "production",
+        "réseau",
+        "numérique",
+        "infrastructure",
+        "construction",
+        "logistique",
+        "transports",
+        "industrie",
+        "manufacture",
+        "chaîne",
+        "approvisionnement",
+        "énergie",
+        "réseau électrique",
+        "télécom",
+        "robotique",
+        "automatisation",
+        "machine",
+        "outil",
+        "équipement",
+        "réseau électrique industriel",
+        "transport industriel",
+        "chaîne logistique",
+        "capacité de production",
+        "site industriel",
+        "parc industriel",
+        "zone d'activité",
+        "approvisionnement industriel",
+        "maintenance industrielle",
+        "équipement industriel"
+      ]
+    },
+    {
       "id": "chance",
       "name": "Chance et Imprévu",
       "emoji": "🎲",
@@ -482,57 +533,6 @@
         "inattendu",
         "miracle",
         "anomalie"
-      ]
-    },
-    {
-      "id": "industrie",
-      "name": "Industrie et Infrastructures",
-      "emoji": "⚙️",
-      "signs": "Capricorne – Verseau – Vierge",
-      "color": "#7F8C8D",
-      "mission": "Animer le système circulatoire et productif de la nation en modernisant les infrastructures pour une efficacité maximale.",
-      "weight": 1,
-      "ministers": [
-        "stratege",
-        "inventeur",
-        "analyste"
-      ],
-      "ministerPrompts": {
-        "inventeur": "Optimise les chaînes logistiques pour une croissance durable.",
-        "stratege": "Renforce les réseaux critiques pour garantir notre avance.",
-        "analyste": "Audite chaque flux de production pour éliminer le gaspillage et maximiser l efficience."
-      },
-      "keywords": [
-        "usine",
-        "production",
-        "réseau",
-        "numérique",
-        "infrastructure",
-        "construction",
-        "logistique",
-        "transports",
-        "industrie",
-        "manufacture",
-        "chaîne",
-        "approvisionnement",
-        "énergie",
-        "réseau électrique",
-        "télécom",
-        "robotique",
-        "automatisation",
-        "machine",
-        "outil",
-        "équipement",
-        "réseau électrique industriel",
-        "transport industriel",
-        "chaîne logistique",
-        "capacité de production",
-        "site industriel",
-        "parc industriel",
-        "zone d'activité",
-        "approvisionnement industriel",
-        "maintenance industrielle",
-        "équipement industriel"
       ]
     }
   ]

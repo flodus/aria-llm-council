@@ -18,10 +18,8 @@ export default function MinistryList({
     countryId,
     cycleActuel,
     getCurrentQuestionForMinistry,
-    setMinistryCycleQuestion
+    setMinistryCycleQuestion,
 }) {
-    console.log('setMinistryCycleQuestion dans MinistryList:', setMinistryCycleQuestion); // Debug
-
     return (
         <>
         {ministries.map(m => (

@@ -12,6 +12,7 @@ export const COLORS = {
     goldFaint:  'rgba(200,164,74,0.08)',
     goldBorder: 'rgba(200,164,74,0.22)',
     goldSolid:  'rgb(200,164,74)',
+    goldHex:    '#C8A44A',
 
     // Violet / Boussole
     purple:     'rgba(140,100,220,0.85)',
@@ -19,6 +20,7 @@ export const COLORS = {
     purpleDim:  'rgba(140,100,220,0.50)',
     violetDim:  'rgba(140,100,220,0.50)',
     purpleSolid:'rgb(140,100,220)',
+    purpleHex:  '#9B7EC8',
 
     // Bleus (mélange des deux versions)
     blue:       'rgba(74,126,200,0.85)',
@@ -28,10 +30,12 @@ export const COLORS = {
     // Vert / Oui
     green:      'rgba(58,191,122,0.85)',
     greenDim:   'rgba(58,191,122,0.50)',
+    greenHex:   '#4CAF50',
 
     // Rouge / Non
     red:        'rgba(200,80,80,0.85)',
     redDim:     'rgba(200,80,80,0.50)',
+    redHex:     '#F44336',
 
     // Textes
     text:       'rgba(200,215,240,0.88)',

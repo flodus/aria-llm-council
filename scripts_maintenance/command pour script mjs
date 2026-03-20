@@ -1,0 +1,22 @@
+package.json
+{
+  "name": "aria",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "homepage": "https://flodus.github.io/aria-llm-council",
+  "scripts": {
+    "dev": "vite",
+    /.../
+    /.../
+    "check": "node scripts_maintenance/check_aria.js",
+    "check:data": "node scripts_maintenance/check_aria.js data/aria_responses.json",
+    "check:fix": "node scripts_maintenance/check_aria.js data/aria_responses.json --fix"
+  }
+}
+
+
+
+npm run check
+npm run check:data
+npm run check:fix

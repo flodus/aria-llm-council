@@ -1306,13 +1306,16 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     if (!selectedCountry || councilRunning) return;
     setCouncilRunning(true);
 
-    // Routing → ministère
+    // Phase 0 : question visible immédiatement (ministryId non résolu → ⏳ instantané)
+    const countryContext = buildCountryContext(selectedCountry);
+    setCouncilSession({ question, ministryId, countryId: selectedCountry?.id, countryContext, countryNom: selectedCountry?.nom });
+
+    // Routing → ministère (async)
     const resolvedId = await routeQuestion(question, ministryId);
     const ministry   = resolvedId ? MINISTRIES_LIST.find(m => m.id === resolvedId) : null;
 
-    // Phase 0 : question visible immédiatement
-    const countryContext = buildCountryContext(selectedCountry);
-    setCouncilSession({ question, ministryId: resolvedId, countryContext, countryNom: selectedCountry?.nom });
+    // Mise à jour avec le ministryId résolu
+    setCouncilSession(prev => ({ ...prev, ministryId: resolvedId }));
 
     try {
       // Phase 1 : ministère (ou fallback orphelin)
@@ -1420,6 +1423,11 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       },
       voteCounts: { oui: ouiVotes, non: nonVotes },
     });
+
+    // Notifie CouncilMinistryQuestions (rendu dans App.jsx) que le vote est en localStorage
+    window.dispatchEvent(new CustomEvent('aria:vote-stored', {
+      detail: { cycleNum: cycleNumRef.current }
+    }));
 
     // Historique cycle courant (pour CycleConfirmModal + live ChronologView)
     const liveEntry = {
