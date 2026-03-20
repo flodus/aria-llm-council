@@ -1,5 +1,5 @@
 {
-  "name": "aria-planete",
+  "name": "ma-planete",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,8 +12,7 @@
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
-    "pigeon-maps": "^0.22.1",
-    "pigeon-marker": "^0.3.4",
+    "@types/three": "^0.183.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "three": "^0.183.2"
