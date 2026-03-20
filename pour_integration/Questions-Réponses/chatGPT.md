@@ -1,21 +1,38 @@
-on continue avec l'analyste par contre il y des règles maintenant :
-vu que je vais les mettre les uns à la suite des autres je veux ce format :
-(pas d'ouverture d'accolade)
-"analyste": {
-...
-}, (accolade et virgule)
+Je travaille sur un jeu narratif politique basé sur des ministres représentant des archétypes (inspirés des 12 signes astrologiques).
 
-de plus j'aime pas les tirets cadratins, donc on va établir une règle selon le contexte. A la place des tirets cadratins, tu mets :
+Chaque ministre possède des réponses organisées en JSON selon :
+- différents régimes (démocratie libérale, junte militaire, technocratie IA, etc.)
+- différentes postures (prudent, radical, statu_quo)
 
-Posture "prudent" → privilégie la virgule (fluidité, retenue)
-Posture "radical" → alterne point et point d'exclamation selon l'intensité
-Posture "statu_quo" → essaie de rester au point (neutre, stable)
+Objectif :
+Faire une réécriture en français immersive, cohérente et narrative (pas une simple correction), avec un ton mélangeant :
+- politique réaliste
+- jeu vidéo immersif
+- narration philosophique légère
 
+Contraintes STRICTES :
+- Respect total de la structure JSON
+- Ne pas ajouter ni supprimer de clés
+- Respecter l’ordre
+- Format inline (ex: "analyste": { ... },)
+- Aucune accolade globale
 
+Style par posture :
+- prudent → phrases fluides, usage de la virgule, nuance
+- radical → phrases courtes, impact, points et parfois points d’exclamation
+- statu_quo → ton neutre, stable, phrases simples avec des points
 
+Chaque ministre doit avoir une identité forte :
+- Initiateur : impulsion, mouvement
+- Gardien : ressources, rigueur
+- Communicant : perception, récit
+- Protecteur : social, humain
+- Ambassadeur : diplomatie
+- Analyste : données, lucidité
+- etc.
 
+Le rendu doit être directement injectables dans un JSON de jeu.
 
-et si au passage tu peux me faire un prompt sur l'idée générale de ce qu'on est en train de faire que je pourrais te redonner si je dois refaire un fil je prends.
 
 
 
@@ -42,3 +59,46 @@ Pour les questions faut des trouver des questions qui collent plus ou moins avec
   }
 }
 ```
+
+
+
+
+Je travaille sur un jeu narratif politique basé sur des ministres représentant des archétypes (inspirés des 12 signes astrologiques).
+
+Chaque ministre possède des réponses organisées en JSON selon :
+- différents régimes (démocratie libérale, junte militaire, technocratie IA, etc.)
+- différentes postures (prudent, radical, statu_quo)
+
+Objectif :
+Faire une réécriture en français immersive, cohérente et narrative (pas une simple correction), avec un ton mélangeant :
+- politique réaliste
+- jeu vidéo immersif
+- narration philosophique légère
+
+Contraintes STRICTES :
+- Respect total de la structure JSON
+- Ne pas ajouter ni supprimer de clés
+- Respecter l’ordre
+- Format inline (ex: "analyste": { ... },)
+- Aucune accolade globale
+
+Style par posture :
+- prudent → phrases fluides, usage de la virgule, nuance
+- radical → phrases courtes, impact, points et parfois points d’exclamation
+- statu_quo → ton neutre, stable, phrases simples avec des points
+
+Chaque ministre doit avoir une identité forte :
+- Initiateur : impulsion, mouvement
+- Gardien : ressources, rigueur
+- Communicant : perception, récit
+- Protecteur : social, humain
+- Ambassadeur : diplomatie
+- Analyste : données, lucidité
+- etc.
+
+Le rendu doit être directement injectables dans un JSON de jeu.
+
+On en est aux ministères je te remets leur rôle et je t'envoie mon fichier original et celui que tu m'aides à modifier.
+
+Pour te donner une idées des ministères et leur missions : (les alias et les missions tu les mets pas, c'est pour ton info) "justice", "alias Justice et Vérité" // Justice, tribunaux, application des lois, renseignement // Garantir l'équilibre des droits et la révélation des faits. Rendre une justice qui voit à travers les masques. "economie", "alias Economie et Ressources" // Économie, finances, fiscalité // Assurer la pérennité matérielle en transformant l'effort en richesse durable. Objectif : zéro gaspillage et croissance concrète. "defense", "alias DÉFENSE ET SOUVERAINETÉ" // Défense, armée, sécurité nationale // Protéger l'intégrité du territoire et l'honneur de la nation. Être le bouclier et l'épée du système. "sante", "alias SANTÉ ET PROTECTION SOCIALE" // Santé, hôpitaux, politique médicale // Prendre soin du corps et de l'esprit du peuple. Priorité absolue : l'humain avant les chiffres. "education", "alias ÉDUCATION ET ÉLÉVATION" // Éducation, écoles, formation, apprentissage // Transmettre le savoir d'hier pour inventer les citoyens de demain. Stimuler l'esprit critique. "ecologie", alias "TRANSITION ÉCOLOGIQUE" // Écologie, environnement, climat // Gérer la survie de la biosphère et l'adaptation climatique. Inventer ce qui n'existe pas encore avec panache. "industrie" , "alias INDUSTRIE ET INFRASTRUCTURES" // Industrie, innovation, technologie, énergie, infrastrucures // Animer le système circulatoire et productif de la nation en modernisant les infrastructures pour une efficacité maximale.
+

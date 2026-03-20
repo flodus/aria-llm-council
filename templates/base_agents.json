@@ -385,7 +385,9 @@
         "transport",
         "voiture",
         "électrique",
-        "taxe"
+        "transport en commun",
+        "energie verte",
+        "vélo"
       ]
     },
     {
@@ -436,7 +438,8 @@
         "zone d'activité",
         "approvisionnement industriel",
         "maintenance industrielle",
-        "équipement industriel"
+        "équipement industriel",
+        "réseau routier"
       ]
     },
     {
