@@ -67,6 +67,35 @@ _Dernière mise à jour : 2026-03-13_
 
 ---
 
+## 🟠 CHANTIERS BOARD GAME
+
+- [ ] **N2 — aria_syntheses.json** : nouveau fichier pour les synthèses offline Board Game
+  Séparé de aria_reponses.json (même logique que questions/réponses)
+
+  Structure :
+  - `ministeres[id][regime][convergence|divergence][]` — 7 ministères × 7 régimes × 2 états
+  - `presidence[convergence|divergence][]` — pool global, pas par régime
+
+  Règle de convergence V1 (à coder dans responseService.js) :
+  - radical + radical → convergence
+  - prudent + prudent → convergence
+  - statu_quo + statu_quo → convergence
+  - prudent + statu_quo → convergence (tension faible)
+  - radical + prudent → divergence
+  - radical + statu_quo → divergence
+
+  Règle présidence : si Phare et Boussole piochent dans le même type de pool
+  (tous deux action ou tous deux prudence) → convergence, sinon → divergence.
+  Logique keyword déjà dans deliberationEngine.js — brancher sur aria_syntheses.json
+
+  Fichiers touchés : aria_syntheses.json (nouveau) · responseService.js · fallbacks.js
+  Ne pas toucher : aria_reponses.json · deliberationEngine.js
+
+  ⚠️ Assess session dédiée pour générer les ~300 entrées de données
+  ⚠️ Système poids ministériels (V-future) documenté dans REFLEXIONS.md
+
+---
+
 ## 🟠 FONCTIONNEL MOYEN TERME
 _(bloqué sur refonte carte V1)_
 
