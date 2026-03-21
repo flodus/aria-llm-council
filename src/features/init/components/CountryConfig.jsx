@@ -119,6 +119,9 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
 
     const nomAffiche = c.nom || c.realData?.nom || null;
     const flagAffiche = c.realData?.flag || null;
+    // Icône du mode contexte délibération (affichée dans le header replié)
+    const ctxIcons = { '': '⚙️', auto: '🤖', rich: '📖', stats_only: '📊', off: '🚫' };
+    const ctxIcon = c.contextOverride ? '✎' : (ctxIcons[c.context_mode || ''] ?? '⚙️');
 
     return (
         <div style={{ ...CARD_STYLE, padding: isOpen ? '0.9rem 1rem' : '0.55rem 1rem' }}>
@@ -141,7 +144,9 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             {c.realData?.emoji || '🌐'} FICTIF
             </span>
         )}
-        {!isOpen && c.realData && c.type === 'reel' && <span style={tag}>{c.realData.flag} RÉEL</span>}
+        {!isOpen && c.type === 'reel' && (
+            <span style={{ fontSize: '0.78rem', opacity: 0.65, lineHeight: 1 }} title="Contexte délibération">{ctxIcon}</span>
+        )}
         <span style={{ fontFamily: FONT.mono, fontSize: '0.55rem', color: 'rgba(140,160,200,0.40)', lineHeight: 1 }}>
             {isOpen ? '▲' : '▼'}
         </span>

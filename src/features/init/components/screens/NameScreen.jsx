@@ -94,25 +94,17 @@ export default function NameScreen({
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '0.6rem 0.9rem', gap: '0.7rem',
                 }}>
-                    <span style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: badgeColor, letterSpacing: '0.06em', flex: 1 }}>
-                        {badgeText}
-                    </span>
-
-                    {/* Toggle Board Game — uniquement si clés valides */}
-                    {hasApiKeys && (
-                        <label
-                            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', flexShrink: 0 }}
-                            title={lang === 'en' ? 'Force Board Game mode (no AI)' : 'Forcer le mode Board Game (hors IA)'}
-                        >
-                            <span style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: iaBoardGame ? 'rgba(80,200,200,0.80)' : 'rgba(140,160,200,0.40)' }}>
-                                🎲
-                            </span>
-                            <input type="checkbox" checked={iaBoardGame} onChange={toggleBoardGame} style={{ display: 'none' }} />
-                            {/* Toggle switch */}
+                    {/* Badge + switch Board Game groupés */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                        <span style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: badgeColor, letterSpacing: '0.06em' }}>
+                            {badgeText}
+                        </span>
+                        {hasApiKeys && (
                             <div
                                 onClick={toggleBoardGame}
+                                title={lang === 'en' ? 'Force Board Game mode (no AI)' : 'Forcer le mode Board Game (hors IA)'}
                                 style={{
-                                    width: '2rem', height: '1rem', borderRadius: '0.5rem', position: 'relative', cursor: 'pointer',
+                                    width: '2rem', height: '1rem', borderRadius: '0.5rem', position: 'relative', cursor: 'pointer', flexShrink: 0,
                                     background: iaBoardGame ? 'rgba(80,200,200,0.25)' : 'rgba(60,70,90,0.40)',
                                     border: `1px solid ${iaBoardGame ? 'rgba(80,200,200,0.50)' : 'rgba(80,100,130,0.35)'}`,
                                     transition: 'background 0.2s, border-color 0.2s',
@@ -126,8 +118,13 @@ export default function NameScreen({
                                     transition: 'transform 0.2s, background 0.2s',
                                 }} />
                             </div>
-                        </label>
-                    )}
+                        )}
+                        {hasApiKeys && (
+                            <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: iaBoardGame ? 'rgba(80,200,200,0.70)' : 'rgba(140,160,200,0.35)' }}>
+                                🎲
+                            </span>
+                        )}
+                    </div>
 
                     <button
                         style={{
