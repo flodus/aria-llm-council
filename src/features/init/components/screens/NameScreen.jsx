@@ -57,7 +57,7 @@ export default function NameScreen({
             padding: '2rem 1.5rem 14vh', boxSizing: 'border-box',
         }}>
             <Suspense fallback={null}><GlobeBackground /></Suspense>
-            <ARIAHeader showQuote={false} lang={lang} setLang={setLang} />
+            <ARIAHeader showQuote={true} lang={lang} setLang={setLang} />
 
             {showKeys && <APIKeyInline onClose={handleCloseKeys} />}
 
