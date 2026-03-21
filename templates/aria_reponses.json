@@ -10,7 +10,7 @@
       "technocratie_ia",
       "junte_militaire",
       "oligarchie",
-      "theocracie"
+      "theocratie"
     ],
     "fallbacks": {
       "monarchie_absolue": "monarchie_constitutionnelle",
@@ -135,7 +135,7 @@
             "La stabilité garantit nos rendements."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Attendons les signes avant d’agir.",
             "La sagesse exige patience et discernement.",
@@ -261,7 +261,7 @@
             "Aucune raison d’ajuster la répartition existante."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Les ressources sont un don, gérons-les avec humilité.",
             "Chaque bien doit être utilisé avec sagesse.",
@@ -388,7 +388,7 @@
             "Inutile d’exposer davantage nos intérêts."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Diffusons la parole avec sagesse.",
             "Chaque message doit être fidèle aux enseignements.",
@@ -515,7 +515,7 @@
             "Ne modifions pas la gestion sociale."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Prenons soin des fidèles avec sagesse.",
             "La compassion guide notre devoir.",
@@ -642,7 +642,7 @@
             "Ne modifions pas nos relations existantes."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Dialoguons sans compromettre nos principes.",
             "La foi guide nos relations extérieures.",
@@ -801,7 +801,7 @@
             "Maintien de la stratégie actuelle."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Les signes doivent être interprétés avec discernement, évitons toute conclusion hâtive.",
             "Les enseignements nécessitent réflexion, approfondissons notre compréhension.",
@@ -966,7 +966,7 @@
             "Maintien des rapports existants."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "La décision doit être guidée par les principes, évitons toute interprétation hâtive.",
             "Prenons le temps de discerner, la justesse en dépend.",
@@ -1131,7 +1131,7 @@
             "Maintien de la lecture actuelle."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Les signes doivent être interprétés avec discernement, évitons toute conclusion hâtive.",
             "Chaque indication doit être examinée, la vérité demande patience.",
@@ -1296,7 +1296,7 @@
             "Maintien de la trajectoire actuelle."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "La voie doit être comprise avant d’être suivie, avançons avec sagesse.",
             "Guidons avec discernement, chaque pas doit avoir du sens.",
@@ -1321,7 +1321,7 @@
         }
       }
     },
-    "stratège": {
+    "stratege": {
       "reponses": {
         "democratie_liberale": {
           "prudent": [
@@ -1461,7 +1461,7 @@
             "Maintien de la ligne actuelle."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Inscrivons notre action dans une vision guidée, sans précipitation.",
             "La stratégie doit respecter les principes, avançons avec discernement.",
@@ -1626,7 +1626,7 @@
             "Maintien des stratégies actuelles."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "L’innovation doit respecter les principes, avançons avec discernement.",
             "Chaque nouveauté doit être comprise avant adoption, évitons toute rupture.",
@@ -1791,7 +1791,7 @@
             "Maintien de l’équilibre actuel."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Prenons soin des âmes avec patience, la guérison demande du temps.",
             "Apaisons les souffrances avec sagesse, chaque être suit son chemin.",
@@ -1958,7 +1958,7 @@
             "Maintien du dispositif actuel."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Les règles doivent refléter les principes, ajustons avec discernement.",
             "L’application du droit doit rester fidèle aux enseignements.",
@@ -2123,7 +2123,7 @@
             "Maintien de la stratégie actuelle."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Les ressources doivent être utilisées avec justesse, évitons tout excès.",
             "Une gestion équilibrée garantit la pérennité, avançons avec discernement.",
@@ -2288,7 +2288,7 @@
             "Maintien du système actuel."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "La protection doit être assurée avec discernement, sans compromettre l’équilibre.",
             "Les forces doivent agir en cohérence avec les principes, avançons avec mesure.",
@@ -2417,7 +2417,7 @@
             "Aucune modification nécessaire."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "Le soin doit être apporté avec compassion, car chaque vie porte une valeur essentielle.",
             "La santé doit rester alignée avec les principes, sans dérive ni excès.",
@@ -2540,7 +2540,7 @@
             "Aucune modification nécessaire."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "L’éducation doit transmettre les principes, avec équilibre et discernement.",
             "Le savoir doit rester aligné avec les valeurs, sans dérive.",
@@ -2663,7 +2663,7 @@
             "Aucune modification nécessaire."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "La nature doit être préservée avec respect, elle reflète l’équilibre fondamental.",
             "Les ressources doivent être utilisées avec mesure, sans excès.",
@@ -2786,7 +2786,7 @@
             "Aucune modification nécessaire."
           ]
         },
-        "theocracie": {
+        "theocratie": {
           "prudent": [
             "L’industrie doit évoluer en respectant les principes, sans excès.",
             "Les infrastructures doivent servir l’équilibre et la stabilité.",
@@ -2866,7 +2866,7 @@
           "Nos décisions doivent préserver et renforcer ce qui crée la valeur.",
           "C’est par la maîtrise des ressources que se construit notre avenir."
         ],
-        "theocracie": [
+        "theocratie": [
           "La foi donne une direction, et c’est elle qui éclaire nos choix.",
           "Nos décisions doivent rester alignées avec ce qui nous dépasse.",
           "C’est dans la fidélité aux principes que se trouve la justesse."
@@ -2933,12 +2933,13 @@
           "La stabilité économique est une condition de durabilité.",
           "Une décision efficace est une décision qui tient dans le temps."
         ],
-        "theocracie": [
+        "theocratie": [
           "Les décisions doivent rester fidèles aux principes.",
           "L’équilibre entre foi et réalité doit être préservé.",
           "La justesse se mesure dans les conséquences."
         ]
       }
     }
-  },
+  }
+  }
 }
