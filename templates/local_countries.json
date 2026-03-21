@@ -1,0 +1,44 @@
+[
+  {
+    "id": "valoria",
+    "nom": "République de Valoria",
+    "emoji": "🏛",
+    "couleur": "#4A7FC1",
+    "regime": "republique_federale",
+    "terrain": "coastal",
+    "description": "Démocratie fédérale fondée sur le commerce maritime et le droit civil. Valoria a surmonté une guerre civile il y a deux générations et reconstruit ses institutions sur un pacte de réconciliation nationale.",
+    "leader": "Premier Consul Aldric Maren",
+    "population": 12400000,
+    "tauxNatalite": 11.2,
+    "tauxMortalite": 9.1,
+    "satisfaction": 62
+  },
+  {
+    "id": "eldoria",
+    "nom": "Confédération d'Eldoria",
+    "emoji": "⛰",
+    "couleur": "#7A5C3A",
+    "regime": "republique_federale",
+    "terrain": "highland",
+    "description": "Alliance de cantons montagnards jaloux de leur autonomie. La Confédération d'Eldoria vit de l'extraction minière et d'une tradition militaire défensive. Ses citoyens votent par référendum cantonal sur toutes les décisions fédérales.",
+    "leader": "Archichancelier Vorn Daelith",
+    "population": 8700000,
+    "tauxNatalite": 9.8,
+    "tauxMortalite": 10.3,
+    "satisfaction": 58
+  },
+  {
+    "id": "thalassia",
+    "nom": "Confédération de Thalassia",
+    "emoji": "🌊",
+    "couleur": "#2A7A6A",
+    "regime": "monarchie_constitutionnelle",
+    "terrain": "island",
+    "description": "Archipel souverain gouverné par une monarchie constitutionnelle ouverte. Thalassia tire sa prospérité de la pêche hauturière, du commerce portuaire et d'une réputation de neutralité diplomatique héritée de trois siècles d'indépendance.",
+    "leader": "Reine Seraphine II de la Mer d'Azur",
+    "population": 5200000,
+    "tauxNatalite": 13.4,
+    "tauxMortalite": 7.6,
+    "satisfaction": 71
+  }
+]
