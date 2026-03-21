@@ -96,6 +96,7 @@ import {
   SubtitleCard,
   ButtonRow
 } from '../../shared/components';
+import InitScreenLayout from './InitScreenLayout';
 
 
 // ── Getters localisés — labels terrain/régime/pays depuis JSON ────────────
@@ -107,8 +108,8 @@ const DEFAULT_COUNTRY = () => ({
   terrain: 'coastal', realData: null,
 });
 
-// ── Composant principal ─────────────────────────────────────────────────
-export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onLaunchAI, hasApiKeys, onRefreshKeys }) {
+// ── Composant interne ─────────────────────────────────────────────────
+function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaunchAI, hasApiKeys, onRefreshKeys }) {
   const { lang, setLang } = useLocale();
   const [step,       setStep]      = useState('name');
   const [mode,       setMode]      = useState(null);
@@ -337,4 +338,13 @@ export default function InitScreen({ worldName, setWorldName, onLaunchLocal, onL
 
     return null;
   }
+
+// ── Export principal — enveloppe dans InitScreenLayout ───────────────────
+export default function InitScreen(props) {
+  return (
+    <InitScreenLayout>
+      <InitScreenInner {...props} />
+    </InitScreenLayout>
+  );
+}
 
