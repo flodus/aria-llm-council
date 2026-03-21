@@ -33,7 +33,7 @@ export default function ContextPanel({ countryName, open, onToggle, mode, setMod
           padding:'0.42rem 0.65rem', background:'none', border:'none', cursor:'pointer',
           textAlign:'left' }}
           onClick={onToggle}>
-          <span style={{ fontSize:'0.75rem' }}>{open ? '▾' : '▸'}</span>
+          <span style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.55)' }}>{open ? '▾' : '▸'}</span>
           <span style={{ fontFamily:FONT.mono, fontSize:'0.44rem', letterSpacing:'0.12em',
             color: open ? GOLD : 'rgba(140,160,200,0.55)' }}>
             {t('CONTEXT',lang)}
