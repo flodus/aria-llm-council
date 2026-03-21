@@ -28,7 +28,7 @@ import {
     PresidencyDetail,
     MinistriesDetail,
     MinistersDetail,
-    CountryContextAccordion,
+    ContextPanel,
     ConfirmLaunchDialog
 } from './index';
 
@@ -207,14 +207,14 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             {/* Onglet RÉSUMÉ */}
             {plTab === 'resume' && (
                 <>
-                <CountryContextAccordion
-                pendingDefs={pendingDefs}
-                plCtxOpen={countryContext.plCtxOpen}
-                setPlCtxOpen={countryContext.setPlCtxOpen}
-                plCtxModes={countryContext.plCtxModes}
-                setPlCtxModes={countryContext.setPlCtxModes}
-                plCtxOvrs={countryContext.plCtxOvrs}
-                setPlCtxOvrs={countryContext.setPlCtxOvrs}
+                <ContextPanel
+                countryName={countries[countryOverride.plCountry]?.nom || countries[countryOverride.plCountry]?.realData?.nom || `Nation ${countryOverride.plCountry + 1}`}
+                open={countryContext.plCtxOpen === countryOverride.plCountry}
+                onToggle={() => countryContext.setPlCtxOpen(p => p === countryOverride.plCountry ? null : countryOverride.plCountry)}
+                mode={countryContext.plCtxModes[countryOverride.plCountry] || ''}
+                setMode={v => countryContext.setPlCtxModes(p => { const a = [...p]; a[countryOverride.plCountry] = v; return a; })}
+                override={countryContext.plCtxOvrs[countryOverride.plCountry] || ''}
+                setOverride={v => countryContext.setPlCtxOvrs(p => { const a = [...p]; a[countryOverride.plCountry] = v; return a; })}
                 />
 
                 <IAConfigAccordion

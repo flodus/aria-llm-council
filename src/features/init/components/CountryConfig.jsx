@@ -25,7 +25,6 @@ import { validateCountryWithAI } from '../../../shared/services/country';
 // Composants (via index.js de components/)
 import {
     CountryInfoCard,
-    ContextPanel,
     CountryEstimations,
     RealCountryLocalSection,
     FictionalCountrySection,
@@ -119,9 +118,11 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
 
     const nomAffiche = c.nom || c.realData?.nom || null;
     const flagAffiche = c.realData?.flag || null;
-    // Icône du mode contexte délibération (affichée dans le header replié)
-    const ctxIcons = { '': '⚙️', auto: '🤖', rich: '📖', stats_only: '📊', off: '🚫' };
-    const ctxIcon = c.contextOverride ? '✎' : (ctxIcons[c.context_mode || ''] ?? '⚙️');
+    // Icône + tooltip du mode contexte délibération (header replié)
+    const ctxIcons    = { '': '⚙️', auto: '🤖', rich: '📖', stats_only: '📊', off: '🚫' };
+    const ctxLabels   = { '': 'Hérité du global', auto: 'Auto — stats + description', rich: 'Enrichi — contexte complet', stats_only: 'Stats seules', off: 'Désactivé — aucun contexte' };
+    const ctxIcon     = c.contextOverride ? '✎' : (ctxIcons[c.context_mode || ''] ?? '⚙️');
+    const ctxTooltip  = c.contextOverride ? 'Contexte personnalisé' : (ctxLabels[c.context_mode || ''] ?? 'Hérité du global');
 
     return (
         <div style={{ ...CARD_STYLE, padding: isOpen ? '0.9rem 1rem' : '0.55rem 1rem' }}>
@@ -145,7 +146,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             </span>
         )}
         {!isOpen && c.type === 'reel' && (
-            <span style={{ fontSize: '0.78rem', opacity: 0.65, lineHeight: 1 }} title="Contexte délibération">{ctxIcon}</span>
+            <span style={{ fontSize: '0.78rem', opacity: 0.65, lineHeight: 1 }} title={`Contexte : ${ctxIcon} ${ctxTooltip}`}>{ctxIcon}</span>
         )}
         <span style={{ fontFamily: FONT.mono, fontSize: '0.55rem', color: 'rgba(140,160,200,0.40)', lineHeight: 1 }}>
             {isOpen ? '▲' : '▼'}
@@ -215,16 +216,6 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             />
         )}
 
-        {/* Contexte Délibérations par Pays*/}
-        <ContextPanel
-        countryName={c.nom || c.realData?.nom || `Nation ${idx + 1}`}
-        open={!!c._ctxOpen}
-        onToggle={() => setField('_ctxOpen', !c._ctxOpen)}
-        mode={c.context_mode || ''}
-        setMode={v => setField('context_mode', v || undefined)}
-        override={c.contextOverride || ''}
-        setOverride={v => setField('contextOverride', v || undefined)}
-        />
         </>}
         </div>
     );
