@@ -18,6 +18,16 @@ export default function NameScreen({
         try { return JSON.parse(localStorage.getItem('aria_options') || '{}').ia_mode === 'none'; } catch { return false; }
     });
 
+    const toggleBoardGame = () => {
+        const next = !iaBoardGame;
+        setIaBoardGame(next);
+        try {
+            const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+            opts.ia_mode = next ? 'none' : (opts.ia_mode === 'none' ? 'aria' : opts.ia_mode);
+            localStorage.setItem('aria_options', JSON.stringify(opts));
+        } catch {}
+    };
+
     const handleCloseKeys = () => {
         setShowKeys(false);
         onRefreshKeys?.();
@@ -32,12 +42,8 @@ export default function NameScreen({
         textAlign: 'center',
     };
 
-    const badgeColor = iaBoardGame
-        ? 'rgba(80,200,200,0.80)'
-        : hasApiKeys ? 'rgba(100,200,120,0.80)' : 'rgba(200,100,74,0.70)';
-    const badgeText = iaBoardGame
-        ? '🎲 BOARD GAME'
-        : hasApiKeys
+    const badgeColor = hasApiKeys ? 'rgba(100,200,120,0.80)' : 'rgba(200,100,74,0.70)';
+    const badgeText = hasApiKeys
         ? (lang === 'en' ? '🔑 API KEYS ✓' : '🔑 CLÉS API ✓')
         : (lang === 'en' ? '⚠ NO KEY — Board Game Mode' : '⚠ AUCUNE CLÉ — Mode Board Game');
 
@@ -86,17 +92,49 @@ export default function NameScreen({
                 <div style={{
                     ...CARD_STYLE,
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '0.6rem 0.9rem',
+                    padding: '0.6rem 0.9rem', gap: '0.7rem',
                 }}>
-                    <span style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: badgeColor, letterSpacing: '0.06em' }}>
+                    <span style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: badgeColor, letterSpacing: '0.06em', flex: 1 }}>
                         {badgeText}
                     </span>
+
+                    {/* Toggle Board Game — uniquement si clés valides */}
+                    {hasApiKeys && (
+                        <label
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', flexShrink: 0 }}
+                            title={lang === 'en' ? 'Force Board Game mode (no AI)' : 'Forcer le mode Board Game (hors IA)'}
+                        >
+                            <span style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: iaBoardGame ? 'rgba(80,200,200,0.80)' : 'rgba(140,160,200,0.40)' }}>
+                                🎲
+                            </span>
+                            <input type="checkbox" checked={iaBoardGame} onChange={toggleBoardGame} style={{ display: 'none' }} />
+                            {/* Toggle switch */}
+                            <div
+                                onClick={toggleBoardGame}
+                                style={{
+                                    width: '2rem', height: '1rem', borderRadius: '0.5rem', position: 'relative', cursor: 'pointer',
+                                    background: iaBoardGame ? 'rgba(80,200,200,0.25)' : 'rgba(60,70,90,0.40)',
+                                    border: `1px solid ${iaBoardGame ? 'rgba(80,200,200,0.50)' : 'rgba(80,100,130,0.35)'}`,
+                                    transition: 'background 0.2s, border-color 0.2s',
+                                }}
+                            >
+                                <div style={{
+                                    position: 'absolute', top: '50%', borderRadius: '50%',
+                                    width: '0.75rem', height: '0.75rem',
+                                    transform: `translateY(-50%) translateX(${iaBoardGame ? '1.1rem' : '0.1rem'})`,
+                                    background: iaBoardGame ? 'rgba(80,200,200,0.90)' : 'rgba(100,120,150,0.60)',
+                                    transition: 'transform 0.2s, background 0.2s',
+                                }} />
+                            </div>
+                        </label>
+                    )}
+
                     <button
                         style={{
                             background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.25)',
                             borderRadius: '2px', padding: '0.25rem 0.65rem', cursor: 'pointer',
                             fontFamily: FONT.mono, fontSize: '0.42rem', letterSpacing: '0.10em',
-                            color: 'rgba(200,164,74,0.65)',
+                            color: 'rgba(200,164,74,0.65)', flexShrink: 0,
                         }}
                         onClick={() => setShowKeys(true)}>
                         {hasApiKeys

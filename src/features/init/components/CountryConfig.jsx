@@ -36,6 +36,9 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
     const { lang } = useLocale();
     const setField = (k, v) => onChange({ ...c, [k]: v });
 
+    // Accordéon
+    const [isOpen, setIsOpen] = useState(true);
+
     // État local
     const [rcSearch, setRcSearch] = useState(c.nom || '');
     const [rcStatus, setRcStatus] = useState(null);
@@ -114,23 +117,51 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
         return () => clearTimeout(rcTimer.current);
     }, [rcSearch, c.type, mode]);
 
+    const nomAffiche = c.nom || c.realData?.nom || null;
+    const flagAffiche = c.realData?.flag || null;
+
     return (
-        <div style={{ ...CARD_STYLE, padding: '0.9rem 1rem' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={labelStyle('0.44rem')}>NATION {idx + 1}</div>
+        <div style={{ ...CARD_STYLE, padding: isOpen ? '0.9rem 1rem' : '0.55rem 1rem' }}>
+        {/* Header — cliquable pour replier */}
+        <div
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
+            onClick={() => setIsOpen(o => !o)}
+        >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={labelStyle('0.44rem')}>NATION {idx + 1}</div>
+            {!isOpen && nomAffiche && (
+                <span style={{ fontFamily: FONT.mono, fontSize: '0.46rem', color: 'rgba(200,164,74,0.75)' }}>
+                    {flagAffiche ? `${flagAffiche} ` : ''}{nomAffiche}
+                </span>
+            )}
+        </div>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-        {c.type === 'imaginaire' && (
+        {!isOpen && c.type === 'imaginaire' && (
             <span style={{ ...tag, color: 'rgba(100,180,255,0.60)', border: '1px solid rgba(100,180,255,0.22)', background: 'rgba(100,180,255,0.05)' }}>
             {c.realData?.emoji || '🌐'} FICTIF
             </span>
         )}
-        {c.realData && c.type === 'reel' && <span style={tag}>{c.realData.flag} PAYS RÉEL</span>}
+        {!isOpen && c.realData && c.type === 'reel' && <span style={tag}>{c.realData.flag} RÉEL</span>}
+        <span style={{ fontFamily: FONT.mono, fontSize: '0.55rem', color: 'rgba(140,160,200,0.40)', lineHeight: 1 }}>
+            {isOpen ? '▲' : '▼'}
+        </span>
         {canRemove && (
-            <button onClick={onRemove} style={{ background: 'none', border: 'none', color: 'rgba(200,80,80,0.45)', cursor: 'pointer', fontSize: '0.75rem' }}>✕</button>
+            <button
+                onClick={e => { e.stopPropagation(); onRemove(); }}
+                style={{ background: 'none', border: 'none', color: 'rgba(200,80,80,0.45)', cursor: 'pointer', fontSize: '0.75rem' }}
+            >✕</button>
         )}
         </div>
         </div>
+
+        {isOpen && <>
+        {/* Tag type (visible quand ouvert) */}
+        {c.type === 'imaginaire' && (
+            <span style={{ ...tag, color: 'rgba(100,180,255,0.60)', border: '1px solid rgba(100,180,255,0.22)', background: 'rgba(100,180,255,0.05)', alignSelf: 'flex-start' }}>
+            {c.realData?.emoji || '🌐'} FICTIF
+            </span>
+        )}
+        {c.realData && c.type === 'reel' && <span style={{ ...tag, alignSelf: 'flex-start' }}>{c.realData.flag} PAYS RÉEL</span>}
 
         {/* Toggle fictif/réel */}
         {!reelOnly && <div style={{ display: 'flex', gap: '0.4rem' }}>
@@ -189,6 +220,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
         override={c.contextOverride || ''}
         setOverride={v => setField('contextOverride', v || undefined)}
         />
+        </>}
         </div>
     );
 }

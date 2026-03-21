@@ -79,20 +79,6 @@ const isFakeKey = (provider, key) => {
 export default function APIKeyInline({ onClose }) {
   const { lang } = useLocale();
 
-  // Toggle Board Game (ia_mode === 'none')
-  const [iaBoardGame, setIaBoardGame] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('aria_options') || '{}').ia_mode === 'none'; } catch { return false; }
-  });
-  const toggleBoardGame = () => {
-    const next = !iaBoardGame;
-    setIaBoardGame(next);
-    try {
-      const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
-      opts.ia_mode = next ? 'none' : (opts.ia_mode === 'none' ? 'aria' : opts.ia_mode);
-      localStorage.setItem('aria_options', JSON.stringify(opts));
-    } catch {}
-  };
-
   // État multi-clés
   const [keyState, setKeyState] = useState(() => {
     const raw = loadKeys();
@@ -272,11 +258,6 @@ export default function APIKeyInline({ onClose }) {
   : '⚠ Testez au moins une clé pour activer la sauvegarde.'}
   </div>
   )}
-
-  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(80,200,200,0.70)', cursor: 'pointer' }}>
-    <input type="checkbox" checked={iaBoardGame} onChange={toggleBoardGame} style={{ cursor: 'pointer' }} />
-    {lang === 'en' ? '🎲 Force Board Game mode (no AI)' : '🎲 Forcer le mode Board Game (hors IA)'}
-  </label>
 
   <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', marginTop: '0.2rem' }}>
   <button style={BTN_SECONDARY} onClick={onClose}>
