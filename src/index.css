@@ -134,3 +134,10 @@ button.aria-accordion__hdr:focus-visible {
   gap: 0.6rem;
   border-top: 1px solid rgba(200,164,74,0.08);
 }
+
+/* Outline focus global — remplace l'outline navigateur blanc par un liseré doré */
+button:focus,
+button:focus-visible {
+  outline: 1px solid rgba(200,164,74,0.30);
+  outline-offset: 0;
+}

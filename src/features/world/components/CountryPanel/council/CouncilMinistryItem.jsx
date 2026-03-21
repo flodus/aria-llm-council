@@ -41,6 +41,7 @@ export default function MinistryItem({
             width: '100%',
             background: 'none',
             border: 'none',
+            outline: 'none',
             cursor: 'pointer',
             padding: '0.45rem 0.6rem',
             display: 'flex',
