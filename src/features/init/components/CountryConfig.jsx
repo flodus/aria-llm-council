@@ -32,7 +32,7 @@ import {
     RealCountryAISection
 } from './index';
 
-export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove }) {
+export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove, reelOnly = false }) {
     const { lang } = useLocale();
     const setField = (k, v) => onChange({ ...c, [k]: v });
 
@@ -133,7 +133,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
         </div>
 
         {/* Toggle fictif/réel */}
-        <div style={{ display: 'flex', gap: '0.4rem' }}>
+        {!reelOnly && <div style={{ display: 'flex', gap: '0.4rem' }}>
         {[
             { v: 'imaginaire', l: mode === 'ai' ? (lang === 'en' ? '🌐 Fictional (AI)' : '🌐 Fictif (IA)') : (lang === 'en' ? '🌐 Fictional' : '🌐 Fictif') },
             { v: 'reel', l: mode === 'ai' ? t('INIT_MODE_REAL_AI', lang) : t('INIT_MODE_REAL', lang) },
@@ -149,7 +149,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             {t.l}
             </button>
         ))}
-        </div>
+        </div>}
 
         {/* Section Pays Réel (mode AI) */}
         {c.type === 'reel' && mode === 'ai' && (
