@@ -969,89 +969,11 @@ export const LOCAL_COUNTRIES = [
 //  Données pays réels pour le mode en ligne — terrain, économie, sociologie ARIA.
 //  aria_acceptance_irl : ancre sociologique Think-Tank (immuable en jeu).
 //  aria_sociology_logic : analyse textuelle affichée dans le Manifeste À Propos.
+//  Source : templates/real_countries.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const REAL_COUNTRIES_DATA = [
-    { id:'france',    flag:'🇫🇷', nom:'France',          regime:'democratie_liberale',        terrain:'coastal',
-        population:68000000,  pib_index:78, natalite:10.7, mortalite:9.8,
-        aria_acceptance_irl: 38,
-        aria_sociology_logic: "Scepticisme élevé dû à la culture de la contestation et à la sacralisation du politique humain. Passé révolutionnaire. Présent : crise de confiance institutionnelle profonde.",
-        triple_combo: "La France traverse une crise de confiance institutionnelle profonde après une décennie de mouvements sociaux (Gilets jaunes, réforme des retraites). Membre fondateur de l'UE et de l'OTAN, elle voit son influence africaine reculer depuis 2020. Les tensions internes se concentrent sur l'identité nationale, l'immigration et la fracture métropoles/périphéries.",
-        secteurs:['aéronautique','agroalimentaire','luxe','énergie nucléaire'],
-        ressources:['agriculture','eau','energie'] },
-
-    { id:'allemagne', flag:'🇩🇪', nom:'Allemagne',        regime:'republique_federale',        terrain:'inland',
-        population:84000000,  pib_index:88, natalite:9.2,  mortalite:12.1,
-        aria_acceptance_irl: 52,
-        aria_sociology_logic: "Pragmatisme industriel et besoin d'ordre, mais traumatisme historique face à la surveillance de masse qui freine l'adhésion totale à une IA centrale.",
-        triple_combo: "L'Allemagne post-Merkel cherche sa doctrine après le choc ukrainien qui a brisé sa dépendance au gaz russe (Zeitenwende). Sa puissance industrielle est fragilisée par la transition énergétique et la compétition chinoise dans l'automobile. Les tensions Est/Ouest alimentent la montée de l'AfD.",
-        secteurs:['automobile','chimie','machine-outil','pharmacie'],
-        ressources:['energie','mineraux','agriculture'] },
-
-    { id:'usa',       flag:'🇺🇸', nom:"États-Unis",        regime:'democratie_liberale',        terrain:'coastal',
-        population:335000000, pib_index:95, natalite:11.0, mortalite:10.4,
-        aria_acceptance_irl: 45,
-        aria_sociology_logic: "Fracture nette : adhésion des pôles technologiques (Silicon Valley) mais rejet viscéral des zones rurales par peur d'un contrôle fédéral algorithmique.",
-        triple_combo: "Les États-Unis traversent une polarisation politique historique menaçant les fondements démocratiques. La compétition stratégique avec la Chine structure leur politique étrangère tandis que la doctrine America First fragilise les alliances OTAN. Les tensions internes portent sur les inégalités raciales, le contrôle des armes et la fracture côtes/intérieur.",
-        secteurs:['technologie','défense','finance','santé'],
-        ressources:['petrole','agriculture','mineraux','energie'] },
-
-    { id:'chine',     flag:'🇨🇳', nom:'Chine',             regime:'regime_autoritaire',         terrain:'coastal',
-        population:1400000000,pib_index:72, natalite:10.1, mortalite:7.3,
-        aria_acceptance_irl: 82,
-        aria_sociology_logic: "Acceptation naturelle d'une gouvernance technocratique centralisée, déjà intégrée dans le contrat social de stabilité contre performances.",
-        triple_combo: "La Chine de Xi consolide son pouvoir dans un contexte de ralentissement économique post-zéro-Covid. En compétition directe avec les USA pour l'hégémonie technologique et maritime, elle maintient une pression croissante sur Taiwan. Les tensions internes portent sur le vieillissement démographique, la crise immobilière et la répression des minorités.",
-        secteurs:['manufacture','technologie','construction','énergie'],
-        ressources:['mineraux','energie','agriculture','bois'] },
-
-    { id:'bresil',    flag:'🇧🇷', nom:'Brésil',            regime:'democratie_liberale',        terrain:'inland',
-        population:215000000, pib_index:52, natalite:13.9, mortalite:6.8,
-        aria_acceptance_irl: 48,
-        aria_sociology_logic: "Besoin d'un arbitre neutre face à la corruption, mais la chaleur humaine et le charisme restent des piliers du consentement politique.",
-        triple_combo: "Le Brésil de Lula tente de réconcilier croissance et protection amazonienne. Puissance régionale, il joue un rôle de médiateur et renforce les BRICS. Les tensions portent sur les inégalités extrêmes, la violence urbaine et la question foncière entre agrobusiness et peuples autochtones.",
-        secteurs:['agrobusiness','pétrole','mines','aérospatial'],
-        ressources:['agriculture','bois','petrole','eau','peche'] },
-
-    { id:'inde',      flag:'🇮🇳', nom:'Inde',              regime:'democratie_liberale',        terrain:'coastal',
-        population:1430000000,pib_index:48, natalite:16.4, mortalite:7.0,
-        aria_acceptance_irl: 60,
-        aria_sociology_logic: "Espoir d'une justice impartiale pour briser la corruption bureaucratique, balancé par d'immenses défis de diversité culturelle.",
-        triple_combo: "L'Inde, première démocratie mondiale par la population, est le moteur émergent de l'économie mondiale. Son autonomie stratégique lui permet de maintenir des relations avec Russie, USA et Chine. Les tensions portent sur le nationalisme hindou, les discriminations de caste et les tensions intercommunautaires.",
-        secteurs:['informatique','pharmacie','textile','agriculture'],
-        ressources:['agriculture','eau','mineraux','energie'] },
-
-    { id:'russie',    flag:'🇷🇺', nom:'Russie',            regime:'regime_autoritaire',         terrain:'inland',
-        population:144000000, pib_index:42, natalite:9.0,  mortalite:14.2,
-        aria_acceptance_irl: 30,
-        aria_sociology_logic: "Attachement culturel au leadership humain fort. L'IA est perçue comme un outil suspect ou incapable de comprendre l'âme nationale.",
-        triple_combo: "La Russie en guerre depuis 2022 paie un isolement occidental croissant et réoriente ses exportations vers l'Asie. Elle renforce ses alliances avec la Chine, l'Iran et la Corée du Nord. Les tensions internes portent sur la mobilisation militaire, la fuite des cerveaux et la fragmentation ethnique.",
-        secteurs:['hydrocarbures','armement','agriculture','mines'],
-        ressources:['petrole','energie','mineraux','agriculture','bois'] },
-
-    { id:'japon',     flag:'🇯🇵', nom:'Japon',             regime:'monarchie_constitutionnelle', terrain:'island',
-        population:125000000, pib_index:82, natalite:6.3,  mortalite:11.6,
-        aria_acceptance_irl: 75,
-        aria_sociology_logic: "Perception de l'IA comme une solution honorable et stable face au déclin démographique et à la fatigue des élites politiques humaines.",
-        triple_combo: "Le Japon fait face à une crise démographique structurelle et réoriente sa doctrine sécuritaire (réarmement) face aux menaces nord-coréenne et chinoise. Les tensions portent sur le tabou de l'immigration face au manque de main-d'œuvre et le poids des grandes entreprises sur la société.",
-        secteurs:['automobile','électronique','robotique','finance'],
-        ressources:['peche','energie','mineraux'] },
-
-    { id:'nigeria',   flag:'🇳🇬', nom:'Nigeria',           regime:'republique_federale',        terrain:'coastal',
-        population:220000000, pib_index:29, natalite:35.2, mortalite:10.8,
-        aria_acceptance_irl: 40,
-        aria_sociology_logic: "Jeunesse connectée prête pour le futur, mais forte résistance des structures traditionnelles face à un contrôle algorithmique transparent.",
-        triple_combo: "Le Nigeria, première économie africaine, est englué dans une crise de gouvernance malgré ses ressources pétrolières. Il fait face à des insurrections multiples (Boko Haram, banditisme, séparatisme). Les tensions structurelles opposent 250 ethnies, chrétiens et musulmans, élites pétrolières et population pauvre.",
-        secteurs:['pétrole','agriculture','télécoms','services'],
-        ressources:['petrole','agriculture','peche','mineraux'] },
-
-    { id:'arabie',    flag:'🇸🇦', nom:"Arabie Saoudite",   regime:'monarchie_absolue',          terrain:'inland',
-        population:36000000,  pib_index:71, natalite:17.8, mortalite:3.4,
-        aria_acceptance_irl: 65,
-        aria_sociology_logic: "Adhésion Top-Down. Les élites voient ARIA comme le moteur de la Vision 2030, population habituée à une gouvernance performative.",
-        triple_combo: "L'Arabie Saoudite de MBS poursuit la Vision 2030 pour diversifier son économie. Sa normalisation avec l'Iran et ses hésitations sur les prix OPEP+ signalent une autonomie croissante vis-à-vis de Washington. Les tensions portent sur les inégalités entre citoyens et travailleurs immigrés, et la répression de l'opposition.",
-        secteurs:['pétrole','construction','finance','tourisme'],
-        ressources:['petrole','energie','mineraux'] },
-    ];
+import _realCountriesFR from '../templates/real_countries.json';
+export const REAL_COUNTRIES_DATA = _realCountriesFR;
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  LOCAL_DELIBERATION_EN
@@ -1718,86 +1640,8 @@ export const LOCAL_DELIBERATION_EN = {
 // ─────────────────────────────────────────────────────────────────────────────
 //  REAL_COUNTRIES_DATA_EN
 //  English version of REAL_COUNTRIES_DATA — activated when aria_lang === 'en'
+//  Source : templates/real_countries_en.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const REAL_COUNTRIES_DATA_EN = [
-    { id:'france',    flag:'🇫🇷', nom:'France',           regime:'democratie_liberale',        terrain:'coastal',
-        population:68000000,  pib_index:78, natalite:10.7, mortalite:9.8,
-        aria_acceptance_irl: 38,
-        aria_sociology_logic: "High scepticism due to a culture of contestation and the sacralisation of human politics. Revolutionary past. Present: deep institutional trust crisis.",
-        triple_combo: "France is experiencing deep institutional distrust after a decade of social movements (Yellow Vests, pension reform). As a founding EU and NATO member, its African influence has receded since 2020. Internal tensions centre on national identity, immigration and the metropolis/periphery divide.",
-        secteurs:['aeronautics','agri-food','luxury','nuclear energy'],
-        ressources:['agriculture','eau','energie'] },
-
-    { id:'allemagne', flag:'🇩🇪', nom:'Germany',          regime:'republique_federale',        terrain:'inland',
-        population:84000000,  pib_index:88, natalite:9.2,  mortalite:12.1,
-        aria_acceptance_irl: 52,
-        aria_sociology_logic: "Industrial pragmatism and need for order, but historical trauma around mass surveillance limits full buy-in to a central AI.",
-        triple_combo: "Post-Merkel Germany is searching for doctrine after the Ukraine shock shattered its dependence on Russian gas (Zeitenwende). Its industrial power is weakened by the energy transition and Chinese competition in the auto sector. East/West tensions fuel the rise of the AfD.",
-        secteurs:['automotive','chemicals','machine tools','pharma'],
-        ressources:['energie','mineraux','agriculture'] },
-
-    { id:'usa',       flag:'🇺🇸', nom:"United States",    regime:'democratie_liberale',        terrain:'coastal',
-        population:335000000, pib_index:95, natalite:11.0, mortalite:10.4,
-        aria_acceptance_irl: 45,
-        aria_sociology_logic: "Clear fracture: buy-in from tech hubs (Silicon Valley) but visceral rejection in rural areas fearing algorithmic federal control.",
-        triple_combo: "The United States faces historic political polarisation threatening democratic foundations. Strategic competition with China shapes foreign policy while America First erodes NATO alliances. Internal tensions centre on racial inequality, gun control and the coast/interior divide.",
-        secteurs:['technology','defense','finance','healthcare'],
-        ressources:['petrole','agriculture','mineraux','energie'] },
-
-    { id:'chine',     flag:'🇨🇳', nom:'China',            regime:'regime_autoritaire',         terrain:'coastal',
-        population:1400000000,pib_index:72, natalite:10.1, mortalite:7.3,
-        aria_acceptance_irl: 82,
-        aria_sociology_logic: "Natural acceptance of centralised technocratic governance, already embedded in the social contract of stability-for-performance.",
-        triple_combo: "Xi's China is consolidating power amid post-zero-Covid economic slowdown. In direct competition with the US for technological and maritime hegemony, it maintains growing pressure on Taiwan. Internal tensions stem from demographic ageing, a real estate crisis and minority repression.",
-        secteurs:['manufacturing','technology','construction','energy'],
-        ressources:['mineraux','energie','agriculture','bois'] },
-
-    { id:'bresil',    flag:'🇧🇷', nom:'Brazil',           regime:'democratie_liberale',        terrain:'inland',
-        population:215000000, pib_index:52, natalite:13.9, mortalite:6.8,
-        aria_acceptance_irl: 48,
-        aria_sociology_logic: "Desire for a neutral arbiter against corruption, but warmth and charisma remain pillars of political consent.",
-        triple_combo: "Lula's Brazil is trying to reconcile growth with Amazonian protection. A regional power, it plays mediator and strengthens BRICS ties. Tensions persist around extreme inequality, urban violence and the land question between agribusiness and indigenous peoples.",
-        secteurs:['agribusiness','oil','mining','aerospace'],
-        ressources:['agriculture','bois','petrole','eau','peche'] },
-
-    { id:'inde',      flag:'🇮🇳', nom:'India',            regime:'democratie_liberale',        terrain:'coastal',
-        population:1430000000,pib_index:48, natalite:16.4, mortalite:7.0,
-        aria_acceptance_irl: 60,
-        aria_sociology_logic: "Hope for impartial justice to break bureaucratic corruption, balanced by immense challenges of cultural diversity.",
-        triple_combo: "India, the world's most populous democracy, is the emerging engine of the global economy. Its strategic autonomy allows it to maintain ties with Russia, the US and China. Tensions revolve around Hindu nationalism, caste discrimination and intercommunal violence.",
-        secteurs:['IT','pharma','textiles','agriculture'],
-        ressources:['agriculture','eau','mineraux','energie'] },
-
-    { id:'russie',    flag:'🇷🇺', nom:'Russia',           regime:'regime_autoritaire',         terrain:'inland',
-        population:144000000, pib_index:42, natalite:9.0,  mortalite:14.2,
-        aria_acceptance_irl: 30,
-        aria_sociology_logic: "Cultural attachment to strong human leadership. AI is seen as a suspect tool incapable of understanding the national soul.",
-        triple_combo: "Russia at war since 2022 faces growing Western isolation and pivots exports to Asia. It deepens alliances with China, Iran and North Korea. Internal tensions centre on military mobilisation, brain drain and ethnic fragmentation.",
-        secteurs:['hydrocarbons','arms','agriculture','mining'],
-        ressources:['petrole','energie','mineraux','agriculture','bois'] },
-
-    { id:'japon',     flag:'🇯🇵', nom:'Japan',            regime:'monarchie_constitutionnelle', terrain:'island',
-        population:125000000, pib_index:82, natalite:6.3,  mortalite:11.6,
-        aria_acceptance_irl: 75,
-        aria_sociology_logic: "AI perceived as an honourable, stable solution to demographic decline and the fatigue with human political elites.",
-        triple_combo: "Japan faces a structural demographic crisis and is reorienting its security doctrine (rearmament) against North Korean and Chinese threats. Tensions centre on the immigration taboo despite labour shortages and the weight of large corporations on society.",
-        secteurs:['automotive','electronics','robotics','finance'],
-        ressources:['peche','energie','mineraux'] },
-
-    { id:'nigeria',   flag:'🇳🇬', nom:'Nigeria',          regime:'republique_federale',        terrain:'coastal',
-        population:220000000, pib_index:29, natalite:35.2, mortalite:10.8,
-        aria_acceptance_irl: 40,
-        aria_sociology_logic: "Connected youth ready for the future, but strong resistance from traditional structures against transparent algorithmic control.",
-        triple_combo: "Nigeria, Africa's largest economy, is mired in a governance crisis despite its oil wealth. It faces multiple insurgencies (Boko Haram, banditry, separatism). Structural tensions pit 250 ethnic groups, Christians and Muslims, and oil elites against the poor majority.",
-        secteurs:['oil','agriculture','telecoms','services'],
-        ressources:['petrole','agriculture','peche','mineraux'] },
-
-    { id:'arabie',    flag:'🇸🇦', nom:"Saudi Arabia",     regime:'monarchie_absolue',          terrain:'inland',
-        population:36000000,  pib_index:71, natalite:17.8, mortalite:3.4,
-        aria_acceptance_irl: 65,
-        aria_sociology_logic: "Top-down buy-in. Elites see ARIA as the engine of Vision 2030; the population is accustomed to performative governance.",
-        triple_combo: "MBS's Saudi Arabia is pursuing Vision 2030 to diversify the economy. Its normalisation with Iran and OPEC+ price hesitations signal growing autonomy from Washington. Tensions centre on inequality between citizens and migrant workers, and the repression of dissent.",
-        secteurs:['oil','construction','finance','tourism'],
-        ressources:['petrole','energie','mineraux'] },
-];
+import _realCountriesEN from '../templates/real_countries_en.json';
+export const REAL_COUNTRIES_DATA_EN = _realCountriesEN;
