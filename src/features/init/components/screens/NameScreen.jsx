@@ -1,9 +1,11 @@
 // src/features/init/components/screens/NameScreen.jsx
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { FONT, CARD_STYLE, labelStyle } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';
 import APIKeyInline from '../APIKeyInline';
+
+const GlobeBackground = lazy(() => import('../canvas/GlobeBackground'));
 
 export default function NameScreen({
     lang,
@@ -54,6 +56,7 @@ export default function NameScreen({
             justifyContent: 'space-between',
             padding: '2rem 1.5rem 14vh', boxSizing: 'border-box',
         }}>
+            <Suspense fallback={null}><GlobeBackground /></Suspense>
             <ARIAHeader showQuote={false} lang={lang} setLang={setLang} />
 
             {showKeys && <APIKeyInline onClose={handleCloseKeys} />}
