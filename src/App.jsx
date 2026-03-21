@@ -7,8 +7,8 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import BASE_AGENTS    from '../templates/base_agents.json';
-import BASE_AGENTS_EN from '../templates/base_agents_en.json';
+import BASE_AGENTS    from '../templates/languages/fr/governance.json';
+import BASE_AGENTS_EN from '../templates/languages/en/governance.json';
 import './App.css';
 
 import Dashboard        from './Dashboard_p3';

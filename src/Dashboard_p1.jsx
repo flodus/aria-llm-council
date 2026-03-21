@@ -7,10 +7,10 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import AGENTS    from '../templates/base_agents.json';
-import AGENTS_EN from '../templates/base_agents_en.json';
-import STATS     from '../templates/base_stats.json';
-import STATS_EN  from '../templates/base_stats_en.json';
+import AGENTS    from '../templates/languages/fr/governance.json';
+import AGENTS_EN from '../templates/languages/en/governance.json';
+import STATS     from '../templates/languages/fr/simulation.json';
+import STATS_EN  from '../templates/languages/en/simulation.json';
 import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN, LOCAL_COUNTRIES } from './ariaData';
 import { loadLang } from './ariaI18n';
 

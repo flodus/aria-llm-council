@@ -1,0 +1,10 @@
+{
+  "_meta": {
+    "version": "0.0",
+    "description": "ARIA — Synthèses offline Board Game (TODO N2)",
+    "structure": "ministeres[id][regime][convergence|divergence][] + presidence[convergence|divergence][]",
+    "status": "TODO"
+  },
+  "ministeres": {},
+  "presidence": {}
+}

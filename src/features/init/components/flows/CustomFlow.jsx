@@ -38,13 +38,13 @@ export default function CustomFlow({ worldName, mode, onBack, onPreLaunch }) {
         <div style={{
             display:'flex', flexDirection:'column', alignItems:'center',
             gap:'1.8rem', width:'100%', maxWidth: 700, padding:'2rem',
-            overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box'
+            overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
+            paddingBottom:'14vh'
         }}>
         <ARIAHeader showQuote={false} />
 
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%' }}>
         <div style={labelStyle()}>NATIONS — {countries.length}/6</div>
-        <div style={{ display:'flex', gap:'0.5rem' }}>
         {countries.length < 6 && (
             <button
             style={{ ...BTN_SECONDARY, padding:'0.3rem 0.7rem', fontSize:'0.48rem' }}
@@ -53,10 +53,6 @@ export default function CustomFlow({ worldName, mode, onBack, onPreLaunch }) {
             + AJOUTER
             </button>
         )}
-        <button style={BTN_SECONDARY} onClick={onBack}>
-        {t('BACK', lang)}
-        </button>
-        </div>
         </div>
 
         <div style={{
@@ -80,7 +76,8 @@ export default function CustomFlow({ worldName, mode, onBack, onPreLaunch }) {
         ))}
         </div>
 
-        <div style={{ display:'flex', justifyContent:'flex-end', width:'100%' }}>
+        <div style={{ position:'fixed', bottom:'8vh', left:'50%', transform:'translateX(-50%)', width:'min(700px, 90vw)', display:'flex', gap:'0.6rem', justifyContent:'space-between', zIndex:20 }}>
+        <button style={BTN_SECONDARY} onClick={onBack}>{t('BACK', lang)}</button>
         <button
         style={{
             ...BTN_PRIMARY,

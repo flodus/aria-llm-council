@@ -8,7 +8,7 @@
   },
   "regimes": {
     "democratie_liberale": {
-      "name": "Démocratie Libérale",
+      "name": "Liberal Democracy",
       "emoji": "🗳️",
       "coeff_satisfaction": 1.2,
       "coeff_croissance": 1.0,
@@ -24,7 +24,7 @@
       }
     },
     "republique_federale": {
-      "name": "République Fédérale",
+      "name": "Federal Republic",
       "emoji": "🏛️",
       "coeff_satisfaction": 1.0,
       "coeff_croissance": 1.1,
@@ -40,7 +40,7 @@
       }
     },
     "monarchie_constitutionnelle": {
-      "name": "Monarchie Constitutionnelle",
+      "name": "Constitutional Monarchy",
       "emoji": "👑",
       "coeff_satisfaction": 0.9,
       "coeff_croissance": 1.0,
@@ -56,7 +56,7 @@
       }
     },
     "technocratie_ia": {
-      "name": "Technocratie ARIA",
+      "name": "ARIA Technocracy",
       "emoji": "🤖",
       "coeff_satisfaction": 0.85,
       "coeff_croissance": 1.4,
@@ -72,7 +72,7 @@
       }
     },
     "junte_militaire": {
-      "name": "Junte Militaire",
+      "name": "Military Junta",
       "emoji": "🎖️",
       "coeff_satisfaction": 0.7,
       "coeff_croissance": 0.9,
@@ -88,7 +88,7 @@
       }
     },
     "oligarchie": {
-      "name": "Oligarchie",
+      "name": "Oligarchy",
       "emoji": "💼",
       "coeff_satisfaction": 0.75,
       "coeff_croissance": 1.2,
@@ -104,7 +104,7 @@
       }
     },
     "theocratie": {
-      "name": "Théocratie",
+      "name": "Theocracy",
       "emoji": "🕌",
       "coeff_satisfaction": 0.8,
       "coeff_croissance": 0.85,
@@ -120,7 +120,7 @@
       }
     },
     "regime_autoritaire": {
-      "name": "Régime Autoritaire",
+      "name": "Authoritarian Regime",
       "emoji": "🔒",
       "coeff_satisfaction": 0.65,
       "coeff_croissance": 0.95,
@@ -136,7 +136,7 @@
       }
     },
     "monarchie_absolue": {
-      "name": "Monarchie Absolue",
+      "name": "Absolute Monarchy",
       "emoji": "👑",
       "coeff_satisfaction": 0.72,
       "coeff_croissance": 1.05,
@@ -152,7 +152,7 @@
       }
     },
     "communisme": {
-      "name": "Parti Communiste",
+      "name": "Communist Party",
       "emoji": "☭",
       "coeff_satisfaction": 0.78,
       "coeff_croissance": 0.9,
@@ -168,7 +168,7 @@
       }
     },
     "nationalisme_autoritaire": {
-      "name": "Nationalisme Autoritaire",
+      "name": "Authoritarian Nationalism",
       "emoji": "⚡",
       "coeff_satisfaction": 0.68,
       "coeff_croissance": 0.92,
@@ -186,7 +186,7 @@
   },
   "terrains": {
     "coastal": {
-      "name": "Côtier",
+      "name": "Coastal",
       "modificateur_pop": 1.1,
       "modificateur_eco": 1.2,
       "ressources_garanties": [
@@ -200,7 +200,7 @@
       ]
     },
     "inland": {
-      "name": "Enclavé",
+      "name": "Landlocked",
       "modificateur_pop": 0.95,
       "modificateur_eco": 1.05,
       "ressources_garanties": [
@@ -214,7 +214,7 @@
       ]
     },
     "island": {
-      "name": "Insulaire",
+      "name": "Island",
       "modificateur_pop": 0.8,
       "modificateur_eco": 0.95,
       "ressources_garanties": [
@@ -227,7 +227,7 @@
       ]
     },
     "archipelago": {
-      "name": "Archipel",
+      "name": "Archipelago",
       "modificateur_pop": 0.75,
       "modificateur_eco": 0.9,
       "ressources_garanties": [
@@ -240,7 +240,7 @@
       ]
     },
     "highland": {
-      "name": "Montagneux",
+      "name": "Highland",
       "modificateur_pop": 0.85,
       "modificateur_eco": 0.9,
       "ressources_garanties": [
@@ -269,12 +269,12 @@
   "humeurs": [
     {
       "min": 80,
-      "label": "Euphorique",
+      "label": "Euphoric",
       "color": "#3ABF7A"
     },
     {
       "min": 65,
-      "label": "Prospère",
+      "label": "Prosperous",
       "color": "#5ABF5A"
     },
     {
@@ -284,74 +284,18 @@
     },
     {
       "min": 35,
-      "label": "Tendu",
+      "label": "Tense",
       "color": "#C07A30"
     },
     {
       "min": 20,
-      "label": "Agitation sociale",
+      "label": "Social Unrest",
       "color": "#C05050"
     },
     {
       "min": 0,
-      "label": "Au bord du gouffre",
+      "label": "On the Brink",
       "color": "#8A2020"
-    }
-  ],
-  "pays_locaux": [
-    {
-      "id": "valoria",
-      "nom": "République de Valoria",
-      "emoji": "🏛️",
-      "couleur": "#4A7EC8",
-      "regime": "democratie_liberale",
-      "terrain": "coastal",
-      "description": "Une démocratie maritime fondée sur le commerce et le débat citoyen.",
-      "leader": {
-        "nom": "Sénatrice Aria Voss",
-        "titre": "Présidente du Sénat",
-        "trait": "Pragmatique et visionnaire, elle a réformé la constitution deux fois en dix ans."
-      },
-      "population": 8400000,
-      "tauxNatalite": 13.2,
-      "tauxMortalite": 8.8,
-      "satisfaction": 68
-    },
-    {
-      "id": "eldoria",
-      "nom": "Royaume d'Eldoria",
-      "emoji": "👑",
-      "couleur": "#C8A44A",
-      "regime": "monarchie_constitutionnelle",
-      "terrain": "highland",
-      "description": "Un vieux royaume montagneux dont les traditions millénaires coexistent avec une industrialisation tardive.",
-      "leader": {
-        "nom": "Roi Aldren IV",
-        "titre": "Roi-Chancelier",
-        "trait": "Conservateur mais lucide, il sait que son règne est peut-être le dernier de la lignée."
-      },
-      "population": 5200000,
-      "tauxNatalite": 11.8,
-      "tauxMortalite": 10.2,
-      "satisfaction": 61
-    },
-    {
-      "id": "thalassia",
-      "nom": "Confédération de Thalassia",
-      "emoji": "🌊",
-      "couleur": "#4AA87A",
-      "regime": "republique_federale",
-      "terrain": "archipelago",
-      "description": "Un archipel fédéral dont chaque île s'est dotée d'une autonomie farouche et d'une flotte marchande redoutable.",
-      "leader": {
-        "nom": "Amiral-Consul Mira Ohan",
-        "titre": "Consul Fédéral",
-        "trait": "Née sur un cargo, elle gouverne comme elle navigue : en lisant les courants avant les cartes."
-      },
-      "population": 3100000,
-      "tauxNatalite": 15.5,
-      "tauxMortalite": 9.1,
-      "satisfaction": 72
     }
   ]
 }

@@ -3,6 +3,7 @@
 import { useLocale, t } from '../../../../ariaI18n';
 import { FONT, wrap, mCard, tag, BTN_SECONDARY, labelStyle } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';
+import ButtonRow from '../../../../shared/components/ButtonRow';
 
 export default function ModeScreen({ worldName, hasApiKeys, onSelectMode, onBack }) {
     const { lang } = useLocale();
@@ -48,9 +49,11 @@ export default function ModeScreen({ worldName, hasApiKeys, onSelectMode, onBack
         ))}
         </div>
         </div>
+        <ButtonRow>
         <button style={BTN_SECONDARY} onClick={onBack}>
         {t('BACK', lang)}
         </button>
+        </ButtonRow>
         </div>
     );
 }

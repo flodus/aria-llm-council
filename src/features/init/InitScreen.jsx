@@ -109,7 +109,7 @@ const DEFAULT_COUNTRY = () => ({
 });
 
 // ── Composant interne (exporté pour usage externe, ex: ma-planete) ────
-export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaunchAI, hasApiKeys, onRefreshKeys }) {
+export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaunchAI, hasApiKeys, onRefreshKeys, generatingBackground }) {
   const { lang, setLang } = useLocale();
   const [step,       setStep]      = useState('name');
   const [mode,       setMode]      = useState(null);
@@ -195,6 +195,8 @@ export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaun
       t('GEN_TOPO',lang),t('GEN_MASSES',lang),
       t('GEN_RESOURCES',lang),t('GEN_COUNCIL',lang),t('GEN_SIM',lang),
     ];
+    // Attendre 3.5s (vue globe) avant de commencer la progression + morphing
+    setTimeout(() => {
     let step = 0;
     const timer = setInterval(() => {
       step++;
@@ -226,7 +228,8 @@ export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaun
           onLaunchAI(defs);
         }
       }
-    }, 60);
+    }, 120);
+    }, 2000);
   };
   // ── Étape : pré-lancement (constitution rapide avant génération) ────────
   if (step === 'pre_launch') {
@@ -243,7 +246,8 @@ export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaun
 
   // ── Étape : génération ────────────────────────────────────────────────
   if (step === 'generating') return (
-    <GeneratingScreen progress={progress} msg={msg} />
+    <GeneratingScreen progress={progress} msg={msg}
+      background={generatingBackground?.(progress)}/>
   );
 
   // ── Étape : nom ───────────────────────────────────────────────────────

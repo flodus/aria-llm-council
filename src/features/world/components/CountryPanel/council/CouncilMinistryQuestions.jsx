@@ -14,7 +14,7 @@
 
 import { FONT, COLORS } from '../../../../../shared/theme';
 import { getQuestionState } from '../../../../../shared/services/boardgame/questionService';
-import QUESTIONS_FR from '../../../../../../templates/aria_questions.json';
+import QUESTIONS_FR from '../../../../../../templates/languages/fr/aria_questions.json';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
 // Dérive le numéro de cycle courant depuis localStorage quand la prop est absente

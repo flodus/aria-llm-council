@@ -17,7 +17,7 @@
 //  Source : templates/local_deliberation.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-import _localDelibeation from '../templates/local_deliberation.json';
+import _localDelibeation from '../templates/languages/fr/local_deliberation.json';
 export const LOCAL_DELIBERATION = _localDelibeation;
 
 
@@ -29,7 +29,7 @@ export const LOCAL_DELIBERATION = _localDelibeation;
 //  Source : templates/local_events.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-import _localEvents from '../templates/local_events.json';
+import _localEvents from '../templates/languages/fr/local_events.json';
 export const LOCAL_EVENTS = _localEvents;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ export const LOCAL_EVENTS = _localEvents;
 //  Source : templates/local_countries.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-import _localCountries from '../templates/local_countries.json';
+import _localCountries from '../templates/languages/fr/local_countries.json';
 export const LOCAL_COUNTRIES = _localCountries;
 
 
@@ -50,7 +50,7 @@ export const LOCAL_COUNTRIES = _localCountries;
 //  Source : templates/real_countries.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-import _realCountriesFR from '../templates/real_countries.json';
+import _realCountriesFR from '../templates/languages/fr/real_countries.json';
 export const REAL_COUNTRIES_DATA = _realCountriesFR;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ export const REAL_COUNTRIES_DATA = _realCountriesFR;
 //  Source : templates/local_deliberation_en.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-import _localDeliberationEN from '../templates/local_deliberation_en.json';
+import _localDeliberationEN from '../templates/languages/en/local_deliberation.json';
 export const LOCAL_DELIBERATION_EN = _localDeliberationEN;
 
 
@@ -70,5 +70,5 @@ export const LOCAL_DELIBERATION_EN = _localDeliberationEN;
 //  Source : templates/real_countries_en.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-import _realCountriesEN from '../templates/real_countries_en.json';
+import _realCountriesEN from '../templates/languages/en/real_countries.json';
 export const REAL_COUNTRIES_DATA_EN = _realCountriesEN;

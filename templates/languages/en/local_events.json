@@ -1,0 +1,302 @@
+{
+  "revolte": [
+    {
+      "titre": "General Strike",
+      "texte": "The population takes to the streets. The government loses control of local institutions.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -8,
+        "popularite": -12
+      }
+    },
+    {
+      "titre": "Legitimacy Crisis",
+      "texte": "Polls hit a historic low. Rival factions emerge within the council.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -5,
+        "popularite": -10
+      }
+    },
+    {
+      "titre": "State of Emergency",
+      "texte": "Faced with unrest, the government declares a state of emergency. The measure divides public opinion.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -6,
+        "popularite": -8
+      }
+    },
+    {
+      "titre": "March on the Capital",
+      "texte": "Thousands of citizens converge on the capital. Security forces are overwhelmed.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -9,
+        "popularite": -14
+      }
+    }
+  ],
+  "demo_explosion": [
+    {
+      "titre": "Critical Overpopulation",
+      "texte": "Infrastructure is saturating. Shortage of housing and food resources in urban areas.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -6,
+        "popularite": -4
+      }
+    },
+    {
+      "titre": "Public Services Crisis",
+      "texte": "Hospitals, schools, transport: public systems are overwhelmed by the demographic surge.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -4,
+        "popularite": -3
+      }
+    },
+    {
+      "titre": "Mass Rural Exodus",
+      "texte": "The countryside empties out in favour of cities. Rural areas lose their economic fabric.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -3,
+        "popularite": -5
+      }
+    }
+  ],
+  "alliance_rompue": [
+    {
+      "titre": "Diplomatic Rupture",
+      "texte": "Ambassadors are recalled. Trade exchanges suspended indefinitely.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -3,
+        "popularite": -5
+      }
+    },
+    {
+      "titre": "Border Tensions",
+      "texte": "Incidents reported at the border. Both nations recall their nationals.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -4,
+        "popularite": -6
+      }
+    },
+    {
+      "titre": "Trade Embargo",
+      "texte": "The partner nation suspends all trade agreements. Markets react immediately.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -5,
+        "popularite": -7
+      }
+    }
+  ],
+  "secession": [
+    {
+      "titre": "New Entity Recognised",
+      "texte": "The international community watches. Markets react to regional instability.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": -4,
+        "popularite": -6
+      }
+    },
+    {
+      "titre": "Birth of a State",
+      "texte": "A new political entity comes into being. Its future depends on its first sovereign choices.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": -2,
+        "popularite": -3
+      }
+    },
+    {
+      "titre": "National Identity Crisis",
+      "texte": "The secession reopens deep identity questions in the parent nation.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -5,
+        "popularite": -4
+      }
+    }
+  ],
+  "menace_invisible": [
+    {
+      "titre": "Major Cyber Attack",
+      "texte": "Government servers are paralysed. Sensitive data has leaked to a foreign power.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -4,
+        "popularite": -8
+      }
+    },
+    {
+      "titre": "Spy Network Dismantled",
+      "texte": "The Investigator reveals the existence of a sleeper cell within the Council itself.",
+      "severite": "warning",
+      "impact": {
+        "popularite": 5,
+        "satisfaction": -2
+      }
+    },
+    {
+      "titre": "Mass Disinformation",
+      "texte": "A coordinated campaign sows doubt about institutions. The Communicant demands an immediate public response.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -6,
+        "popularite": -7
+      }
+    },
+    {
+      "titre": "Infrastructure Sabotage",
+      "texte": "A critical power plant has been taken offline. The origin of the act remains unknown.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -7,
+        "popularite": -6
+      }
+    }
+  ],
+  "innovation_disruptive": [
+    {
+      "titre": "Energy Breakthrough",
+      "texte": "The Inventor presents a stable fusion prototype. The whole world is watching.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 10,
+        "popularite": 8
+      }
+    },
+    {
+      "titre": "Governance AI (ARIA V2)",
+      "texte": "A system update optimises the allocation of national resources.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 2,
+        "popularite": 3
+      }
+    },
+    {
+      "titre": "Agricultural Revolution",
+      "texte": "A new technique triples crop yields in arid zones.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 6,
+        "popularite": 5
+      }
+    }
+  ],
+  "prosperite": [
+    {
+      "titre": "Record Trade Surplus",
+      "texte": "Exports exceed forecasts. The government announces a targeted investment plan.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 5,
+        "popularite": 4
+      }
+    },
+    {
+      "titre": "Demographic Record",
+      "texte": "The birth rate reaches a historic high. A sign of renewed confidence in the future.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 3,
+        "popularite": 4
+      }
+    },
+    {
+      "titre": "Cultural Radiance",
+      "texte": "A national artist wins a world prize. National pride explodes in the polls.",
+      "severite": "info",
+      "impact": {
+        "popularite": 10,
+        "satisfaction": 5
+      }
+    },
+    {
+      "titre": "Full Employment Reached",
+      "texte": "The unemployment rate falls below the symbolic 3% threshold. A first in two decades.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 8,
+        "popularite": 7
+      }
+    }
+  ],
+  "catastrophe_naturelle": [
+    {
+      "titre": "Magnitude 7 Earthquake",
+      "texte": "Coastal infrastructure is devastated. The Guardian calls for mobilisation of national reserves.",
+      "severite": "critical",
+      "impact": {
+        "population_delta": -50000,
+        "satisfaction": -10,
+        "popularite": -8
+      }
+    },
+    {
+      "titre": "Catastrophic Flooding",
+      "texte": "Three regions under water. The Protector activates emergency evacuation protocols.",
+      "severite": "critical",
+      "impact": {
+        "population_delta": -20000,
+        "satisfaction": -8,
+        "popularite": -6
+      }
+    },
+    {
+      "titre": "Prolonged Drought",
+      "texte": "Third consecutive year without sufficient rainfall. Freshwater reserves reach a critical threshold.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -8,
+        "popularite": -5
+      }
+    },
+    {
+      "titre": "National Epidemic",
+      "texte": "An unknown pathogen spreads rapidly. The Healer requests activation of the emergency health protocol.",
+      "severite": "critical",
+      "impact": {
+        "population_delta": -30000,
+        "satisfaction": -9,
+        "popularite": -7
+      }
+    }
+  ],
+  "ressource_critique": [
+    {
+      "titre": "Food Shortage",
+      "texte": "Agricultural stocks reach a critical threshold. Prices spike on local markets.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -7,
+        "popularite": -5
+      }
+    },
+    {
+      "titre": "Energy Crisis",
+      "texte": "Power cuts multiply. Industry operates at reduced capacity.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -6,
+        "popularite": -4
+      }
+    },
+    {
+      "titre": "Drinking Water Shortage",
+      "texte": "Freshwater reserves fall below the minimum threshold. Rationing is imposed in five regions.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -9,
+        "popularite": -7
+      }
+    }
+  ]
+}
