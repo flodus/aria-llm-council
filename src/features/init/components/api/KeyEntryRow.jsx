@@ -1,5 +1,6 @@
 // src/features/init/components/api/KeyEntryRow.jsx
 
+import { useState } from 'react';
 import { INPUT_STYLE, BTN_SECONDARY } from '../../../../shared/theme';
 import { useLocale } from '../../../../ariaI18n';
 import ModelSelector from './ModelSelector';
@@ -16,6 +17,7 @@ export default function KeyEntryRow({
     onSetDefault
 }) {
     const { lang } = useLocale();
+    const [showKey, setShowKey] = useState(false);
 
     const statusIcon = {
         ok: '✅',
@@ -48,11 +50,20 @@ export default function KeyEntryRow({
 
         <input
         style={{ ...INPUT_STYLE, fontSize: '0.44rem', flex: 1 }}
-        type="password"
+        type={showKey ? 'text' : 'password'}
         value={entry.key}
         onChange={e => onUpdate(entry._id, 'key', e.target.value)}
         placeholder="Clé API…"
         />
+
+        <button
+        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0.15rem', color: 'rgba(140,160,200,0.55)', flexShrink: 0, fontSize: '1rem', lineHeight: 1 }}
+        onClick={() => setShowKey(v => !v)}
+        title={showKey ? (lang === 'en' ? 'Hide' : 'Masquer') : (lang === 'en' ? 'Show' : 'Afficher')}
+        tabIndex={-1}
+        >
+        <span className={showKey ? 'mdi mdi-eye-lock-open' : 'mdi mdi-eye-lock'} />
+        </button>
 
         <button
         style={{ ...BTN_SECONDARY, padding: '0.28rem 0.50rem', fontSize: '0.42rem', whiteSpace: 'nowrap' }}
@@ -68,13 +79,13 @@ export default function KeyEntryRow({
             </span>
         )}
 
-        {isMulti && (
+        {entry.key?.trim() && (
             <button
-            style={{ ...BTN_SECONDARY, padding: '0.18rem 0.35rem', fontSize: '0.80rem', lineHeight: 1, flexShrink: 0 }}
-            onClick={() => onRemove(entry._id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0.15rem', color: 'rgba(200,80,80,0.55)', flexShrink: 0, fontSize: '1rem', lineHeight: 1 }}
+            onClick={() => isMulti ? onRemove(entry._id) : onUpdate(entry._id, 'key', '')}
             title={lang === 'en' ? 'Delete key' : 'Supprimer'}
             >
-            🗑
+            <span className="mdi mdi-delete" />
             </button>
         )}
         </div>

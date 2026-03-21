@@ -17,11 +17,7 @@ export default function ProviderAccordion({
     onAddKey
 }) {
     const { lang } = useLocale();
-    const [isOpen, setIsOpen] = useState(() => {
-        // Ouvre automatiquement si pas de clé configurée
-        const hasKey = keys.some(k => k.key?.trim());
-        return !hasKey;
-    });
+    const [isOpen, setIsOpen] = useState(false);
 
     const hasAnyKey = keys.some(k => k.key?.trim());
     const providerOk = keys.some(k => keyStatus[k._id] === 'ok');
