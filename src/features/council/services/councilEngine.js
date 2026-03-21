@@ -93,33 +93,10 @@ export async function runCouncilDeliberation(question, country, options = {}) {
 // EXPORTS POUR COMPATIBILITÉ (réexport depuis les modules)
 // ============================================================
 
-// On réexporte tout ce qui peut être utile aux composants
-export {
-  // Agents
-  getAgentsFor,
-  getMinistriesList,
-  getMinistriesListFor,
-  getMinistersMapFor,
-  getPresidencyFor,
-  MINISTRIES_LIST,
-  MINISTERS_MAP,
-  PRESIDENCY,
-
-  // Phases (au cas où)
-  runMinisterePhase,
-  runCerclePhase,
-  runPresidencePhase,
-
-  // Routage
-  routeQuestion,
-  isOrphanQuestion,
-
-  // Vote
-  computeVoteImpact,
-
-  // Contexte
-  buildCountryContext,
-
-  // Fallbacks
-  FALLBACK_RESPONSES
-} from './index';
+// On réexporte tout ce qui peut être utile aux composants (imports directs — pas via index pour éviter le cycle)
+export { getAgentsFor, getMinistriesList, getMinistriesListFor, getMinistersMapFor, getPresidencyFor, MINISTRIES_LIST, MINISTERS_MAP, PRESIDENCY } from './agentsManager';
+export { runMinisterePhase, runCerclePhase, runPresidencePhase } from './deliberationEngine';
+export { routeQuestion, isOrphanQuestion } from './routingEngine';
+export { computeVoteImpact } from './voteEngine';
+export { buildCountryContext } from './contextBuilder';
+export { FALLBACK_RESPONSES } from './fallbacks';
