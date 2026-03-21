@@ -108,8 +108,8 @@ const DEFAULT_COUNTRY = () => ({
   terrain: 'coastal', realData: null,
 });
 
-// ── Composant interne ─────────────────────────────────────────────────
-function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaunchAI, hasApiKeys, onRefreshKeys }) {
+// ── Composant interne (exporté pour usage externe, ex: ma-planete) ────
+export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaunchAI, hasApiKeys, onRefreshKeys }) {
   const { lang, setLang } = useLocale();
   const [step,       setStep]      = useState('name');
   const [mode,       setMode]      = useState(null);
