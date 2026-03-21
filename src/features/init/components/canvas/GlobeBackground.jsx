@@ -135,7 +135,7 @@ function GlobeMesh() {
 export default function GlobeBackground() {
     return (
         <div style={{
-            position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
+            position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none',
         }}>
             <Canvas
                 camera={{ position: [0, 0, 14], fov: 45 }}
