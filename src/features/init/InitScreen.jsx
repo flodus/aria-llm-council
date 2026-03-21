@@ -340,9 +340,9 @@ function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaunchAI, h
   }
 
 // ── Export principal — enveloppe dans InitScreenLayout ───────────────────
-export default function InitScreen(props) {
+export default function InitScreen({ background, ...props }) {
   return (
-    <InitScreenLayout>
+    <InitScreenLayout background={background}>
       <InitScreenInner {...props} />
     </InitScreenLayout>
   );
