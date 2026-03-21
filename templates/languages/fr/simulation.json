@@ -8,7 +8,7 @@
   },
   "regimes": {
     "democratie_liberale": {
-      "name": "Liberal Democracy",
+      "name": "Démocratie Libérale",
       "emoji": "🗳️",
       "coeff_satisfaction": 1.2,
       "coeff_croissance": 1.0,
@@ -24,7 +24,7 @@
       }
     },
     "republique_federale": {
-      "name": "Federal Republic",
+      "name": "République Fédérale",
       "emoji": "🏛️",
       "coeff_satisfaction": 1.0,
       "coeff_croissance": 1.1,
@@ -40,7 +40,7 @@
       }
     },
     "monarchie_constitutionnelle": {
-      "name": "Constitutional Monarchy",
+      "name": "Monarchie Constitutionnelle",
       "emoji": "👑",
       "coeff_satisfaction": 0.9,
       "coeff_croissance": 1.0,
@@ -56,7 +56,7 @@
       }
     },
     "technocratie_ia": {
-      "name": "ARIA Technocracy",
+      "name": "Technocratie ARIA",
       "emoji": "🤖",
       "coeff_satisfaction": 0.85,
       "coeff_croissance": 1.4,
@@ -72,7 +72,7 @@
       }
     },
     "junte_militaire": {
-      "name": "Military Junta",
+      "name": "Junte Militaire",
       "emoji": "🎖️",
       "coeff_satisfaction": 0.7,
       "coeff_croissance": 0.9,
@@ -88,7 +88,7 @@
       }
     },
     "oligarchie": {
-      "name": "Oligarchy",
+      "name": "Oligarchie",
       "emoji": "💼",
       "coeff_satisfaction": 0.75,
       "coeff_croissance": 1.2,
@@ -104,7 +104,7 @@
       }
     },
     "theocratie": {
-      "name": "Theocracy",
+      "name": "Théocratie",
       "emoji": "🕌",
       "coeff_satisfaction": 0.8,
       "coeff_croissance": 0.85,
@@ -120,7 +120,7 @@
       }
     },
     "regime_autoritaire": {
-      "name": "Authoritarian Regime",
+      "name": "Régime Autoritaire",
       "emoji": "🔒",
       "coeff_satisfaction": 0.65,
       "coeff_croissance": 0.95,
@@ -136,7 +136,7 @@
       }
     },
     "monarchie_absolue": {
-      "name": "Absolute Monarchy",
+      "name": "Monarchie Absolue",
       "emoji": "👑",
       "coeff_satisfaction": 0.72,
       "coeff_croissance": 1.05,
@@ -152,7 +152,7 @@
       }
     },
     "communisme": {
-      "name": "Communist Party",
+      "name": "Parti Communiste",
       "emoji": "☭",
       "coeff_satisfaction": 0.78,
       "coeff_croissance": 0.9,
@@ -168,7 +168,7 @@
       }
     },
     "nationalisme_autoritaire": {
-      "name": "Authoritarian Nationalism",
+      "name": "Nationalisme Autoritaire",
       "emoji": "⚡",
       "coeff_satisfaction": 0.68,
       "coeff_croissance": 0.92,
@@ -186,39 +186,72 @@
   },
   "terrains": {
     "coastal": {
-      "name": "Coastal",
+      "name": "Côtier",
       "modificateur_pop": 1.1,
       "modificateur_eco": 1.2,
-      "ressources_garanties": ["peche"],
-      "ressources_possibles": ["agriculture", "petrole", "energie", "commerce"]
+      "ressources_garanties": [
+        "peche"
+      ],
+      "ressources_possibles": [
+        "agriculture",
+        "petrole",
+        "energie",
+        "commerce"
+      ]
     },
     "inland": {
-      "name": "Landlocked",
+      "name": "Enclavé",
       "modificateur_pop": 0.95,
       "modificateur_eco": 1.05,
-      "ressources_garanties": ["mineraux"],
-      "ressources_possibles": ["agriculture", "bois", "energie", "eau"]
+      "ressources_garanties": [
+        "mineraux"
+      ],
+      "ressources_possibles": [
+        "agriculture",
+        "bois",
+        "energie",
+        "eau"
+      ]
     },
     "island": {
-      "name": "Island",
+      "name": "Insulaire",
       "modificateur_pop": 0.8,
       "modificateur_eco": 0.95,
-      "ressources_garanties": ["peche"],
-      "ressources_possibles": ["petrole", "energie", "eau"]
+      "ressources_garanties": [
+        "peche"
+      ],
+      "ressources_possibles": [
+        "petrole",
+        "energie",
+        "eau"
+      ]
     },
     "archipelago": {
-      "name": "Archipelago",
+      "name": "Archipel",
       "modificateur_pop": 0.75,
       "modificateur_eco": 0.9,
-      "ressources_garanties": ["peche", "eau"],
-      "ressources_possibles": ["petrole", "energie"]
+      "ressources_garanties": [
+        "peche",
+        "eau"
+      ],
+      "ressources_possibles": [
+        "petrole",
+        "energie"
+      ]
     },
     "highland": {
-      "name": "Highland",
+      "name": "Montagneux",
       "modificateur_pop": 0.85,
       "modificateur_eco": 0.9,
-      "ressources_garanties": ["mineraux", "eau"],
-      "ressources_possibles": ["bois", "energie", "agriculture"]
+      "ressources_garanties": [
+        "mineraux",
+        "eau"
+      ],
+      "ressources_possibles": [
+        "bois",
+        "energie",
+        "agriculture"
+      ]
     }
   },
   "calculs_cycles": {
@@ -234,67 +267,35 @@
     "bruit_max": 3
   },
   "humeurs": [
-    { "min": 80, "label": "Euphoric",       "color": "#3ABF7A" },
-    { "min": 65, "label": "Prosperous",     "color": "#5ABF5A" },
-    { "min": 50, "label": "Stable",         "color": "#C8A44A" },
-    { "min": 35, "label": "Tense",          "color": "#C07A30" },
-    { "min": 20, "label": "Social Unrest",  "color": "#C05050" },
-    { "min": 0,  "label": "On the Brink",   "color": "#8A2020" }
-  ],
-  "pays_locaux": [
     {
-      "id": "valoria",
-      "nom": "Republic of Valoria",
-      "emoji": "🏛️",
-      "couleur": "#4A7EC8",
-      "regime": "democratie_liberale",
-      "terrain": "coastal",
-      "description": "A maritime democracy built on trade and civic debate.",
-      "leader": {
-        "nom": "Senator Aria Voss",
-        "titre": "President of the Senate",
-        "trait": "Pragmatic and visionary, she has reformed the constitution twice in ten years."
-      },
-      "population": 8400000,
-      "tauxNatalite": 13.2,
-      "tauxMortalite": 8.8,
-      "satisfaction": 68
+      "min": 80,
+      "label": "Euphorique",
+      "color": "#3ABF7A"
     },
     {
-      "id": "eldoria",
-      "nom": "Kingdom of Eldoria",
-      "emoji": "👑",
-      "couleur": "#C8A44A",
-      "regime": "monarchie_constitutionnelle",
-      "terrain": "highland",
-      "description": "An ancient mountain kingdom where millennial traditions coexist with late industrialisation.",
-      "leader": {
-        "nom": "King Aldren IV",
-        "titre": "King-Chancellor",
-        "trait": "Conservative yet clear-eyed, he knows his reign may be the last of the line."
-      },
-      "population": 5200000,
-      "tauxNatalite": 11.8,
-      "tauxMortalite": 10.2,
-      "satisfaction": 61
+      "min": 65,
+      "label": "Prospère",
+      "color": "#5ABF5A"
     },
     {
-      "id": "thalassia",
-      "nom": "Thalassian Confederation",
-      "emoji": "🌊",
-      "couleur": "#4AA87A",
-      "regime": "republique_federale",
-      "terrain": "archipelago",
-      "description": "A federal archipelago where each island has forged fierce autonomy and a formidable merchant fleet.",
-      "leader": {
-        "nom": "Admiral-Consul Mira Ohan",
-        "titre": "Federal Consul",
-        "trait": "Born on a cargo ship, she governs as she sails: reading currents before charts."
-      },
-      "population": 3100000,
-      "tauxNatalite": 15.5,
-      "tauxMortalite": 9.1,
-      "satisfaction": 72
+      "min": 50,
+      "label": "Stable",
+      "color": "#C8A44A"
+    },
+    {
+      "min": 35,
+      "label": "Tendu",
+      "color": "#C07A30"
+    },
+    {
+      "min": 20,
+      "label": "Agitation sociale",
+      "color": "#C05050"
+    },
+    {
+      "min": 0,
+      "label": "Au bord du gouffre",
+      "color": "#8A2020"
     }
   ]
 }

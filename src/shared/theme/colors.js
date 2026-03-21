@@ -48,7 +48,7 @@ export const COLORS = {
 
     // Backgrounds
     bg:         'rgba(8,14,26,0.92)',
-    bgCard:     'rgba(14,20,36,0.85)',
+    bgCard:     'rgba(14,20,36,0.45)',
     bgDeep:     'rgba(6,10,18,0.95)',
 };
 

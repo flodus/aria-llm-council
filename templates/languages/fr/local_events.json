@@ -1,0 +1,302 @@
+{
+  "revolte": [
+    {
+      "titre": "Grève générale",
+      "texte": "La population descend dans les rues. Le gouvernement perd le contrôle des institutions locales.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -8,
+        "popularite": -12
+      }
+    },
+    {
+      "titre": "Crise de légitimité",
+      "texte": "Les sondages atteignent un plancher historique. Des factions rivales émergent dans le conseil.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -5,
+        "popularite": -10
+      }
+    },
+    {
+      "titre": "État d'urgence",
+      "texte": "Face à l'agitation, le gouvernement décrète l'état d'urgence. La mesure divise l'opinion.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -6,
+        "popularite": -8
+      }
+    },
+    {
+      "titre": "Marche sur la capitale",
+      "texte": "Des milliers de citoyens convergent vers la capitale. Les forces de l'ordre sont débordées.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -9,
+        "popularite": -14
+      }
+    }
+  ],
+  "demo_explosion": [
+    {
+      "titre": "Surpopulation critique",
+      "texte": "Les infrastructures saturent. Pénurie de logements et de ressources alimentaires dans les zones urbaines.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -6,
+        "popularite": -4
+      }
+    },
+    {
+      "titre": "Crise des services publics",
+      "texte": "Hôpitaux, écoles, transports : les systèmes publics sont débordés par l'afflux démographique.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -4,
+        "popularite": -3
+      }
+    },
+    {
+      "titre": "Exode rural massif",
+      "texte": "Les campagnes se vident au profit des villes. Les zones rurales perdent leur tissu économique.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -3,
+        "popularite": -5
+      }
+    }
+  ],
+  "alliance_rompue": [
+    {
+      "titre": "Rupture diplomatique",
+      "texte": "Les ambassadeurs sont rappelés. Les échanges commerciaux suspendus sine die.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -3,
+        "popularite": -5
+      }
+    },
+    {
+      "titre": "Tensions frontalières",
+      "texte": "Incidents signalés à la frontière. Les deux nations rappellent leurs ressortissants.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -4,
+        "popularite": -6
+      }
+    },
+    {
+      "titre": "Embargo commercial",
+      "texte": "La nation partenaire suspend tous les accords commerciaux. Les marchés réagissent immédiatement.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -5,
+        "popularite": -7
+      }
+    }
+  ],
+  "secession": [
+    {
+      "titre": "Nouvelle entité reconnue",
+      "texte": "La communauté internationale observe. Les marchés réagissent à l'instabilité régionale.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": -4,
+        "popularite": -6
+      }
+    },
+    {
+      "titre": "Naissance d'un État",
+      "texte": "Une nouvelle entité politique voit le jour. Son avenir dépend de ses premiers choix souverains.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": -2,
+        "popularite": -3
+      }
+    },
+    {
+      "titre": "Crise d'identité nationale",
+      "texte": "La sécession rouvre des questions identitaires profondes dans la nation d'origine.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -5,
+        "popularite": -4
+      }
+    }
+  ],
+  "menace_invisible": [
+    {
+      "titre": "Cyber-attaque majeure",
+      "texte": "Les serveurs de l'administration sont paralysés. Des données sensibles ont fuité vers une puissance étrangère.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -4,
+        "popularite": -8
+      }
+    },
+    {
+      "titre": "Réseau d'espionnage démantelé",
+      "texte": "L'Enquêteur révèle l'existence d'une cellule dormante au sein même du Conseil.",
+      "severite": "warning",
+      "impact": {
+        "popularite": 5,
+        "satisfaction": -2
+      }
+    },
+    {
+      "titre": "Désinformation massive",
+      "texte": "Une campagne coordonnée sème le doute sur les institutions. Le Communicant demande une réponse publique immédiate.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -6,
+        "popularite": -7
+      }
+    },
+    {
+      "titre": "Sabotage d'infrastructure",
+      "texte": "Une centrale énergétique critique a été mise hors service. L'origine de l'acte reste inconnue.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -7,
+        "popularite": -6
+      }
+    }
+  ],
+  "innovation_disruptive": [
+    {
+      "titre": "Percée énergétique",
+      "texte": "L'Inventeur présente un prototype de fusion stable. Le monde entier nous regarde.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 10,
+        "popularite": 8
+      }
+    },
+    {
+      "titre": "IA de Gouvernance (ARIA V2)",
+      "texte": "Une mise à jour système optimise la répartition des ressources nationales.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 2,
+        "popularite": 3
+      }
+    },
+    {
+      "titre": "Révolution agricole",
+      "texte": "Une nouvelle technique multiplie les rendements agricoles par trois dans les zones arides.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 6,
+        "popularite": 5
+      }
+    }
+  ],
+  "prosperite": [
+    {
+      "titre": "Excédent commercial record",
+      "texte": "Les exportations dépassent les prévisions. Le gouvernement annonce un plan d'investissement ciblé.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 5,
+        "popularite": 4
+      }
+    },
+    {
+      "titre": "Record démographique",
+      "texte": "Le taux de natalité atteint un niveau historique. Signe d'une confiance retrouvée en l'avenir.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 3,
+        "popularite": 4
+      }
+    },
+    {
+      "titre": "Rayonnement culturel",
+      "texte": "Un artiste national remporte un prix mondial. Le sentiment de fierté nationale explose dans les sondages.",
+      "severite": "info",
+      "impact": {
+        "popularite": 10,
+        "satisfaction": 5
+      }
+    },
+    {
+      "titre": "Plein emploi atteint",
+      "texte": "Le taux de chômage tombe sous le seuil symbolique de 3%. Une première en deux décennies.",
+      "severite": "info",
+      "impact": {
+        "satisfaction": 8,
+        "popularite": 7
+      }
+    }
+  ],
+  "catastrophe_naturelle": [
+    {
+      "titre": "Séisme de magnitude 7",
+      "texte": "Les infrastructures côtières sont ravagées. Le Gardien appelle à la mobilisation des réserves nationales.",
+      "severite": "critical",
+      "impact": {
+        "population_delta": -50000,
+        "satisfaction": -10,
+        "popularite": -8
+      }
+    },
+    {
+      "titre": "Inondations catastrophiques",
+      "texte": "Trois régions sous les eaux. Le Protecteur active les protocoles d'évacuation d'urgence.",
+      "severite": "critical",
+      "impact": {
+        "population_delta": -20000,
+        "satisfaction": -8,
+        "popularite": -6
+      }
+    },
+    {
+      "titre": "Sécheresse prolongée",
+      "texte": "Troisième année consécutive sans pluies suffisantes. Les réserves d'eau douce atteignent un seuil critique.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -8,
+        "popularite": -5
+      }
+    },
+    {
+      "titre": "Épidémie nationale",
+      "texte": "Un agent pathogène inconnu se propage rapidement. Le Guérisseur demande l'activation du protocole sanitaire d'urgence.",
+      "severite": "critical",
+      "impact": {
+        "population_delta": -30000,
+        "satisfaction": -9,
+        "popularite": -7
+      }
+    }
+  ],
+  "ressource_critique": [
+    {
+      "titre": "Pénurie alimentaire",
+      "texte": "Les stocks agricoles atteignent un seuil critique. Les prix flambent sur les marchés locaux.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -7,
+        "popularite": -5
+      }
+    },
+    {
+      "titre": "Crise énergétique",
+      "texte": "Les coupures de courant se multiplient. L'industrie tourne au ralenti.",
+      "severite": "warning",
+      "impact": {
+        "satisfaction": -6,
+        "popularite": -4
+      }
+    },
+    {
+      "titre": "Pénurie d'eau potable",
+      "texte": "Les réserves d'eau douce tombent sous le seuil minimal. Des rationnements sont imposés dans cinq régions.",
+      "severite": "critical",
+      "impact": {
+        "satisfaction": -9,
+        "popularite": -7
+      }
+    }
+  ]
+}

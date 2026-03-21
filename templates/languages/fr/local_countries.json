@@ -1,0 +1,56 @@
+[
+  {
+    "id": "valoria",
+    "nom": "République de Valoria",
+    "emoji": "🏛️",
+    "couleur": "#4A7EC8",
+    "regime": "democratie_liberale",
+    "terrain": "coastal",
+    "description": "Une démocratie maritime fondée sur le commerce et le débat citoyen.",
+    "leader": {
+      "nom": "Sénatrice Aria Voss",
+      "titre": "Présidente du Sénat",
+      "trait": "Pragmatique et visionnaire, elle a réformé la constitution deux fois en dix ans."
+    },
+    "population": 8400000,
+    "tauxNatalite": 13.2,
+    "tauxMortalite": 8.8,
+    "satisfaction": 68
+  },
+  {
+    "id": "eldoria",
+    "nom": "Royaume d'Eldoria",
+    "emoji": "👑",
+    "couleur": "#C8A44A",
+    "regime": "monarchie_constitutionnelle",
+    "terrain": "highland",
+    "description": "Un vieux royaume montagneux dont les traditions millénaires coexistent avec une industrialisation tardive.",
+    "leader": {
+      "nom": "Roi Aldren IV",
+      "titre": "Roi-Chancelier",
+      "trait": "Conservateur mais lucide, il sait que son règne est peut-être le dernier de la lignée."
+    },
+    "population": 5200000,
+    "tauxNatalite": 11.8,
+    "tauxMortalite": 10.2,
+    "satisfaction": 61
+  },
+  {
+    "id": "thalassia",
+    "nom": "Confédération de Thalassia",
+    "emoji": "🌊",
+    "couleur": "#4AA87A",
+    "regime": "republique_federale",
+    "terrain": "archipelago",
+    "description": "Un archipel fédéral dont chaque île s'est dotée d'une autonomie farouche et d'une flotte marchande redoutable.",
+    "leader": {
+      "nom": "Amiral-Consul Mira Ohan",
+      "titre": "Consul Fédéral",
+      "trait": "Née sur un cargo, elle gouverne comme elle navigue : en lisant les courants avant les cartes."
+    },
+    "population": 3100000,
+    "tauxNatalite": 15.5,
+    "tauxMortalite": 9.1,
+    "satisfaction": 72
+  }
+]

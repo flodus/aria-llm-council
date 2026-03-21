@@ -14,7 +14,8 @@ export default function ProviderAccordion({
     onTestEntry,
     onRemoveEntry,
     onSetDefault,
-    onAddKey
+    onAddKey,
+    onClear
 }) {
     const { lang } = useLocale();
     const [isOpen, setIsOpen] = useState(false);
@@ -61,6 +62,7 @@ export default function ProviderAccordion({
                 onUpdate={(id, field, value) => onUpdateEntry(provider.id, id, field, value)}
                 onTest={(id, key, model) => onTestEntry(provider.id, id, key, model)}
                 onRemove={(id) => onRemoveEntry(provider.id, id)}
+                onClear={onClear}
                 onSetDefault={(id) => onSetDefault(provider.id, id)}
                 />
                 {idx < keys.length - 1 && (

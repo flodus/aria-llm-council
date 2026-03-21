@@ -9,8 +9,8 @@
 import { getRegimeLabel, getTerrainLabel } from './shared/data/worldLabels';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
-import BASE_AGENTS    from '../templates/base_agents.json';
-import BASE_AGENTS_EN from '../templates/base_agents_en.json';
+import BASE_AGENTS    from '../templates/languages/fr/governance.json';
+import BASE_AGENTS_EN from '../templates/languages/en/governance.json';
 import {
   DEFAULT_OPTIONS, getOptions, saveOptions,
   MINISTERS, MINISTRIES as MINISTRIES_RAW, PRESIDENCY,

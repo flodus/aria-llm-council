@@ -1,0 +1,56 @@
+[
+  {
+    "id": "valoria",
+    "nom": "Republic of Valoria",
+    "emoji": "🏛️",
+    "couleur": "#4A7EC8",
+    "regime": "democratie_liberale",
+    "terrain": "coastal",
+    "description": "A maritime democracy built on trade and civic debate.",
+    "leader": {
+      "nom": "Senator Aria Voss",
+      "titre": "President of the Senate",
+      "trait": "Pragmatic and visionary, she has reformed the constitution twice in ten years."
+    },
+    "population": 8400000,
+    "tauxNatalite": 13.2,
+    "tauxMortalite": 8.8,
+    "satisfaction": 68
+  },
+  {
+    "id": "eldoria",
+    "nom": "Kingdom of Eldoria",
+    "emoji": "👑",
+    "couleur": "#C8A44A",
+    "regime": "monarchie_constitutionnelle",
+    "terrain": "highland",
+    "description": "An ancient mountain kingdom where millennial traditions coexist with late industrialisation.",
+    "leader": {
+      "nom": "King Aldren IV",
+      "titre": "King-Chancellor",
+      "trait": "Conservative yet clear-eyed, he knows his reign may be the last of the line."
+    },
+    "population": 5200000,
+    "tauxNatalite": 11.8,
+    "tauxMortalite": 10.2,
+    "satisfaction": 61
+  },
+  {
+    "id": "thalassia",
+    "nom": "Thalassian Confederation",
+    "emoji": "🌊",
+    "couleur": "#4AA87A",
+    "regime": "republique_federale",
+    "terrain": "archipelago",
+    "description": "A federal archipelago where each island has forged fierce autonomy and a formidable merchant fleet.",
+    "leader": {
+      "nom": "Admiral-Consul Mira Ohan",
+      "titre": "Federal Consul",
+      "trait": "Born on a cargo ship, she governs as she sails: reading currents before charts."
+    },
+    "population": 3100000,
+    "tauxNatalite": 15.5,
+    "tauxMortalite": 9.1,
+    "satisfaction": 72
+  }
+]

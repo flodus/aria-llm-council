@@ -14,6 +14,7 @@ export default function KeyEntryRow({
     onUpdate,
     onTest,
     onRemove,
+    onClear,
     onSetDefault
 }) {
     const { lang } = useLocale();
@@ -82,7 +83,7 @@ export default function KeyEntryRow({
         {entry.key?.trim() && (
             <button
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0.15rem', color: 'rgba(200,80,80,0.55)', flexShrink: 0, fontSize: '1rem', lineHeight: 1 }}
-            onClick={() => isMulti ? onRemove(entry._id) : onUpdate(entry._id, 'key', '')}
+            onClick={() => { if (isMulti) { onRemove(entry._id); } else { onUpdate(entry._id, 'key', ''); onClear?.(); } }}
             title={lang === 'en' ? 'Delete key' : 'Supprimer'}
             >
             <span className="mdi mdi-delete" />

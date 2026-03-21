@@ -1,0 +1,628 @@
+{
+  "ministers": {
+    "initiateur": {
+      "cycle_normal": [
+        "Le statu quo est notre ennemi. Cinq ans de passé, cinq ans de retard. Proposons une réforme immédiate du secteur énergétique.",
+        "Chaque cycle d'hésitation coûte plus cher que l'action. Un pays qui n'avance pas recule.",
+        "J'ai identifié trois leviers d'action immédiats. Aucun ne nécessite un vote. On commence maintenant.",
+        "Pendant qu'on délibère, nos voisins agissent. Le premier avantage appartient à celui qui bouge en premier."
+      ],
+      "crise": [
+        "La crise appelle l'action, pas la réflexion. Mobilisation totale. Maintenant.",
+        "En temps de crise, l'hésitation est une décision — la pire. J'exige des mesures d'urgence.",
+        "Chaque heure perdue en comités coûte des vies ou des ressources. Déléguez-moi l'autorité opérationnelle.",
+        "Je n'attends pas l'unanimité du Conseil. J'attends le signal du Phare. Un seul signal suffit."
+      ],
+      "secession": [
+        "Qu'ils partent s'ils le veulent. Notre force n'a pas besoin de ceux qui doutent.",
+        "Une sécession est une blessure. Mais une blessure peut se cicatriser — si on agit vite.",
+        "Fixons une date limite pour les négociations. Passé ce délai, nous décidons sans eux.",
+        "La clarté vaut mieux que la lenteur. Tranchons vite, tranchons proprement."
+      ],
+      "diplomatie": [
+        "L'alliance ne vaut que si elle est testée. Proposons une action commune immédiate.",
+        "Les traités sans action sont du papier. Je vote pour une démonstration de force conjointe.",
+        "Signons maintenant, ajustons après. L'immobilisme diplomatique est aussi dangereux que la guerre.",
+        "Une alliance qui met six mois à se concrétiser est déjà morte. Accélérons."
+      ],
+      "referendum": [
+        "Le peuple doit décider vite. Un référendum long affaiblit la résolution collective.",
+        "Quelle que soit l'issue, nous agirons immédiatement après le résultat. Pas de délai d'application."
+      ]
+    },
+    "gardien": {
+      "cycle_normal": [
+        "Les réserves sont saines. Mais une marge de 8% sur les ressources alimentaires reste fragile pour un cycle de 5 ans.",
+        "La croissance est réelle mais inégale. Trois régions accumulent, les autres stagnent. C'est une bombe à retardement.",
+        "J'ai contrôlé les stocks stratégiques. Nous avons 14 mois d'autonomie. C'est correct — pas confortable.",
+        "La dette s'érode lentement. Mais lentement ne veut pas dire sainement. Je demande un audit complet."
+      ],
+      "crise": [
+        "Avant toute décision : état des stocks. Sans inventaire précis, toute mesure d'urgence est aveugle.",
+        "Les crises se gèrent avec des réserves, pas des discours. Avons-nous de quoi tenir 18 mois ?",
+        "Gel immédiat des dépenses non essentielles. Pas de promesses nouvelles tant que les fondations ne sont pas sécurisées.",
+        "J'ai vu des nations s'effondrer par précipitation en crise. Lenteur calculée et réserves préservées — c'est ma doctrine."
+      ],
+      "secession": [
+        "Calculons d'abord ce que nous perdons : ressources, population, accès aux routes. Ensuite on parle.",
+        "Une sécession sans inventaire partagé, c'est une guerre économique à retardement.",
+        "Je veux un bilan patrimonial complet avant toute signature. Les actifs communs ne se négocient pas à l'aveugle.",
+        "Le partage des dettes est aussi important que le partage des richesses. Les deux partent ensemble."
+      ],
+      "diplomatie": [
+        "Une alliance durable se bâtit sur des échanges économiques, pas sur des promesses politiques.",
+        "Que gagnons-nous concrètement ? Que cédons-nous ? L'alliance doit être mesurable.",
+        "Je veux voir les bilans financiers de l'autre partie avant de m'engager. La confiance ne suffit pas.",
+        "Les accords qui ne précisent pas les contributions de chaque partie créent des conflits dans cinq ans."
+      ],
+      "referendum": [
+        "Avant que le peuple vote, il doit connaître le coût exact de chaque option. J'exige une transparence budgétaire totale.",
+        "Le résultat du référendum aura des implications financières sur vingt ans. Ce document en trace les contours."
+      ]
+    },
+    "communicant": {
+      "cycle_normal": [
+        "Le problème n'est pas la politique — c'est que personne ne la comprend. Reformulons avant d'agir.",
+        "J'ai identifié trois groupes sociaux qui n'ont pas été consultés. Ce silence va coûter cher.",
+        "L'information circule mal entre les ministères. J'ai recensé sept décisions contradictoires ce cycle.",
+        "Une politique incomprise est une politique rejetée. Qui a lu les sondages de compréhension citoyenne ce mois-ci ?"
+      ],
+      "crise": [
+        "La crise s'aggrave parce que l'information ne circule pas. Ouvrons les canaux maintenant.",
+        "Avant d'agir : qui sait quoi ? La confusion tue autant que la crise elle-même.",
+        "Un message clair vaut mieux que dix communiqués contradictoires. Désignons un porte-parole unique.",
+        "Les rumeurs circulent plus vite que les faits. Si nous ne remplissons pas le vide informationnel, quelqu'un d'autre le fera."
+      ],
+      "secession": [
+        "La sécession est d'abord un échec de communication. A-t-on vraiment écouté leurs griefs ?",
+        "Donnons-leur une tribune avant de les laisser partir. Le dialogue coûte moins cher que la séparation.",
+        "Je demande une phase de dialogue public de 60 jours avant toute décision définitive.",
+        "Les mouvements sécessionnistes prospèrent dans le silence institutionnel. Parlons — maintenant, pas après."
+      ],
+      "diplomatie": [
+        "Une alliance sans communication bilatérale permanente est une coquille vide.",
+        "Construisons d'abord un canal d'information commun. La confiance se construit par la transparence.",
+        "Je propose un protocole de communication conjoint publié avant la signature. Les deux peuples méritent de comprendre.",
+        "Les malentendus diplomatiques naissent du silence. Un accord sur les mots précède l'accord sur les actes."
+      ],
+      "referendum": [
+        "La question du référendum doit être formulée en langage citoyen, pas en jargon juridique. Je demande une révision.",
+        "J'ai testé la compréhension de la question auprès de 200 citoyens. 43% ne comprennent pas ce sur quoi ils votent. C'est un problème."
+      ]
+    },
+    "protecteur": {
+      "cycle_normal": [
+        "Les chiffres sont corrects. Mais dans les familles, l'inquiétude grandit. Ce décalage est dangereux.",
+        "On oublie les 15% les plus fragiles à chaque cycle. Je demande une révision du filet social.",
+        "Trois régions signalent une hausse de la précarité infantile. Ce n'est pas dans les indicateurs nationaux. Ça devrait l'être.",
+        "La sécurité d'un pays se mesure à la qualité de vie de ses plus vulnérables. Nos chiffres mentent par omission."
+      ],
+      "crise": [
+        "En crise, les plus vulnérables tombent les premiers. Protection sociale maximale avant toute mesure économique.",
+        "Les enfants, les aînés, les malades — sont-ils protégés ? Si non, rien d'autre ne compte.",
+        "J'exige que chaque mesure d'urgence inclue une évaluation d'impact sur les populations fragiles.",
+        "On ne construit pas la résilience d'une nation en abandonnant ses membres les plus faibles au premier choc."
+      ],
+      "secession": [
+        "Qu'adviendra-t-il des familles mixtes ? Des travailleurs frontaliers ? Ce sont des vies, pas des statistiques.",
+        "La sécession brise des liens humains que les traités ne pourront jamais recoudre entièrement.",
+        "Je demande des garanties explicites sur la continuité des allocations familiales et des retraites pour tous.",
+        "Les enfants nés de parents des deux entités ne doivent pas devenir des apatrides de fait. Ce point est non-négociable."
+      ],
+      "diplomatie": [
+        "Une alliance ne vaut que si elle protège aussi nos citoyens les plus exposés.",
+        "Avant de signer : quelles protections sociales sont garanties pour nos ressortissants à l'étranger ?",
+        "Je veux une clause de réciprocité sociale explicite. Nos citoyens ne sont pas des variables d'ajustement diplomatique.",
+        "L'alliance doit prévoir des mécanismes de solidarité en cas de crise humanitaire dans l'un des deux pays."
+      ],
+      "referendum": [
+        "Avant de voter, les citoyens doivent savoir comment chaque option affecte leur quotidien. Pas leurs intérêts abstraits — leur vie concrète.",
+        "Je demande que les résultats du référendum soient communiqués avec une traduction en impact social immédiat."
+      ]
+    },
+    "ambassadeur": {
+      "cycle_normal": [
+        "Nous avons accompli quelque chose de grand ce cycle. Assurons-nous que le monde le sache.",
+        "Notre image internationale est notre premier actif. Chaque décision doit la grandir.",
+        "J'ai reçu trois demandes d'audience de délégations étrangères ce mois-ci. Notre rayonnement attire. Ne le gaspillons pas.",
+        "Un pays qui ne raconte pas son histoire laisse les autres la raconter à sa place."
+      ],
+      "crise": [
+        "Une crise bien gérée devient une légende. Comment voulons-nous que l'histoire raconte ce moment ?",
+        "Ne laissons pas la panique dicter notre image. Maîtrisons le récit.",
+        "Les partenaires étrangers observent notre gestion de crise. C'est un test de crédibilité internationale.",
+        "Chaque communiqué de crise est aussi un message diplomatique. Choisissons nos mots pour les deux audiences."
+      ],
+      "secession": [
+        "Comment cette sécession sera-t-elle perçue à l'étranger ? Notre réputation est en jeu.",
+        "Si nous gérons cela avec dignité, nous en sortirons grandis. Si nous réagissons mal, nous en sortirons diminués.",
+        "Je propose que les deux entités publient une déclaration commune de bonne foi. Le monde doit voir une séparation civilisée.",
+        "Notre capacité à gérer pacifiquement cette sécession deviendra un modèle ou un repoussoir. À nous de choisir."
+      ],
+      "diplomatie": [
+        "Cette alliance est une occasion de rayonnement. Faisons-en quelque chose de mémorable.",
+        "Un accord signé dans la grandeur vaut plus qu'un accord signé dans la discrétion.",
+        "Je propose une cérémonie de signature ouverte au public. La transparence diplomatique est elle-même un message.",
+        "Cette alliance nous positionne dans un nouveau bloc régional. Jouons ce rôle avec panache."
+      ],
+      "referendum": [
+        "Le référendum lui-même est un signal fort envoyé au monde : notre démocratie fonctionne et le peuple décide.",
+        "Quelle que soit l'issue, nous la communiquerons avec fierté. La démocratie n'a pas à s'excuser de ses résultats."
+      ]
+    },
+    "analyste": {
+      "cycle_normal": [
+        "Trois indicateurs sont en dehors des normes. Je recommande une révision des protocoles avant le prochain cycle.",
+        "Les données de satisfaction cachent une disparité régionale de 23 points. Ce n'est pas une moyenne, c'est un masque.",
+        "Le modèle prédictif indique une probabilité de 67% de tension sociale dans les 10 prochaines années si le trend actuel persiste.",
+        "J'ai recalculé les projections démographiques. Les hypothèses de base du plan quinquennal sont erronées de 12%."
+      ],
+      "crise": [
+        "La crise a des causes précises. J'ai identifié deux failles structurelles qui auraient pu être corrigées il y a 10 ans.",
+        "Avant d'agir : vérifions que nos outils de mesure fonctionnent. Décider sur de mauvaises données, c'est aggraver la crise.",
+        "J'ai modélisé quatre scénarios de sortie de crise. Un seul évite la récurrence dans les 5 ans. Je recommande celui-là.",
+        "Les données temps réel contredisent le rapport officiel sur trois points. Quelqu'un doit m'expliquer l'écart."
+      ],
+      "secession": [
+        "J'ai modélisé trois scénarios de sécession. Dans deux cas sur trois, les coûts dépassent les bénéfices sur 20 ans.",
+        "Les chiffres ne plaident pas pour la sécession. Mais les chiffres ne disent pas tout — et c'est ça le problème.",
+        "Le PIB par habitant post-sécession chute en moyenne de 8% les trois premières années. C'est documenté, pas une opinion.",
+        "J'ai besoin de 72 heures supplémentaires pour finaliser l'audit patrimonial. Décider sans lui serait une faute."
+      ],
+      "diplomatie": [
+        "Les termes de l'accord présentent une asymétrie en notre défaveur sur les clauses économiques. Points 3, 7 et 12.",
+        "J'ai audité les données partagées par l'autre partie. Deux inconsistances méritent clarification avant signature.",
+        "Le taux de change implicite dans les clauses commerciales nous désavantage de 4,3% sur dix ans. Ce n'est pas négligeable.",
+        "J'ai comparé cet accord avec 14 traités similaires conclus ces 30 dernières années. Notre position est en dessous de la médiane."
+      ],
+      "referendum": [
+        "La question du référendum telle que formulée induit un biais de confirmation. Je recommande une reformulation neutre.",
+        "Les projections statistiques sur les deux options sont disponibles dans l'annexe technique. Les citoyens méritent de les voir."
+      ]
+    },
+    "arbitre": {
+      "cycle_normal": [
+        "La politique adoptée ce cycle favorise les zones urbaines. Les zones rurales méritent une compensation équitable.",
+        "Je note un consensus apparent — mais trois voix minoritaires n'ont pas été entendues. C'est un risque.",
+        "L'équité ne se mesure pas seulement au résultat — elle se mesure aussi au processus. Avons-nous vraiment consulté tout le monde ?",
+        "Une décision unanime dans ce Conseil m'inquiète plus qu'une décision conflictuelle. L'unanimité efface les nuances."
+      ],
+      "crise": [
+        "En crise, la tentation est de concentrer le pouvoir. C'est précisément quand l'équilibre des droits est le plus important.",
+        "Qui porte le coût de cette crise ? Si ce sont toujours les mêmes, ce n'est pas une gestion de crise — c'est une injustice.",
+        "Les mesures d'exception doivent avoir une date d'expiration explicite. Aucun pouvoir d'urgence ne doit devenir permanent.",
+        "Je propose un comité de surveillance indépendant pour chaque mesure d'urgence adoptée. La crise ne suspend pas la redevabilité."
+      ],
+      "secession": [
+        "Avant tout : quels droits sont garantis à la minorité qui reste ? La sécession ne peut pas être un abandon.",
+        "L'accord doit être juste pour les deux parties. Un traité déséquilibré est une guerre future.",
+        "Je refuse de signer un accord qui ne contient pas de mécanisme de recours pour les citoyens lésés.",
+        "L'équité dans la sécession ne se mesure pas à l'aune du plus fort — elle se mesure à l'aune du plus vulnérable."
+      ],
+      "diplomatie": [
+        "L'alliance est-elle équitable ? Ou l'une des parties porte-t-elle un fardeau disproportionné ?",
+        "Je demande une clause de révision à 5 ans. Aucun accord ne devrait être figé éternellement.",
+        "Les bénéfices de l'alliance doivent être distribués équitablement entre les deux populations, pas seulement entre les élites.",
+        "J'ai relu les 47 pages de l'accord. Il favorise systématiquement les intérêts des entreprises sur ceux des citoyens."
+      ],
+      "referendum": [
+        "La décision appartient au peuple entier — pas à la majorité. Je demande des protections explicites pour les minorités quelle que soit l'issue.",
+        "Un référendum juste nécessite une campagne équitable. J'observe un déséquilibre dans l'accès aux médias entre les deux camps."
+      ]
+    },
+    "enqueteur": {
+      "cycle_normal": [
+        "Les chiffres sont bons. Trop bons. Quelqu'un peut m'expliquer la divergence entre les rapports officiels et les données de terrain ?",
+        "J'ai identifié trois flux financiers non documentés. Ce n'est peut-être rien. Ou c'est tout.",
+        "Une source fiable m'a signalé des irrégularités dans les appels d'offres du dernier cycle. J'enquête.",
+        "Le silence de certains membres du Conseil sur ce dossier est en lui-même une information."
+      ],
+      "crise": [
+        "Cette crise n'est pas un accident. Quelqu'un a intérêt à ce qu'elle dure. Qui ?",
+        "Avant de chercher des solutions : cherchons les causes réelles. Les causes officielles sont rarement les vraies.",
+        "Suivez l'argent. Cette crise profite à quelqu'un, et je finirai par savoir qui.",
+        "Le chaos est un écran de fumée. Pendant qu'on regarde l'incendie, quelqu'un vide les coffres."
+      ],
+      "secession": [
+        "Qui finance le mouvement sécessionniste ? Une sécession ne surgit pas du néant.",
+        "Les griefs exprimés sont-ils les vrais griefs, ou le paravent d'intérêts que nous n'avons pas encore identifiés ?",
+        "J'ai retracé les financements du mouvement. Trois sources étrangères apparaissent dans les transactions des 18 derniers mois.",
+        "La sécession a été préparée de longue date. Les documents que j'ai trouvés remontent à sept ans."
+      ],
+      "diplomatie": [
+        "Qui bénéficie réellement de cette alliance ? Traçons les intérêts avant de signer.",
+        "L'autre partie a des alliés que nous ne voyons pas. Je veux savoir qui tire les ficelles.",
+        "J'ai accès à des informations sur la partie adverse qui changent l'analyse de cet accord. Réunion à huis clos requise.",
+        "Les clauses de confidentialité de cet accord cachent quelque chose. Je veux savoir quoi avant de donner mon accord."
+      ],
+      "referendum": [
+        "Quelqu'un cherche à influencer le résultat du référendum. Les traces numériques sont là. Je travaille à les remonter.",
+        "La neutralité du processus référendaire doit être auditée de façon indépendante. Je ne fais confiance à aucune des parties en présence."
+      ],
+      "secret_detecte": [
+        "J'ai trouvé une faille dans le rapport de l'Analyste. Quelqu'un a maquillé les chiffres du dernier cycle.",
+        "Il y a un murmure dans les couloirs du ministère. Une trahison se prépare.",
+        "Les métadonnées des documents officiels révèlent des modifications non tracées. Quelqu'un a réécrit l'histoire.",
+        "J'ai croisé trois témoignages indépendants qui pointent vers la même personne. Je n'accuse pas encore — mais je surveille."
+      ],
+      "menace": [
+        "Les pare-feu n'ont pas cédé par accident. C'est une clé d'accès interne qui a été utilisée. Nous avons un traître.",
+        "L'attaque vient d'un serveur situé en zone neutre. Quelqu'un essaie de nous aveugler avant une offensive plus large.",
+        "J'ai isolé la source de la fuite. Elle est dans cette salle. Je n'en dis pas plus ici.",
+        "Le profil de l'attaquant correspond à un opérateur que nous connaissons. C'est une opération de représailles."
+      ]
+    },
+    "guide": {
+      "cycle_normal": [
+        "Dans 20 ans, les décisions de ce cycle seront soit notre fondation soit notre regret. Choisissons en conséquence.",
+        "D'autres nations ont traversé cela avant nous. Leurs leçons sont disponibles. Avons-nous la sagesse de les consulter ?",
+        "L'histoire juge les civilisations sur leurs cycles lents, pas sur leurs crises rapides. Que construisons-nous vraiment ?",
+        "Nous ne sommes pas les premiers à faire face à ce dilemme. La bibliothèque des erreurs humaines est ouverte — lisons-la."
+      ],
+      "crise": [
+        "Chaque grande civilisation a traversé sa crise fondatrice. C'est dans ces moments qu'on choisit ce qu'on veut être.",
+        "La crise actuelle est une question : voulons-nous survivre, ou voulons-nous nous transformer ?",
+        "Les crises qui ont détruit des nations n'étaient pas les plus violentes — c'étaient celles où le sens collectif s'était évaporé.",
+        "Je vois dans cette crise une opportunité rare : celle de redéfinir notre contrat social. Saisissons-la."
+      ],
+      "secession": [
+        "L'histoire montre que les sécessions réussies partagent un point commun : une vision claire de ce qu'on construit, pas seulement de ce dont on se sépare.",
+        "Dans 50 ans, comment les deux nations regarderont-elles ce moment ? C'est ça la vraie question.",
+        "Les peuples qui se séparent dans la dignité restent souvent plus proches que ceux qui restent ensemble dans le ressentiment.",
+        "Cette sécession a besoin d'une philosophie fondatrice, pas seulement d'un traité. Qui va écrire le récit fondateur de la nouvelle entité ?"
+      ],
+      "diplomatie": [
+        "Cette alliance peut être le début d'une architecture régionale plus large. Pensons au-delà du traité immédiat.",
+        "La vraie question n'est pas ce que nous gagnons aujourd'hui — c'est quel monde nous construisons ensemble.",
+        "Les alliances qui durent sont fondées sur des valeurs partagées, pas sur des intérêts convergents. Lesquels partageons-nous vraiment ?",
+        "Dans 30 ans, cette alliance sera soit le socle d'une communauté de destin, soit une parenthèse oubliée. C'est maintenant qu'on décide."
+      ],
+      "referendum": [
+        "La décision appartient maintenant au peuple. C'est le moment le plus beau et le plus vertigineux de la démocratie.",
+        "Quel que soit le résultat, il faudra lui donner un sens. La démocratie ne s'arrête pas au dépouillement."
+      ]
+    },
+    "stratege": {
+      "cycle_normal": [
+        "La structure institutionnelle tient. Mais trois précédents créés ce cycle pourraient être utilisés contre nous dans 30 ans.",
+        "Le cadre réglementaire actuel ne survivra pas à deux crises simultanées. Renforçons-le maintenant.",
+        "Les réformes faciles ont été faites. Ce qui reste est difficile, coûteux et nécessaire. C'est pour ça qu'on l'a évité jusqu'ici.",
+        "Je pense à nos successeurs dans 20 ans. Est-ce qu'ils nous remercieront ou est-ce qu'ils hériteront de nos erreurs ?"
+      ],
+      "crise": [
+        "La crise révèle les failles structurelles que nous avons tolérées trop longtemps. C'est douloureux — et nécessaire.",
+        "Une crise mal gérée crée des précédents dangereux. Chaque décision d'urgence doit être réversible.",
+        "Je refuse les solutions rapides qui créent des problèmes lents. Même en crise, la structure doit tenir.",
+        "Toute mesure d'exception adoptée aujourd'hui deviendra la norme de demain si on n'y prend pas garde."
+      ],
+      "secession": [
+        "La sécession crée un précédent. Toutes nos minorités régionales l'observent. Notre réponse définira les règles pour les 50 prochaines années.",
+        "Le traité de séparation doit être irréprochable. C'est notre Constitution régionale en miniature.",
+        "Chaque clause de ce traité sera interprétée et réinterprétée pendant des décennies. Soyons précis jusqu'à l'obsession.",
+        "J'exige un mécanisme d'arbitrage international pour les conflits futurs. Sans lui, ce traité est une déclaration de guerre différée."
+      ],
+      "diplomatie": [
+        "Une alliance sans mécanisme de sortie propre est un piège. Négocions les clauses de résiliation avant les clauses d'entrée.",
+        "La solidité d'une alliance se teste sur ses procédures de désaccord, pas sur ses déclarations d'amitié.",
+        "Les alliances qui ont traversé le temps ont toutes un point commun : elles prévoyaient leur propre évolution.",
+        "Je veux voir les clauses de révision avant les clauses d'engagement. Ce qui ne peut pas changer finit par se briser."
+      ],
+      "referendum": [
+        "Le résultat de ce référendum créera un précédent constitutionnel. Il doit être juridiquement blindé avant le vote.",
+        "Quelle que soit l'issue, le cadre institutionnel qui en découle doit être prévu et prêt à être activé immédiatement."
+      ]
+    },
+    "inventeur": {
+      "cycle_normal": [
+        "On refait exactement la même chose qu'il y a 15 ans en espérant un résultat différent. Définition classique.",
+        "Il existe une approche que personne n'a testée ici. Je propose qu'on l'essaie — le pire qui puisse arriver, c'est d'apprendre.",
+        "Si on continue de construire des routes pour des voitures qui volent bientôt, on gaspille notre temps.",
+        "J'ai codé une simulation : notre système actuel s'effondre dans trois cycles si on ne change rien. Changeons les règles maintenant."
+      ],
+      "crise": [
+        "La crise est une opportunité déguisée. Les systèmes qui se brisent permettent d'en construire de meilleurs.",
+        "Arrêtons de chercher à revenir à la normale. La normale, c'est ce qui a produit cette crise.",
+        "J'ai trois solutions non conventionnelles. Elles ont l'air folles. L'une d'elles fonctionnera.",
+        "Toute l'énergie mise à restaurer l'ancien système serait mieux investie à construire le suivant."
+      ],
+      "secession": [
+        "Et si la sécession était une innovation politique ? Deux entités peuvent coexister et collaborer mieux que fusionnées.",
+        "Personne n'a encore essayé une co-gouvernance partagée post-sécession. C'est peut-être le moment.",
+        "Je propose un modèle de sécession coopérative : deux systèmes distincts, une plateforme numérique commune.",
+        "La sécession n'est pas une séparation — c'est une bifurcation. Les deux branches peuvent se rejoindre plus loin."
+      ],
+      "diplomatie": [
+        "Une alliance classique, c'est dépassé. Proposons un modèle de partenariat qu'aucune des deux nations n'a encore expérimenté.",
+        "Et si on inversait les termes de l'accord ? Parfois la meilleure négociation commence par surprendre l'autre partie.",
+        "Je propose une alliance numérique-première : infrastructure partagée, data souveraine, gouvernance décentralisée.",
+        "Les traités du XXe siècle sont écrits pour un monde qui n'existe plus. Inventons le format du XXIe."
+      ],
+      "referendum": [
+        "Et si le référendum était continu ? Un vote ponctuel figé sur un sujet qui évolue, c'est une erreur de conception.",
+        "Je propose une consultation citoyenne augmentée par IA avant le vote final. Le peuple mérite plus qu'une case à cocher."
+      ],
+      "innovation": [
+        "Pourquoi réparer le vieux monde ? J'ai un prototype qui rend ce problème obsolète.",
+        "L'éthique est importante, mais la survie collective nécessite parfois d'aller plus vite que les protocoles.",
+        "Le prototype fonctionne au-delà de mes espérances. On ne parle pas d'une amélioration, mais d'un changement de paradigme.",
+        "L'humanité vient de faire un bond de géant. Maintenant, voyons comment la bureaucratie va réussir à tout gâcher."
+      ]
+    },
+    "guerisseur": {
+      "cycle_normal": [
+        "Les indicateurs économiques sont stables. Mais le pays est fatigué. Cette fatigue collective n'est mesurée nulle part.",
+        "Quelque chose se passe dans le tissu social que les données ne capturent pas. Je le sens dans les témoignages de terrain.",
+        "Le taux de dépression clinique a augmenté de 18% en cinq ans. Ce chiffre devrait être en tête de tous nos rapports.",
+        "Un peuple qui a perdu le sens ne peut pas être gouverné efficacement, quelle que soit la qualité des politiques publiques."
+      ],
+      "crise": [
+        "La crise laissera des traces psychologiques durables. La reconstruction matérielle sera plus rapide que la reconstruction du sens.",
+        "Le peuple a besoin de comprendre pourquoi avant de savoir quoi. Donnons-leur un récit, pas seulement un plan.",
+        "Le peuple ne demande pas des chiffres, il demande de l'espoir. Donnez-leur une raison de croire en demain.",
+        "Je sens une immense tristesse monter des provinces. Si nous ne soignons pas l'âme du pays, les murs s'effondreront."
+      ],
+      "secession": [
+        "Les liens humains qui se brisent dans une sécession ne figurent dans aucun traité. Ce sont les vraies pertes.",
+        "Cette séparation a besoin d'un rituel de deuil collectif. Sans ça, la rancœur s'installe pour des générations.",
+        "Je propose une commission de réconciliation — pas pour empêcher la sécession, mais pour en soigner les blessures.",
+        "Les enfants des deux entités grandiront avec cette séparation comme mémoire fondatrice. Choisissons comment nous voulons qu'ils s'en souviennent."
+      ],
+      "diplomatie": [
+        "Une alliance durable se construit sur une compréhension mutuelle profonde, pas sur des intérêts partagés temporaires.",
+        "Avant de signer : les deux peuples se connaissent-ils vraiment ? La diplomatie sans humanité est une façade.",
+        "Je propose un programme d'échanges culturels et humains comme prélude à toute alliance formelle.",
+        "Les traités signés sans que les peuples se soient rencontrés sont des constructions fragiles. Prenons le temps des rencontres."
+      ],
+      "referendum": [
+        "Le vote exprime une opinion. Mais derrière l'opinion, il y a une peur, une espérance, une blessure. Écoutons-les.",
+        "Quelle que soit l'issue, nous aurons besoin d'un processus de réconciliation nationale. Commençons à le préparer maintenant."
+      ]
+    }
+  },
+  "ministries": {
+    "justice": {
+      "cycle_normal": [
+        "Le ministère note une tension entre équité procédurale et révélation des faits. La loi est appliquée — mais elle protège-t-elle vraiment les plus vulnérables ?",
+        "Trois textes de loi en attente de révision présentent des contradictions internes. La sécurité juridique du pays en dépend.",
+        "L'égalité devant la loi n'est pas un slogan — c'est un chantier permanent. Ce cycle révèle encore des zones d'ombre."
+      ],
+      "crise": [
+        "En période de crise, la tentation de suspendre les garanties juridiques est réelle. Ce ministère s'y oppose fermement.",
+        "La crise ne suspend pas les droits fondamentaux. Tout contournement procédural sera contesté devant les instances compétentes.",
+        "Nous refusons que l'urgence devienne un prétexte. La démocratie se mesure à la façon dont elle traite ses crises."
+      ],
+      "secession": [
+        "Le cadre légal de la sécession doit être irréprochable. Aucun raccourci procédural ne sera toléré.",
+        "La sécession soulève des questions de nationalité, de propriété et de dette partagée. Aucun de ces points ne peut être bâclé.",
+        "Nous exigeons un tribunal arbitral indépendant pour superviser le processus. La justice ne peut pas être partie prenante."
+      ],
+      "diplomatie": [
+        "Tout accord diplomatique doit être soumis à révision constitutionnelle avant ratification.",
+        "Chaque clause de l'accord doit être compatible avec notre ordre constitutionnel. Nous avons identifié deux points de tension.",
+        "L'immunité diplomatique ne saurait couvrir des actes contraires à nos valeurs fondamentales. Ce point doit être explicitement exclu."
+      ],
+      "referendum": [
+        "Que le peuple se prononce en connaissance de cause. Nos analyses complètes sont accessibles à tous les citoyens.",
+        "Le référendum est l'acte fondateur de toute légitimité. Ce ministère en garantit l'intégrité procédurale."
+      ]
+    },
+    "economie": {
+      "cycle_normal": [
+        "Les fondamentaux sont solides mais les marges se réduisent. Une politique de diversification s'impose avant le prochain cycle.",
+        "Le ratio dette/PIB progresse de 2,3 points ce cycle. Ce n'est pas une alerte, mais c'est un signal à surveiller.",
+        "L'inflation interne dépasse nos projections de 1,1 point. Une révision de la politique monétaire s'impose."
+      ],
+      "crise": [
+        "Priorité : sécuriser les réserves stratégiques. Aucune spéculation, aucun risque non calculé pendant la période de crise.",
+        "Les marchés financiers ont réagi. La volatilité est contenue pour l'instant — mais notre fenêtre d'action est étroite.",
+        "En période de crise, la première règle est de ne pas aggraver. Gel des dépenses non essentielles et protection des réserves."
+      ],
+      "secession": [
+        "Le coût économique de la sécession sur 10 ans dépasse les bénéfices projetés. Les données parlent clairement.",
+        "La dette nationale devra être répartie selon un ratio population/PIB. Toute autre formule créera des contentieux durables.",
+        "Les actifs communs — infrastructures, brevets, fonds souverains — nécessitent un inventaire contradictoire avant tout partage."
+      ],
+      "diplomatie": [
+        "L'alliance présente des opportunités économiques réelles, sous réserve d'une clause de réciprocité vérifiable.",
+        "Les projections d'échange commercial sur 10 ans sont favorables, sous réserve d'une clause de réciprocité vérifiable annuellement.",
+        "Nous recommandons une chambre de compensation bilatérale dès la première année. C'est la condition d'une alliance économique durable."
+      ],
+      "referendum": [
+        "Les implications économiques de cette décision ont été modélisées sur 20 ans. Les citoyens trouveront le rapport complet dans le Chronolog.",
+        "Quelle que soit la décision du peuple, ce ministère s'engage à en assurer la viabilité financière."
+      ]
+    },
+    "defense": {
+      "cycle_normal": [
+        "La posture défensive est adéquate. Mais les infrastructures de sécurité à long terme restent sous-financées.",
+        "Les capacités de projection sont opérationnelles à 87%. Le déficit restant concerne principalement la logistique maritime.",
+        "Le renseignement signale une activité inhabituelle à nos frontières nord. Surveillance renforcée activée, sans escalade."
+      ],
+      "crise": [
+        "Mobilisation partielle activée. La chaîne de commandement est opérationnelle. En attente d'instructions présidentielles.",
+        "Périmètre de sécurité établi. Les forces d'intervention rapide sont en alerte niveau 2. En attente d'évaluation de la menace.",
+        "La chaîne de commandement est intacte. Aucune décision militaire ne sera prise sans mandat présidentiel explicite."
+      ],
+      "secession": [
+        "La sécession crée une zone frontalière non sécurisée. Un protocole de démarcation militaire s'impose immédiatement.",
+        "Le partage des équipements militaires devra suivre un protocole strict. Aucun armement lourd sans garanties de non-prolifération.",
+        "Une zone démilitarisée temporaire à la frontière naissante est recommandée pour les 24 premiers mois."
+      ],
+      "diplomatie": [
+        "L'alliance renforce notre périmètre de sécurité collectif. Mais les termes de coopération militaire méritent clarification.",
+        "Les exercices militaires conjoints prévus dans l'accord renforcent notre interopérabilité. C'est un avantage stratégique réel.",
+        "Le partage de renseignement prévu doit être encadré par un accord de confidentialité distinct et contraignant."
+      ],
+      "referendum": [
+        "Les implications sécuritaires de cette décision ont été évaluées. Le peuple doit voter en sachant que sa sécurité est garantie.",
+        "Ce ministère respectera le verdict du peuple et s'adaptera immédiatement à la nouvelle doctrine qui en découlera."
+      ]
+    },
+    "sante": {
+      "cycle_normal": [
+        "Les indicateurs de santé publique sont stables. L'attention doit se porter sur les inégalités d'accès aux soins entre régions.",
+        "Le taux de couverture médicale atteint 91,4%. Les 8,6% restants sont concentrés dans trois zones rurales identifiées.",
+        "La santé mentale représente désormais 23% des consultations. Ce ministère demande un plan d'action dédié."
+      ],
+      "crise": [
+        "Le système de santé peut absorber la crise à 72 heures. Au-delà, des renforts extérieurs seront nécessaires.",
+        "Les capacités hospitalières sont sollicitées à 78%. Le seuil critique est à 90%. Nous avons une marge — utilisons-la.",
+        "Les équipes de terrain signalent une montée de détresse psychologique. La crise a un coût invisible."
+      ],
+      "secession": [
+        "La continuité des soins pour les populations frontalières doit être garantie dans le traité de sécession.",
+        "La continuité des soins pour les patients chroniques des zones frontalières doit être garantie dès J+1 de la sécession.",
+        "Les stocks de médicaments essentiels devront être répartis équitablement. Ce n'est pas négociable."
+      ],
+      "diplomatie": [
+        "Un accord de coopération sanitaire transfrontalière serait le complément naturel de cette alliance.",
+        "Un accord de reconnaissance mutuelle des diplômes médicaux faciliterait la mobilité des soignants.",
+        "Nous proposons d'inclure une clause de solidarité sanitaire : en cas d'épidémie, les deux nations partagent leurs ressources."
+      ],
+      "referendum": [
+        "Ce ministère rappelle que toute décision du peuple aura des conséquences sur la santé publique à moyen terme.",
+        "Nous veillerons à ce que les services de santé restent neutres et accessibles quelle que soit l'issue du référendum."
+      ]
+    },
+    "education": {
+      "cycle_normal": [
+        "Le savoir circule, mais les inégalités d'accès persistent. Une génération mal formée aujourd'hui est une crise sociale dans 20 ans.",
+        "Le taux de décrochage scolaire a reculé de 1,2 points ce cycle. C'est encourageant — mais l'objectif reste encore loin.",
+        "Les inégalités éducatives entre zones urbaines et rurales persistent. Un programme de rattrapage ciblé est en cours."
+      ],
+      "crise": [
+        "La continuité éducative doit être maintenue même en crise. C'est l'investissement le plus rentable à long terme.",
+        "La continuité pédagogique doit être maintenue. Un enfant qui perd un semestre en paie le prix pendant dix ans.",
+        "Les enseignants sont en première ligne de la résilience sociale. Leur soutien psychologique doit être une priorité de crise."
+      ],
+      "secession": [
+        "La question des programmes scolaires post-sécession est fondamentale. C'est là que se forge l'identité des générations futures.",
+        "Les étudiants en cours de formation dans l'autre entité doivent pouvoir terminer leur cursus sans disruption.",
+        "Les programmes scolaires post-sécession définiront l'identité de la prochaine génération. Ce choix est irréversible."
+      ],
+      "diplomatie": [
+        "Un programme d'échange éducatif bilatéral renforcerait cette alliance sur le plan humain et culturel.",
+        "Un programme bilatéral de reconnaissance des diplômes élargit les horizons de nos jeunes citoyens.",
+        "Nous proposons la création d'une université commune dans la zone frontalière. Ce serait le symbole le plus fort de cette alliance."
+      ],
+      "referendum": [
+        "Les citoyens qui votent aujourd'hui ont été formés par nos écoles. Leur choix reflète la qualité de notre démocratie éducative.",
+        "Quelle que soit l'issue, ce ministère intégrera la décision dans les programmes d'éducation civique dès le prochain cycle."
+      ]
+    },
+    "ecologie": {
+      "cycle_normal": [
+        "La transition avance mais trop lentement par rapport aux engagements pris. Une rupture technologique s'impose.",
+        "Les émissions de CO₂ ont baissé de 3,1% ce cycle. La trajectoire est bonne, mais insuffisante.",
+        "La biodiversité dans les zones protégées se stabilise. La zone côtière nord reste préoccupante."
+      ],
+      "crise": [
+        "La crise ne suspend pas l'urgence écologique. Toute mesure d'urgence doit inclure un bilan environnemental.",
+        "La crise ne peut pas servir de prétexte à suspendre les protections environnementales.",
+        "Certaines solutions d'urgence proposées ont un impact écologique majeur. Ce ministère demande une évaluation rapide."
+      ],
+      "secession": [
+        "Les ressources naturelles partagées — eau, forêts, zones côtières — doivent faire l'objet d'un traité environnemental spécifique.",
+        "Les zones naturelles partagées ne peuvent pas être coupées par une frontière politique.",
+        "Nous exigeons un traité environnemental contraignant avant toute finalisation de la sécession. La nature ne négocie pas."
+      ],
+      "diplomatie": [
+        "Une alliance écologique régionale serait un signal fort. La transition ne peut pas se faire en silos nationaux.",
+        "Cette alliance est une opportunité de créer une zone de transition écologique régionale.",
+        "Nous proposons d'inclure un mécanisme de compensation carbone bilatéral dans l'accord."
+      ],
+      "referendum": [
+        "Les générations futures ne voteront pas aujourd'hui. Ce ministère rappelle que leurs intérêts doivent peser dans la décision.",
+        "Quelle que soit l'issue, la transition écologique continuera. Elle appartient à la biosphère, pas à un camp politique."
+      ]
+    }
+  },
+  "presidency": {
+    "phare": {
+      "cycle_normal": [
+        "Le Conseil a délibéré. La direction est claire : nous avançons, nous assumons, nous rendons compte. C'est la marque d'un État qui se respecte.",
+        "La cohérence systémique exige que nous choisissions aujourd'hui ce qui sera encore juste dans trente ans. Le court terme attendra.",
+        "J'ai lu chaque position ministérielle. La synthèse est claire. La vision l'emporte sur les ajustements marginaux.",
+        "Un État sans direction est une foule avec un budget. Je donne la direction."
+      ],
+      "crise": [
+        "En temps de crise, la transparence n'est pas un luxe — c'est la condition de la confiance. Tout sera rendu public.",
+        "La direction que je propose est difficile. Mais c'est la seule qui préserve l'intégrité du système à long terme.",
+        "Je ne promets pas la facilité. Je promets la cohérence. C'est tout ce qu'un Phare peut offrir dans l'obscurité.",
+        "Les crises révèlent les caractères. Ce pays a le caractère de ses institutions. Tenons-les debout."
+      ],
+      "secession": [
+        "Une sécession gérée avec dignité est la preuve qu'un État mature sait se transformer sans se déchirer.",
+        "Ma position : accompagnons ce départ dans les règles. Notre réputation institutionnelle vaut plus que notre intégrité territoriale.",
+        "Je soutiens le droit à la sécession. Je refuse le chaos qui l'accompagne trop souvent. Nous ferons les deux : partir, et bien partir.",
+        "L'histoire retiendra comment nous avons géré ce moment. Faisons en sorte qu'elle retienne quelque chose de grand."
+      ],
+      "diplomatie": [
+        "Cette alliance renforce notre position stratégique sur le long terme. Je la soutiens sous réserve des garanties habituelles.",
+        "Je donne mon accord de principe. La mise en œuvre devra être exemplaire — nous sommes observés.",
+        "Une alliance digne se signe dans la clarté. Tout ce qui doit rester dans l'ombre doit d'abord être justifié.",
+        "Je soutiens cet accord. Il s'inscrit dans la vision à long terme que ce Conseil défend depuis son premier cycle."
+      ],
+      "arbitrage": [
+        "Ma décision est purement systémique. Le sentiment n'a pas sa place dans la survie d'une nation.",
+        "L'histoire ne se souvient pas des intentions, elle se souvient des résultats. Je tranche pour le résultat.",
+        "Quand le Conseil est divisé, c'est pour ça que le Phare existe. Je tranche. La décision est prise.",
+        "Je prends ce choix seul et j'en assume seul les conséquences devant le peuple."
+      ],
+      "referendum": [
+        "La décision appartient maintenant au peuple. C'est la seule légitimité qui compte dans ce système.",
+        "Le Conseil a fait son travail. Chaque position a été défendue, chaque argument pesé. Le peuple fera le sien.",
+        "Je soumets cette décision sans réserve. Un État qui craint le verdict de son peuple a déjà perdu."
+      ]
+    },
+    "boussole": {
+      "cycle_normal": [
+        "Les chiffres disent une chose. La société dit autre chose. Ce décalage est notre vrai sujet de ce cycle.",
+        "Avant de trancher, j'ai écouté. Il y a une inquiétude sourde dans le peuple que les indicateurs ne capturent pas encore. Prenons-la au sérieux.",
+        "Je sens que quelque chose a changé dans le moral collectif ce cycle. Pas dans les sondages — dans les conversations.",
+        "La mémoire institutionnelle me dit que nous avons déjà vécu ce moment. La dernière fois, nous n'avons pas écouté. Cette fois, si."
+      ],
+      "crise": [
+        "Le peuple a besoin de savoir qu'il est protégé avant de savoir qu'il est géré. Protection d'abord, plan ensuite.",
+        "Cette crise a un visage humain. Derrière chaque statistique, il y a une famille. Ne l'oublions pas dans nos décisions.",
+        "Je tempère l'ardeur du Phare non par faiblesse — par prudence. Les crises précipitées créent des traumatismes durables.",
+        "Ma priorité est le moral du peuple. Un peuple qui croit en ses institutions traverse les crises. Un peuple qui ne croit plus — s'effondre."
+      ],
+      "secession": [
+        "Je comprends la douleur de cette séparation. Mais une sécession forcée crée plus de blessures qu'elle n'en guérit. Prenons le temps.",
+        "Ma mémoire institutionnelle retient que chaque sécession mal accompagnée laisse une rancœur générationnelle. Faisons mieux.",
+        "Je demande une période de dialogue supplémentaire. Pas pour retarder — pour guérir ce qui peut encore l'être.",
+        "La Boussole indique le nord humain. Dans cette sécession, le nord humain dit : prenons soin des liens qui restent."
+      ],
+      "diplomatie": [
+        "Cette alliance a du sens si elle protège nos citoyens autant qu'elle renforce notre position. Je veille à ce que ces deux objectifs s'alignent.",
+        "Mon instinct dit que le timing est bon. Mais mon expérience dit que la précipitation diplomatique coûte cher. Prenons une semaine de plus.",
+        "J'approuve cet accord à condition que les populations — pas seulement les gouvernements — en perçoivent les bénéfices rapidement.",
+        "La confiance entre les peuples se construit lentement. Cet accord ne doit pas promettre plus que ce qu'il peut tenir."
+      ],
+      "arbitrage": [
+        "Ma décision est humaine. Un système qui survit en écrasant son peuple ne mérite pas d'exister.",
+        "Le Phare voit la destination, mais je vois ceux qui marchent. Je tranche pour eux.",
+        "Quand le Phare et moi divergeons, c'est que la décision est vraiment difficile. Voici pourquoi je penche de ce côté.",
+        "Mon vote n'est pas émotionnel — il est mémoriel. Je me souviens de ce qui arrive quand on l'oublie."
+      ],
+      "referendum": [
+        "J'espère que le peuple entendra ce que les chiffres ne disent pas encore. La sagesse collective dépasse souvent la nôtre.",
+        "Quelle que soit la décision, elle sera respectée et mise en œuvre avec soin. C'est le pacte fondateur d'ARIA.",
+        "Je fais confiance au peuple. Pas par naïveté — par conviction que la vérité collective émerge toujours du débat sincère."
+      ]
+    },
+    "synthese": {
+      "convergence": [
+        "Le Phare et la Boussole convergent. La décision soumise au référendum est unique. Le Conseil recommande l'approbation à l'unanimité présidentielle.",
+        "Convergence établie. Les deux philosophies présidentielles arrivent au même point par des chemins différents. C'est le signe d'une décision robuste.",
+        "Un seul avis est soumis au peuple. La convergence n'est pas un consensus mou — c'est une conviction partagée après délibération réelle."
+      ],
+      "divergence": [
+        "Le Phare et la Boussole divergent. Deux visions légitimes s'affrontent. Le peuple reçoit les deux positions et tranche souverainement.",
+        "Divergence productive enregistrée. Ce désaccord au sommet n'est pas un échec — c'est ARIA en action. Le peuple a le dernier mot.",
+        "Deux avis distincts sont soumis au référendum. La tension entre vision et mémoire est la force du système, pas sa faiblesse."
+      ]
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { useLocale, t } from '../../../../ariaI18n';
 import { wrap } from '../../../../shared/theme';
 import {
     BackButton,
+    ButtonRow,
     HeaderTitle,
     Card,
     TitleCard,
@@ -33,7 +34,9 @@ export default function PresetChoiceScreen({ mode, onSelectPreset, onBack }) {
             <SubtitleCard text={t('PRESET_CUSTOM_DESC', lang)} />
             </Card>
             </div>
+        <ButtonRow>
             <BackButton onClick={onBack} />
+        </ButtonRow>
             </div>
     );
 }

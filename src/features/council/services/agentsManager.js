@@ -9,8 +9,8 @@
 // - Filtrer selon les configurations actives
 // ============================================================
 
-import AGENTS_RAW    from '../../../../templates/base_agents.json';
-import AGENTS_RAW_EN from '../../../../templates/base_agents_en.json';
+import AGENTS_RAW    from '../../../../templates/languages/fr/governance.json';
+import AGENTS_RAW_EN from '../../../../templates/languages/en/governance.json';
 import { loadLang }  from '../../../ariaI18n';
 
 // ============================================================

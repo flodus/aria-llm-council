@@ -28,7 +28,7 @@ import {
     PresidencyDetail,
     MinistriesDetail,
     MinistersDetail,
-    CountryContextAccordion,
+    ContextPanel,
     ConfirmLaunchDialog
 } from './index';
 
@@ -153,6 +153,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             width: '100%',
             maxWidth: 680,
             padding: '2rem',
+            paddingBottom: '14vh',
             overflowY: 'auto',
             maxHeight: 'calc(100vh - 2rem)',
             boxSizing: 'border-box'
@@ -182,7 +183,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 0, borderBottom: '1px solid rgba(200,164,74,0.10)', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0, borderBottom: '1px solid rgba(200,164,74,0.10)', width: '100%', backdropFilter: 'blur(6px)', background: 'rgba(8,14,26,0.45)', borderRadius: '2px 2px 0 0' }}>
         <ConstitutionTabs
         activeTab={plTab}
         onTabChange={setPlTab}
@@ -206,14 +207,14 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             {/* Onglet RÉSUMÉ */}
             {plTab === 'resume' && (
                 <>
-                <CountryContextAccordion
-                pendingDefs={pendingDefs}
-                plCtxOpen={countryContext.plCtxOpen}
-                setPlCtxOpen={countryContext.setPlCtxOpen}
-                plCtxModes={countryContext.plCtxModes}
-                setPlCtxModes={countryContext.setPlCtxModes}
-                plCtxOvrs={countryContext.plCtxOvrs}
-                setPlCtxOvrs={countryContext.setPlCtxOvrs}
+                <ContextPanel
+                countryName={countries[countryOverride.plCountry]?.nom || countries[countryOverride.plCountry]?.realData?.nom || `Nation ${countryOverride.plCountry + 1}`}
+                open={countryContext.plCtxOpen === countryOverride.plCountry}
+                onToggle={() => countryContext.setPlCtxOpen(p => p === countryOverride.plCountry ? null : countryOverride.plCountry)}
+                mode={countryContext.plCtxModes[countryOverride.plCountry] || ''}
+                setMode={v => countryContext.setPlCtxModes(p => { const a = [...p]; a[countryOverride.plCountry] = v; return a; })}
+                override={countryContext.plCtxOvrs[countryOverride.plCountry] || ''}
+                setOverride={v => countryContext.setPlCtxOvrs(p => { const a = [...p]; a[countryOverride.plCountry] = v; return a; })}
                 />
 
                 <IAConfigAccordion
@@ -312,7 +313,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         )}
 
         {/* Boutons footer */}
-        <div style={{ display: 'flex', gap: '0.6rem', width: '100%', justifyContent: 'space-between' }}>
+        <div style={{ position:'fixed', bottom:'8vh', left:'50%', transform:'translateX(-50%)', width:'min(700px, 90vw)', display:'flex', gap:'0.6rem', justifyContent:'space-between', zIndex:20 }}>
         <button style={BTN_SECONDARY} onClick={onBack}>{t('BACK', lang)}</button>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
         <button

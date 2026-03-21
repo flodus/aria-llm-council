@@ -115,6 +115,7 @@ export default function APIKeyInline({ onClose }) {
 
   const { provKeys, keyStatus } = keyState;
   const [hasDeleted, setHasDeleted] = useState(false);
+  const [hasCleared, setHasCleared] = useState(false);
 
   // Helpers d'état imbriqué (provKeys + keyStatus dans un seul objet)
   const setPK = (fn) => setKeyState(s => ({ ...s, provKeys: typeof fn === 'function' ? fn(s.provKeys) : fn }));
@@ -180,7 +181,7 @@ export default function APIKeyInline({ onClose }) {
 
   const anyOk = Object.values(keyStatus).some(s => s === 'ok' || s === 'debug');
   const hasAnyKey = Object.values(provKeys).some(arr => arr.some(k => k.key?.trim()));
-  const canSave = anyOk || hasDeleted;
+  const canSave = anyOk || hasDeleted || hasCleared;
 
   // ── Sauvegarde ───────────────────────────────────────────────────────────
   // Persiste clés valides + statuts + modèle préféré par provider dans localStorage
@@ -246,6 +247,7 @@ export default function APIKeyInline({ onClose }) {
     onUpdateEntry={updateEntry}
     onTestEntry={testEntry}
     onRemoveEntry={removeEntry}
+    onClear={() => setHasCleared(true)}
     onSetDefault={setDefault}
     onAddKey={addKey}
     />

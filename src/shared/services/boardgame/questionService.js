@@ -6,7 +6,7 @@
 //  i18n     : charge _en.json si disponible, fallback FR
 // ═══════════════════════════════════════════════════════════════════════════
 
-import QUESTIONS_FR from '../../../../templates/aria_questions.json';
+import QUESTIONS_FR from '../../../../templates/languages/fr/aria_questions.json';
 import { loadLang } from '../../../ariaI18n';
 import { COLORS } from '../../theme';
 
