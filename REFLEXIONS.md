@@ -176,3 +176,69 @@ Lien avec :
 
 ⚠️ Assess dédié requis avant implémentation
 ⚠️ À faire après intégration gemini.json dans base_agents.json
+
+---
+
+## Système de poids ministériels — V-future
+
+Mécanique de convergence/divergence narrative pour le mode Board Game offline.
+Née de la discussion sur aria_syntheses.json (2026-03-20).
+
+### Principe
+
+Chaque ministre commence avec un poids de `1`.
+Le poids évolue dynamiquement selon le régime actif, le contexte géopolitique
+et les votes citoyens passés.
+
+Exemples de modificateurs :
+- Junte militaire → initiateur `+3`, écologie `-3`
+- Temps de guerre → initiateur `+5`
+- Vote citoyen favorable → ministre porteur `+1`
+
+### V1 — Matrice postures simple (implémentée dans responseService.js)
+```
+radical   + radical   → convergence
+prudent   + prudent   → convergence
+statu_quo + statu_quo → convergence
+prudent   + statu_quo → convergence (tension faible)
+radical   + prudent   → divergence
+radical   + statu_quo → divergence
+```
+
+### V-future — Poids + régime + contexte
+
+Sur un même ministère, si les deux postures donnent "convergence" mais que
+les poids diffèrent → l'avis du ministre au poids le plus élevé l'emporte
+et oriente la synthèse vers sa posture.
+
+Modificateurs régime (exemples à affiner) :
+- `junte_militaire` : initiateur/stratege/protecteur `+3` · ecologie/guide `-3`
+- `technocratie_ia` : analyste/inventeur `+3` · communicant `-1`
+- `theocracie` : guide/guerisseur `+3` · inventeur `-2`
+- `democratie_liberale` : communicant/arbitre `+2` · stratege `-1`
+- `oligarchie` : gardien/analyste `+3` · guerisseur/ecologie `-2`
+
+Modificateurs contexte (exemples) :
+- Guerre déclarée → initiateur/protecteur/stratege `+5`
+- Crise sanitaire → guerisseur/gardien `+4`
+- Effondrement économique → gardien/analyste `+3`
+- Satisfaction < 30% (mode crise) → calcul coalition :
+  somme des poids convergents vs somme des poids divergents
+  → la coalition la plus lourde gagne, sa synthèse s'impose
+
+### Règle de convergence présidentielle (V1)
+
+Phare et Boussole ont chacun un pool de styles contextuels.
+Si les deux piochent dans le même type de pool → convergence.
+Si les pools sont opposés (action vs prudence) → divergence.
+
+### Fichiers impactés (quand on implémentera)
+
+- `responseService.js` → calcul poids + règle convergence
+- `base_agents.json` → table des modificateurs par régime
+- `aria_syntheses.json` → pools synthèse par ministère × régime × état
+- Moteur de cycle → événements qui modifient les poids en temps réel
+- Constitution → possible override de poids par pays
+
+⚠️ Assess dédié requis avant implémentation
+⚠️ Ne pas toucher deliberationEngine.js sans cette session
