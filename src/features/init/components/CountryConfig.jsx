@@ -148,7 +148,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
         {!isOpen && c.type === 'reel' && (
             <span style={{ fontSize: '0.78rem', opacity: 0.65, lineHeight: 1 }} title={`Contexte : ${ctxIcon} ${ctxTooltip}`}>{ctxIcon}</span>
         )}
-        <span style={{ fontFamily: FONT.mono, fontSize: '0.55rem', color: 'rgba(140,160,200,0.40)', lineHeight: 1 }}>
+        <span style={{ fontFamily: FONT.mono, fontSize: '0.55rem', color: 'rgba(200,164,74,0.60)', lineHeight: 1 }}>
             {isOpen ? '▲' : '▼'}
         </span>
         {canRemove && (

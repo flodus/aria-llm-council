@@ -47,7 +47,7 @@ export default function RealWorldFlow({ worldName, mode, onBack, onPreLaunch, ba
         <div style={labelStyle()}>🌍 TERRE RÉELLE — {countries.length}/6</div>
         {countries.length < 6 && (
             <button
-            style={{ ...BTN_SECONDARY, padding: '0.3rem 0.7rem', fontSize: '0.48rem' }}
+            style={{ ...BTN_SECONDARY, padding: '0.3rem 0.7rem', fontSize: '0.48rem', color: 'rgba(200,164,74,0.80)', border: '1px solid rgba(200,164,74,0.28)' }}
             onClick={() => setCountries(p => [...p, DEFAULT_COUNTRY()])}
             >
             + AJOUTER
