@@ -40,7 +40,10 @@
         "Quelle politique adopter face à la surpopulation carcérale ?",
         "Jusqu'où peut aller la surveillance numérique au nom de la sécurité ?",
         "Comment garantir la liberté de la presse face aux pressions politiques ?",
-        "Faut-il créer un tribunal spécialisé pour les crimes environnementaux ?"
+        "Faut-il créer un tribunal spécialisé pour les crimes environnementaux ?",
+        "Comment encadrer l'usage des algorithmes dans les décisions judiciaires ?",
+        "Doit-on limiter la médiatisation des procès pour garantir leur équité ?",
+        "Faut-il instaurer des jurys citoyens obligatoires pour certaines affaires sensibles ?"
       ]
     },
 
@@ -66,7 +69,10 @@
         "Quelle politique fiscale adopter face à l'évasion des grandes entreprises ?",
         "Faut-il nationaliser les secteurs stratégiques (énergie, eau, transports) ?",
         "Comment financer la transition écologique sans creuser la dette publique ?",
-        "Quelle politique d'emploi pour les travailleurs déplacés par l'automatisation ?"
+        "Quelle politique d'emploi pour les travailleurs déplacés par l'automatisation ?",
+        "Comment encourager la relocalisation sans pénaliser la compétitivité ?",
+        "Doit-on plafonner les marges sur les biens de première nécessité ?",
+        "Faut-il instaurer une taxation dynamique en fonction des crises économiques ?"
       ]
     },
 
@@ -89,7 +95,10 @@
         "Faut-il interdire la diffusion d'images de conflits en direct ?",
         "Comment distinguer défense nationale et ingérence dans les conflits étrangers ?",
         "Faut-il un contrôle parlementaire renforcé sur les opérations militaires secrètes ?",
-        "Jusqu'où peut-on sacrifier les libertés civiles pour la sécurité nationale ?"
+        "Jusqu'où peut-on sacrifier les libertés civiles pour la sécurité nationale ?",
+        "Comment gérer la guerre de l'information face aux puissances étrangères ?",
+        "Doit-on automatiser certaines décisions militaires critiques via IA ?",
+        "Faut-il créer une force de réserve citoyenne mobilisable en cas de crise majeure ?"
       ]
     },
 
@@ -112,7 +121,10 @@
         "Faut-il interdire la vente de produits transformés néfastes ?",
         "Comment garantir l'accès aux soins dans les déserts médicaux ?",
         "Faut-il encadrer les médecines alternatives par la loi ?",
-        "Quelle politique face aux épidémies de maladies liées au mode de vie ?"
+        "Quelle politique face aux épidémies de maladies liées au mode de vie ?",
+        "Comment intégrer l'intelligence artificielle dans le diagnostic médical sans déshumaniser le soin ?",
+        "Doit-on imposer un suivi médical régulier obligatoire pour tous les citoyens ?",
+        "Faut-il prioriser les investissements dans la prévention plutôt que dans les soins ?"
       ]
     },
 
@@ -138,7 +150,10 @@
         "Faut-il rendre l'université gratuite pour tous les citoyens ?",
         "Comment adapter le système éducatif aux métiers du futur ?",
         "Quelle politique linguistique pour protéger les langues régionales ?",
-        "Comment lutter contre le décrochage scolaire dans les quartiers défavorisés ?"
+        "Comment lutter contre le décrochage scolaire dans les quartiers défavorisés ?",
+        "Comment gérer l'écart de niveau croissant entre élèves à l'ère numérique ?",
+        "Doit-on intégrer des compétences émotionnelles dans les programmes scolaires ?",
+        "Faut-il personnaliser totalement les parcours éducatifs grâce à l'IA ?"
       ]
     },
 
@@ -161,7 +176,10 @@
         "La nature a-t-elle le droit de passer avant l'intérêt humain ?",
         "Faut-il taxer lourdement les entreprises les plus polluantes ?",
         "Comment protéger la biodiversité face à l'expansion agricole ?",
-        "Doit-on créer un ministère dédié à la gestion des catastrophes climatiques ?"
+        "Doit-on créer un ministère dédié à la gestion des catastrophes climatiques ?",
+        "Comment arbitrer entre protection de la nature et besoins énergétiques croissants ?",
+        "Doit-on relocaliser massivement l'agriculture pour réduire l'empreinte écologique ?",
+        "Faut-il instaurer un quota individuel de consommation carbone ?"
       ]
     },
 
@@ -181,7 +199,10 @@
         "Quelle infrastructure pour une mobilité décarbonée ?",
         "Faut-il imposer une part de production locale dans tous les secteurs stratégiques ?",
         "Comment réguler les monopoles technologiques sans freiner l'innovation ?",
-        "Doit-on nationaliser les infrastructures numériques critiques ?"
+        "Doit-on nationaliser les infrastructures numériques critiques ?",
+        "Comment garantir la souveraineté technologique face aux géants étrangers ?",
+        "Doit-on limiter volontairement certaines innovations jugées à risque pour la société ?",
+        "Faut-il imposer une transparence totale des algorithmes utilisés par les grandes entreprises ?"
       ]
     }
 

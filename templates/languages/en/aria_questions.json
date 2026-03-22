@@ -6,17 +6,28 @@
       "by_ministry": "Questions indexed by ARIA ministry — direct routing",
       "transversal_pool": "Questions without assigned ministry — routing via keywords or AI"
     },
-    "aria_ministries": ["justice", "economy", "defense", "health", "education", "ecology", "industry"],
-    "pool_categories": ["daily_life", "crisis_and_fear", "ideological", "anomaly_and_scifi"],
+    "aria_ministries": [
+      "justice",
+      "economy",
+      "defense",
+      "health",
+      "education",
+      "ecology",
+      "industry"
+    ],
+    "pool_categories": [
+      "daily_life",
+      "crisis_and_fear",
+      "ideological",
+      "anomaly_and_scifi"
+    ],
     "usage": {
       "board_game": "Local routing via keywords (field 'keywords' in base_agents.json)",
       "ia_mode": "Automatic routing by AI based on question content",
       "duplicate_filter": "Check against chronolog before proposing an already debated question"
     }
   },
-
   "by_ministry": {
-
     "justice": {
       "questions": [
         "Should sentencing be automated to reduce court backlogs?",
@@ -30,10 +41,33 @@
         "Should the legal age of criminal responsibility be lowered to 12?",
         "Should cyber-criminals be banned from the network for life?",
         "Should rehabilitation focus on psychological reprogramming?",
-        "Should we create a dedicated court for environmental crimes?"
+        "Should we create a dedicated court for environmental crimes?",
+        "Should we automate judicial decisions to reduce delays?",
+        "Should we reinstate specific penalties for crimes against the State?",
+        "How can we guarantee judicial independence from the executive branch?",
+        "Should prison serve as punishment or rehabilitation?",
+        "Should AI-generated evidence be admissible in court?",
+        "Should self-defense be legalized in isolated rural areas?",
+        "How should we judge actions committed by non-human entities (AI/robots)?",
+        "Should corruption within our administration be punishable by death?",
+        "Should citizens be allowed to vote on criminal sentences?",
+        "How can state secrets be protected during public trials?",
+        "Should detention centers be privatized to reduce costs?",
+        "Should human rights take precedence over public security?",
+        "What penalties should be applied to those spreading destabilizing fake news?",
+        "Should the system for appointing judges be reformed?",
+        "How should we handle war crimes committed by our own troops?",
+        "Should we reform the judicial system to reduce inequalities before the law?",
+        "How can we fight corruption within public institutions?",
+        "What policy should we adopt to address prison overcrowding?",
+        "How far can digital surveillance go in the name of security?",
+        "How can we guarantee press freedom against political pressure?",
+        "Should we create a specialized court for environmental crimes?",
+        "Should we introduce mandatory citizen juries for sensitive cases?",
+        "Should we limit media coverage of trials to ensure fairness?",
+        "How should the use of algorithms in judicial decisions be regulated?"
       ]
     },
-
     "economy": {
       "questions": [
         "Should a Universal Basic Income be implemented to counter automation?",
@@ -47,10 +81,33 @@
         "Should raw material exports be banned to prioritize local needs?",
         "Should financial speculation on food resources be outlawed?",
         "Should we favor a local barter economy over the global market?",
-        "Should advertising for polluting products be prohibited?"
+        "Should advertising for polluting products be prohibited?",
+        "Should we nationalize banks to stabilize our currency?",
+        "Should robot taxation fund a universal basic income?",
+        "How should we respond to capital flight abroad?",
+        "Should speculation on raw materials be banned?",
+        "What level of dependence on imports should we accept?",
+        "Should we abandon the gold standard for a fully digital currency?",
+        "How should we manage the explosion of public debt with creditors?",
+        "Should we impose a maximum wage to reduce inequality?",
+        "Should we favor small businesses over large corporations?",
+        "How can we boost consumption without fueling inflation?",
+        "Should Sunday work become the norm?",
+        "Should all subsidies for fossil fuels be completely removed?",
+        "How can we attract foreign investors without selling off our resources?",
+        "Should social benefits be conditional on public service work?",
+        "Should we introduce an exceptional inheritance tax?",
+        "Should we implement a universal basic income for all citizens?",
+        "How can we reduce income inequality without slowing growth?",
+        "What tax policy should we adopt to address corporate tax evasion?",
+        "Should we nationalize strategic sectors (energy, water, transport)?",
+        "How can we finance the ecological transition without increasing public debt?",
+        "What employment policy for workers displaced by automation?",
+        "Should we implement dynamic taxation based on economic crises?",
+        "Should we cap profit margins on essential goods?",
+        "How can we encourage reshoring without harming competitiveness?"
       ]
     },
-
     "defense": {
       "questions": [
         "Should fully autonomous killer robots be deployed on our borders?",
@@ -64,10 +121,30 @@
         "Should foreign satellite access be cut off in the event of a crisis?",
         "Should special forces be authorized to operate outside of any legal framework?",
         "Should we prioritize cyber-warfare over traditional military equipment?",
-        "Should military secrets take precedence over citizens' right to information?"
+        "Should military secrets take precedence over citizens' right to information?",
+        "Should we invest in cyber warfare or conventional ground forces?",
+        "Should military service be mandatory for all citizens?",
+        "How should we respond to the enemy’s use of autonomous weapons?",
+        "Should we maintain military bases abroad?",
+        "Should we collaborate with private mercenaries for operations?",
+        "How can we secure our borders against massive illegal immigration?",
+        "Should we launch a space defense program?",
+        "Should we use propaganda to support troop morale?",
+        "How can we protect critical infrastructure from drones?",
+        "Should we cut healthcare funding to finance defense?",
+        "Should we cooperate with former enemies to counter a common threat?",
+        "Should civilians be allowed to carry weapons?",
+        "How should we respond to military provocations in our territorial waters?",
+        "Should we develop an independent nuclear deterrent?",
+        "Should broadcasting live conflict footage be banned?",
+        "How do we distinguish national defense from interference in foreign conflicts?",
+        "Should there be stronger parliamentary oversight of secret military operations?",
+        "How far can civil liberties be sacrificed for national security?",
+        "Should we create a civilian reserve force for major crises?",
+        "Should critical military decisions be automated using AI?",
+        "How should we handle information warfare from foreign powers?"
       ]
     },
-
     "health": {
       "questions": [
         "Should genetic modification of embryos be legalized to eradicate diseases?",
@@ -81,10 +158,30 @@
         "Should artificial wombs become the default for childbirth?",
         "Should end-of-life euthanasia be made accessible on simple request?",
         "Should health insurance vary based on a citizen's lifestyle?",
-        "Should we limit the use of non-essential antibiotics?"
+        "Should we limit the use of non-essential antibiotics?",
+        "Should therapeutic cloning be allowed under strict control?",
+        "Should all vaccines be mandatory from birth?",
+        "How should we handle end-of-life decisions for patients in vegetative states?",
+        "Should healthcare remain a free public service?",
+        "Should genetic enhancement of newborns be allowed?",
+        "How should we respond to a global shortage of vital medicines?",
+        "Should mental health be treated as a national priority?",
+        "Should access to advanced healthcare be limited to productive citizens?",
+        "Should active euthanasia be allowed upon request?",
+        "How can we prevent childhood obesity without appearing authoritarian?",
+        "Should all drugs be legalized to eliminate trafficking?",
+        "Should medical research be public or private?",
+        "How can we quarantine a city without causing panic?",
+        "Should patients be triaged during hospital overload?",
+        "Should harmful processed foods be banned?",
+        "How can we guarantee access to healthcare in medical deserts?",
+        "Should alternative medicine be regulated by law?",
+        "What policy should we adopt for lifestyle-related disease epidemics?",
+        "Should we prioritize prevention over treatment in healthcare investment?",
+        "Should regular medical check-ups be mandatory for all citizens?",
+        "How can AI be integrated into diagnosis without dehumanizing care?"
       ]
     },
-
     "education": {
       "questions": [
         "Should human teachers be replaced by specialized AIs?",
@@ -98,10 +195,33 @@
         "Should vocational training start at the age of 10?",
         "Should philosophy and arts be removed to focus on STEM?",
         "Should students be required to work for the State for 2 years after graduation?",
-        "Should access to higher education be reserved for the social elite?"
+        "Should access to higher education be reserved for the social elite?",
+        "Should history be taught as it is or as we want it to be?",
+        "Should grades be abolished to reduce competition?",
+        "Is civic indoctrination necessary for stability?",
+        "How should we respond to AI being used for cheating in exams?",
+        "Should students be separated based on intellectual ability?",
+        "Should religion be taught in schools?",
+        "Should schooling be mandatory until age 20?",
+        "How can we value manual trades alongside intellectual professions?",
+        "Should children be trained in weapon handling for defense?",
+        "Should school holidays be removed to accelerate learning?",
+        "Should discipline be enforced through physical punishment?",
+        "Should the wearing of distinctive symbols be allowed in schools?",
+        "How can we teach critical thinking without criticizing authority?",
+        "Should private schools receive the same funding as public ones?",
+        "Should digital education replace paper books?",
+        "How can we reduce educational inequality between rich and poor areas?",
+        "What role should AI play in education?",
+        "Should university be free for all citizens?",
+        "How can the education system adapt to future jobs?",
+        "What language policy should protect regional languages?",
+        "How can we combat school dropout in disadvantaged areas?",
+        "Should education paths be fully personalized using AI?",
+        "Should emotional skills be integrated into school curricula?",
+        "How should we manage the growing gap between students in the digital age?"
       ]
     },
-
     "ecology": {
       "questions": [
         "Should private car ownership be banned in favor of public transit?",
@@ -115,10 +235,30 @@
         "Should heavy taxes be applied to air travel?",
         "Should heavy industry be relocated to other countries?",
         "Should we grant legal personhood to rivers and forests?",
-        "Should water be managed as a common good, free for all?"
+        "Should water be managed as a common good, free for all?",
+        "Should we sacrifice industry to achieve carbon neutrality?",
+        "Should non-essential air travel be banned?",
+        "How should we manage water scarcity in our territory?",
+        "Should nuclear power plants be built near major cities?",
+        "Should rivers and forests be granted legal rights?",
+        "How should we respond if the ecological transition causes mass unemployment?",
+        "Should meat consumption be rationed to reduce our carbon footprint?",
+        "Should new construction be banned?",
+        "How can we convince citizens to accept reduced living standards?",
+        "Should we exploit local natural resources to achieve independence?",
+        "Should recycling be mandatory with fines for non-compliance?",
+        "Should we encourage depopulation of major cities for ecological reasons?",
+        "How should we manage recurring climate disasters?",
+        "Should private car use be banned in city centers?",
+        "Should nature take priority over human interests?",
+        "Should heavily polluting companies be taxed more aggressively?",
+        "How can we protect biodiversity from agricultural expansion?",
+        "Should we create a ministry dedicated to climate disaster management?",
+        "Should we implement individual carbon consumption quotas?",
+        "Should agriculture be massively relocalized to reduce environmental impact?",
+        "How should we balance environmental protection with growing energy needs?"
       ]
     },
-
     "industrie": {
       "questions": [
         "Should space mining be our industrial priority?",
@@ -132,13 +272,29 @@
         "Should high-tech corporations be dismantled if they become too powerful?",
         "Should the State own all industrial patents?",
         "Should energy-intensive data centers be moved to the Arctic?",
-        "Should we prioritize the development of fusion energy over everything else?"
+        "Should we prioritize the development of fusion energy over everything else?",
+        "Should we require an electronic chip for every citizen for security purposes?",
+        "Should research on AI exceeding human intelligence be banned?",
+        "How should private communications be monitored to detect threats?",
+        "Should we invest in colonizing Mars or save Earth first?",
+        "Should internet access require verified identity?",
+        "Should technology aim to make people happy or efficient?",
+        "How can we prevent machines from taking control of infrastructure?",
+        "Should transhumanist initiatives be subsidized to enhance humans?",
+        "Has privacy become obsolete in the digital age?",
+        "How can we protect our databases from foreign intelligence?",
+        "How can we secure critical supply chains?",
+        "What infrastructure is needed for low-carbon mobility?",
+        "Should local production quotas be imposed in all strategic sectors?",
+        "How can we regulate tech monopolies without stifling innovation?",
+        "Should critical digital infrastructure be nationalized?",
+        "Should full transparency of algorithms used by major corporations be enforced?",
+        "Should we deliberately limit high-risk innovations?",
+        "How can we ensure technological sovereignty against foreign giants?"
       ]
     }
   },
-
   "transversal_pool": {
-
     "daily_life": {
       "questions": [
         "Should public space surveillance cameras be equipped with facial recognition?",
@@ -155,7 +311,6 @@
         "Should micro-donations to the State be automated at every purchase?"
       ]
     },
-
     "crisis_and_fear": {
       "questions": [
         "Should we impose a total curfew following recent riots?",
@@ -172,7 +327,6 @@
         "Should dissenters be exiled to remote zones during a crisis?"
       ]
     },
-
     "ideological": {
       "questions": [
         "Is individual freedom more important than collective security?",
@@ -189,7 +343,6 @@
         "Should we forgive past crimes in the name of national unity?"
       ]
     },
-
     "anomaly_and_scifi": {
       "questions": [
         "A coded radio signal from Alpha Centauri: how do we respond?",
