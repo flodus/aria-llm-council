@@ -9,6 +9,7 @@
 import { getRegimeLabel, getTerrainLabel } from './shared/data/worldLabels';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
+import { getIaStatus } from './shared/services/iaStatusStore';
 import BASE_AGENTS    from '../templates/languages/fr/governance.json';
 import BASE_AGENTS_EN from '../templates/languages/en/governance.json';
 import {
@@ -294,6 +295,13 @@ function SectionSysteme({ onHardReset }) {
       return { claude: st('claude'), gemini: st('gemini'), grok: st('grok'), openai: st('openai') };
     } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
   });
+
+  const [iaStatus, setIaStatusLocal] = useState(() => getIaStatus());
+  useEffect(() => {
+    const handler = (e) => setIaStatusLocal(e.detail.status);
+    window.addEventListener('aria:ia-status', handler);
+    return () => window.removeEventListener('aria:ia-status', handler);
+  }, []);
 
   const update = (path, val) => {
     setOpts(prev => {
@@ -584,6 +592,8 @@ function SectionSysteme({ onHardReset }) {
                             onChange={v => updateSettingsKey(prov.id, entry._id, 'key', v)}
                             placeholder={prov.placeholder} />
                           <button className="settings-btn-test"
+                            disabled={iaStatus === 'offline'}
+                            title={iaStatus === 'offline' ? (isEn ? 'No network — test unavailable' : 'Pas de réseau — test indisponible') : undefined}
                             onClick={() => testSettingsKey(prov.id, entry._id, entry.key, entry.model)}>
                             {isEn?'Test':'Tester'}
                           </button>

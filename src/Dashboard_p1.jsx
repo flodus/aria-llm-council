@@ -13,6 +13,7 @@ import STATS     from '../templates/languages/fr/simulation.json';
 import STATS_EN  from '../templates/languages/en/simulation.json';
 import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN, LOCAL_COUNTRIES } from './ariaData';
 import { loadLang } from './ariaI18n';
+import { setIaStatus } from './shared/services/iaStatusStore';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  1. CONSTANTES DÉRIVÉES DES JSON
@@ -953,34 +954,50 @@ export async function callAI(prompt, type = 'standard', context = {}) {
     return getLocalResponse(type, context);
   }
 
+  // Helper : notifie le statut IA selon le résultat de callModel
+  const _track = async (promise) => {
+    try {
+      const result = await promise;
+      if (result?.error) {
+        setIaStatus(result.code === 429 ? 'quota' : (!navigator.onLine ? 'offline' : 'quota'));
+      } else if (result !== null && result !== undefined) {
+        setIaStatus(null);
+      }
+      return result;
+    } catch {
+      setIaStatus(!navigator.onLine ? 'offline' : 'quota');
+      return null;
+    }
+  };
+
   // 2. Dispatcher intelligent (on passe le modèle de Settings + le prompt système)
   switch (type) {
     case 'ministre':
-      return callModel(roles.ministre_model || 'claude', prompt, keys);
+      return _track(callModel(roles.ministre_model || 'claude', prompt, keys));
 
     case 'synthese_ministere':
-      return callModel(roles.synthese_min || 'gemini', prompt, keys, promptsSys.synthese_ministere);
+      return _track(callModel(roles.synthese_min || 'gemini', prompt, keys, promptsSys.synthese_ministere));
 
     case 'phare':
-      return callModel(roles.phare_model || 'claude', prompt, keys);
+      return _track(callModel(roles.phare_model || 'claude', prompt, keys));
 
     case 'boussole':
-      return callModel(roles.boussole_model || 'claude', prompt, keys);
+      return _track(callModel(roles.boussole_model || 'claude', prompt, keys));
 
     case 'synthese_presidence':
-      return callModel(roles.synthese_pres || 'gemini', prompt, keys, promptsSys.synthese_presidence);
+      return _track(callModel(roles.synthese_pres || 'gemini', prompt, keys, promptsSys.synthese_presidence));
 
     case 'evenement':
-      return callModel(roles.evenement_model || 'claude', prompt, keys);
+      return _track(callModel(roles.evenement_model || 'claude', prompt, keys));
 
     case 'factcheck':
-      return callModel(roles.factcheck_model || 'gemini', prompt, keys, promptsSys.factcheck_evenement);
+      return _track(callModel(roles.factcheck_model || 'gemini', prompt, keys, promptsSys.factcheck_evenement));
 
     case 'pays':
-      // Génération de pays — utilise le modèle solo configuré (ou claude par défaut)
-      return callModel(opts.solo_model || 'claude', prompt, keys);
+      return _track(callModel(opts.solo_model || 'claude', prompt, keys));
+
     default:
-      return callModel(opts.solo_model || 'claude', prompt, keys);
+      return _track(callModel(opts.solo_model || 'claude', prompt, keys));
   }
 }
 export const DEFAULT_OPTIONS = {

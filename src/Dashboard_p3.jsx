@@ -36,7 +36,8 @@ import {
 } from './features/council/services/councilEngine';
 import { useCouncilSession } from './features/council/hooks/useCouncilSession';
 import { GarbageModal, MismatchModal } from './features/council/components/CouncilModals';
-import { C, FONT, } from './shared/theme'
+import { C, FONT, } from './shared/theme';
+import { getIaStatus } from './shared/services/iaStatusStore';
 
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
@@ -1058,6 +1059,58 @@ function DiplomacyModal({ sourceCountry, allCountries, alliances, onSetRelation,
 // ─────────────────────────────────────────────────────────────────────────────
 
 
+// ── Statut IA — badge persistant + toast reconnexion ─────────────────────────
+function useIaStatus(pushNotif) {
+  const [iaStatus, setLocal] = useState(() => getIaStatus());
+  const prevRef = useRef(iaStatus);
+  const lang = loadLang();
+
+  useEffect(() => {
+    const handler = (e) => {
+      const next = e.detail.status;
+      const prev = prevRef.current;
+      prevRef.current = next;
+      setLocal(next);
+      // Toast au retour de l'IA
+      if (prev !== null && next === null) {
+        pushNotif?.(
+          lang === 'en' ? '✅ AI reconnected — Board Game mode disabled' : '✅ IA reconnectée — mode Board Game désactivé',
+          'ok', 4000
+        );
+      }
+    };
+    window.addEventListener('aria:ia-status', handler);
+    return () => window.removeEventListener('aria:ia-status', handler);
+  }, [pushNotif, lang]);
+
+  return iaStatus;
+}
+
+function IaStatusBadge({ status }) {
+  if (!status) return null;
+  const lang = loadLang();
+  const isOffline = status === 'offline';
+  const color     = isOffline ? 'rgba(220,60,60,0.90)' : 'rgba(220,160,40,0.90)';
+  const border    = isOffline ? 'rgba(220,60,60,0.35)' : 'rgba(220,160,40,0.35)';
+  const label     = isOffline
+    ? (lang === 'en' ? '🔴 AI OFFLINE — BOARD GAME MODE' : '🔴 IA HORS-LIGNE — MODE BOARD GAME')
+    : (lang === 'en' ? '⚠ QUOTA EXCEEDED — BOARD GAME MODE' : '⚠ QUOTA DÉPASSÉ — MODE BOARD GAME');
+
+  return (
+    <div style={{
+      position: 'fixed', bottom: '1.4rem', left: '50%', transform: 'translateX(-50%)',
+      zIndex: 9000, pointerEvents: 'none',
+      background: 'rgba(4,8,18,0.88)', border: `1px solid ${border}`,
+      borderRadius: '3px', padding: '0.3rem 0.9rem',
+      fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.10em',
+      color, boxShadow: `0 0 14px ${border}`,
+      animation: 'fadeSlideInBadge 0.3s ease both',
+    }}>
+      {label}
+    </div>
+  );
+}
+
 // ── Toast notifications ──────────────────────────────────────────────────────
 function Toast({ notification }) {
   if (!notification) return null;
@@ -1187,6 +1240,7 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
 
 export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
+  const iaStatus = useIaStatus(aria.pushNotif);
 
   // Langue réactive (écoute event aria-lang-change émis par ariaI18n)
   const [uiLang, setUiLang] = useState(() => localStorage.getItem('aria_lang') || 'fr');
@@ -1495,6 +1549,10 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
               0%   { transform: translateX(-100%); }
               100% { transform: translateX(250%); }
             }
+            @keyframes fadeSlideInBadge {
+              from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+              to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
           `}</style>
         </div>
       )}
@@ -1504,6 +1562,9 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
 
       {/* ── Toast notifications ── */}
       <Toast notification={aria.notification} />
+
+      {/* ── Badge statut IA ── */}
+      <IaStatusBadge status={iaStatus} />
 
       {/* ── Modal erreur IA ── */}
       <AIErrorModal
