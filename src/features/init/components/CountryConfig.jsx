@@ -28,7 +28,8 @@ import {
     CountryEstimations,
     RealCountryLocalSection,
     FictionalCountrySection,
-    RealCountryAISection
+    RealCountryAISection,
+    ContextPanel
 } from './index';
 
 export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove, reelOnly = false }) {
@@ -37,6 +38,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
 
     // Accordéon
     const [isOpen, setIsOpen] = useState(true);
+    const [ctxPanelOpen, setCtxPanelOpen] = useState(false);
 
     // État local
     const [rcSearch, setRcSearch] = useState(c.nom || '');
@@ -213,6 +215,19 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             idx={idx}
             onChange={onChange}
             setField={setField}
+            />
+        )}
+
+        {/* Contexte de délibération — pays réel uniquement */}
+        {c.type === 'reel' && (
+            <ContextPanel
+            countryName={c.nom || c.realData?.nom}
+            open={ctxPanelOpen}
+            onToggle={() => setCtxPanelOpen(o => !o)}
+            mode={c.context_mode || ''}
+            setMode={v => onChange({ ...c, context_mode: v })}
+            override={c.contextOverride || ''}
+            setOverride={v => onChange({ ...c, contextOverride: v })}
             />
         )}
 

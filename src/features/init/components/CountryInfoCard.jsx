@@ -47,7 +47,7 @@ export default function CountryInfoCard({ data }) {
         </div>
       </div>
       {/* Sociologie ARIA */}
-      <div style={{ fontSize:'0.46rem', color:'rgba(180,200,230,0.82)', lineHeight:1.6, fontStyle:'italic', padding:'0.4rem 0.6rem', background:'rgba(6,12,24,0.78)', borderRadius:'2px', borderLeft:'2px solid rgba(200,164,74,0.28)' }}>
+      <div style={{ fontSize:'0.52rem', color:'rgba(190,210,240,0.90)', lineHeight:1.6, fontStyle:'italic', padding:'0.4rem 0.6rem', background:'rgba(6,12,24,0.82)', borderRadius:'2px', borderLeft:'2px solid rgba(200,164,74,0.28)' }}>
         {data.aria_sociology_logic}
       </div>
       {/* Contexte géopolitique — expandable */}
@@ -59,7 +59,7 @@ export default function CountryInfoCard({ data }) {
         </button>
       )}
       {open && data.triple_combo && (
-        <div style={{ fontSize:'0.44rem', color:'rgba(140,160,200,0.58)', lineHeight:1.65, padding:'0.4rem 0.5rem', background:'rgba(90,110,160,0.04)', borderRadius:'2px', border:'1px solid rgba(90,110,160,0.12)' }}>
+        <div style={{ fontSize:'0.52rem', color:'rgba(190,210,240,0.90)', lineHeight:1.65, padding:'0.4rem 0.6rem', background:'rgba(6,12,24,0.82)', borderRadius:'2px', border:'1px solid rgba(200,164,74,0.15)' }}>
           {data.triple_combo}
         </div>
       )}
