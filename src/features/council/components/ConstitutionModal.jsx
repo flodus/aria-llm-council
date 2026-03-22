@@ -75,7 +75,11 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     };
 
     // Récupération des options globales pour les valeurs par défaut
-    const globalGov = getOptions().defaultGovernance || DEFAULT_OPTIONS.defaultGovernance;
+    const savedGov  = getOptions().defaultGovernance || {};
+    const globalGov = {
+        presidency:  savedGov.presidency  || 'duale',
+        ministries:  savedGov.ministries  || getAgents().ministries.filter(m => m.base).map(m => m.id),
+    };
     const current = { ...globalGov, ...(country?.governanceOverride || {}) };
     const BASE_IDS = getAgents().ministries.filter(m => m.base).map(m => m.id);
 
