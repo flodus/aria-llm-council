@@ -5,6 +5,7 @@
 // ============================================================
 
 import { loadLang } from '../../../ariaI18n';
+import { getLocalResponse } from '../../../shared/services/boardgame/responseService';
 
 // ============================================================
 // FALLBACK BUREAUCRATIQUE — questions orphelines hors-ligne
@@ -62,7 +63,15 @@ export const LOCAL_MINISTER_PHRASES = {
 // FONCTIONS DE FALLBACK
 // ============================================================
 
-export function localMinisterFallback(ministerId, question) {
+// regime optionnel — peut être passé par deliberationEngine pour des réponses contextualisées
+export function localMinisterFallback(ministerId, question, regime = null) {
+    // Tenter une réponse depuis aria_reponses.json (riche, contextualisée par archétype)
+    const reponseRiche = getLocalResponse(ministerId, regime);
+    if (reponseRiche) {
+        return { position: reponseRiche, mot_cle: 'analyse' };
+    }
+
+    // Ultime fallback — phrases hardcodées par archétype
     const phrases = LOCAL_MINISTER_PHRASES[ministerId] || ['Délibération en cours.'];
     return {
         position: phrases[Math.floor(Math.random() * phrases.length)],

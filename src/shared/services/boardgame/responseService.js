@@ -1,2 +1,137 @@
 // src/shared/services/boardgame/responseService.js
+// ═══════════════════════════════════════════════════════════════════════════
+//  responseService — Réponses locales mode Board Game
+//
+//  Lit aria_reponses.json (archetypes × régime × posture)
+//  Structure source : ministers.{archetype}.reponses.{regime}.{posture}[]
+//                     ministeres.{ministere}.reponses.{regime}.{posture}[]
+//                     presidence.{role}.styles.{style}[]
+//
+//  Fallbacks : régime inconnu → _meta.fallbacks → democratie_liberale
+// ═══════════════════════════════════════════════════════════════════════════
 
+import REPONSES_FR from '../../../../templates/languages/fr/aria_reponses.json';
+// import REPONSES_EN from '../../../../templates/languages/en/aria_reponses.json'; // à activer
+
+// Table archétype → posture par défaut
+const ARCHETYPE_POSTURE = {
+    initiateur:  'radical',
+    inventeur:   'radical',
+    gardien:     'prudent',
+    analyste:    'prudent',
+    protecteur:  'prudent',
+    guerisseur:  'prudent',
+    communicant: 'statu_quo',
+    guide:       'statu_quo',
+    ambassadeur: 'statu_quo',
+    arbitre:     'statu_quo',
+    enqueteur:   'statu_quo',
+    stratege:    'statu_quo',
+};
+
+function chargerReponses() {
+    // Plus tard : if (loadLang() === 'en') { try { return REPONSES_EN; } catch {} }
+    return REPONSES_FR;
+}
+
+function resoudreRegime(regime, fallbacks) {
+    if (!regime) return 'democratie_liberale';
+    return fallbacks[regime] || regime;
+}
+
+function piocherDansPool(pool) {
+    if (!pool?.length) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/**
+ * Retourne la posture par défaut d'un archétype
+ */
+export function getPostureForArchetype(archetypeId) {
+    return ARCHETYPE_POSTURE[archetypeId] || 'statu_quo';
+}
+
+/**
+ * Récupère une réponse locale pour un archétype (ministre)
+ * @param {string} archetypeId - initiateur, gardien, etc.
+ * @param {string|null} regime  - régime politique du pays (null → democratie_liberale)
+ * @param {string|null} posture - radical/prudent/statu_quo (déduit si null)
+ * @returns {string|null}
+ */
+export function getLocalResponse(archetypeId, regime = null, posture = null) {
+    const data = chargerReponses();
+    if (!data) return null;
+
+    const fallbacks      = data._meta?.fallbacks || {};
+    const regimeResolu   = resoudreRegime(regime, fallbacks);
+    const postureEffective = posture || getPostureForArchetype(archetypeId);
+
+    try {
+        // Tentative avec le régime résolu
+        const pool = data.ministers?.[archetypeId]?.reponses?.[regimeResolu]?.[postureEffective];
+        const resultat = piocherDansPool(pool);
+        if (resultat) return resultat;
+
+        // Fallback vers democratie_liberale si régime inconnu dans le JSON
+        const poolFallback = data.ministers?.[archetypeId]?.reponses?.democratie_liberale?.[postureEffective];
+        return piocherDansPool(poolFallback);
+    } catch (e) {
+        console.warn('getLocalResponse — lookup échoué :', e);
+        return null;
+    }
+}
+
+/**
+ * Récupère une réponse locale pour un ministère (synthèse)
+ * @param {string} ministereId - justice, economie, defense, etc.
+ * @param {string|null} regime
+ * @param {string|null} posture
+ * @returns {string|null}
+ */
+export function getMinistereResponse(ministereId, regime = null, posture = null) {
+    const data = chargerReponses();
+    if (!data) return null;
+
+    const fallbacks       = data._meta?.fallbacks || {};
+    const regimeResolu    = resoudreRegime(regime, fallbacks);
+    const postureEffective = posture || 'statu_quo';
+
+    try {
+        const pool = data.ministeres?.[ministereId]?.reponses?.[regimeResolu]?.[postureEffective];
+        const resultat = piocherDansPool(pool);
+        if (resultat) return resultat;
+
+        const poolFallback = data.ministeres?.[ministereId]?.reponses?.democratie_liberale?.[postureEffective];
+        return piocherDansPool(poolFallback);
+    } catch (e) {
+        console.warn('getMinistereResponse — lookup échoué :', e);
+        return null;
+    }
+}
+
+/**
+ * Récupère une réponse de la présidence
+ * @param {string} role  - phare | boussole
+ * @param {string} style - vision | conflit_ministeriel | validation | ...
+ * @returns {string|null}
+ */
+export function getPresidenceResponse(role, style) {
+    const data = chargerReponses();
+    if (!data) return null;
+
+    try {
+        const pool = data.presidence?.[role]?.styles?.[style];
+        return piocherDansPool(pool);
+    } catch (e) {
+        console.warn('getPresidenceResponse — lookup échoué :', e);
+        return null;
+    }
+}
+
+/**
+ * No-op — import statique, pas de cache à vider
+ * Conservé pour compatibilité API avec l'ancienne version fetch-based
+ */
+export function clearResponsesCache() {}
+
+export default { getPostureForArchetype, getLocalResponse, getMinistereResponse, getPresidenceResponse, clearResponsesCache };
