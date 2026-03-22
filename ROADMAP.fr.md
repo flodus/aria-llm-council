@@ -30,6 +30,14 @@
  ├─[✓] Constitution pré-lancement [Édition avant génération] ........ ■ 100%
  └─[✓] Registry LLM ............. [JSON Gist + fallback local] ...... ■ 100%
 
+ [ MODE BOARD GAME — PIPELINE OFFLINE ] ........................... STATUT: ✅ FAIT
+ ├─[✓] Questions ................. [aria_questions.json FR+EN] ........ ■ 100%
+ ├─[✓] Réponses ministres ........ [aria_reponses.json — archétype × régime × posture] ■ 100%
+ ├─[✓] Synthèses délibération .... [aria_syntheses.json — ministère × régime × convergence] ■ 100%
+ ├─[✓] Annotations cercle ........ [aria_annotations.json — ministère × régime] ■ 100%
+ └─[✓] Routing offline ........... [keywords → ministère · garbage → random] ■ 100%
+        └─> 100% du contenu éditorial en JSON · zéro phrase hardcodée dans le moteur
+
  [ CONSTITUTION PAR PAYS ] ........................................ STATUT: ✅ FAIT
  ├─[✓] Override gouvernance ...... [Fork constitution indépendante] .. ■ 100%
  │      └─> Chaque nation peut avoir ses propres ministres, ministères, présidence
@@ -118,9 +126,10 @@
  └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~16%
+ PROGRESSION : [██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~18%
  BASE : Moteur + constitution par pays complets.
         Init UX poli (filtrage mode IA, recherche FR pays, panel carte).
+        Mode Board Game offline complet (pipeline 4 JSON + routing).
         1 bug restant (B4 — jauge conseil) · Refonte carte en approche.
 ================================================================================
 ```

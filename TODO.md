@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-13_
+_Dernière mise à jour : 2026-03-22_
 
 ---
 
@@ -69,30 +69,11 @@ _Dernière mise à jour : 2026-03-13_
 
 ## 🟠 CHANTIERS BOARD GAME
 
-- [ ] **N2 — aria_syntheses.json** : nouveau fichier pour les synthèses offline Board Game
-  Séparé de aria_reponses.json (même logique que questions/réponses)
-
-  Structure :
-  - `ministeres[id][regime][convergence|divergence][]` — 7 ministères × 7 régimes × 2 états
-  - `presidence[convergence|divergence][]` — pool global, pas par régime
-
-  Règle de convergence V1 (à coder dans responseService.js) :
-  - radical + radical → convergence
-  - prudent + prudent → convergence
-  - statu_quo + statu_quo → convergence
-  - prudent + statu_quo → convergence (tension faible)
-  - radical + prudent → divergence
-  - radical + statu_quo → divergence
-
-  Règle présidence : si Phare et Boussole piochent dans le même type de pool
-  (tous deux action ou tous deux prudence) → convergence, sinon → divergence.
-  Logique keyword déjà dans deliberationEngine.js — brancher sur aria_syntheses.json
-
-  Fichiers touchés : aria_syntheses.json (nouveau) · responseService.js · fallbacks.js
-  Ne pas toucher : aria_reponses.json · deliberationEngine.js
-
-  ⚠️ Assess session dédiée pour générer les ~300 entrées de données
-  ⚠️ Système poids ministériels (V-future) documenté dans REFLEXIONS.md
+- [x] **N2 — aria_syntheses.json** : synthèses offline Board Game — 7 ministères × 7 régimes × convergence/divergence + présidence
+- [x] **N3 — aria_annotations.json** : annotations cercle offline — 7 ministères × 7 régimes × 4 phrases (FR + EN)
+- [x] **Pipeline Board Game complet** : tout le contenu éditorial sorti du code → 4 fichiers JSON personnalisables
+  (`aria_questions` · `aria_reponses` · `aria_syntheses` · `aria_annotations`)
+  Seuls les fallbacks bureaucratiques orphelins restent hardcodés (dernier recours, jamais à changer)
 
 ---
 
@@ -151,6 +132,17 @@ _(bloqué sur refonte carte V1)_
   - Vérifier useCallback/useMemo manquants
   - Identifier les appels IA redondants
   - Ne pas implémenter sans Assess complet
+
+---
+
+## ✅ LIVRÉ cette session (2026-03-22)
+
+- [x] **Routing Board Game enrichi** : questions sans keyword → ministère aléatoire (plus d'Agent Δ fantôme) · garbage/mismatch routé proprement
+- [x] **useCouncilSession extrait** : hook dédié sorti de LLMCouncil.jsx
+- [x] **aria_reponses.json enrichi** : réponses statu_quo renforcées (textes plus contextualisés par régime)
+- [x] **aria_syntheses.json créé + intégré** : 7 ministères × 7 régimes × convergence/divergence + présidence (FR + EN) · `getSyntheseMinistere()` + `getSynthesePresidence()` dans responseService
+- [x] **aria_annotations.json créé + intégré** : 7 ministères × 7 régimes × 4 phrases (FR + EN) · `getAnnotationMinistere()` dans responseService · `localAnnotationFallback` branché
+- [x] **regime passé partout** : `country.regime` transmis aux 3 fallbacks (ministère, synthèse, annotation)
 
 ---
 
