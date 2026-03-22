@@ -35,7 +35,8 @@ export const FALLBACK_RESPONSES = {
         sante:     "Dimension sanitaire non prioritaire selon les indicateurs actuels. Veille épidémiologique nominale.",
         education: "Aucun impact sur les indicateurs d'éducation à court terme. Dossier noté pour revue annuelle.",
         ecologie:  "Évaluation d'impact environnemental différée. Principe de précaution standard appliqué.",
-        chance:    "L'imprévu est par définition hors des cadres prévus. Protocole d'urgence adaptative en veille.",
+        destin:    "Les fils du destin se tissent en silence. Oracle et Wyrd observent — leur voix viendra en temps voulu.",
+        industrie: "Les infrastructures nationales sont en veille. L'impact industriel sera évalué au prochain cycle.",
     },
     presidence: {
         phare:    { position: "Le Phare observe. En l'absence de données suffisantes, la décision sera différée jusqu'à ce que la lumière soit plus nette. Une décision hâtive sur terrain incertain crée plus d'ombre que de clarté.", decision: "Suspension de délibération — instruction complémentaire requise." },
