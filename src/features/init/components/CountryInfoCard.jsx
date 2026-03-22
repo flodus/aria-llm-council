@@ -47,7 +47,7 @@ export default function CountryInfoCard({ data }) {
         </div>
       </div>
       {/* Sociologie ARIA */}
-      <div style={{ fontSize:'0.52rem', color:'rgba(180,200,230,0.82)', lineHeight:1.6, fontStyle:'italic', padding:'0.4rem 0.6rem', background:'rgba(6,12,24,0.78)', borderRadius:'2px', borderLeft:'2px solid rgba(200,164,74,0.28)' }}>
+      <div style={{ fontSize:'0.46rem', color:'rgba(180,200,230,0.82)', lineHeight:1.6, fontStyle:'italic', padding:'0.4rem 0.6rem', background:'rgba(6,12,24,0.78)', borderRadius:'2px', borderLeft:'2px solid rgba(200,164,74,0.28)' }}>
         {data.aria_sociology_logic}
       </div>
       {/* Contexte géopolitique — expandable */}
