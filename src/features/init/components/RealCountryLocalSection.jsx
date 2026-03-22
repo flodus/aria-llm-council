@@ -16,7 +16,7 @@ import { getTerrainLabelMap, getRegimeLabelMap, getTerrainIcon, getRegimeIcon } 
 import { getRealCountries } from '../services/realCountries';
 import { CountryInfoCard } from './index';
 
-export default function RealCountryLocalSection({ country, onChange, setField }) {
+export default function RealCountryLocalSection({ country, onChange, setField, selectedRealIds = [] }) {
     const { lang } = useLocale();
 
     return (
@@ -32,7 +32,10 @@ export default function RealCountryLocalSection({ country, onChange, setField })
         }}
         >
         <option value="">— Choisir —</option>
-        {getRealCountries().map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
+        {getRealCountries().map(rc => {
+            const pris = selectedRealIds.includes(rc.id);
+            return <option key={rc.id} value={rc.id} disabled={pris}>{pris ? '✗ ' : ''}{rc.flag} {rc.nom}</option>;
+        })}
         </select>
         </div>
 

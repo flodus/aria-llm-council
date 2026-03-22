@@ -59,13 +59,17 @@ export default function RealWorldFlow({ worldName, mode, onBack, onPreLaunch, ba
             width: '100%', display: 'flex', flexDirection: 'column', gap: '0.6rem',
             maxHeight: '52vh', overflowY: 'auto'
         }}>
-        {countries.map((c, idx) => (
+        {countries.map((c, idx) => {
+            const tousIds = countries.map(x => x.realData?.id).filter(Boolean);
+            const autresIds = tousIds.filter(id => id !== c.realData?.id);
+            return (
             <CountryConfig
             key={c.key}
             c={c}
             idx={idx}
             mode={mode}
             reelOnly={true}
+            selectedRealIds={autresIds}
             onChange={updated => setCountries(p =>
                 p.map(x => x.key === c.key ? updated : x)
             )}
@@ -74,6 +78,8 @@ export default function RealWorldFlow({ worldName, mode, onBack, onPreLaunch, ba
             )}
             canRemove={countries.length > 1}
             />
+            );
+        })}
         ))}
         </div>
 
