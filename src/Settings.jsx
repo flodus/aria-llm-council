@@ -1184,6 +1184,7 @@ function SectionConseil() {
           { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence' },
           { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères' },
           { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'  },
+          { id: 'destinee',    label: isEn ? 'Destiny'    : 'Destinée'   },
         ].map(t => (
           <button key={t.id}
             className={`settings-tab${tab === t.id ? ' active' : ''}`}
@@ -1304,6 +1305,57 @@ function SectionConseil() {
                       </Field>
                     </div>
                   )}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
+
+      {tab === 'destinee' && (() => {
+        const destin = getDestin();
+        const destingIds = destin?.agents || [];
+        const destAgents = destingIds
+          .map(id => ({ id, ...(liveMinsters[id] || {}) }))
+          .filter(a => a.name);
+        return (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', padding: '0.4rem 0.55rem', background: 'rgba(140,100,220,0.06)', border: '1px solid rgba(140,100,220,0.15)', borderRadius: '2px' }}>
+              <span style={{ fontSize: '1.0rem' }}>👁️</span>
+              <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: 0, lineHeight: 1.5 }}>
+                {isEn
+                  ? 'Oracle and Wyrd — existential crisis agents. Edit their essence and communication style.'
+                  : 'Oracle et Trame — agents des crises existentielles. Modifiez leur essence et style de communication.'}
+              </p>
+            </div>
+            <AgentGrid
+              agents={destAgents}
+              selectedId={selectedMin}
+              activeIds={null}
+              onAgentClick={setSelectedMin}
+              onResetAll={null}
+              countLabel={isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}
+              lang={lang}
+            />
+            {destAgents.map(agent => {
+              if (selectedMin && selectedMin !== agent.id) return null;
+              return (
+                <div key={agent.id}>
+                  <Field label="Essence" hint={isEn ? 'Deep philosophy — what drives their visions' : 'Philosophie profonde — ce qui guide leurs visions'}>
+                    <TextArea value={getVal(`ministers.${agent.id}.essence`, agent.essence || '')}
+                      onChange={v => updateAgent(`ministers.${agent.id}.essence`, v)}
+                    />
+                  </Field>
+                  <Field label="Communication" hint={trC.comm_hint}>
+                    <TextArea value={getVal(`ministers.${agent.id}.comm`, agent.comm || '')}
+                      onChange={v => updateAgent(`ministers.${agent.id}.comm`, v)}
+                    />
+                  </Field>
+                  <Field label={trC.annot_label} hint={trC.annot_hint}>
+                    <TextArea value={getVal(`ministers.${agent.id}.annotation`, agent.annotation || '')}
+                      onChange={v => updateAgent(`ministers.${agent.id}.annotation`, v)}
+                    />
+                  </Field>
                 </div>
               );
             })}

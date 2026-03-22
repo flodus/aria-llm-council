@@ -14,6 +14,7 @@ export default function useCountryOverride(perGov, setPerGov, commonAgents, comm
     const activeMins = curGov?.activeMins ?? commonMins;
     const activePres = curGov?.activePres ?? commonPres;
     const activeMinsters = curGov?.activeMinsters ?? commonMinsters;
+    const destinyMode = curGov?.destinyMode ?? false;
 
     // Crée l'override à la volée si inexistant, puis applique la mise à jour
     const ensureFork = (p) => {
@@ -62,6 +63,16 @@ export default function useCountryOverride(perGov, setPerGov, commonAgents, comm
         });
     };
 
+    const setDestinyMode = (v) => {
+        setPerGov(p => {
+            const a = [...p];
+            const fork = ensureFork(p);
+            const next = typeof v === 'function' ? v(fork.destinyMode ?? false) : v;
+            a[plCountry] = { ...fork, destinyMode: next };
+            return a;
+        });
+    };
+
     const forkCountry = () => {
         setPerGov(p => {
             if (p[plCountry]) return p;
@@ -102,12 +113,13 @@ export default function useCountryOverride(perGov, setPerGov, commonAgents, comm
         activeMins, setActiveMins,
         activePres, setActivePres,
         activeMinsters, setActiveMinsters,
+        destinyMode, setDestinyMode,
         hasOverride,
         selectedMinistry, setSelectedMinistry,
         selectedMinister, setSelectedMinister,
         forkCountry,
-            resetCountryOverride,
-            toggleMinster,
-            setPlAgents
+        resetCountryOverride,
+        toggleMinster,
+        setPlAgents
     };
 }

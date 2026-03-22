@@ -13,7 +13,9 @@
 
 import { useRef, useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
-import { FONT, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
+import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle } from '../../../shared/theme';
+import AgentGrid from '../../../shared/components/AgentGrid';
+import { getDestin } from '../../council/services/agentsManager';
 import {
     ARIAHeader,
     RecapAccordion,
@@ -48,6 +50,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
     const scrollRef = useRef(null);
     const [plTab, setPlTab] = useState('resume');
     const [confirmLaunch, setConfirmLaunch] = useState(false);
+    const [selectedDestin, setSelectedDestin] = useState(null);
 
     // Hooks
     const constitution = useConstitution(pendingDefs);
@@ -188,6 +191,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         activeTab={plTab}
         onTabChange={setPlTab}
         scrollRef={scrollRef}
+        showDestiny={countryOverride.destinyMode}
         />
         <ConstitutionStatus
         hasOverride={countryOverride.hasOverride}
@@ -207,6 +211,35 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             {/* Onglet RÉSUMÉ */}
             {plTab === 'resume' && (
                 <>
+                {/* Toggle Destinée du monde */}
+                <button
+                onClick={() => {
+                    countryOverride.setDestinyMode(v => !v);
+                    if (countryOverride.destinyMode) setPlTab('resume');
+                }}
+                style={{
+                    display: 'flex', alignItems: 'center', gap: '0.55rem',
+                    padding: '0.48rem 0.65rem', width: '100%', textAlign: 'left',
+                    background: countryOverride.destinyMode ? 'rgba(140,100,220,0.12)' : 'rgba(20,28,45,0.55)',
+                    border: `1px solid ${countryOverride.destinyMode ? 'rgba(140,100,220,0.45)' : 'rgba(140,160,200,0.10)'}`,
+                    borderRadius: '2px', cursor: 'pointer', transition: 'all 0.15s',
+                    fontFamily: FONT.mono,
+                }}
+                >
+                <span style={{ fontSize: '1.05rem' }}>👁️</span>
+                <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.50rem', color: countryOverride.destinyMode ? 'rgba(140,100,220,0.85)' : 'rgba(200,215,240,0.50)' }}>
+                    {lang === 'en' ? 'Destiny of the World' : 'Destinée du Monde'}
+                    </div>
+                    <div style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.45)', marginTop: '0.06rem' }}>
+                    {lang === 'en' ? 'Oracle & Wyrd — existential crises' : 'Oracle & Wyrd — crises existentielles'}
+                    </div>
+                </div>
+                <span style={{ fontSize: '0.45rem', color: countryOverride.destinyMode ? 'rgba(140,100,220,0.85)' : 'rgba(140,160,200,0.22)' }}>
+                {countryOverride.destinyMode ? '● ACTIF' : '○ INACTIF'}
+                </span>
+                </button>
+
                 <ContextPanel
                 countryName={countries[countryOverride.plCountry]?.nom || countries[countryOverride.plCountry]?.realData?.nom || `Nation ${countryOverride.plCountry + 1}`}
                 open={countryContext.plCtxOpen === countryOverride.plCountry}
@@ -303,6 +336,70 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                 setPlAgents={countryOverride.setPlAgents}
                 />
             )}
+
+            {/* Onglet DESTINÉE */}
+            {plTab === 'destinee' && (() => {
+                const destin = getDestin();
+                const destingIds = destin?.agents || [];
+                const destAgents = destingIds
+                    .map(id => ({ id, ...(countryOverride.plAgents.ministers?.[id] || {}) }))
+                    .filter(a => a.name);
+                return (
+                    <>
+                    <div style={{ ...CARD_STYLE, border: '1px solid rgba(140,100,220,0.22)', background: 'rgba(140,100,220,0.04)' }}>
+                    <div style={labelStyle('0.42rem', 'rgba(140,100,220,0.65)')}>
+                    👁️ {lang === 'en' ? 'DESTINY OF THE WORLD' : 'DESTINÉE DU MONDE'}
+                    </div>
+                    <p style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: '0.3rem 0 0', lineHeight: 1.5 }}>
+                    {lang === 'en'
+                        ? 'Oracle and Wyrd intervene on existential crises. Configure their essence and communication style below.'
+                        : 'L\'Oracle et la Trame interviennent sur les crises existentielles. Configurez leur essence et style de communication ci-dessous.'}
+                    </p>
+                    </div>
+
+                    <AgentGrid
+                    agents={destAgents}
+                    selectedId={selectedDestin}
+                    activeIds={null}
+                    onAgentClick={id => setSelectedDestin(p => p === id ? null : id)}
+                    onResetAll={null}
+                    countLabel={`${destAgents.length} ${lang === 'en' ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}`}
+                    lang={lang}
+                    />
+
+                    {destAgents.map(agent => {
+                        if (selectedDestin && selectedDestin !== agent.id) return null;
+                        return (
+                            <div key={agent.id} style={{ ...CARD_STYLE, border: `1px solid ${agent.color}33` }}>
+                            <div style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: agent.color + 'CC', marginBottom: '0.4rem' }}>
+                            {agent.emoji} {agent.name?.toUpperCase()}
+                            </div>
+                            <div style={{ fontFamily: FONT.mono, fontSize: '0.37rem', color: 'rgba(90,110,150,0.38)', marginBottom: '0.12rem' }}>ESSENCE</div>
+                            <textarea
+                            style={{ ...INPUT_STYLE, width: '100%', minHeight: '40px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5, marginBottom: '0.25rem' }}
+                            value={agent.essence || ''}
+                            onChange={e => countryOverride.setPlAgents(a => ({
+                                ...a,
+                                ministers: { ...a.ministers, [agent.id]: { ...a.ministers[agent.id], essence: e.target.value } }
+                            }))}
+                            />
+                            <div style={{ fontFamily: FONT.mono, fontSize: '0.37rem', color: 'rgba(90,110,150,0.38)', marginBottom: '0.12rem' }}>
+                            {lang === 'en' ? 'COMMUNICATION STYLE' : 'STYLE DE COMMUNICATION'}
+                            </div>
+                            <textarea
+                            style={{ ...INPUT_STYLE, width: '100%', minHeight: '32px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5 }}
+                            value={agent.comm || ''}
+                            onChange={e => countryOverride.setPlAgents(a => ({
+                                ...a,
+                                ministers: { ...a.ministers, [agent.id]: { ...a.ministers[agent.id], comm: e.target.value } }
+                            }))}
+                            />
+                            </div>
+                        );
+                    })}
+                    </>
+                );
+            })()}
             </div>
         )}
 

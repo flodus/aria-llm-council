@@ -11,9 +11,11 @@
 
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
+import { getDestin } from '../../council/services/agentsManager';
 
 export default function ActiveMinistersSection({ ministers, activeMinsters, onToggleMinister, onSetAllActive }) {
     const { lang } = useLocale();
+    const destingIds = new Set(getDestin()?.agents || []);
 
     return (
         <div style={{ ...CARD_STYLE }}>
@@ -30,7 +32,7 @@ export default function ActiveMinistersSection({ ministers, activeMinsters, onTo
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-        {Object.entries(ministers).map(([key, min]) => {
+        {Object.entries(ministers).filter(([key]) => !destingIds.has(key)).map(([key, min]) => {
             const on = activeMinsters === null || activeMinsters.includes(key);
             return (
                 <button
