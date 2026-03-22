@@ -333,7 +333,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
   const [openCtx, setOpenCtx] = useState(false);
 
   // Accordéon contexte — visible même en IDLE
-  const ctxText = session?.countryDescription || '';
+  const ctxText = session?.countryDescription || countryContext || '';
   const ctxNom  = session?.countryNom     || countryNom     || '';
   const renderCtxAccordion = () => ctxText ? (
     <div className={`aria-accordion${openCtx ? ' open' : ''}`} style={{ marginBottom: '0.8rem' }}>

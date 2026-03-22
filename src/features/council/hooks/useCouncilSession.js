@@ -42,7 +42,9 @@ export function useCouncilSession(country, onVoteResult) {
         setRunning(true);
 
         const countryContext     = buildCountryContext(country);
-        const countryDescription = country.contextOverride?.trim() || country.description || '';
+        const countryDescription = country.contextOverride?.trim()
+            || [country.description, country.geoContext].filter(Boolean).join('\n\n')
+            || '';
         setSession({ question, ministryId, countryId: country.id, countryContext, countryNom: country.nom, countryDescription });
 
         const resolvedId = await routeQuestion(question, ministryId);

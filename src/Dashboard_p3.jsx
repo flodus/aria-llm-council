@@ -1473,7 +1473,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
           session={councilSession}
           onVote={handleVoteCouncil}
           isRunning={councilRunning}
-          countryContext={selectedCountry ? buildCountryContext(selectedCountry) : ''}
+          countryContext={selectedCountry ? [selectedCountry.description, selectedCountry.geoContext].filter(Boolean).join('\n\n') : ''}
           countryNom={selectedCountry?.nom || ''}
           ctxMode={(() => {
             const c = selectedCountry;

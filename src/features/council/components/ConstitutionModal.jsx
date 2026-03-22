@@ -380,10 +380,19 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
             {isEn ? 'CURRENT CONTEXT' : 'CONTEXTE ACTUEL'}
             </h3>
-            {country?.description
-                ? <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.55)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
-                {country.description}
-                </p>
+            {(country?.description || country?.geoContext)
+                ? <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                {country.description && (
+                    <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.55)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
+                    {country.description}
+                    </p>
+                )}
+                {country.geoContext && (
+                    <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.50)', margin: 0, lineHeight: 1.6 }}>
+                    {country.geoContext}
+                    </p>
+                )}
+                </div>
                 : <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.28)', margin: 0 }}>—</p>
             }
             <button
