@@ -19,10 +19,7 @@ _Dernière mise à jour : 2026-03-22_
   - Cause racine : `overflow:hidden` sur `.aria-accordion` supprime `min-height:auto` des flex children
   - Fix : `flex-shrink:0` sur `.aria-accordion` dans `index.css`
 
-- [ ] **B4 — Jauge LLM Council mal affichée** 🟡
-  - La jauge de satisfaction s'affiche en bas de page après le résultat du vote du peuple
-  - Contexte : fin de délibération, phase RESULT — la jauge sort du layout normal
-  - Fichier : `src/LLMCouncil.jsx` (section phase RESULT / rendu jauge)
+- [x] **B4 — Jauge LLM Council mal affichée** : corrigé dans `src/features/council/` (pas Dashboard_p3)
 
 ---
 
