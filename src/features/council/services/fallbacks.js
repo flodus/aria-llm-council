@@ -5,7 +5,7 @@
 // ============================================================
 
 import { loadLang } from '../../../ariaI18n';
-import { getLocalResponse } from '../../../shared/services/boardgame/responseService';
+import { getLocalResponse, getSyntheseMinistere, getAnnotationMinistere } from '../../../shared/services/boardgame/responseService';
 
 // ============================================================
 // FALLBACK BUREAUCRATIQUE — questions orphelines hors-ligne
@@ -79,38 +79,28 @@ export function localMinisterFallback(ministerId, question, regime = null) {
     };
 }
 
-export function localSyntheseFallback(ministry, resA, resB) {
+export function localSyntheseFallback(ministry, resA, resB, regime = null) {
     const isEn = ((() => { try { return localStorage.getItem('aria_lang'); } catch { return 'fr'; } })()) === 'en';
+    const texte = getSyntheseMinistere(ministry?.id, regime, true);
     return {
         convergence: true,
-        synthese: isEn
-        ? `The ${ministry.name} ministry has deliberated on the submitted question. Both ministers have presented their analyses. A common position will be submitted to the Ministerial Circle.`
-        : `Le ministère ${ministry.name} a délibéré sur la question soumise. Les deux ministres ont exposé leurs analyses respectives. Une position commune sera présentée au Cercle Ministériel.`,
+        synthese: texte || (isEn
+            ? `The ${ministry.name} ministry has deliberated on the submitted question. Both ministers have presented their analyses. A common position will be submitted to the Ministerial Circle.`
+            : `Le ministère ${ministry.name} a délibéré sur la question soumise. Les deux ministres ont exposé leurs analyses respectives. Une position commune sera présentée au Cercle Ministériel.`),
         tension_residuelle: null,
         recommandation: isEn
-        ? 'The ministry recommends a progressive and concerted approach.'
-        : 'Le ministère recommande une approche progressive et concertée.',
+            ? 'The ministry recommends a progressive and concerted approach.'
+            : 'Le ministère recommande une approche progressive et concertée.',
     };
 }
 
-export function localAnnotationFallback(ministry, question) {
+export function localAnnotationFallback(ministry, question, regime = null) {
+    const texte = getAnnotationMinistere(ministry?.id, regime);
+    if (texte) return texte;
+
+    // Ultime fallback si JSON ne couvre pas ce ministère
     const isEn = ((() => { try { return localStorage.getItem('aria_lang'); } catch { return 'fr'; } })()) === 'en';
-    const annotations = isEn ? {
-        justice:   'The legal dimension of this question deserves particular attention.',
-        economie:  'Budgetary impact must be assessed before any decision.',
-        defense:   'The security implications have been examined.',
-        sante:     'The well-being of the population is our central concern.',
-        education: 'The impact on future generations has been taken into account.',
-        ecologie:  'The environmental sustainability of this decision is questionable.',
-    } : {
-        justice:   'La dimension juridique de cette question mérite une attention particulière.',
-        economie:  'L\'impact budgétaire doit être évalué avant toute décision.',
-        defense:   'Les implications sécuritaires ont été examinées.',
-        sante:     'Le bien-être des populations est notre préoccupation centrale.',
-        education: 'L\'impact sur les générations futures a été pris en compte.',
-        ecologie:  'La soutenabilité environnementale de cette décision est questionnable.',
-    };
-    return annotations[ministry.id] || (isEn
-    ? `The ${ministry.name} ministry notes the importance of this question.`
-    : `Le ministère ${ministry.name} note l\'importance de cette question.`);
+    return isEn
+        ? `The ${ministry.name} ministry notes the importance of this question.`
+        : `Le ministère ${ministry.name} note l'importance de cette question.`;
 }

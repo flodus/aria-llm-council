@@ -8,6 +8,7 @@ import { callAI, getApiKeys } from '../../../Dashboard_p1';
 import { getMinistersMapFor, getMinistriesListFor, getPresidencyFor } from './agentsManager';
 import { buildCountryContext, langPrefix } from './contextBuilder';  // direct
 import { FALLBACK_RESPONSES, localMinisterFallback, localSyntheseFallback, localAnnotationFallback } from './fallbacks';
+import { getSynthesePresidence } from '../../../shared/services/boardgame/responseService';
 import { COLORS } from '../../../shared/theme';
 
 /**
@@ -82,7 +83,7 @@ export async function runMinisterePhase(ministry, question, country) {
         const pSynth = buildSyntheseMinisterePrompt(ministry, resA, resB, question, ctx);
         synthese = await callAI(pSynth, 'council_synthese_min').catch(() => null);
     }
-    if (!synthese) synthese = localSyntheseFallback(ministry, resA, resB);
+    if (!synthese) synthese = localSyntheseFallback(ministry, resA, resB, country?.regime);
 
     return {
         ministryId: ministry.id,
@@ -166,7 +167,7 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
                 ministryName:  m.name,
                 ministryEmoji: m.emoji,
                 ministryColor: m.color,
-                annotation:    result?.annotation || localAnnotationFallback(m, question),
+                annotation:    result?.annotation || localAnnotationFallback(m, question, country?.regime),
             };
         })
     );
@@ -389,6 +390,7 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
 
         synthese = {
             convergence,
+            synthese: getSynthesePresidence(convergence),
             voteType,
             voteQuestion,
             voteOptions,

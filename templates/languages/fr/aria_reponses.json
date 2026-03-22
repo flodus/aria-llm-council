@@ -351,7 +351,7 @@
           "statu_quo": [
             "Les canaux actuels sont efficaces.",
             "Le système de diffusion est optimal.",
-            "Aucune modification n’est requise."
+            "Le flux d'information est optimisé. Aucune correction de message n'est nécessaire."
           ]
         },
         "junte_militaire": {
@@ -478,7 +478,7 @@
           "statu_quo": [
             "Les indicateurs sociaux sont stables.",
             "Le système actuel atteint ses objectifs.",
-            "Aucune modification n’est requise."
+            "Les paramètres de protection sociale sont dans les normes calculées. Aucun ajustement nécessaire."
           ]
         },
         "junte_militaire": {
@@ -493,7 +493,7 @@
             "Le contrôle social est une nécessité."
           ],
           "statu_quo": [
-            "La situation est sous contrôle.",
+            "La population civile est encadrée. Le dispositif de protection est en place et fonctionnel.",
             "L’ordre actuel est suffisant.",
             "Maintenons la discipline sociale."
           ]
@@ -529,7 +529,7 @@
           "statu_quo": [
             "L’ordre actuel protège déjà les fidèles.",
             "La tradition suffit à assurer la cohésion.",
-            "Continuons selon la voie établie."
+            "La communauté est protégée par sa foi et ses traditions. Ne changeons pas ce qui la soutient."
           ]
         }
       }
@@ -749,8 +749,8 @@
           ],
           "statu_quo": [
             "Les modèles sont stables.",
-            "Les paramètres sont optimisés.",
-            "Aucune anomalie détectée.",
+            "L'optimisation actuelle est à son plateau d'efficience. Toute intervention serait une régression.",
+            "Les modèles tournent dans les paramètres nominaux. Aucune correction requise.",
             "Le système fonctionne normalement.",
             "Aucun ajustement requis."
           ]
@@ -771,11 +771,11 @@
             "Les informations convergent. Exécution."
           ],
           "statu_quo": [
-            "La situation est sous contrôle.",
+            "Aucune anomalie dans les rapports de terrain. Le dispositif tient.",
             "Aucune menace immédiate détectée.",
             "Les données confirment la stabilité.",
             "Les indicateurs restent constants.",
-            "Maintien de la position actuelle."
+            "Le renseignement confirme la stabilité du périmètre. Maintenons le dispositif en place."
           ]
         },
         "oligarchie": {
@@ -794,11 +794,11 @@
             "Les données convergent. Décision immédiate."
           ],
           "statu_quo": [
-            "Les performances sont stables.",
+            "Les rendements sont dans les marges acceptables. Ne touchons pas à ce qui rapporte.",
             "Les indicateurs financiers sont constants.",
             "Les projections restent inchangées.",
             "Aucune variation significative.",
-            "Maintien de la stratégie actuelle."
+            "La stratégie en place protège nos positions. Aucune raison de la remettre en question."
           ]
         },
         "theocratie": {
@@ -845,7 +845,7 @@
           ],
           "statu_quo": [
             "Le cadre juridique actuel est respecté.",
-            "Les institutions assurent l’équilibre.",
+            "L'état de droit fonctionne. Les contre-pouvoirs jouent leur rôle. Préservons cet équilibre.",
             "La justice suit son cours.",
             "Aucune irrégularité constatée.",
             "Maintien du cadre existant."
@@ -871,7 +871,7 @@
             "L’équilibre entre niveaux est maintenu.",
             "Les décisions restent cohérentes.",
             "Aucun conflit majeur n’est relevé.",
-            "Maintien du système actuel."
+            "L'équilibre juridique fédéral tient. Chaque entité respecte le cadre partagé."
           ]
         },
         "monarchie_constitutionnelle": {
@@ -914,8 +914,8 @@
           ],
           "statu_quo": [
             "Le système décisionnel est stable.",
-            "Les paramètres sont cohérents.",
-            "Aucune anomalie détectée.",
+            "La jurisprudence algorithmique est cohérente avec les paramètres légaux établis.",
+            "Aucune irrégularité juridique détectée dans les flux de décisions automatisées.",
             "Les décisions restent optimisées.",
             "Maintien du modèle actuel."
           ]
@@ -936,10 +936,10 @@
             "Toute déviation doit être sanctionnée. Immédiatement."
           ],
           "statu_quo": [
-            "La situation est maîtrisée.",
-            "L’ordre est maintenu.",
-            "Aucune intervention nécessaire.",
-            "Les règles sont respectées.",
+            "La loi militaire tient. Aucune brèche dans le cadre disciplinaire.",
+            "L'ordre juridique suit l'ordre militaire. Les procédures sont respectées.",
+            "Le droit en vigueur est suffisant. Toute modification affaiblirait notre cadre.",
+            "La discipline juridique est intacte. Les règles servent leur fonction.",
             "Maintien du contrôle actuel."
           ]
         },
@@ -983,7 +983,7 @@
           ],
           "statu_quo": [
             "Les principes sont respectés.",
-            "L’ordre est maintenu.",
+            "La loi divine est appliquée. L'équilibre spirituel de la communauté est préservé.",
             "Aucune nouvelle décision nécessaire.",
             "Les règles restent inchangées.",
             "Maintien de l’équilibre actuel."
@@ -1059,7 +1059,7 @@
             "Aucune investigation supplémentaire requise.",
             "Les conclusions sont acceptées.",
             "Les éléments restent inchangés.",
-            "Maintien de la position actuelle."
+            "Aucun élément compromettant n'a émergé. La loyauté des institutions est confirmée."
           ]
         },
         "technocratie_ia": {
@@ -1078,11 +1078,11 @@
             "Incohérence confirmée. Investigation lancée."
           ],
           "statu_quo": [
-            "Les données sont cohérentes.",
-            "Aucune anomalie détectée.",
+            "Les données sont cohérentes entre elles. Aucune manipulation détectée dans les systèmes.",
+            "Les algorithmes de détection ne signalent aucune irrégularité dans les flux de données.",
             "Les systèmes sont fiables.",
             "Les résultats sont validés.",
-            "Maintien de l’état actuel."
+            "Les modèles prédictifs ne détectent aucune dérive. La surveillance automatisée suffit."
           ]
         },
         "junte_militaire": {
@@ -1104,7 +1104,7 @@
             "Les renseignements sont fiables.",
             "Aucune menace identifiée.",
             "Les informations sont cohérentes.",
-            "La situation est maîtrisée.",
+            "Le renseignement intérieur ne signale rien d'anormal. La surveillance fonctionne.",
             "Maintien du dispositif actuel."
           ]
         },
@@ -1125,10 +1125,10 @@
           ],
           "statu_quo": [
             "Les informations sont fiables.",
-            "Les données sont cohérentes.",
+            "Aucune anomalie dans les flux financiers. Les intérêts en jeu sont stables.",
             "Aucune anomalie notable.",
             "Les analyses sont confirmées.",
-            "Maintien de la lecture actuelle."
+            "Les réseaux d'influence sont stables. Aucune menace pour les positions établies."
           ]
         },
         "theocratie": {
@@ -1151,7 +1151,7 @@
             "Aucune nouvelle révélation.",
             "Les interprétations restent valides.",
             "Les éléments sont stables.",
-            "Maintien de la lecture actuelle."
+            "L'interprétation en vigueur est juste. Aucun fait nouveau ne la remet en cause."
           ]
         }
       }
@@ -1176,7 +1176,7 @@
           "statu_quo": [
             "Le cap actuel est compris.",
             "La direction reste cohérente.",
-            "Les repères sont établis.",
+            "Notre boussole collective est claire. L'horizon que nous avons fixé reste le bon.",
             "Aucune réorientation nécessaire.",
             "Maintien du chemin actuel."
           ]
@@ -1313,7 +1313,7 @@
           ],
           "statu_quo": [
             "La voie actuelle est claire.",
-            "Les repères sont établis.",
+            "La vérité que nous transmettons est immuable. Les repères sont gravés dans nos textes fondateurs.",
             "La direction est suivie.",
             "Aucune réorientation nécessaire.",
             "Maintien du chemin existant."
@@ -1412,7 +1412,7 @@
             "La trajectoire est optimisée.",
             "Aucune divergence détectée.",
             "Les projections sont stables.",
-            "Maintien de la stratégie actuelle."
+            "Les simulations confirment : la stratégie en cours est optimale. Toute déviation coûterait plus qu'elle ne rapporterait."
           ]
         },
         "junte_militaire": {
@@ -1456,7 +1456,7 @@
           "statu_quo": [
             "La stratégie actuelle est rentable.",
             "Les positions sont optimisées.",
-            "Les indicateurs sont stables.",
+            "La position stratégique est solide. Nos acquis sont préservés, nos flancs couverts.",
             "Aucune réorientation nécessaire.",
             "Maintien de la ligne actuelle."
           ]
@@ -1552,7 +1552,7 @@
           "statu_quo": [
             "La tradition suffit à guider nos pratiques.",
             "Les systèmes actuels sont éprouvés.",
-            "Aucune innovation nécessaire.",
+            "Le savoir-faire ancestral a fait ses preuves. L'innovation attendra que le terrain soit prêt.",
             "Les usages restent pertinents.",
             "Maintien des méthodes existantes."
           ]
@@ -1575,7 +1575,7 @@
           "statu_quo": [
             "Les systèmes actuels sont optimisés.",
             "Aucune amélioration détectée.",
-            "Les performances sont stables.",
+            "Le système actuel est à son optimum mesuré. Toute modification introduirait de l'incertitude.",
             "Aucune innovation requise.",
             "Maintien de l’architecture actuelle."
           ]
@@ -1597,7 +1597,7 @@
           ],
           "statu_quo": [
             "Les méthodes actuelles sont fiables.",
-            "Aucune innovation nécessaire.",
+            "L'arsenal actuel est suffisant pour les missions en cours. Pas de développement urgent.",
             "Les systèmes sont éprouvés.",
             "La stabilité prime.",
             "Maintien des pratiques existantes."
@@ -1622,7 +1622,7 @@
             "Les solutions actuelles sont rentables.",
             "Aucune innovation urgente.",
             "Les modèles existants suffisent.",
-            "Les performances sont stables.",
+            "Les brevets actuels génèrent des revenus stables. Pas besoin de prendre des risques inutiles.",
             "Maintien des stratégies actuelles."
           ]
         },
@@ -1644,7 +1644,7 @@
           "statu_quo": [
             "Les pratiques actuelles sont suffisantes.",
             "Les traditions guident nos actions.",
-            "Aucune innovation nécessaire.",
+            "Ce qui est divinement ordonné n'a pas besoin d'être amélioré par la main de l'homme.",
             "Les méthodes restent valides.",
             "Maintien des usages existants."
           ]
@@ -1670,10 +1670,10 @@
           ],
           "statu_quo": [
             "Les équilibres sont rétablis.",
-            "Les tensions sont contenues.",
+            "La tension sociale est gérée. Les espaces de dialogue fonctionnent encore.",
             "La situation est stabilisée.",
             "Aucune action corrective nécessaire.",
-            "Maintien de l’état actuel."
+            "Le tissu social cicatrise lentement. N'intervenons pas là où les plaies se referment."
           ]
         },
         "republique_federale": {
@@ -1694,8 +1694,8 @@
           "statu_quo": [
             "Les équilibres régionaux sont maintenus.",
             "Les tensions locales sont maîtrisées.",
-            "La situation est stable.",
-            "Aucune intervention nécessaire.",
+            "L'accès aux soins est équitablement réparti entre les régions. L'équilibre tient.",
+            "Le système de santé fédéral répond aux besoins. Pas de réforme urgente.",
             "Maintien des dispositifs actuels."
           ]
         },
@@ -1739,10 +1739,10 @@
           ],
           "statu_quo": [
             "Les systèmes sont équilibrés.",
-            "Aucune anomalie détectée.",
+            "Les capteurs sanitaires ne signalent aucune déviation. La population est dans les paramètres.",
             "Les paramètres sont stables.",
             "Aucune correction requise.",
-            "Maintien de l’état actuel."
+            "Les indicateurs de bien-être collectif sont dans les normes. Le système de soin est optimisé."
           ]
         },
         "junte_militaire": {
@@ -1761,10 +1761,10 @@
             "Le calme doit être imposé. Sans délai."
           ],
           "statu_quo": [
-            "La situation est sous contrôle.",
-            "Les tensions sont contenues.",
-            "L’ordre est maintenu.",
-            "Aucune intervention nécessaire.",
+            "Le moral des troupes est correct. Les blessures sont prises en charge dans les délais.",
+            "La pression psychologique est dans les seuils tolérables. Le corps tient.",
+            "La discipline sanitaire est respectée. Les ressources médicales sont stables.",
+            "L'état de santé général ne requiert pas de mesure d'urgence. Maintien du protocole.",
             "Maintien du dispositif actuel."
           ]
         },
@@ -1784,7 +1784,7 @@
             "Apaisement immédiat. Exécution."
           ],
           "statu_quo": [
-            "La situation est stable.",
+            "Le marché de la santé est équilibré. Les coûts sont maîtrisés, les marges préservées.",
             "Les tensions sont maîtrisées.",
             "L’environnement est sécurisé.",
             "Aucune action requise.",
@@ -1810,7 +1810,7 @@
             "La paix est maintenue.",
             "Les âmes sont apaisées.",
             "L’équilibre est préservé.",
-            "Aucune intervention nécessaire.",
+            "La communauté est en paix avec elle-même. La foi guérit ce que la médecine ne peut atteindre.",
             "Maintien de l’harmonie actuelle."
           ]
         }
