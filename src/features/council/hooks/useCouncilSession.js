@@ -14,11 +14,13 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useCallback } from 'react';
-import { routeQuestion, getBestMatch } from '../services/routingEngine';
-import { runMinisterePhase, runCerclePhase, runPresidencePhase } from '../services/deliberationEngine';
+import { routeQuestion, getBestMatch, detectCrisis } from '../services/routingEngine';
+import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from '../services/deliberationEngine';
 import { computeVoteImpact } from '../services/voteEngine';
 import { buildCountryContext } from '../services/contextBuilder';
 import { MINISTRIES_LIST } from '../services/agentsManager';
+import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../ariaData';
+import { loadLang } from '../../../ariaI18n';
 import REPONSES_FR from '../../../../templates/languages/fr/aria_reponses.json';
 
 function pickGarbage() {
@@ -42,7 +44,21 @@ export function useCouncilSession(country, onVoteResult) {
         setRunning(true);
 
         const countryContext = buildCountryContext(country);
-        setSession({ question, ministryId, countryId: country.id, countryContext, countryNom: country.nom });
+
+        const en      = loadLang() === 'en';
+        const rawReal = (en ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === country.id);
+        const geoText = rawReal?.triple_combo         || country.geoContext  || '';
+        const socText = rawReal?.aria_sociology_logic || country.description || '';
+        const sat     = Math.round(country.satisfaction ?? 50);
+        const aria    = Math.round(country.aria_current ?? country.aria_irl ?? 40);
+        const statsLine = en
+            ? `Approval: ${sat}%   ·   ARIA: ${aria}%`
+            : `Satisfaction : ${sat}%   ·   Adhésion ARIA : ${aria}%`;
+        const geoBlock   = [geoText, socText].filter(Boolean).join('\n\n');
+        const baseText   = country.contextOverride?.trim() || geoBlock;
+        const countryDescription = [baseText, statsLine].filter(Boolean).join('\n\n');
+
+        setSession({ question, ministryId, countryId: country.id, countryContext, countryNom: country.nom, countryDescription });
 
         const resolvedId = await routeQuestion(question, ministryId);
         const ministry   = resolvedId ? MINISTRIES_LIST.find(m => m.id === resolvedId) : null;
@@ -55,7 +71,15 @@ export function useCouncilSession(country, onVoteResult) {
             const cercleResult = await runCerclePhase(resolvedId, question, ministereResult.synthese, country);
             setSession(prev => ({ ...prev, cercle: cercleResult }));
 
-            const presidenceResult = await runPresidencePhase(question, ministereResult, cercleResult, country);
+            // Phase Destin — optionnelle si destiny_mode actif + crise détectée
+            const gov = country?.governanceOverride || {};
+            let destinResult = null;
+            if (gov.destiny_mode === true && gov.crisis_mode !== false && detectCrisis(question)) {
+                destinResult = await runDestinPhase(question, country, false);
+                setSession(prev => ({ ...prev, destin: destinResult }));
+            }
+
+            const presidenceResult = await runPresidencePhase(question, ministereResult, cercleResult, country, destinResult);
             setSession(prev => ({ ...prev, presidence: presidenceResult, voteReady: true }));
         } catch (e) {
             console.warn('[ARIA Council]', e);

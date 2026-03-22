@@ -24,19 +24,21 @@ const tabStyle = (active) => ({
                               color: active ? 'rgba(200,164,74,0.90)' : 'rgba(140,160,200,0.35)',
 });
 
-const TABS = [
-    { id: 'resume', fr: 'RÉSUMÉ', en: 'SUMMARY' },
-{ id: 'presidency', fr: 'PRÉSIDENCE', en: 'PRESIDENCY' },
-{ id: 'ministries', fr: 'MINISTÈRES', en: 'MINISTRIES' },
-{ id: 'ministers', fr: 'MINISTRES', en: 'MINISTERS' }
+const BASE_TABS = [
+    { id: 'resume',    fr: 'RÉSUMÉ',    en: 'SUMMARY'    },
+    { id: 'presidency',fr: 'PRÉSIDENCE',en: 'PRESIDENCY' },
+    { id: 'ministries',fr: 'MINISTÈRES',en: 'MINISTRIES' },
+    { id: 'ministers', fr: 'MINISTRES', en: 'MINISTERS'  },
 ];
+const DESTINY_TAB = { id: 'destinee', fr: 'DESTINÉE', en: 'DESTINY' };
 
-export default function ConstitutionTabs({ activeTab, onTabChange, scrollRef }) {
+export default function ConstitutionTabs({ activeTab, onTabChange, scrollRef, showDestiny }) {
     const { lang } = useLocale();
+    const tabs = showDestiny ? [...BASE_TABS, DESTINY_TAB] : BASE_TABS;
 
     return (
         <>
-        {TABS.map(tab => (
+        {tabs.map(tab => (
             <button
             key={tab.id}
             style={tabStyle(activeTab === tab.id)}
@@ -45,7 +47,7 @@ export default function ConstitutionTabs({ activeTab, onTabChange, scrollRef }) 
                 if (scrollRef?.current) scrollRef.current.scrollTop = 0;
             }}
             >
-            {tab[lang] || tab.fr}
+            {lang === 'en' ? tab.en : tab.fr}
             </button>
         ))}
         </>

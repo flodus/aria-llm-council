@@ -162,8 +162,12 @@ export const TRANSLATIONS = {
   GOV_ANNOT:           { fr: 'Angle universel en annotation', en: 'Universal annotation angle' },
   GOV_PRES_DEFAULT:    { fr: 'PRÉSIDENCE PAR DÉFAUT',    en: 'DEFAULT PRESIDENCY'    },
   GOV_MINS_DEFAULT:    { fr: 'MINISTÈRES ACTIFS PAR DÉFAUT', en: 'ACTIVE MINISTRIES BY DEFAULT' },
-  GOV_CRISIS:          { fr: 'GESTION DE CRISE',         en: 'CRISIS MANAGEMENT'     },
-  GOV_CHANCE:          { fr: 'Ministère de la Chance & Crises', en: 'Ministry of Chance & Crises' },
+  GOV_DESTIN:          { fr: 'DESTINÉE DU MONDE',        en: 'DESTINY OF THE WORLD'  },
+  GOV_DESTIN_LABEL:    { fr: '👁️ Oracle & Wyrd',         en: '👁️ Oracle & Wyrd'       },
+  GOV_DESTIN_HINT:     { fr: 'Active Oracle et Wyrd pour les crises existentielles.', en: 'Activates Oracle and Wyrd for existential crises.' },
+  GOV_CRISIS_MODE:     { fr: 'GESTION DE CRISE',         en: 'CRISIS MANAGEMENT'     },
+  GOV_CRISIS_LABEL:    { fr: '⚡ Mode crise',             en: '⚡ Crisis mode'         },
+  GOV_CRISIS_HINT:     { fr: 'Active la détection automatique des crises et la délibération adaptée.', en: 'Activates automatic crisis detection and adapted deliberation.' },
 
   // ── ConstitutionModal ─────────────────────────────────────────────────
   GOV_TAB_REGIME:      { fr: 'RÉGIME',                   en: 'REGIME'                },

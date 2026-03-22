@@ -12,11 +12,11 @@
 
 import { useLocale, t } from '../../../ariaI18n';
 import { CARD_STYLE, SELECT_STYLE, labelStyle } from '../../../shared/theme';
-import { getTerrainLabelMap,getRegimeLabelMap } from '../services/labels';
+import { getTerrainLabelMap, getRegimeLabelMap, getTerrainIcon, getRegimeIcon } from '../services/labels';
 import { getRealCountries } from '../services/realCountries';
 import { CountryInfoCard } from './index';
 
-export default function RealCountryLocalSection({ country, onChange, setField }) {
+export default function RealCountryLocalSection({ country, onChange, setField, selectedRealIds = [] }) {
     const { lang } = useLocale();
 
     return (
@@ -32,7 +32,17 @@ export default function RealCountryLocalSection({ country, onChange, setField })
         }}
         >
         <option value="">— Choisir —</option>
-        {getRealCountries().map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
+        {[...getRealCountries()]
+            .sort((a, b) => {
+                const aPris = selectedRealIds.includes(a.id);
+                const bPris = selectedRealIds.includes(b.id);
+                if (aPris === bPris) return 0;
+                return aPris ? 1 : -1;
+            })
+            .map(rc => {
+                const pris = selectedRealIds.includes(rc.id);
+                return <option key={rc.id} value={rc.id} disabled={pris} style={{ color: pris ? 'rgba(140,160,200,0.35)' : undefined }}>{rc.flag} {rc.nom}{pris ? ' ✗' : ''}</option>;
+            })}
         </select>
         </div>
 
@@ -42,13 +52,13 @@ export default function RealCountryLocalSection({ country, onChange, setField })
             <div>
             <div style={{ ...labelStyle('0.42rem'), marginBottom: '0.25rem' }}>{t('TERRAIN', lang)}</div>
             <select style={SELECT_STYLE} value={country.terrain} onChange={e => setField('terrain', e.target.value)}>
-            {Object.entries(getTerrainLabelMap(lang)).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(getTerrainLabelMap(lang)).map(([k, v]) => <option key={k} value={k}>{getTerrainIcon(k)} {v}</option>)}
             </select>
             </div>
             <div>
             <div style={{ ...labelStyle('0.42rem'), marginBottom: '0.25rem' }}>{t('REGIME', lang)}</div>
             <select style={SELECT_STYLE} value={country.regime} onChange={e => setField('regime', e.target.value)}>
-            {Object.entries(getRegimeLabelMap(lang)).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(getRegimeLabelMap(lang)).map(([k, v]) => <option key={k} value={k}>{getRegimeIcon(k)} {v}</option>)}
             </select>
             </div>
             </div>

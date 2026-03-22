@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-22_
+_Dernière mise à jour : 2026-03-22 (session refactor+destin)_
 
 ---
 
@@ -8,10 +8,7 @@ _Dernière mise à jour : 2026-03-22_
 
 - [x] **B1 — Ajout pays in-game** : corrigé — `addFictionalCountry` dans `Dashboard_p1.jsx`
 
-- [ ] **B5 — Mode IA offline** : si hors ligne (pas de réseau détecté), ne proposer que Board Game
-  - Détecter `navigator.onLine` ou écouter `offline`/`online` events
-  - Masquer les options IA exactement comme pour 0 clé configurée
-  - Fichiers : `InitScreen.jsx` (PreLaunchScreen ariaMode init + filtre boutons)
+- [x] **B5 — Mode IA offline** : `navigator.onLine` + listeners `online`/`offline` dans `NameScreen.jsx` · badge "⚠ HORS LIGNE", toggle masqué, `computedMode` sécurisé dans `InitScreen.jsx`
 
 - [x] **B6 — Corbeille suppression clé API** : `removeEntry` + `onRemoveEntry` implémentés dans `APIKeyInline.jsx`
 
@@ -27,31 +24,19 @@ _Dernière mise à jour : 2026-03-22_
 
 - [x] **U5 — Confirmation nouvelle partie** : modale légère avant ↺ — livré 2026-03-12
 
-- [ ] **T1 — Multi-clés par provider** : permettre plusieurs clés API par provider (Init + Settings)
-  - Structure cible `aria_api_keys` : `{ claude: [{key, model, default:true}, {key, model}], gemini: [...] }`
-  - UI : bouton "+ Ajouter une clé" par provider, select modèle par clé, étoile clé par défaut, bouton supprimer
+- [ ] **T1 — Ajout de provider + modèle custom** : permettre d'ajouter des providers non listés (ex: DeepSeek, Mistral, Ollama local…)
+  - UI : bouton "+ Ajouter un provider" dans Init + Settings · champs : nom, endpoint, clé API, modèle par défaut
   - Impacte : `aria_api_keys` localStorage · `callAI()` dans Dashboard_p1.jsx · InitScreen.jsx · Settings.jsx
-  - _À faire après refonte Settings terminée_
+  - _Assess dédié requis — impacts sur callAI() et le sélecteur de provider_
 
-- [ ] **U1 — Icônes régimes** : dans les listes déroulantes Init (création pays) et in-game (settings)
+- [x] **U1 — Icônes régimes** : dans les listes déroulantes Init (création pays) et in-game (settings)
 - [ ] **U2 — Harmonisation tuiles** : même style glow ministres/ministères dans les 3 contextes
   (Init PreLaunchScreen · Settings in-game · popup ConstitutionModal in-game)
 - [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
   (satisfaction détaillée, décisions clés, événements notables)
-- [ ] **U4 — Contexte pays dans la Constitution** : déplacer/dupliquer `context_mode` et `contextOverride`
-  depuis les options système (Settings) vers la ConstitutionModal par pays
-  — logique : le contexte de délibération est une propriété du pays, pas un réglage global
+- [x] **U4 — Contexte pays dans la Constitution** : `context_mode` et `contextOverride` dans ConstitutionModal par pays
 
-- [ ] **U8 — Mécanique questions LLM Council**
-  - Questions déjà posées : grisées + déplacées en bas de liste + badge "✓ Cycle X" au hover
-  - Questions champ libre : ajoutées dans la liste avec badge "✏️ Personnalisée"
-    et insérées dans le ministère vers lequel elles ont été redirigées
-  - Routing champ libre :
-    - Mode IA : l'IA route vers le bon ministère selon le contenu
-    - Board Game : matching local via keywords (gemini.json) + correction manuelle possible
-    - Dans les deux cas le joueur peut corriger le ministère suggéré
-  - Lien : ariaQA.json (questions hardcodées) + chronolog (filtre cycle) + keywords (routing offline)
-  - Assess dédié requis — touche LLMCouncil.jsx + llmCouncilEngine.js + chronolog
+- [x] **U8 — Mécanique questions LLM Council** : livré
 
 - [ ] **U7 — Emoji picker pays** : permettre au joueur de choisir l'emoji de son pays
   - À la création (InitScreen) : après génération IA, proposer de changer l'emoji suggéré
@@ -126,6 +111,37 @@ _(bloqué sur refonte carte V1)_
   - Vérifier useCallback/useMemo manquants
   - Identifier les appels IA redondants
   - Ne pas implémenter sans Assess complet
+
+---
+
+## ✅ LIVRÉ cette session (2026-03-22, session refactor+destin)
+
+- [x] **Refactor source unique de vérité** — branche `refactor/simulation-json-source`
+  - Toutes les constantes hardcodées supprimées (REGIME_ARIA_BASE_IRL, REGIME_BLOC, resMinisters, TERRAIN_COLORS, MARITIME, ARCHETYPE_POSTURE, REGIME_LABEL_KEYS, ALL_MINISTRY_IDS, etc.)
+  - Chaque donnée lue depuis `governance.json` ou `simulation.json` via `getAgents()` / `getStats()`
+  - `simulation.json` enrichi : `aria_irl_base`, `sat_base`, `bloc`, `couleur` par régime · `pop_base` + `maritime` par terrain
+  - Industrie actif par défaut (remplace chance) — `useConstitution`, `DEFAULT_OPTIONS`, `ConstitutionModal`
+  - `governance.json` (FR+EN) : ministère chance supprimé · industrie ajouté · oracle + wyrd dans ministers · bloc `destin` racine
+
+- [x] **Destinée du Monde — 8 chantiers livrés**
+  - C1 : `governance.json` FR+EN — bloc destin, oracle/wyrd, keywords 65 termes, `aria_questions.json` 7 questions crise existentielle
+  - C2 : `agentsManager.getDestin()` — lecture lang-aware du bloc destin
+  - C3 : `routingEngine.detectCrisis()` — détection synchrone, n'affecte pas le routage standard
+  - C4 : `deliberationEngine` — `runDestinPhase()` (oracle+wyrd, AI+fallback local) · `runPresidencePhase(destinVoices)` · `councilEngine` câblage conditionnel `destiny_mode + crisis_mode`
+  - C5 : `Settings.jsx` — deux accordions séparés (DESTINÉE DU MONDE · GESTION DE CRISE)
+  - C6 : `ConstitutionModal.jsx` — `destiny_mode` + `crisis_mode` (remplace `crisis_ministry`)
+  - C7 : `fallbacks.js` — annotation destin + industrie · chance supprimé
+  - C7b : `aria_reponses.json` (FR+EN) — oracle + wyrd · 7 régimes × 3 postures
+  - C8 : `ariaI18n.js` — GOV_DESTIN/DESTIN_LABEL/DESTIN_HINT · GOV_CRISIS_MODE/LABEL/HINT · GOV_CHANCE/CRISIS supprimés
+  - `MIGRATION_NOTES.md` créé — 12 ministerPrompts.crise archétypes préservés pour chantier futur
+
+---
+
+## ✅ LIVRÉ cette session (2026-03-22, suite)
+
+- [x] **B5b — Badge statut IA mid-session** : `iaStatusStore.js` singleton + event `aria:ia-status`
+  `callAI` détecte erreurs réseau/quota → badge 🔴/⚠ centré bas de page
+  Toast ✅ au retour IA · bouton Tester désactivé si offline seulement
 
 ---
 

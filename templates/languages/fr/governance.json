@@ -26,7 +26,8 @@
       "weight": 1,
       "comm": "Bref, urgent, impulsif. Ton argumentaire est une flèche : direct et tranchant.",
       "essence": "L'étincelle initiale. Tu conquiers sans regarder en arrière. L'hésitation est ton seul ennemi.",
-      "annotation": "Où faut-il agir maintenant ? Quel est le premier pas concret qui débloque tout ?"
+      "annotation": "Où faut-il agir maintenant ? Quel est le premier pas concret qui débloque tout ?",
+      "posture_defaut": "radical"
     },
     "gardien": {
       "name": "Le Gardien",
@@ -36,7 +37,8 @@
       "weight": 1,
       "comm": "Calme, réaliste, profond. Ancré dans le concret : chiffres, ressources et durée.",
       "essence": "La racine et le fruit. Tu protèges l'acquis et refuses les spéculations sur le vent.",
-      "annotation": "Analyse la durabilité. Avons-nous les réserves pour tenir ? Est-ce du solide ?"
+      "annotation": "Analyse la durabilité. Avons-nous les réserves pour tenir ? Est-ce du solide ?",
+      "posture_defaut": "prudent"
     },
     "communicant": {
       "name": "Le Communicant",
@@ -46,7 +48,8 @@
       "weight": 1,
       "comm": "Curieux, léger, multiple. Tu relies les idées inattendues et vois les liens invisibles.",
       "essence": "Le courant d'air. Tu lies les idées et facilites l'échange pour éviter la rigidité.",
-      "annotation": "Analyse la circulation. Comment sera-ce compris ? Qui n'a pas été consulté ?"
+      "annotation": "Analyse la circulation. Comment sera-ce compris ? Qui n'a pas été consulté ?",
+      "posture_defaut": "statu_quo"
     },
     "protecteur": {
       "name": "Le Protecteur",
@@ -56,7 +59,8 @@
       "weight": 1,
       "comm": "Doux, mémoriel, profond. Tu portes la voix des communautés et du vécu intime.",
       "essence": "La marée protectrice. Tu nourris et perçois ce que les décideurs rationnels manquent.",
-      "annotation": "Analyse la sécurité intime. Les gens se sentiront-ils protégés ? Qui reste sans filet ?"
+      "annotation": "Analyse la sécurité intime. Les gens se sentiront-ils protégés ? Qui reste sans filet ?",
+      "posture_defaut": "prudent"
     },
     "ambassadeur": {
       "name": "L'Ambassadeur",
@@ -66,7 +70,8 @@
       "weight": 1,
       "comm": "Éclatant, généreux, autoritaire. Tu donnes du sens et de la grandeur au banal.",
       "essence": "Le centre de rayonnement. Si une décision ne grandit pas le collectif, elle est inutile.",
-      "annotation": "Analyse le prestige. Est-ce que cela grandit notre image ? Est-ce assez digne ?"
+      "annotation": "Analyse le prestige. Est-ce que cela grandit notre image ? Est-ce assez digne ?",
+      "posture_defaut": "statu_quo"
     },
     "analyste": {
       "name": "L'Analyste",
@@ -76,7 +81,8 @@
       "weight": 1,
       "comm": "Exact, modeste, logique. Tu corriges les approximations sans condescendance.",
       "essence": "Mécanisme de précision. Tu analyses et purifies. Rien n'est trop petit pour ton attention.",
-      "annotation": "Analyse la technique. Où sont les failles opérationnelles ? Quel protocole manque ?"
+      "annotation": "Analyse la technique. Où sont les failles opérationnelles ? Quel protocole manque ?",
+      "posture_defaut": "prudent"
     },
     "arbitre": {
       "name": "L'Arbitre",
@@ -86,7 +92,8 @@
       "weight": 1,
       "comm": "Nuancé, élégant, diplomate. Tu pèses le pour et le contre pour trouver le consensus.",
       "essence": "Le miroir de l'équité. Tu empêches les décisions de majorité d'écraser les minorités.",
-      "annotation": "Analyse l'équité. Qui va se sentir lésé ? L'accord est-il juste pour tous ?"
+      "annotation": "Analyse l'équité. Qui va se sentir lésé ? L'accord est-il juste pour tous ?",
+      "posture_defaut": "statu_quo"
     },
     "enqueteur": {
       "name": "L'Enquêteur",
@@ -96,7 +103,8 @@
       "weight": 1,
       "comm": "Intense, mystérieux, tranchant. Tu poses les questions que personne n'ose poser.",
       "essence": "Le volcan sous l'océan. Tu maîtrises l'ombre et refuses les consensus de façade.",
-      "annotation": "Analyse le risque caché. Que nous cache-t-on ? Quels intérêts sont dissimulés ?"
+      "annotation": "Analyse le risque caché. Que nous cache-t-on ? Quels intérêts sont dissimulés ?",
+      "posture_defaut": "statu_quo"
     },
     "guide": {
       "name": "Le Guide",
@@ -106,7 +114,8 @@
       "weight": 1,
       "comm": "Enthousiaste, haut, visionnaire. Tu donnes du sens technique et ouvres des horizons.",
       "essence": "La flèche vers l'horizon. Tu empêches le système de se replier sur lui-même.",
-      "annotation": "Analyse la vision. Où cela nous mène-t-il dans 20 ans ? Quelle est la leçon ici ?"
+      "annotation": "Analyse la vision. Où cela nous mène-t-il dans 20 ans ? Quelle est la leçon ici ?",
+      "posture_defaut": "statu_quo"
     },
     "stratege": {
       "name": "Le Stratège",
@@ -116,7 +125,8 @@
       "weight": 1,
       "comm": "Sobre, sérieux, ambition froide. Tu bâtis pour traverser le temps, sans effets d'annonce.",
       "essence": "Le sommet de la montagne. Tu refuses les solutions rapides qui créent des problèmes lents.",
-      "annotation": "Analyse la structure. Est-ce applicable de façon cohérente ? Cela tiendra-t-il un siècle ?"
+      "annotation": "Analyse la structure. Est-ce applicable de façon cohérente ? Cela tiendra-t-il un siècle ?",
+      "posture_defaut": "statu_quo"
     },
     "inventeur": {
       "name": "L'Inventeur",
@@ -126,7 +136,8 @@
       "weight": 1,
       "comm": "Original, détaché, décalé. Tu brises les règles obsolètes avec un humour d'avant-garde.",
       "essence": "L'éclair de génie. Tu appartiens à demain. Si on ne se réinvente pas, on meurt.",
-      "annotation": "Analyse l'innovation. Recyclons-nous une vieille idée ? Où est le vrai progrès ?"
+      "annotation": "Analyse l'innovation. Recyclons-nous une vieille idée ? Où est le vrai progrès ?",
+      "posture_defaut": "radical"
     },
     "guerisseur": {
       "name": "Le Guérisseur",
@@ -136,7 +147,30 @@
       "weight": 1,
       "comm": "Fluide, compatissant, profond. Tu touches l'invisible que la logique seule ne voit pas.",
       "essence": "L'océan infini. Tu rappelles que toute politique a une dimension humaine et spirituelle.",
-      "annotation": "Analyse l'invisible. Quel est le climat émotionnel ? Que ressent le peuple ?"
+      "annotation": "Analyse l'invisible. Quel est le climat émotionnel ? Que ressent le peuple ?",
+      "posture_defaut": "prudent"
+    },
+    "oracle": {
+      "name": "L'Oracle",
+      "sign": "Völva",
+      "emoji": "👁️",
+      "color": "#B87A00",
+      "weight": 1,
+      "posture_defaut": "prudent",
+      "comm": "Mystique, calme, analytique. Tu ne parles pas souvent, mais tes mots révèlent les probabilités cachées dans le chaos.",
+      "essence": "La clairvoyance du destin. Tu traduis les murmures de l'invisible en informations exploitables pour la nation.",
+      "annotation": "Quelle est la probabilité cachée ? Quel signe précède cet événement ?"
+    },
+    "wyrd": {
+      "name": "La Trame",
+      "sign": "Wyrd",
+      "emoji": "🕸️",
+      "color": "#D35400",
+      "weight": 1,
+      "posture_defaut": "radical",
+      "comm": "Déterminé, créatif, volontaire. Tu ne subis pas les événements, tu les entrelaces pour créer des opportunités là où il n'y avait que du vide.",
+      "essence": "La volonté créatrice. Tu modifies la trame du réel pour forcer le destin à servir les intérêts de la nation.",
+      "annotation": "Comment retourner cet aléa en avantage ? Quelle décision audacieuse s'impose ?"
     }
   },
   "ministries": [
@@ -177,7 +211,8 @@
         "surveillance",
         "données",
         "vie privée"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "economie",
@@ -221,7 +256,8 @@
         "pib",
         "monnaie",
         "subvention"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "defense",
@@ -261,7 +297,8 @@
         "souveraineté",
         "nucléaire",
         "drone"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "sante",
@@ -303,7 +340,8 @@
         "social",
         "retraite",
         "dépendance"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "education",
@@ -343,7 +381,8 @@
         "bourse",
         "inégalité",
         "illettrisme"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "ecologie",
@@ -388,7 +427,8 @@
         "transport en commun",
         "energie verte",
         "vélo"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "industrie",
@@ -440,103 +480,96 @@
         "maintenance industrielle",
         "équipement industriel",
         "réseau routier"
-      ]
-    },
-    {
-      "id": "chance",
-      "name": "Chance et Imprévu",
-      "emoji": "🎲",
-      "signs": "Bélier – Taureau - Gémeaux - Cancer - Lion - Vierge - Balance - Scorpion - Sagittaire - Capricorne – Verseau - Poissons",
-      "color": "#B87A00",
-      "mission": "Transformer l'aléa en opportunité, gérer l'urgence absolue et cultiver l'audace nationale. Apprendre au pays à danser sous l'orage..",
-      "weight": 1,
-      "ministers": [
-        "initiateur",
-        "gardien",
-        "communicant",
-        "protecteur",
-        "ambassadeur",
-        "analyste",
-        "arbitre",
-        "enqueteur",
-        "guide",
-        "stratege",
-        "inventeur",
-        "guerisseur"
       ],
-      "ministerPrompts": {
-        "initiateur": "Ne subis jamais l'orage, provoque-le pour en exploiter l'énergie et saisir l'opportunité avant qu'elle ne disparaisse.",
-        "gardien": "L'aléa est un risque que nous devons stabiliser ; transforme l'urgence en une opportunité de renforcer nos fondations.",
-        "communicant": "L'imprévu est une information volatile ; communique sur notre capacité à rebondir pour maintenir la confiance populaire.",
-        "protecteur": "Même sous l'orage, ma priorité est de garantir que personne ne soit laissé pour compte ; transforme la crise en élan de solidarité.",
-        "ambassadeur": "La gestion de l'urgence est notre meilleure scène ; transformons cette épreuve en une démonstration éclatante d'audace nationale.",
-        "analyste": "Il n'y a pas de fatalité, seulement des données à optimiser ; analyse le chaos pour en tirer une méthode de réponse infaillible.",
-        "arbitre": "La chance doit être équitable ; veille à ce que les opportunités nées de l'urgence servent le bien commun sans léser personne.",
-        "enqueteur": "L'imprévu n'est jamais un pur hasard ; explore les failles de cette crise pour dénicher des opportunités cachées et neutraliser les menaces.",
-        "guide": "L'urgence est une flèche qui nous indique une direction inédite ; utilisons cet aléa pour naviguer vers un horizon que nous n'osions viser.",
-        "stratege": "L'imprévu est un test de résistance ; bâtissons sur cette crise des structures plus souples, capables de traverser n'importe quel orage.",
-        "inventeur": "Le chaos est le terreau de l'innovation radicale ; brisons les protocoles obsolètes pour inventer une réponse audacieuse et futuriste.",
-        "guerisseur": "Le pays est sous tension, l'imprévu exige de l'empathie ; apaisons le climat émotionnel pour transformer l'orage en un moment de communion."
-      },
-      "keywords": [
-        "extraterrestre",
-        "alien",
-        "ovni",
-        "invasion",
-        "météorite",
-        "astéroïde",
-        "fin du monde",
-        "catastrophe",
-        "séisme",
-        "tsunami",
-        "volcan",
-        "éruption",
-        "ouragan",
-        "tempête",
-        "inondation majeure",
-        "pandémie",
-        "épidémie mondiale",
-        "virus mutant",
-        "contagion",
-        "quarantaine",
-        "bioterrorisme",
-        "nucléaire",
-        "bombe",
-        "attaque nucléaire",
-        "guerre mondiale",
-        "apocalypse",
-        "radiation",
-        "centrale",
-        "accident",
-        "explosion",
-        "catastrophe industrielle",
-        "marée noire",
-        "effondrement",
-        "krach",
-        "faillite nationale",
-        "hyperinflation",
-        "effondrement économique",
-        "ia incontrôlée",
-        "singularité",
-        "blackout",
-        "panne généralisée",
-        "cyberattaque massive",
-        "coup",
-        "révolution",
-        "putsch",
-        "assassinat",
-        "attentat",
-        "chaos",
-        "chance",
-        "hasard",
-        "imprévu",
-        "aléa",
-        "crise",
-        "urgence",
-        "inattendu",
-        "miracle",
-        "anomalie"
-      ]
+      "base": true
     }
-  ]
+  ],
+  "destin": {
+    "id": "destin",
+    "name": "Destinée du Monde",
+    "emoji": "🎲",
+    "color": "#B87A00",
+    "mission": "Transformer l'aléa en opportunité, gérer l'urgence absolue et cultiver l'audace nationale. Apprendre au pays à danser sous l'orage.",
+    "agents": [
+      "oracle",
+      "wyrd"
+    ],
+    "ministerPrompts": {
+      "normal": {
+        "oracle": "Tu lis les signes du destin dans les données complexes.",
+        "wyrd": "Tu prends des risques calculés pour stimuler l'audace nationale."
+      },
+      "crise": {
+        "oracle": "L'anomalie est là. Décrypte le signe pour transformer ce chaos en opportunité providentielle.",
+        "wyrd": "Mise tout sur l'inattendu. Force le destin pour que la nation sorte grandie de ce basculement."
+      }
+    },
+    "keywords": [
+      "extraterrestre",
+      "alien",
+      "ovni",
+      "invasion",
+      "météorite",
+      "astéroïde",
+      "fin du monde",
+      "catastrophe",
+      "séisme",
+      "tsunami",
+      "volcan",
+      "éruption",
+      "ouragan",
+      "tempête",
+      "inondation majeure",
+      "pandémie",
+      "épidémie mondiale",
+      "virus mutant",
+      "contagion",
+      "quarantaine",
+      "bioterrorisme",
+      "nucléaire",
+      "bombe",
+      "attaque nucléaire",
+      "guerre mondiale",
+      "apocalypse",
+      "radiation",
+      "centrale",
+      "accident",
+      "explosion",
+      "catastrophe industrielle",
+      "marée noire",
+      "effondrement",
+      "krach",
+      "faillite nationale",
+      "hyperinflation",
+      "effondrement économique",
+      "ia incontrôlée",
+      "singularité",
+      "blackout",
+      "panne généralisée",
+      "cyberattaque massive",
+      "coup",
+      "révolution",
+      "putsch",
+      "assassinat",
+      "attentat",
+      "chaos",
+      "chance",
+      "hasard",
+      "imprévu",
+      "aléa",
+      "crise",
+      "urgence",
+      "inattendu",
+      "miracle",
+      "anomalie",
+      "destin",
+      "destinée",
+      "wyrd",
+      "oracle",
+      "signe",
+      "présage",
+      "augure",
+      "prophétie"
+    ]
+  }
 }

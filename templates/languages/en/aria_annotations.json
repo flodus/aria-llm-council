@@ -1,49 +1,91 @@
 {
   "_meta": {
     "version": "1.0",
-    "description": "ARIA — Circle Annotations offline Board Game",
-    "structure": "ministeres[id][regime][]",
-    "langue": "en"
+    "description": "ARIA — Ministry circle annotations. External perspective of each ministry on the question being deliberated.",
+    "structure": "ministeres[id][regime][] — 5 phrases per regime, sober and institutional tone",
+    "fallbacks": {
+      "monarchie_absolue": "monarchie_constitutionnelle",
+      "regime_autoritaire": "junte_militaire",
+      "nationalisme_autoritaire": "junte_militaire",
+      "communisme": "republique_federale",
+      "democratie_directe": "democratie_liberale"
+    },
+    "usage": "getAnnotationMinistere(ministereId, regime) → random phrase from pool"
   },
   "ministeres": {
     "justice": {
       "democratie_liberale": [
+        "This decision engages our collective legal responsibility. Compliance with the law must be verified.",
+        "Any act of governance may be subject to legal challenge. The Ministry of Justice will remain vigilant.",
+        "The rule of law requires that this measure be framed by solid procedural guarantees.",
+        "Individual freedom is the limit that every public decision must respect. We remind the Council of this.",
+        "Case law will scrutinize this decision carefully. The legal framework must be scrupulously observed.",
         "The legality of the proposed measure must be verified before any implementation.",
         "Fundamental citizens' rights are the inviolable boundary of any reform.",
         "Procedural transparency is a democratic requirement, not an option.",
         "An independent legal assessment is required to guarantee the constitutionality of this decision."
       ],
       "republique_federale": [
+        "Jurisdictional competencies must be clarified before any territorial application.",
+        "Federal law and local laws must be reconciled. Justice will ensure coherence.",
+        "Legal harmonization between entities is a condition for the legitimacy of this decision.",
+        "Each region must be able to apply this framework while respecting its own legal prerogatives.",
+        "Coordination of regional judicial systems will be necessary for equitable implementation.",
         "Compliance with federal legislation in force must be established before execution.",
         "Jurisdictional boundaries between federal and regional levels must be clearly delimited.",
         "Federal jurisprudential precedents define the boundaries of available options.",
         "Legal harmonisation between federated entities is essential to avoid conflicts of law."
       ],
       "monarchie_constitutionnelle": [
+        "The legitimacy of this decision rests on its conformity with the fundamental laws of the Kingdom.",
+        "The Crown can act only within the framework that the Constitution has set for it. We remind the Council.",
+        "The Kingdom's legal tradition offers useful precedents to frame this situation.",
+        "The judicial institution ensures that the continuity of royal law is maintained.",
+        "Legal stability is a pillar of the trust that the people place in the institutions.",
         "The decision must align with the founding texts of the Kingdom.",
         "The opinion of the Crown's constitutional council conditions the validity of any substantial reform.",
         "National legal tradition is a safeguard against hasty reforms.",
         "Inherited rights cannot be challenged without a formal constitutional revision."
       ],
       "technocratie_ia": [
+        "The algorithmic compliance of decisions with the legal order must be audited continuously.",
+        "The automation of procedures cannot exclude human oversight of legal decisions.",
+        "Data used in this process must satisfy legal transparency requirements.",
+        "The right to contest automated decisions must be preserved without exception.",
+        "Any systemic optimization must remain within the bounds of the legal corpus in force.",
         "The algorithmic audit of the legal implications of this decision is currently processing.",
         "Established legal parameters strictly limit the options available to the system.",
         "Procedural optimisation is subject to the constraints of activated compliance protocols.",
         "No formal irregularity detected in the applicable legal framework for this deliberation."
       ],
       "junte_militaire": [
+        "Legal discipline is the foundation of the order this decision seeks to serve.",
+        "A state of exception does not suspend the law — it concentrates it. Justice will be its guardian.",
+        "Military and civilian procedures must remain distinct to preserve legitimacy.",
+        "The severity of the law must be proportionate to the real threat, not to fear.",
+        "Even in times of crisis, arbitrariness is the enemy of lasting order.",
         "The existing legal order is sufficient — any reform risks weakening the disciplinary framework.",
         "Military law supersedes any civil provision when national necessity requires it.",
         "The legal security of the command must be preserved against any attempt at destabilisation.",
         "Emergency procedures allow bypassing ordinary delays when the situation demands it."
       ],
       "oligarchie": [
+        "The clarity of the contractual and regulatory framework conditions the confidence of economic actors.",
+        "Legal predictability is an asset that this decision must not jeopardize.",
+        "The law protects investments. A decision that weakens it harms all actors.",
+        "Justice will ensure that the rules of the game are not changed in the middle of the match.",
+        "Legal stability is the condition for sustainable economic growth.",
         "The decision must not create a legal precedent unfavourable to established economic interests.",
         "Litigation risks for dominant actors must be assessed before any adoption.",
         "The regulatory framework must remain conducive to the freedom of action of influential entities.",
         "Overly restrictive jurisprudence would compromise the competitiveness of strategic sectors."
       ],
       "theocratie": [
+        "Human law cannot contradict divine law. The Ministry of Justice will be its guarantor.",
+        "Every decision must be examined for its conformity with the sacred principles.",
+        "Earthly justice is only legitimate if it reflects the higher justice.",
+        "The founding texts offer an immutable jurisprudence to guide our interpretation.",
+        "The community expects its laws to reflect its deepest values.",
         "Compliance of the measure with sacred texts is a prerequisite for any adoption.",
         "Positive law cannot break free from the moral prescriptions that underpin the regime's legitimacy.",
         "The authority of judicial institutions derives from their fidelity to the people's transcendent values.",
@@ -52,42 +94,77 @@
     },
     "economie": {
       "democratie_liberale": [
+        "The budgetary impact of this decision must be rigorously assessed before any implementation.",
+        "Economic sustainability is a condition for the democratic legitimacy of public policies.",
+        "The financing of this measure must not compromise the existing fiscal balances.",
+        "The redistributive effects of this decision deserve thorough analysis before the vote.",
+        "Economic efficiency and social justice must be reconciled in this measure.",
         "The budgetary impact must be quantified and submitted to parliamentary oversight before any decision.",
         "The fiscal sustainability of the measure conditions its long-term political acceptability.",
         "A transparent cost-benefit analysis is essential to inform the Council's choice.",
         "The balance between economic efficiency and social equity lies at the heart of this deliberation."
       ],
       "republique_federale": [
+        "The economic imbalances between regions that this decision could create must be anticipated.",
+        "Federal fiscal policy must remain consistent with this orientation. We will verify this.",
+        "Equalization transfers will need to be adjusted if this decision alters regional balances.",
+        "The impact on the relative competitiveness of the federated entities must be measured precisely.",
+        "Strengthened economic coordination between regions will be necessary to absorb this change.",
         "Budgetary implications must be shared equitably between the central state and the regions.",
         "The differentiated economic impact across territories requires a detailed regional analysis.",
         "Inter-regional financial transfers generated by this decision must be anticipated.",
         "Federal fiscal coordination is necessary to avoid territorial competitiveness distortions."
       ],
       "monarchie_constitutionnelle": [
+        "The Kingdom's finances must remain in service of its stability and greatness.",
+        "Any decision that engages national resources must respect the tradition of budgetary prudence.",
+        "The royal economy has been built on continuity. Let us not jeopardize it through improvisation.",
+        "The national treasury is a common heritage that this decision must preserve.",
+        "The markets' confidence in the Crown is a precious asset that must not be squandered.",
         "The inherited economic stability must not be compromised by premature reforms.",
         "The impact on the Royal Treasury's financial balances must be assessed with prudence.",
         "Preserving the traditional economic fabric is a priority in this deliberation.",
         "Budgetary reforms must align with the Crown-validated orientations."
       ],
       "technocratie_ia": [
+        "Economic models project effects that must be integrated into the final decision.",
+        "Optimization of economic flows requires rigorous analysis of available data.",
+        "Resource allocation algorithms must be recalibrated according to this new orientation.",
+        "Measurable economic efficiency must guide the calibration of this policy.",
+        "Economic performance indicators will be our compass for evaluating this decision.",
         "Econometric models project a budgetary impact within acceptable tolerance margins.",
         "Optimising the financial flows generated by this decision is technically feasible.",
         "Economic performance indicators are within nominal parameters in post-implementation simulation.",
         "Predictive analysis detects no systemic imbalance in the short or medium term."
       ],
       "junte_militaire": [
+        "The economy is a strategic resource. This decision must serve national power.",
+        "Economic mobilization requires difficult trade-offs. The national effort takes precedence.",
+        "Resources must be allocated according to strategic priorities, not market forces.",
+        "Economic dependency is a vulnerability. This decision must reduce it.",
+        "Economic self-sufficiency is a defensive objective as much as an economic one.",
         "Budgetary resources must primarily fuel the national defence effort.",
         "The economy serves security — all budgetary trade-offs must respect this hierarchy.",
         "Fiscal discipline is a national imperative, not a political option.",
         "Civil expenditure cannot exceed the margins allowed by the command's strategic requirements."
       ],
       "oligarchie": [
+        "The profitability of this measure for dominant economic actors must be preserved.",
+        "Investors will scrutinize this decision. The clarity of the signal sent is essential.",
+        "Markets reward predictability. This decision must take that into account.",
+        "The impact on capital flows must be anticipated to avoid flight effects.",
+        "Growth benefits everyone when the framework conditions are favorable to investment.",
         "The profitability of dominant economic sectors must be preserved in every Council decision.",
         "The impact on financial markets and competitive positions must be precisely anticipated.",
         "The interests of structuring economic actors cannot be sacrificed to secondary considerations.",
         "The stability of strategic investments is a condition of the regime's sustainable growth."
       ],
       "theocratie": [
+        "The economy must serve the community, not the other way around. This decision will be judged accordingly.",
+        "The equitable sharing of wealth is a moral imperative as much as an economic one.",
+        "Usury and speculation contrary to our principles cannot be encouraged by our policies.",
+        "Collective prosperity is the reward of an economy founded on just values.",
+        "Resources are a gift. Their management must reflect humility and responsibility.",
         "Economic prosperity must be oriented toward the common good, not individual accumulation.",
         "Usury and speculation are contrary to the principles that underpin our economic order's legitimacy.",
         "Equitable sharing of resources is a moral obligation, not merely a political option.",
@@ -96,42 +173,77 @@
     },
     "defense": {
       "democratie_liberale": [
+        "The security implications of this decision must be assessed without excessive alarmism.",
+        "Defending freedoms is also a national security mission. The two are linked.",
+        "Any security measure must remain proportionate and subject to democratic oversight.",
+        "International cooperation is our first line of defense. This decision must reinforce it.",
+        "Security cannot be a pretext for eroding the rights we seek to defend.",
         "The security implications of the decision must be assessed without compromising civil liberties.",
         "Any defence measure must operate within the framework of democratic oversight of armed forces.",
         "National security is a common good — its management requires transparency and public debate.",
         "The balance between security imperatives and respect for fundamental rights is non-negotiable."
       ],
       "republique_federale": [
+        "Coordination of security arrangements between entities is essential to effectiveness.",
+        "A threat to one region is a threat to the whole federation. Solidarity is required.",
+        "Federal and regional defensive competencies must be clearly articulated.",
+        "The federation's resilience depends on the cohesion of its security arrangements.",
+        "The collective defense effort must be distributed equitably among the entities.",
         "Coordination of defensive capacities between federated entities is a prerequisite for any strategic decision.",
         "Shared sovereignty implies a common defence doctrine validated by all members.",
         "Defensive jurisdictional boundaries between federal and regional levels must be respected.",
         "No unilateral decision can commit the entire federation without prior consultation."
       ],
       "monarchie_constitutionnelle": [
+        "The honor and security of the Kingdom are missions that the Crown does not delegate.",
+        "The Crown's historical alliances are our first rampart. Let us not weaken them.",
+        "The Kingdom's military strength is built on proven traditions that must be preserved.",
+        "The defense of the Kingdom is also the defense of its values and heritage.",
+        "Every military commitment engages the word of the Crown. Prudence is required.",
         "Defending the Kingdom is the Crown's primary obligation — every threat must be treated with gravity.",
         "National military tradition is a pillar of institutional identity that cannot be compromised.",
         "Internal stability conditions external defensive capacity — the two are inseparable.",
         "Decisions engaging the armed forces require the Crown's symbolic approval for legitimacy."
       ],
       "technocratie_ia": [
+        "Predictive analysis of security risks must guide the calibration of this decision.",
+        "Automated detection systems must be integrated into any response framework.",
+        "Cybersecurity is a defense dimension that this decision cannot ignore.",
+        "Optimization of defensive resources requires rigorous threat modeling.",
+        "Intelligence data must feed the algorithms for strategic decision-making.",
         "Security risk models are current — no critical-level threat has been detected.",
         "Optimisation of the defensive system is underway per validated strategic parameters.",
         "Surveillance and threat analysis systems are operating within nominal margins.",
         "Integration of intelligence data into decision models is fully operational."
       ],
       "junte_militaire": [
+        "State security is the condition for everything else. This decision must serve it first.",
+        "Weakness invites aggression. This decision must project strength and determination.",
+        "Military command must be involved in any decision with security implications.",
+        "The chain of command must remain intact regardless of the chosen orientation.",
+        "The operational readiness of the forces cannot be sacrificed to other priorities.",
         "National security is the absolute priority — every decision must reinforce, not weaken, the system.",
         "Military command must be consulted upstream of any decision with security implications.",
         "Internal order is the precondition for any foreign policy — discipline comes first.",
         "No concession on defensive capacities will be tolerated, whatever the civilian justification."
       ],
       "oligarchie": [
+        "The security of trade routes and strategic assets must be preserved.",
+        "Security instability costs more than prevention. This decision must account for that.",
+        "Defense contracts and strategic industries must be protected by this orientation.",
+        "Security is a public good whose failure directly affects economic confidence.",
+        "National economic interests abroad require adequate security protection.",
         "Security stability is a prerequisite for protecting economic interests and investments.",
         "Threats to the established order must be neutralised before they reach strategic sectors.",
         "Privatisation of certain security functions could optimise costs without loss of effectiveness.",
         "Defending strategic assets is a priority that conditions long-term national competitiveness."
       ],
       "theocratie": [
+        "The defense of the community is a sacred duty that transcends ordinary political calculations.",
+        "Force is only legitimate when it protects the values and members of the community.",
+        "Every military decision must be weighed against the moral principles that govern us.",
+        "Peace is preferable to war when it can be obtained without compromising our values.",
+        "Protecting the spiritual community is as important as protecting the territory.",
         "Defending the faith and moral order is also a mission of the nation's armed forces.",
         "Just war, as defined by the founding texts, is the only legitimate form of violence.",
         "Military force must protect the regime's spiritual values, not only its territory.",
@@ -140,42 +252,77 @@
     },
     "sante": {
       "democratie_liberale": [
+        "The health impact of this decision on the most vulnerable populations must be assessed.",
+        "Public health is a common good that this orientation must not jeopardize.",
+        "Universal access to care is a fundamental right that we recall at every deliberation.",
+        "Epidemiological data must be integrated into the impact analysis of this measure.",
+        "The well-being of citizens is the ultimate purpose of every public policy.",
         "The impact on public health must be assessed independently of economic considerations.",
         "Universal access to healthcare is a fundamental right this decision must not undermine.",
         "The most vulnerable populations will be affected first — their situation must guide deliberation.",
         "An epidemiological assessment is required before any decision with health consequences."
       ],
       "republique_federale": [
+        "The health disparities between regions that this decision could accentuate concern us.",
+        "Coordination of regional health systems is essential for a coherent response.",
+        "Equitable access to care across the federal territory is our guiding principle.",
+        "Medical resources must be pooled to absorb territorial imbalances.",
+        "Sanitary solidarity between entities is a condition for federal cohesion.",
         "Health disparities between regions must be reduced, not widened, by this decision.",
         "Coordination of federal health systems is essential for a coherent response.",
         "Equal access to healthcare, regardless of region, is a non-negotiable condition.",
         "Regional epidemiological data must feed a differentiated analysis of the health impact."
       ],
       "monarchie_constitutionnelle": [
+        "The sovereign watches over the health of his people. This decision will be judged accordingly.",
+        "The royal benevolence toward the most fragile is a principle we recall here.",
+        "The Kingdom's medical traditions offer a wisdom that reforms must respect.",
+        "The health of the people is the Kingdom's primary wealth. This decision must preserve it.",
+        "The royal medical institution carries a historical responsibility it intends to assume.",
         "The health of the population is the Crown's duty — stability of the medical system must be preserved.",
         "Health reforms must align with the continuity of inherited care institutions.",
         "National medical tradition is a heritage to protect against hasty reforms.",
         "Access to care for the least favoured is a moral responsibility of the royal institution."
       ],
       "technocratie_ia": [
+        "Health indicators must be integrated into the impact models for this decision.",
+        "Algorithmic preventive medicine offers anticipation tools that this measure must utilize.",
+        "Available public health data illuminate the likely consequences of this orientation.",
+        "Optimization of medical resources requires rigorous modeling of needs.",
+        "Epidemiological surveillance systems must be maintained in any context of change.",
         "Health indicators are within nominal margins per the latest available data analyses.",
         "Optimisation of medical resources is modelled — no systemic imbalance projected.",
         "Public health data feeds predictive models with no anomalies detected.",
         "The automated epidemiological surveillance system indicates no alerts above standard level."
       ],
       "junte_militaire": [
+        "The health of active forces is a strategic priority that this decision must not compromise.",
+        "The sanitary resilience of the population is a factor of national power.",
+        "Military medical resources must remain available for the national effort.",
+        "Management of the wounded and sick is a front-rank operational imperative.",
+        "Collective health is a component of the nation's capacity for resistance.",
         "The health of active forces is the priority — the operational capacity of the military corps must be preserved.",
         "National health resilience is a strategic issue of the first order for regime defence.",
         "Medical discipline and triage protocols must guide trade-offs in crisis situations.",
         "A healthy population is a strategic asset — its management falls under national security."
       ],
       "oligarchie": [
+        "The impact of this decision on workforce productivity must be evaluated.",
+        "Worker health is an economic asset that companies have an interest in preserving.",
+        "The health costs induced by this decision must be anticipated and managed.",
+        "The private medical sector must be able to operate within a predictable and profitable framework.",
+        "The productive health of the population conditions long-term economic growth.",
         "The impact on workforce productivity must be assessed before any decision with health effects.",
         "Health investments must be directed toward economically strategic sectors.",
         "Partial privatisation of healthcare provision could generate measurable efficiency gains.",
         "The health of skilled workers is an economic asset whose preservation must be prioritised."
       ],
       "theocratie": [
+        "The body is the temple of the soul. Any decision touching health is a moral question.",
+        "Care must be administered in respect of the dignity and values of the community.",
+        "Medicine and faith do not oppose each other — they complement each other. This decision must recognize that.",
+        "The suffering of community members is a collective responsibility.",
+        "Caring for the sick is an act of faith as much as a medical act.",
         "The body is the temple of the soul — every health policy must respect this founding principle.",
         "Medicine must be guided by ethical values compatible with the regime's sacred texts.",
         "Caring for the weakest is a moral obligation before it is a public policy.",
@@ -184,42 +331,77 @@
     },
     "education": {
       "democratie_liberale": [
+        "The impact of this decision on the formation of tomorrow's citizens deserves particular attention.",
+        "Education is the foundation of the critical judgment that democracy requires of its citizens.",
+        "Equal educational opportunity must remain a priority in the analysis of this measure.",
+        "Young generations will be the first affected by the consequences of this orientation.",
+        "An educated and critical society is the best guarantee against abuses of power.",
         "The impact on future generations must be at the heart of this deliberation.",
         "The right to quality education is the foundation of a living, informed democracy.",
         "Every decision must be evaluated against its effect on equality of educational opportunity.",
         "The transmission of critical knowledge is a precondition for active civic participation."
       ],
       "republique_federale": [
+        "Regional pedagogical specificities must be respected in any national policy.",
+        "Education is an area where federal diversity is a strength, not an obstacle.",
+        "Educational mobility between regions must be facilitated, not hindered by this decision.",
+        "Regional cultural identities are transmitted through education. Let us preserve them.",
+        "A common skills baseline must coexist with the pedagogical diversity of the entities.",
         "Curricula must reflect the diversity of regional identities without fragmenting national cohesion.",
         "Harmonising educational standards between federated entities is a priority for territorial equity.",
         "Disparities in school resources between rich and poor regions must be reduced.",
         "A common federal civic education is the cement of unity in diversity."
       ],
       "monarchie_constitutionnelle": [
+        "Education transmits the values and history that make the Kingdom great.",
+        "Training future servants of the State and the Crown is a national mission.",
+        "Respect for authority and traditions is learned. Education is its primary vehicle.",
+        "The Kingdom's institutions of excellence are a heritage that this decision must preserve.",
+        "Royal education has always formed minds in service of the nation and the Crown.",
         "Education must transmit the Kingdom's founding values and nurture the sense of national belonging.",
         "Pedagogical continuity is a condition for the intergenerational cohesion the Crown protects.",
         "School reforms must preserve the link between national culture and the formation of young citizens.",
         "History and traditions must occupy a central place in educational programmes."
       ],
       "technocratie_ia": [
+        "Skills needed for tomorrow's economy must guide pedagogical orientations.",
+        "The adaptability of teaching programs to labor market developments is a measurable necessity.",
+        "Educational performance data must feed policy decisions on pedagogy.",
+        "Individualization of pathways through algorithmic analysis optimizes learning outcomes.",
+        "Adaptive educational systems offer a more efficient response to real needs.",
         "School performance indicators are within the margins projected by optimisation models.",
         "Integration of adaptive learning tools is underway per established protocols.",
         "School assessment data feeds predictive models with no significant anomaly.",
         "Optimisation of educational pathways by artificial intelligence is deployed per validated parameters."
       ],
       "junte_militaire": [
+        "Education forges the national character and social cohesion that defense requires.",
+        "Civic and patriotic formation is a strategic investment for stability.",
+        "Disciplines that reinforce national resilience must be prioritized in curricula.",
+        "A people educated in their duties to the nation is a stronger people.",
+        "Education in discipline and collective service is a pillar of our system.",
         "Education must forge disciplined, patriotic citizens ready to defend the nation.",
         "School programmes must transmit the values of order, rigour, and collective sacrifice.",
         "Civic and military training for youth is a strategic priority for the regime's continuity.",
         "Any subversive content contrary to national unity must be removed from programmes."
       ],
       "oligarchie": [
+        "The educational system must produce the skills the economy needs to remain competitive.",
+        "The training-employment match is an economic imperative that this decision must serve.",
+        "Excellence tracks form tomorrow's economic leaders. Let us preserve them.",
+        "Investment in human capital is the most profitable investment over the long term.",
+        "A high-performing educational system attracts talent and foreign investment.",
         "Education must primarily train the skills the dominant economic sectors require.",
         "Return on investment of educational pathways must guide public funding trade-offs.",
         "Elite institutions must be preserved and strengthened as nurseries for future economic leaders.",
         "Education is a strategic investment — its funding must be directed toward profitable pathways."
       ],
       "theocratie": [
+        "Education transmits the faith, values, and wisdom of our ancestors. That is its primary mission.",
+        "Forming upright souls is more important than forming high-performing minds.",
+        "Pedagogical content must conform to the moral principles of the community.",
+        "Education is the terrain where the transmission of our collective identity is at stake.",
+        "Learning to live according to our values is the highest form of education.",
         "Education must form souls before forming minds — the moral dimension comes first.",
         "No content contrary to the regime's founding values may be taught to younger generations.",
         "Religious formation is the foundation upon which all learning must rest.",
@@ -228,42 +410,77 @@
     },
     "ecologie": {
       "democratie_liberale": [
+        "The environmental impact of this decision must be assessed with the rigor the subject demands.",
+        "Future generations cannot vote today. We must represent them here.",
+        "The ecological transition is a collective responsibility that this decision must serve.",
+        "Available environmental data cannot be ignored in this deliberation.",
+        "The ecological footprint of this measure is a dimension of its real cost to society.",
         "The environmental sustainability of this decision must be assessed over the long term.",
         "Future generations have the right to a preserved environment — this deliberation engages them.",
         "The precautionary principle must apply in the face of uncertainty about ecological impacts.",
         "The transition to a sustainable model is a collective responsibility, not an optional choice."
       ],
       "republique_federale": [
+        "Natural resources cross regional boundaries. Coordination is required.",
+        "Each entity has the right to manage its environment, but the effects go beyond its borders.",
+        "Federal ecological policy must create a coherent framework that regions can adapt.",
+        "Territories most exposed to climate risks deserve increased federal solidarity.",
+        "The diversity of regional ecosystems is a national wealth to be collectively preserved.",
         "Cross-border environmental impacts between regions must be taken into account in this decision.",
         "A coherent ecological policy at federal level is essential to prevent free-riding.",
         "Natural resources shared between regions require common, transparent governance.",
         "No federated entity may evade its environmental obligations to the detriment of others."
       ],
       "monarchie_constitutionnelle": [
+        "The Kingdom has administered its lands for centuries. This wisdom must guide our decisions.",
+        "The Kingdom's natural heritage is a legacy that we have a duty to transmit intact.",
+        "The sustainable management of natural resources is a royal tradition that we perpetuate.",
+        "The protection of the Kingdom's forests and waters is a responsibility of the Crown.",
+        "The balance between development and preservation is at the heart of the royal vision.",
         "Preserving the national natural heritage is a historic mission of the royal institution.",
         "The balance between development and conservation is a tradition the Crown has always maintained.",
         "Inherited landscapes and ecosystems are a common good this deliberation must protect.",
         "Responsibility toward future generations is embedded in the continuity of monarchical tradition."
       ],
       "technocratie_ia": [
+        "Climate models project consequences that this decision must integrate.",
+        "Optimization of the national environmental footprint requires rigorous data analysis.",
+        "Ecological monitoring systems provide indicators that this measure must respect.",
+        "The optimal energy transition is calculable. Data must guide our choices.",
+        "Environmental efficiency is measurable and must become a systematic decision criterion.",
         "Environmental sensors indicate parameters within tolerable margins per current models.",
         "Energy optimisation of the system is underway — carbon impact projections are being calculated.",
         "Ecological data feeds sustainability models with no critical alert detected.",
         "Algorithmic analysis of the decision's environmental externalities is available on request."
       ],
       "junte_militaire": [
+        "Natural resources are strategic assets that this decision must not squander.",
+        "Dependence on foreign resources is a vulnerability. Ecological autonomy is defensive.",
+        "Food and water security is a national defense imperative.",
+        "Ecological disasters destabilize nations. Prevention is a security mission.",
+        "Control of the territory's vital resources is an absolute sovereign priority.",
         "Natural resources are a national strategic asset to protect against any foreign exploitation.",
         "Sovereignty over territorial resources is a non-negotiable defensive red line.",
         "The environment must not become a pretext for weakening national productive and military capacity.",
         "Management of natural resources falls under national security — it must be controlled accordingly."
       ],
       "oligarchie": [
+        "Poorly managed environmental risks translate into economic and reputational risks.",
+        "Green markets offer opportunities that this decision can help seize.",
+        "Environmental compliance has become a criterion of attractiveness for investors.",
+        "A well-managed ecological transition creates durable competitive advantages.",
+        "The costs of environmental degradation exceed the costs of prevention.",
         "Environmental constraints must be calibrated so as not to impede economic competitiveness.",
         "Emissions trading markets are the most efficient tool for an ecological transition without disruption.",
         "Green investments must be directed toward sectors offering the best return on capital.",
         "Environmental regulation cannot exceed what dominant economic actors can absorb."
       ],
       "theocratie": [
+        "Creation has been entrusted to us. Caring for it is a religious duty as much as an ecological one.",
+        "Respect for nature is a form of gratitude toward the One who gave it to us.",
+        "Sobriety in the use of resources is a virtue that our values impose on us.",
+        "The protection of creation is a commandment that our decisions must honor.",
+        "Harmony with nature reflects harmony with the principles that order the world.",
         "Creation is a sacred gift — degrading it is a moral fault before it is a political problem.",
         "Sobriety and respect for nature are spiritual founding values of our relationship to the world.",
         "Irresponsible exploitation of natural resources betrays the stewardship obligation we have received.",
@@ -272,42 +489,77 @@
     },
     "industrie": {
       "democratie_liberale": [
+        "Industrial competitiveness and social protection are not incompatible objectives.",
+        "Technological innovation must benefit all citizens, not just its promoters.",
+        "The impact of this decision on industrial employment must be carefully assessed.",
+        "The industrial transition must be accompanied so that no territory is left behind.",
+        "A diversified industrial fabric is a guarantee of democratic resilience.",
         "Industrial competitiveness must be preserved without sacrificing workers' social rights.",
         "Innovation is the engine of sovereign industry — it deserves a favourable regulatory framework.",
         "National reindustrialisation is a strategic issue that goes beyond market logic alone.",
         "The impact of this decision on industrial employment must be assessed transparently."
       ],
       "republique_federale": [
+        "Regional industrial specializations are a strength that this decision must leverage.",
+        "Coordination of industrial policies between entities avoids duplication and rivalries.",
+        "Industrial value chains cross regional boundaries. Coherence is required.",
+        "Industrial balance between regions is a factor of federal cohesion.",
+        "Balanced industrial development between entities strengthens national solidarity.",
         "Regional industrial sectors must be coordinated to avoid duplication and rivalries.",
         "The complementarity of industrial specialisations between regions is a federal asset to preserve.",
         "Local industrial policies cannot contradict national strategy without federal arbitration.",
         "The industrial development of one region must not come at the expense of other federated entities."
       ],
       "monarchie_constitutionnelle": [
+        "National industry is a pillar of the Kingdom's power and prestige.",
+        "Ancestral industrial know-how is a heritage that this decision must protect.",
+        "The Crown has always supported industries that serve national greatness.",
+        "Industrial innovation must be inscribed within the continuity of the Kingdom's technical traditions.",
+        "The Kingdom's industrial prosperity is an expression of the wisdom of its governance.",
         "Historic national industries are symbols of identity as much as economic tools.",
         "Industrial modernisation must align with the continuity of recognised national know-how.",
         "The Crown guarantees the stability of the industrial fabric as a condition of national social cohesion.",
         "Craftspeople and traditional industries deserve particular protection in this deliberation."
       ],
       "technocratie_ia": [
+        "Optimization of production chains requires systematic integration of performance data.",
+        "Industrial automation must be driven by rigorous profitability metrics.",
+        "Data-based industrial decisions produce superior results.",
+        "Predictive modeling of industrial markets must guide strategic investments.",
+        "Industrial efficiency is measurable. It must become the primary criterion of our policies.",
         "Automation of production chains is underway per validated optimisation schedules.",
         "Industrial performance indicators are within the margins projected by planning models.",
         "Integration of industrial systems into the centralised management platform is operational.",
         "Post-decision industrial yield projections are favourable per available analyses."
       ],
       "junte_militaire": [
+        "National industry is the material base of military power. It must be protected.",
+        "Industrial autonomy is a strategic imperative that this decision must serve.",
+        "Defense industries and civilian industries must be coordinated in service of the nation.",
+        "Industrial dependence on foreign countries is an unacceptable strategic vulnerability.",
+        "Industrial mobilization in times of crisis requires anticipatory and rigorous planning.",
         "National industry is a pillar of sovereignty — it must be oriented toward strategic needs.",
         "Armament and military equipment production takes precedence over any other industrial direction.",
         "State control of critical industrial sectors is a national security necessity.",
         "Dependence on foreign suppliers in strategic sectors is unacceptable."
       ],
       "oligarchie": [
+        "Industrial profitability is the signal markets send about the optimal allocation of resources.",
+        "The competitiveness of our national industries conditions our position in the global economy.",
+        "Industrial investments follow regulatory predictability. This decision must guarantee it.",
+        "Private industrial innovation produces more efficiency than public intervention.",
+        "Protecting our industrial champions is an investment in national economic power.",
         "The profitability of dominant industrial sectors must guide industrial policy trade-offs.",
         "Public subsidies must be directed toward sectors with the highest potential return on capital.",
         "Flexibility of the industrial labour market is a condition of national competitiveness.",
         "Industrial concentrations must be protected from regulations that fragment markets."
       ],
       "theocratie": [
+        "Work is a vocation. Industry must serve human flourishing, not alienate it.",
+        "Industrial practices must respect the dignity of workers and the values of the community.",
+        "Technical progress is only legitimate if it serves ends consistent with our principles.",
+        "Industry in service of the community is blessed. Industry in service of profit alone is vain.",
+        "Moderation in production and consumption is a virtue that our values teach us.",
         "Industry must serve the common good and the regime's values, not the enrichment of a minority.",
         "Manual and artisanal work is a form of human dignity that industrialisation must not erase.",
         "Industrial activities contrary to the regime's founding moral values must be prohibited.",

@@ -199,6 +199,35 @@ function MinistereSyntheseBlock({ synthese, ministry }) {
   );
 }
 
+/** Voix de la Destinée (Oracle ou Wyrd) */
+function DestinVoiceBlock({ agent }) {
+  if (!agent) return null;
+  const color = agent.color || '#B87A00';
+  return (
+    <div style={bubble(color, { marginBottom: '0.6rem' })}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+        <span style={{ fontSize: '0.9rem' }}>{agent.emoji}</span>
+        <span style={{ fontFamily: FONT.cinzel, fontSize: '0.52rem', color, letterSpacing: '0.10em' }}>
+          {agent.name}
+        </span>
+        {agent.sign && (
+          <span style={{
+            fontFamily: FONT.mono, fontSize: '0.38rem',
+            padding: '0.1rem 0.35rem', borderRadius: '2px',
+            background: `${color}18`, border: `1px solid ${color}28`,
+            color: `${color}BB`, letterSpacing: '0.10em',
+          }}>
+            {agent.sign}
+          </span>
+        )}
+      </div>
+      <p style={{ fontFamily: FONT.mono, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: 0, fontStyle: 'italic' }}>
+        {agent.position}
+      </p>
+    </div>
+  );
+}
+
 /** Annotation cercle (1 ligne par ministère) */
 function CercleAnnotation({ annotation, index }) {
   return (
@@ -333,7 +362,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
   const [openCtx, setOpenCtx] = useState(false);
 
   // Accordéon contexte — visible même en IDLE
-  const ctxText = session?.countryContext || countryContext || '';
+  const ctxText = session?.countryDescription || countryContext || '';
   const ctxNom  = session?.countryNom     || countryNom     || '';
   const renderCtxAccordion = () => ctxText ? (
     <div className={`aria-accordion${openCtx ? ' open' : ''}`} style={{ marginBottom: '0.8rem' }}>
@@ -367,6 +396,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
     PEUPLE_IN:   !!session?.question,
     MINISTERE:   !!session?.ministere,
     CERCLE:      !!session?.cercle,
+    DESTIN:      !!session?.destin,
     PRESIDENCE:  !!session?.presidence,
     PEUPLE_VOTE: !!session?.voteReady && !session?.voteResult,
     RESULT:      !!session?.voteResult,
@@ -405,7 +435,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
     );
   }
 
-  const { question, ministere, cercle, presidence, voteReady, voteResult } = session;
+  const { question, ministere, cercle, destin, presidence, voteReady, voteResult } = session;
   const convergence = presidence?.synthese?.convergence;
 
   return (
@@ -498,6 +528,23 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             {cercle.map((a, i) => (
               <CercleAnnotation key={a.ministryId} annotation={a} index={i} />
             ))}
+          </PhaseBlock>
+        )}
+
+        {/* ── PHASE 3b : DESTINÉE DU MONDE (optionnelle) ───────────────────── */}
+        {show.DESTIN && destin && (
+          <PhaseBlock
+            phase="DESTIN"
+            label={loadLang()==='en' ? 'DESTINY OF THE WORLD' : 'DESTINÉE DU MONDE'}
+            icon="👁️"
+            accentColor="#B87A00"
+            style={{ animation: 'fadeSlideIn 0.5s ease both' }}
+          >
+            <div style={sectionTitle('#B87A00')}>
+              {loadLang()==='en' ? 'ORACLE & WYRD — EXISTENTIAL VOICES' : 'ORACLE & WYRD — VOIX DE L\'EXISTENCE'}
+            </div>
+            <DestinVoiceBlock agent={destin.oracle} />
+            <DestinVoiceBlock agent={destin.wyrd} />
           </PhaseBlock>
         )}
 

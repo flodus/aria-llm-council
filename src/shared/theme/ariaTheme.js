@@ -10,6 +10,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 import { COLORS } from './colors';
 import { getTerrainLabel, getRegimeLabel, TERRAIN_LABELS, REGIME_LABELS } from '../data/worldLabels';
+import SIMU_RAW from '../../../templates/languages/fr/simulation.json';
 
 export const FONT = {
     cinzel: "'Cinzel', serif",
@@ -89,4 +90,8 @@ export const getResourceDefs = (lang = 'fr') =>
         label: typeof r.label === 'object' ? (r.label[lang] ?? r.label.fr) : r.label,
     }));
 
-export const MARITIME = new Set(['coastal', 'island', 'archipelago']);
+export const MARITIME = new Set(
+    Object.entries(SIMU_RAW.terrains || {})
+        .filter(([, t]) => t.maritime)
+        .map(([k]) => k)
+);

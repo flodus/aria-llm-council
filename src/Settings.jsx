@@ -7,8 +7,11 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { getRegimeLabel, getTerrainLabel } from './shared/data/worldLabels';
+import AgentGrid from './shared/components/AgentGrid';
+import { getDestin } from './features/council/services/agentsManager';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
+import { getIaStatus } from './shared/services/iaStatusStore';
 import BASE_AGENTS    from '../templates/languages/fr/governance.json';
 import BASE_AGENTS_EN from '../templates/languages/en/governance.json';
 import {
@@ -57,10 +60,6 @@ function getSections(isEn) {
   ];
 }
 
-const MINISTER_KEYS = [
-  'initiateur','gardien','communicant','protecteur','ambassadeur','analyste',
-  'arbitre','enqueteur','guide','stratege','inventeur','guerisseur',
-];
 // ── Getters dynamiques — labels localisés selon aria_lang ─────────────────
 function getMinisterLabels() {
   const ag = getAgents();
@@ -84,22 +83,6 @@ function getMinistryEmojis() {
   const ag = getAgents();
   const mins = Array.isArray(ag.ministries) ? ag.ministries : Object.values(ag.ministries || {});
   return Object.fromEntries(mins.map(m => [m.id, m.emoji || '🏛️']));
-}
-const MINISTRY_KEYS = ['justice','economie','defense','sante','education','ecologie','chance'];
-const TOOLTIP_MINISTERES = {
-  justice:   'Ministère de la Justice et de la Vérité',
-  economie:  "Ministère de l'Économie et des Ressources",
-  defense:   'Ministère de la Défense et de la Souveraineté',
-  sante:     'Ministère de la Santé et de la Protection Sociale',
-  education: "Ministère de l'Éducation et de l'Élévation",
-  ecologie:  'Ministère de la Transition Écologique',
-  chance:    "Ministère de la Chance et de l'Imprévu",
-};
-
-// REGIME_LABELS → getRegimeLabel(key, lang) depuis ariaTheme
-const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocratie'];
-function getRegimeLabelMap(lang) {
-  return Object.fromEntries(REGIME_LABEL_KEYS.map(k => [k, getRegimeLabel(k, lang)]));
 }
 
 const DEFAULT_PROMPTS = {
@@ -294,6 +277,13 @@ function SectionSysteme({ onHardReset }) {
       return { claude: st('claude'), gemini: st('gemini'), grok: st('grok'), openai: st('openai') };
     } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
   });
+
+  const [iaStatus, setIaStatusLocal] = useState(() => getIaStatus());
+  useEffect(() => {
+    const handler = (e) => setIaStatusLocal(e.detail.status);
+    window.addEventListener('aria:ia-status', handler);
+    return () => window.removeEventListener('aria:ia-status', handler);
+  }, []);
 
   const update = (path, val) => {
     setOpts(prev => {
@@ -584,6 +574,8 @@ function SectionSysteme({ onHardReset }) {
                             onChange={v => updateSettingsKey(prov.id, entry._id, 'key', v)}
                             placeholder={prov.placeholder} />
                           <button className="settings-btn-test"
+                            disabled={iaStatus === 'offline'}
+                            title={iaStatus === 'offline' ? (isEn ? 'No network — test unavailable' : 'Pas de réseau — test indisponible') : undefined}
                             onClick={() => testSettingsKey(prov.id, entry._id, entry.key, entry.model)}>
                             {isEn?'Test':'Tester'}
                           </button>
@@ -1103,9 +1095,31 @@ function SectionConseil() {
   const [govOpts, setGovOpts] = useState(() => getOptions());
   const [selectedMin, setSelectedMin] = useState('initiateur');
   const [selectedMin2, setSelectedMin2] = useState('justice');
-  const [tab, setTab]         = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres'
+  const [tab, setTab]         = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres' | 'destinee'
   const [presOpenAcc, setPresOpenAcc] = useState(null);
+  const [activeDestinSettings, setActiveDestinSettings] = useState(null); // null = tous actifs
   const [saved, setSaved]  = useState(false);
+
+  // Gouvernance → Destinée : intercepte les changements de destiny_mode sans passer par useEffect
+  const handleSetGovOpts = (newOpts) => {
+    const prevMode = govOpts.defaultGovernance?.destiny_mode;
+    const nextMode = newOpts.defaultGovernance?.destiny_mode;
+    if (prevMode !== nextMode) {
+      setActiveDestinSettings(nextMode ? null : []);
+    }
+    setGovOpts(newOpts);
+    setSaved(false);
+  };
+
+  // Destinée → Gouvernance : met à jour destiny_mode selon l'état des agents
+  const syncGovDestiny = (activeAgents) => {
+    const hasActive = activeAgents === null || (Array.isArray(activeAgents) && activeAgents.length > 0);
+    setGovOpts(prev => ({
+      ...prev,
+      defaultGovernance: { ...(prev.defaultGovernance || {}), destiny_mode: hasActive }
+    }));
+    setSaved(false);
+  };
 
   const updateGovOpts = (path, val) => {
     setGovOpts(prev => {
@@ -1192,6 +1206,7 @@ function SectionConseil() {
           { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence' },
           { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères' },
           { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'  },
+          { id: 'destinee',    label: isEn ? 'Destiny'    : 'Destinée'   },
         ].map(t => (
           <button key={t.id}
             className={`settings-tab${tab === t.id ? ' active' : ''}`}
@@ -1203,33 +1218,15 @@ function SectionConseil() {
       {tab === 'ministres' && (
         <div>
           {/* Grille icônes ministres */}
-          <div style={{marginBottom:'1.2rem'}}>
-            <div style={{fontSize:'0.75rem',color:'rgba(200,164,74,0.7)',letterSpacing:'0.10em',marginBottom:'0.6rem',textTransform:'uppercase'}}>
-              {isEn ? 'Select a minister' : 'Sélectionner un ministre'}
-            </div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
-              {MINISTER_KEYS.map(k => {
-                const isSelected = selectedMin === k;
-                return (
-                  <button key={k}
-                    title={ministerLabels[k] || k}
-                    onClick={() => setSelectedMin(k)}
-                    style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem',
-                      padding:'0.6rem 0.7rem',borderRadius:'6px',cursor:'pointer',minWidth:'3.5rem',
-                      background: isSelected ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${isSelected ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                      transition:'all 0.12s'}}>
-                    <span style={{fontSize:'1.2rem',lineHeight:1}}>{ministerEmojis[k]}</span>
-                    <span style={{fontSize:'0.52rem',color:isSelected?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
-                      letterSpacing:'0.03em',textAlign:'center',maxWidth:'4rem',
-                      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3}}>
-                      {(ministerLabels[k]?.split(' (')[0] || k).replace(/^(Le |La |L')/, '')}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <AgentGrid
+            agents={Object.entries(getAgents().ministers || {}).filter(([id]) => !new Set(getDestin()?.agents || []).has(id)).map(([id, m]) => ({ id, name: (ministerLabels[id]?.split(' (')[0] || id).replace(/^(Le |La |L')/, ''), emoji: m.emoji, color: m.color }))}
+            selectedId={selectedMin}
+            activeIds={null}
+            onAgentClick={setSelectedMin}
+            onResetAll={null}
+            countLabel={isEn ? 'SELECT A MINISTER' : 'SÉLECTIONNER UN MINISTRE'}
+            lang={lang}
+          />
 
           <Field label="Essence" hint={trC.essence_hint}>
             <TextArea value={getVal(`ministers.${selectedMin}.essence`, minFallback('essence'))}
@@ -1254,35 +1251,15 @@ function SectionConseil() {
       {tab === 'ministeres' && (
         <div>
           {/* Grille tuiles ministères */}
-          <div style={{marginBottom:'1.2rem'}}>
-            <div style={{fontSize:'0.75rem',color:'rgba(200,164,74,0.7)',letterSpacing:'0.10em',marginBottom:'0.6rem',textTransform:'uppercase'}}>
-              {isEn ? 'Select a ministry' : 'Sélectionner un ministère'}
-            </div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
-              {MINISTRY_KEYS.map(k => {
-                const isSelected = selectedMin2 === k;
-                const fullLabel = ministryLabels[k] || k;
-                const name = fullLabel.split(' ').slice(1).join(' ') || k;
-                return (
-                  <button key={k}
-                    title={TOOLTIP_MINISTERES[k] || fullLabel}
-                    onClick={() => setSelectedMin2(k)}
-                    style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem',
-                      padding:'0.6rem 0.7rem',borderRadius:'6px',cursor:'pointer',minWidth:'3.5rem',
-                      background: isSelected ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${isSelected ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                      transition:'all 0.12s'}}>
-                    <span style={{fontSize:'1.2rem',lineHeight:1}}>{ministryEmojis[k]}</span>
-                    <span style={{fontSize:'0.52rem',color:isSelected?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
-                      letterSpacing:'0.03em',textAlign:'center',maxWidth:'4rem',
-                      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3}}>
-                      {name}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <AgentGrid
+            agents={getAgents().ministries.map(m => ({ id: m.id, name: (ministryLabels[m.id] || m.id).split(' ').slice(1).join(' ') || m.id, emoji: m.emoji, color: m.color }))}
+            selectedId={selectedMin2}
+            activeIds={null}
+            onAgentClick={setSelectedMin2}
+            onResetAll={null}
+            countLabel={isEn ? 'SELECT A MINISTRY' : 'SÉLECTIONNER UN MINISTÈRE'}
+            lang={lang}
+          />
 
           <Field label={trC.missionLabel} hint={trC.missionHint}>
             <TextArea value={getVal(`ministries.${selectedMin2}.mission`, ministryFallback('mission'))}
@@ -1304,66 +1281,128 @@ function SectionConseil() {
       )}
 
       {tab === 'presidence' && (() => {
-        const [openP, setOpenP] = [presOpenAcc, setPresOpenAcc];
-        const toggleP = (key) => setOpenP(p => p === key ? null : key);
-        const HDR_P = (key, agent) => {
-          const symbol = agent?.symbol || '';
-          const name   = agent?.name   || key;
-          const sub    = agent?.subtitle || '';
-          return (
-            <button className="aria-accordion__hdr" onClick={() => toggleP(key)}>
-              <span style={{ fontSize:'1.1rem', lineHeight:1, opacity:0.80 }}>{symbol}</span>
-              <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', letterSpacing:'0.12em',
-                color: openP===key ? 'rgba(200,164,74,0.92)' : 'rgba(200,215,240,0.70)', flex:1 }}>{name}</span>
-              {sub && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                color:'rgba(140,160,200,0.35)', letterSpacing:'0.08em' }}>{sub}</span>}
-              <span className="aria-accordion__arrow">{openP===key?'▾':'▸'}</span>
-            </button>
-          );
-        };
+        const toggleP = (key) => setPresOpenAcc(p => p === key ? null : key);
+        const openP = presOpenAcc;
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+            {['phare', 'boussole'].map(key => {
+              const agent = liveAgents.presidency?.[key];
+              if (!agent) return null;
+              const clr = key === 'phare' ? 'rgba(200,164,74,0.88)' : 'rgba(140,100,220,0.85)';
+              const bg  = key === 'phare' ? 'rgba(200,164,74,0.10)' : 'rgba(140,100,220,0.12)';
+              const bd  = key === 'phare' ? 'rgba(200,164,74,0.45)' : 'rgba(140,100,220,0.45)';
+              const isOpen = openP === key;
+              return (
+                <div key={key}>
+                  <button
+                    onClick={() => toggleP(key)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '0.55rem',
+                      padding: '0.52rem 0.68rem',
+                      background: isOpen ? bg : 'rgba(20,28,45,0.55)',
+                      border: `1px solid ${isOpen ? bd : 'rgba(140,160,200,0.10)'}`,
+                      borderRadius: isOpen ? '2px 2px 0 0' : '2px',
+                      cursor: 'pointer', width: '100%', textAlign: 'left',
+                      transition: 'all 0.15s', fontFamily: 'inherit',
+                    }}
+                  >
+                    <span style={{ fontSize: '1.15rem', minWidth: '1.4rem', color: clr }}>{agent.symbol}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.56rem', letterSpacing: '0.10em', color: isOpen ? clr : 'rgba(200,215,240,0.50)' }}>{agent.name}</div>
+                      {agent.subtitle && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.44rem', color: 'rgba(140,160,200,0.48)', marginTop: '0.08rem' }}>{agent.subtitle}</div>}
+                    </div>
+                    <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.48rem', color: isOpen ? clr : 'rgba(140,160,200,0.22)' }}>{isOpen ? '▾' : '▸'}</span>
+                  </button>
+                  {isOpen && (
+                    <div style={{ border: `1px solid ${bd}`, borderTop: 'none', borderRadius: '0 0 2px 2px', padding: '0.6rem 0.68rem', background: bg, display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                      <Field label={isEn ? 'Role' : 'Rôle'} hint={agent.subtitle || ''}>
+                        <TextArea value={getVal(`presidency.${key}.role`, agent.role_long || PRESIDENCY?.[key]?.role_long || '')}
+                          onChange={v => updateAgent(`presidency.${key}.role`, v)}
+                        />
+                      </Field>
+                      <Field label="Essence">
+                        <TextArea value={getVal(`presidency.${key}.essence`, agent.essence || PRESIDENCY?.[key]?.essence || '')}
+                          onChange={v => updateAgent(`presidency.${key}.essence`, v)}
+                        />
+                      </Field>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
+
+      {tab === 'destinee' && (() => {
+        const destin = getDestin();
+        const destingIds = destin?.agents || [];
+        const destAgents = destingIds
+          .map(id => ({ id, ...(liveMinsters[id] || {}) }))
+          .filter(a => a.name);
         return (
           <div>
-            <div className={`aria-accordion${openP==='phare' ? ' open' : ''}`}>
-              {HDR_P('phare', liveAgents.presidency?.phare)}
-              {openP==='phare' && (
-                <div className="aria-accordion__body">
-                  <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.phare?.subtitle || ''}>
-                    <TextArea value={getVal('presidency.phare.role', liveAgents.presidency?.phare?.role_long || PRESIDENCY?.phare?.role_long || '')}
-                      onChange={v => updateAgent('presidency.phare.role', v)}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', padding: '0.4rem 0.55rem', background: 'rgba(140,100,220,0.06)', border: '1px solid rgba(140,100,220,0.15)', borderRadius: '2px' }}>
+              <span style={{ fontSize: '1.0rem' }}>👁️</span>
+              <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: 0, lineHeight: 1.5 }}>
+                {isEn
+                  ? 'Oracle and Wyrd — existential crisis agents. Edit their essence and communication style.'
+                  : 'Oracle et Trame — agents des crises existentielles. Modifiez leur essence et style de communication.'}
+              </p>
+            </div>
+            <AgentGrid
+              agents={destAgents}
+              selectedId={selectedMin}
+              activeIds={activeDestinSettings}
+              onAgentClick={id => {
+                if (selectedMin !== id) {
+                  setSelectedMin(id);
+                } else {
+                  // 2e clic = toggle actif/inactif
+                  setActiveDestinSettings(prev => {
+                    const all = destAgents.map(a => a.id);
+                    const cur = prev || all;
+                    const on = cur.includes(id);
+                    const next = on ? cur.filter(k => k !== id) : [...cur, id];
+                    const result = next.length === all.length ? null : next;
+                    syncGovDestiny(result);
+                    return result;
+                  });
+                  setSelectedMin(null);
+                }
+              }}
+              onResetAll={() => { setActiveDestinSettings(null); syncGovDestiny(null); }}
+              countLabel={isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}
+              lang={lang}
+            />
+            {destAgents.map(agent => {
+              if (selectedMin && selectedMin !== agent.id) return null;
+              return (
+                <div key={agent.id}>
+                  <Field label="Essence" hint={isEn ? 'Deep philosophy — what drives their visions' : 'Philosophie profonde — ce qui guide leurs visions'}>
+                    <TextArea value={getVal(`ministers.${agent.id}.essence`, agent.essence || '')}
+                      onChange={v => updateAgent(`ministers.${agent.id}.essence`, v)}
                     />
                   </Field>
-                  <Field label="Essence">
-                    <TextArea value={getVal('presidency.phare.essence', liveAgents.presidency?.phare?.essence || PRESIDENCY?.phare?.essence || '')}
-                      onChange={v => updateAgent('presidency.phare.essence', v)}
+                  <Field label="Communication" hint={trC.comm_hint}>
+                    <TextArea value={getVal(`ministers.${agent.id}.comm`, agent.comm || '')}
+                      onChange={v => updateAgent(`ministers.${agent.id}.comm`, v)}
+                    />
+                  </Field>
+                  <Field label={trC.annot_label} hint={trC.annot_hint}>
+                    <TextArea value={getVal(`ministers.${agent.id}.annotation`, agent.annotation || '')}
+                      onChange={v => updateAgent(`ministers.${agent.id}.annotation`, v)}
                     />
                   </Field>
                 </div>
-              )}
-            </div>
-
-            <div className={`aria-accordion${openP==='boussole' ? ' open' : ''}`}>
-              {HDR_P('boussole', liveAgents.presidency?.boussole)}
-              {openP==='boussole' && (
-                <div className="aria-accordion__body">
-                  <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.boussole?.subtitle || ''}>
-                    <TextArea value={getVal('presidency.boussole.role', liveAgents.presidency?.boussole?.role_long || PRESIDENCY?.boussole?.role_long || '')}
-                      onChange={v => updateAgent('presidency.boussole.role', v)}
-                    />
-                  </Field>
-                  <Field label="Essence">
-                    <TextArea value={getVal('presidency.boussole.essence', liveAgents.presidency?.boussole?.essence || PRESIDENCY?.boussole?.essence || '')}
-                      onChange={v => updateAgent('presidency.boussole.essence', v)}
-                    />
-                  </Field>
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         );
       })()}
 
       {tab === 'gouvernance' && (
-        <SectionGouvernanceDefaut opts={govOpts} setOpts={(v) => { setGovOpts(v); setSaved(false); }} />
+        <SectionGouvernanceDefaut opts={govOpts} setOpts={handleSetGovOpts} />
       )}
 
       <div className="settings-footer">
@@ -1378,7 +1417,7 @@ function SectionConseil() {
 //  SOUS-COMPOSANT : GOUVERNANCE PAR DÉFAUT (dans SectionConseil)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ALL_MINISTRY_IDS = ['justice','economie','defense','sante','education','ecologie','chance'];
+function getAllMinistryIds() { return getAgents().ministries.map(m => m.id); }
 // MINISTRY_META dynamique depuis getAgents()
 function getMinistryMeta() {
   const agents = getAgents();
@@ -1403,21 +1442,23 @@ function getPresidencyOpts(isEn) {
   ];
 }
 
-const DEFAULT_GOVERNANCE = {
-  presidency: 'duale',
-  ministries: ['justice','economie','defense','sante','education','ecologie'],
-};
+function getDefaultGovernance() {
+  return {
+    presidency: 'duale',
+    ministries: getAgents().ministries.filter(m => m.base).map(m => m.id),
+  };
+}
 
 function SectionGouvernanceDefaut({ opts, setOpts }) {
   const { lang } = useLocale();
   const isEn = lang === 'en';
-  const gov = opts.defaultGovernance || DEFAULT_GOVERNANCE;
+  const gov = opts.defaultGovernance || getDefaultGovernance();
   const [openAcc, setOpenAcc] = useState(null);
 
   const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
 
   const setGov = (key, val) => {
-    setOpts({ ...opts, defaultGovernance: { ...(opts.defaultGovernance || DEFAULT_GOVERNANCE), [key]: val } });
+    setOpts({ ...opts, defaultGovernance: { ...(opts.defaultGovernance || getDefaultGovernance()), [key]: val } });
   };
 
   const setCtx = (val) => {
@@ -1455,11 +1496,11 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                 {/* Grille tuiles */}
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'0.5rem' }}>
                   {[
-                    { value:'solaire',    icon:'☉',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
-                    { value:'lunaire',    icon:'☽',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
-                    { value:'duale',      icon:'☉☽', iconSize:'1.2rem', ls:'-0.05em',  label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
-                    { value:'collegiale', icon:null, iconSize:'1.6rem', ls:'normal',   label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
-                  ].map(({ value, icon, iconSize, ls, label, tooltip }) => {
+                    { value:'solaire',    icon:'☉',  iconColor:'rgba(200,164,74,0.90)',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
+                    { value:'lunaire',    icon:'☽',  iconColor:'rgba(150,100,220,0.90)', iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
+                    { value:'duale',      iconRender:<><span style={{color:'rgba(200,164,74,0.90)'}}>☉</span><span style={{color:'rgba(150,100,220,0.90)'}}>☽</span></>, iconSize:'1.2rem', ls:'-0.05em', label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
+                    { value:'collegiale', icon:null, iconColor:'rgba(165,55,75,0.88)',   iconSize:'1.6rem', ls:'normal',  label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
+                  ].map(({ value, icon, iconRender, iconColor, iconSize, ls, label, tooltip }) => {
                     const isSel = (gov.presidency || 'duale') === value;
                     return (
                       <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
@@ -1469,9 +1510,11 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                           border: `1px solid ${isSel ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
                           transition:'all 0.12s' }}>
                         <span style={{ height:'2rem', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                          {icon
-                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{icon}</span>
-                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)' }} />
+                          {iconRender
+                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{iconRender}</span>
+                            : icon
+                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls, color: iconColor || (isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)') }}>{icon}</span>
+                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: iconColor }} />
                           }
                         </span>
                         <span style={{ fontSize:'0.52rem', color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
@@ -1486,6 +1529,12 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                 {/* Description sélection */}
                 {(() => {
                   const sel = gov.presidency || 'duale';
+                  const modeAccent = {
+                    solaire:    'rgba(200,164,74,0.80)',
+                    lunaire:    'rgba(140,100,220,0.80)',
+                    duale:      'rgba(170,132,147,0.80)',
+                    collegiale: 'rgba(165,55,75,0.80)',
+                  }[sel] || 'rgba(200,164,74,0.70)';
                   const desc = {
                     solaire:    isEn ? '☉ The Phare\npresides alone\nThe Will'                           : '☉ Le Phare\npréside seul\nLa Volonté',
                     lunaire:    isEn ? '☽ The Boussole\npresides alone\nThe Soul'                        : '☽ La Boussole\npréside seule\nL\'Âme',
@@ -1493,8 +1542,8 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                     collegiale: isEn ? '✡ Vote of 12 ministers\nConstitutional Synthesis'                : '✡ Vote des 12 ministres\nSynthèse Constitutionnelle',
                   }[sel] || '';
                   return (
-                    <div style={{ borderLeft:'2px solid rgba(200,164,74,0.2)', paddingLeft:'1rem',
-                      fontStyle:'italic', color:'rgba(200,164,74,0.7)', fontSize:'0.52rem',
+                    <div style={{ borderLeft:`2px solid ${modeAccent}44`, paddingLeft:'1rem',
+                      fontStyle:'italic', color:modeAccent, fontSize:'0.52rem',
                       lineHeight:1.7, whiteSpace:'pre-line', alignSelf:'center' }}>
                       {desc}
                     </div>
@@ -1512,10 +1561,10 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
       {/* ▸ MINISTÈRES */}
       <div className={`aria-accordion${openAcc==='mins' ? ' open' : ''}`}>
         {HDR('mins', isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT',
-          `${(gov.ministries||[]).length}/${ALL_MINISTRY_IDS.length}`)}
+          `${(gov.ministries||[]).length}/${getAllMinistryIds().length}`)}
         {openAcc==='mins' && (
           <div className="aria-accordion__body">
-            {ALL_MINISTRY_IDS.map(id => {
+            {getAllMinistryIds().map(id => {
               const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
               const active = (gov.ministries||[]).includes(id);
               const isMin  = (gov.ministries||[]).length <= 2 && active;
@@ -1537,15 +1586,31 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
         )}
       </div>
 
+      {/* ▸ CROYEZ-VOUS AU DESTIN ? (Oracle / Wyrd — cf. Völva) */}
+      <div className={`aria-accordion${openAcc==='destin' ? ' open' : ''}`}>
+        {HDR('destin', isEn ? 'DO YOU BELIEVE IN DESTINY?' : 'CROYEZ-VOUS AU DESTIN ?')}
+        {openAcc==='destin' && (
+          <div className="aria-accordion__body">
+            <Field label={isEn ? "L'Oracle & THE TRAME" : "L'Oracle & LA TRAME"}
+              hint={isEn
+                ? "Activates the Oracle and La Trame agents for existential crises (pandemics, nuclear threats, systemic collapses, civilizational ruptures…)"
+                : "Active les agents L'Oracle et La Trame pour les crises existentielles (pandémies, menaces nucléaires, effondrements systémiques, ruptures civilisationnelles…)"}>
+              <Toggle value={gov.destiny_mode === true} onChange={v => setGov('destiny_mode', v)}
+                label={gov.destiny_mode === true ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
+            </Field>
+          </div>
+        )}
+      </div>
+
       {/* ▸ GESTION DE CRISE */}
       <div className={`aria-accordion${openAcc==='crise' ? ' open' : ''}`}>
         {HDR('crise', isEn ? 'CRISIS MANAGEMENT' : 'GESTION DE CRISE')}
         {openAcc==='crise' && (
           <div className="aria-accordion__body">
-            <Field label={isEn ? "Ministry of Chance & Crises" : "Ministère de la Chance & Crises"}
-              hint={isEn ? "Activates the 7th ministry for emergency management" : "Active le 7e ministère pour la gestion des urgences"}>
-              <Toggle value={gov.crisis_ministry !== false} onChange={v => setGov('crisis_ministry', v)}
-                label={gov.crisis_ministry !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
+            <Field label={isEn ? "Crisis mode" : "Mode crise"}
+              hint={isEn ? "Activates automatic crisis detection and adapted deliberation" : "Active la détection automatique des crises et la délibération adaptée"}>
+              <Toggle value={gov.crisis_mode !== false} onChange={v => setGov('crisis_mode', v)}
+                label={gov.crisis_mode !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
             </Field>
           </div>
         )}
@@ -1675,10 +1740,10 @@ function SectionSimulation() {
 
       {/* ▸ COEFFICIENTS DES RÉGIMES */}
       <div className={`aria-accordion${openAcc==='regimes' ? ' open' : ''}`}>
-        {HDR('regimes', isEn?'REGIME COEFFICIENTS':'COEFFICIENTS DES RÉGIMES', `${REGIME_LABEL_KEYS.length}`)}
+        {HDR('regimes', isEn?'REGIME COEFFICIENTS':'COEFFICIENTS DES RÉGIMES', `${Object.keys(getStats().regimes || {}).length}`)}
         {openAcc==='regimes' && (
         <div className="aria-accordion__body">
-        {REGIME_LABEL_KEYS.map(rk => {
+        {Object.keys(getStats().regimes || {}).map(rk => {
           const coeff_sat  = getReg(rk, 'coeff_satisfaction');
           const coeff_cro  = getReg(rk, 'coeff_croissance');
           const natalite   = getReg(rk, 'taux_natalite');

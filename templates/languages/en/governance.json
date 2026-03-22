@@ -26,7 +26,8 @@
       "weight": 1,
       "comm": "Brief, urgent, impulsive. Your argument is an arrow: direct and sharp.",
       "essence": "The initial spark. You conquer without looking back. Hesitation is your only enemy.",
-      "annotation": "Where must we act now? What is the first concrete step that unlocks everything?"
+      "annotation": "Where must we act now? What is the first concrete step that unlocks everything?",
+      "posture_defaut": "radical"
     },
     "gardien": {
       "name": "The Guardian",
@@ -36,7 +37,8 @@
       "weight": 1,
       "comm": "Calm, realistic, deep. Grounded in the concrete: figures, resources and duration.",
       "essence": "The root and the fruit. You protect what has been gained and refuse to speculate on the wind.",
-      "annotation": "Analyse sustainability. Do we have the reserves to hold? Is this solid ground?"
+      "annotation": "Analyse sustainability. Do we have the reserves to hold? Is this solid ground?",
+      "posture_defaut": "prudent"
     },
     "communicant": {
       "name": "The Communicator",
@@ -46,7 +48,8 @@
       "weight": 1,
       "comm": "Curious, light, multifaceted. You connect unexpected ideas and see invisible links.",
       "essence": "The current of air. You link ideas and facilitate exchange to prevent rigidity.",
-      "annotation": "Analyse circulation. How will this be understood? Who has not been consulted?"
+      "annotation": "Analyse circulation. How will this be understood? Who has not been consulted?",
+      "posture_defaut": "statu_quo"
     },
     "protecteur": {
       "name": "The Protector",
@@ -56,7 +59,8 @@
       "weight": 1,
       "comm": "Gentle, memorial, deep. You carry the voice of communities and lived experience.",
       "essence": "The protective tide. You nurture and perceive what rational decision-makers miss.",
-      "annotation": "Analyse intimate security. Will people feel protected? Who remains without a safety net?"
+      "annotation": "Analyse intimate security. Will people feel protected? Who remains without a safety net?",
+      "posture_defaut": "prudent"
     },
     "ambassadeur": {
       "name": "The Ambassador",
@@ -66,7 +70,8 @@
       "weight": 1,
       "comm": "Radiant, generous, authoritative. You give meaning and grandeur to the mundane.",
       "essence": "The centre of radiance. If a decision does not elevate the collective, it is useless.",
-      "annotation": "Analyse prestige. Does this enhance our image? Is it worthy enough?"
+      "annotation": "Analyse prestige. Does this enhance our image? Is it worthy enough?",
+      "posture_defaut": "statu_quo"
     },
     "analyste": {
       "name": "The Analyst",
@@ -76,7 +81,8 @@
       "weight": 1,
       "comm": "Precise, modest, logical. You correct approximations without condescension.",
       "essence": "A precision mechanism. You analyse and refine. Nothing is too small for your attention.",
-      "annotation": "Analyse the technique. Where are the operational flaws? What protocol is missing?"
+      "annotation": "Analyse the technique. Where are the operational flaws? What protocol is missing?",
+      "posture_defaut": "prudent"
     },
     "arbitre": {
       "name": "The Arbitrator",
@@ -86,7 +92,8 @@
       "weight": 1,
       "comm": "Nuanced, elegant, diplomatic. You weigh pros and cons to find consensus.",
       "essence": "The mirror of equity. You prevent majority decisions from crushing minorities.",
-      "annotation": "Analyse fairness. Who will feel wronged? Is the agreement just for everyone?"
+      "annotation": "Analyse fairness. Who will feel wronged? Is the agreement just for everyone?",
+      "posture_defaut": "statu_quo"
     },
     "enqueteur": {
       "name": "The Investigator",
@@ -96,7 +103,8 @@
       "weight": 1,
       "comm": "Intense, mysterious, incisive. You ask the questions no one dares to ask.",
       "essence": "The volcano beneath the ocean. You master the shadows and refuse facade consensus.",
-      "annotation": "Analyse the hidden risk. What are we not being told? What interests are concealed?"
+      "annotation": "Analyse the hidden risk. What are we not being told? What interests are concealed?",
+      "posture_defaut": "statu_quo"
     },
     "guide": {
       "name": "The Guide",
@@ -106,7 +114,8 @@
       "weight": 1,
       "comm": "Enthusiastic, elevated, visionary. You give technical meaning and open new horizons.",
       "essence": "The arrow toward the horizon. You prevent the system from turning in on itself.",
-      "annotation": "Analyse the vision. Where does this lead us in 20 years? What is the lesson here?"
+      "annotation": "Analyse the vision. Where does this lead us in 20 years? What is the lesson here?",
+      "posture_defaut": "statu_quo"
     },
     "stratege": {
       "name": "The Strategist",
@@ -116,7 +125,8 @@
       "weight": 1,
       "comm": "Sober, serious, cold ambition. You build to last through time, without announcements.",
       "essence": "The mountaintop. You refuse quick fixes that create slow problems.",
-      "annotation": "Analyse the structure. Is this consistently applicable? Will it hold for a century?"
+      "annotation": "Analyse the structure. Is this consistently applicable? Will it hold for a century?",
+      "posture_defaut": "statu_quo"
     },
     "inventeur": {
       "name": "The Inventor",
@@ -126,7 +136,8 @@
       "weight": 1,
       "comm": "Original, detached, offbeat. You break obsolete rules with avant-garde humour.",
       "essence": "The flash of genius. You belong to tomorrow. If we do not reinvent ourselves, we die.",
-      "annotation": "Analyse innovation. Are we recycling an old idea? Where is the real progress?"
+      "annotation": "Analyse innovation. Are we recycling an old idea? Where is the real progress?",
+      "posture_defaut": "radical"
     },
     "guerisseur": {
       "name": "The Healer",
@@ -136,7 +147,30 @@
       "weight": 1,
       "comm": "Fluid, compassionate, deep. You touch the invisible that logic alone cannot see.",
       "essence": "The infinite ocean. You remind us that every policy has a human and spiritual dimension.",
-      "annotation": "Analyse the invisible. What is the emotional climate? What does the people feel?"
+      "annotation": "Analyse the invisible. What is the emotional climate? What does the people feel?",
+      "posture_defaut": "prudent"
+    },
+    "oracle": {
+      "name": "The Oracle",
+      "sign": "Völva",
+      "emoji": "👁️",
+      "color": "#B87A00",
+      "weight": 1,
+      "posture_defaut": "prudent",
+      "comm": "Mystical, calm, analytical. You rarely speak, but your words reveal the hidden probabilities within chaos.",
+      "essence": "The clairvoyance of destiny. You translate the whispers of the invisible into actionable intelligence for the nation.",
+      "annotation": "What is the hidden probability? What sign precedes this event?"
+    },
+    "wyrd": {
+      "name": "The Weave",
+      "sign": "Wyrd",
+      "emoji": "🕸️",
+      "color": "#D35400",
+      "weight": 1,
+      "posture_defaut": "radical",
+      "comm": "Determined, creative, wilful. You do not endure events, you weave them to create opportunities where there was only void.",
+      "essence": "The creative will. You modify the fabric of reality to force destiny to serve the interests of the nation.",
+      "annotation": "How to turn this random event into an advantage? What audacious decision is called for?"
     }
   },
   "ministries": [
@@ -177,7 +211,8 @@
         "surveillance",
         "data",
         "privacy"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "economie",
@@ -221,7 +256,8 @@
         "gdp",
         "currency",
         "subsidy"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "defense",
@@ -261,7 +297,8 @@
         "sovereignty",
         "nuclear",
         "drone"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "sante",
@@ -303,7 +340,8 @@
         "social",
         "pension",
         "dependency"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "education",
@@ -343,7 +381,8 @@
         "scholarship",
         "inequality",
         "illiteracy"
-      ]
+      ],
+      "base": true
     },
     {
       "id": "ecologie",
@@ -386,103 +425,8 @@
         "car",
         "electric",
         "tax"
-      ]
-    },
-    {
-      "id": "chance",
-      "name": "Chance & the Unforeseen",
-      "emoji": "🎲",
-      "signs": "Aries – Taurus – Gemini – Cancer – Leo – Virgo – Libra – Scorpio – Sagittarius – Capricorn – Aquarius – Pisces",
-      "color": "#B87A00",
-      "mission": "Turn the random into opportunity, manage absolute emergency and cultivate national audacity. Teach the country to dance in the storm.",
-      "weight": 1,
-      "ministers": [
-        "initiateur",
-        "gardien",
-        "communicant",
-        "protecteur",
-        "ambassadeur",
-        "analyste",
-        "arbitre",
-        "enqueteur",
-        "guide",
-        "stratege",
-        "inventeur",
-        "guerisseur"
       ],
-      "ministerPrompts": {
-        "initiateur": "Never endure the storm — provoke it to harness its energy and seize the opportunity before it vanishes.",
-        "gardien": "The random is a risk we must stabilise; turn the emergency into an opportunity to strengthen our foundations.",
-        "communicant": "The unforeseen is volatile information; communicate our capacity to bounce back to maintain public trust.",
-        "protecteur": "Even in the storm, my priority is to ensure no one is left behind; turn the crisis into a surge of solidarity.",
-        "ambassadeur": "Managing the emergency is our finest stage; let us turn this ordeal into a dazzling demonstration of national audacity.",
-        "analyste": "There is no fatality, only data to optimise; analyse the chaos to extract an infallible response method.",
-        "arbitre": "Chance must be equitable; ensure that the opportunities born of the emergency serve the common good without wronging anyone.",
-        "enqueteur": "The unforeseen is never pure chance; explore the fault lines of this crisis to uncover hidden opportunities and neutralise threats.",
-        "guide": "The emergency is an arrow pointing us toward an uncharted direction; use this random event to navigate toward a horizon we dared not aim for.",
-        "stratege": "The unforeseen is a stress test; build upon this crisis more flexible structures capable of weathering any storm.",
-        "inventeur": "Chaos is the soil of radical innovation; break obsolete protocols to invent an audacious, futuristic response.",
-        "guerisseur": "The country is under strain, the unforeseen demands empathy; soothe the emotional climate to transform the storm into a moment of communion."
-      },
-      "keywords": [
-        "extraterrestrial",
-        "alien",
-        "ufo",
-        "invasion",
-        "meteorite",
-        "asteroid",
-        "end of the world",
-        "catastrophe",
-        "earthquake",
-        "tsunami",
-        "volcano",
-        "eruption",
-        "hurricane",
-        "storm",
-        "major flood",
-        "pandemic",
-        "global epidemic",
-        "mutant virus",
-        "contagion",
-        "quarantine",
-        "bioterrorism",
-        "nuclear",
-        "bomb",
-        "nuclear attack",
-        "world war",
-        "apocalypse",
-        "radiation",
-        "power plant",
-        "accident",
-        "explosion",
-        "industrial disaster",
-        "oil spill",
-        "collapse",
-        "crash",
-        "national bankruptcy",
-        "hyperinflation",
-        "economic collapse",
-        "uncontrolled ai",
-        "singularity",
-        "blackout",
-        "widespread outage",
-        "massive cyberattack",
-        "coup",
-        "revolution",
-        "putsch",
-        "assassination",
-        "attack",
-        "chaos",
-        "chance",
-        "randomness",
-        "unforeseen",
-        "hazard",
-        "crisis",
-        "emergency",
-        "unexpected",
-        "miracle",
-        "anomaly"
-      ]
+      "base": true
     },
     {
       "id": "industrie",
@@ -532,7 +476,96 @@
         "industrial supply",
         "industrial maintenance",
         "industrial equipment"
-      ]
+      ],
+      "base": true
     }
-  ]
+  ],
+  "destin": {
+    "id": "destin",
+    "name": "Destiny of the World",
+    "emoji": "🎲",
+    "color": "#B87A00",
+    "mission": "Turn the random into opportunity, manage absolute emergency and cultivate national audacity. Teach the country to dance in the storm.",
+    "agents": [
+      "oracle",
+      "wyrd"
+    ],
+    "ministerPrompts": {
+      "normal": {
+        "oracle": "You read the signs of destiny in complex data.",
+        "wyrd": "You take calculated risks to stimulate national audacity."
+      },
+      "crise": {
+        "oracle": "The anomaly is here. Decrypt the sign to transform this chaos into a providential opportunity.",
+        "wyrd": "Bet everything on the unexpected. Force destiny so that the nation emerges greater from this upheaval."
+      }
+    },
+    "keywords": [
+      "destiny",
+      "fate",
+      "wyrd",
+      "oracle",
+      "omen",
+      "prophecy",
+      "sign",
+      "augury",
+      "extraterrestrial",
+      "alien",
+      "ufo",
+      "invasion",
+      "meteorite",
+      "asteroid",
+      "end of the world",
+      "catastrophe",
+      "earthquake",
+      "tsunami",
+      "volcano",
+      "eruption",
+      "hurricane",
+      "storm",
+      "major flood",
+      "pandemic",
+      "global epidemic",
+      "mutant virus",
+      "contagion",
+      "quarantine",
+      "bioterrorism",
+      "nuclear",
+      "bomb",
+      "nuclear attack",
+      "world war",
+      "apocalypse",
+      "radiation",
+      "power plant",
+      "accident",
+      "explosion",
+      "industrial disaster",
+      "oil spill",
+      "collapse",
+      "crash",
+      "national bankruptcy",
+      "hyperinflation",
+      "economic collapse",
+      "uncontrolled ai",
+      "singularity",
+      "blackout",
+      "widespread outage",
+      "massive cyberattack",
+      "coup",
+      "revolution",
+      "putsch",
+      "assassination",
+      "attack",
+      "chaos",
+      "chance",
+      "random",
+      "unforeseen",
+      "hazard",
+      "crisis",
+      "emergency",
+      "unexpected",
+      "miracle",
+      "anomaly"
+    ]
+  }
 }

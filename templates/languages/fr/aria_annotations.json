@@ -1,49 +1,91 @@
 {
   "_meta": {
     "version": "1.0",
-    "description": "ARIA — Annotations cercle offline Board Game",
-    "structure": "ministeres[id][regime][]",
-    "langue": "fr"
+    "description": "ARIA — Annotations du cercle ministériel. Regard extérieur de chaque ministère sur la question débattue.",
+    "structure": "ministeres[id][regime][] — 5 phrases par régime, ton sobre et institutionnel",
+    "fallbacks": {
+      "monarchie_absolue": "monarchie_constitutionnelle",
+      "regime_autoritaire": "junte_militaire",
+      "nationalisme_autoritaire": "junte_militaire",
+      "communisme": "republique_federale",
+      "democratie_directe": "democratie_liberale"
+    },
+    "usage": "getAnnotationMinistere(ministereId, regime) → phrase aléatoire dans le pool"
   },
   "ministeres": {
     "justice": {
       "democratie_liberale": [
+        "Cette décision engage notre responsabilité juridique collective. La conformité au droit doit être vérifiée.",
+        "Tout acte de gouvernance peut faire l'objet d'un recours. Le ministère de la Justice restera vigilant.",
+        "L'état de droit exige que cette mesure soit encadrée par des garanties procédurales solides.",
+        "La liberté individuelle est la limite que toute décision publique doit respecter. Nous le rappelons.",
+        "La jurisprudence sera attentive à cette décision. Le cadre légal doit être scrupuleusement respecté.",
         "La légalité de la mesure proposée doit être vérifiée avant toute mise en œuvre.",
         "Les droits fondamentaux des citoyens constituent la limite infranchissable de toute réforme.",
         "La transparence procédurale est une exigence démocratique, non une option.",
         "Une évaluation juridique indépendante est nécessaire pour garantir la constitutionnalité de la décision."
       ],
       "republique_federale": [
+        "Les compétences juridictionnelles doivent être clarifiées avant toute application territoriale.",
+        "Le droit fédéral et les droits locaux doivent être réconciliés. La Justice veillera à la cohérence.",
+        "L'harmonisation juridique entre les entités est une condition de la légitimité de cette décision.",
+        "Chaque région doit pouvoir appliquer ce cadre dans le respect de ses propres prérogatives légales.",
+        "La coordination des systèmes judiciaires régionaux sera nécessaire pour une application équitable.",
         "La conformité avec les textes fédéraux en vigueur doit être établie avant exécution.",
         "La compétence juridictionnelle entre niveaux fédéral et régional doit être clairement délimitée.",
         "Les précédents jurisprudentiels fédéraux encadrent les marges de manœuvre disponibles.",
         "Une harmonisation juridique entre entités fédérées est indispensable pour éviter les conflits de droit."
       ],
       "monarchie_constitutionnelle": [
+        "La légitimité de cette décision repose sur sa conformité aux lois fondamentales du Royaume.",
+        "La Couronne ne peut agir que dans le cadre que la Constitution lui a tracé. Nous le rappelons.",
+        "La tradition juridique du Royaume offre des précédents utiles pour encadrer cette situation.",
+        "L'institution judiciaire veille à ce que la continuité du droit royal soit assurée.",
+        "La stabilité juridique est un pilier de la confiance que le peuple accorde aux institutions.",
         "La décision doit s'inscrire dans la continuité des textes fondateurs du Royaume.",
         "L'avis du Conseil constitutionnel de la Couronne conditionne la validité de toute réforme substantielle.",
         "La tradition juridique nationale est un garde-fou contre les réformes précipitées.",
         "Les droits hérités ne peuvent être remis en cause sans une révision constitutionnelle formelle."
       ],
       "technocratie_ia": [
+        "La conformité algorithmique des décisions à l'ordre légal doit être auditée en continu.",
+        "L'automatisation des procédures ne peut pas exclure le contrôle humain des décisions juridiques.",
+        "Les données utilisées dans ce processus doivent satisfaire aux exigences légales de transparence.",
+        "Le droit à la contestation des décisions automatisées doit être préservé sans exception.",
+        "Toute optimisation systémique doit rester dans les limites du corpus légal en vigueur.",
         "L'audit algorithmique des implications juridiques de la décision est en cours de traitement.",
         "Les paramètres légaux établis encadrent strictement les options disponibles pour le système.",
         "L'optimisation procédurale est soumise aux contraintes des protocoles de conformité activés.",
         "Aucune irrégularité formelle détectée dans le cadre juridique applicable à cette délibération."
       ],
       "junte_militaire": [
+        "La discipline juridique est le fondement de l'ordre que cette décision cherche à servir.",
+        "L'état d'exception ne suspend pas le droit — il le concentre. La Justice en sera le gardien.",
+        "Les procédures militaires et civiles doivent rester distinctes pour préserver la légitimité.",
+        "La sévérité de la loi doit être proportionnée à la menace réelle, pas à la peur.",
+        "Même en temps de crise, l'arbitraire est l'ennemi de l'ordre durable.",
         "L'ordre légal en vigueur est suffisant — toute réforme risque d'affaiblir le cadre disciplinaire.",
         "La loi militaire prime sur toute disposition civile en situation d'état de nécessité nationale.",
         "La sécurité juridique du commandement doit être préservée face à toute tentative de déstabilisation.",
         "Les procédures d'exception permettent de contourner les délais ordinaires si la situation l'exige."
       ],
       "oligarchie": [
+        "La clarté du cadre contractuel et réglementaire conditionne la confiance des acteurs économiques.",
+        "La prévisibilité juridique est un actif que cette décision ne doit pas fragiliser.",
+        "Le droit protège les investissements. Une décision qui l'affaiblit nuit à tous les acteurs.",
+        "La Justice veillera à ce que les règles du jeu ne soient pas modifiées en cours de partie.",
+        "La stabilité du droit est la condition de la croissance économique durable.",
         "La décision ne doit pas créer de précédent légal défavorable aux intérêts économiques établis.",
         "Les risques contentieux pour les acteurs dominants doivent être évalués avant toute adoption.",
         "Le cadre réglementaire doit rester favorable à la liberté d'initiative des pôles d'influence.",
         "Une jurisprudence trop contraignante compromettrait la compétitivité des secteurs stratégiques."
       ],
       "theocratie": [
+        "La loi humaine ne peut contredire la loi divine. Le ministère de la Justice en sera le garant.",
+        "Toute décision doit être soumise à l'examen de sa conformité avec les principes sacrés.",
+        "La justice terrestre n'est légitime que si elle reflète la justice supérieure.",
+        "Les textes fondateurs offrent une jurisprudence immuable pour guider notre interprétation.",
+        "La communauté attend que ses lois soient le reflet de ses valeurs les plus profondes.",
         "La conformité de la mesure avec les textes sacrés est une condition préalable à toute adoption.",
         "Le droit positif ne peut s'affranchir des prescriptions morales qui fondent la légitimité du régime.",
         "L'autorité des institutions judiciaires dérive de leur fidélité aux valeurs transcendantes du peuple.",
@@ -52,42 +94,77 @@
     },
     "economie": {
       "democratie_liberale": [
+        "L'impact budgétaire de cette décision doit être évalué rigoureusement avant toute mise en œuvre.",
+        "La soutenabilité économique est une condition de la légitimité démocratique des politiques publiques.",
+        "Le financement de cette mesure ne doit pas compromettre les équilibres fiscaux existants.",
+        "Les effets redistributifs de cette décision méritent une analyse approfondie avant le vote.",
+        "L'efficacité économique et la justice sociale doivent être conciliées dans cette mesure.",
         "L'impact budgétaire doit être chiffré et soumis au contrôle parlementaire avant toute décision.",
         "La soutenabilité fiscale de la mesure conditionne son acceptabilité politique à long terme.",
         "Un bilan coût-bénéfice transparent est indispensable pour éclairer le choix du Conseil.",
         "L'équilibre entre efficacité économique et équité sociale est au cœur de cette délibération."
       ],
       "republique_federale": [
+        "Les déséquilibres économiques entre régions que cette décision pourrait créer doivent être anticipés.",
+        "La politique fiscale fédérale doit rester cohérente avec cette orientation. Nous le vérifierons.",
+        "Les transferts de péréquation devront être ajustés si cette décision modifie les équilibres régionaux.",
+        "L'impact sur la compétitivité relative des entités fédérées doit être mesuré avec précision.",
+        "Une coordination économique renforcée entre les régions sera nécessaire pour absorber ce changement.",
         "Les implications budgétaires doivent être partagées équitablement entre l'État central et les régions.",
         "L'impact économique différencié selon les territoires nécessite une analyse régionale détaillée.",
         "Les transferts financiers inter-régionaux générés par cette décision doivent être anticipés.",
         "Une coordination fiscale fédérale est nécessaire pour éviter les distorsions de compétitivité territoriale."
       ],
       "monarchie_constitutionnelle": [
+        "Les finances du Royaume doivent rester au service de sa stabilité et de sa grandeur.",
+        "Toute décision qui engage les ressources nationales doit respecter la tradition de prudence budgétaire.",
+        "L'économie royale s'est construite sur la continuité. Ne la fragilisons pas par l'improvisation.",
+        "Le Trésor national est un patrimoine commun que cette décision doit préserver.",
+        "La confiance des marchés dans la Couronne est un actif précieux qui ne doit pas être dilapidé.",
         "La stabilité économique héritée ne doit pas être compromise par des réformes prématurées.",
         "L'impact sur les équilibres financiers du Trésor royal doit être évalué avec prudence.",
         "La préservation du tissu économique traditionnel est une priorité dans cette délibération.",
         "Les réformes budgétaires doivent s'inscrire dans la continuité des orientations validées par la Couronne."
       ],
       "technocratie_ia": [
+        "Les modèles économiques projettent des effets qui doivent être intégrés dans la décision finale.",
+        "L'optimisation des flux économiques passe par une analyse rigoureuse des données disponibles.",
+        "Les algorithmes d'allocation des ressources doivent être recalibrés selon cette nouvelle orientation.",
+        "L'efficience économique mesurable doit guider le calibrage de cette politique.",
+        "Les indicateurs de performance économique seront notre boussole pour évaluer cette décision.",
         "Les modèles économétriques projettent un impact budgétaire dans les marges de tolérance acceptables.",
         "L'optimisation des flux financiers générés par cette décision est techniquement réalisable.",
         "Les indicateurs économiques de performance sont dans les paramètres nominaux post-implémentation simulée.",
         "L'analyse prédictive ne détecte pas de déséquilibre systémique à court ou moyen terme."
       ],
       "junte_militaire": [
+        "L'économie est une ressource stratégique. Cette décision doit servir la puissance nationale.",
+        "La mobilisation économique requiert des arbitrages difficiles. L'effort national prime.",
+        "Les ressources doivent être allouées selon les priorités stratégiques, pas selon le marché.",
+        "La dépendance économique est une vulnérabilité. Cette décision doit la réduire.",
+        "L'autosuffisance économique est un objectif défensif autant qu'économique.",
         "Les ressources budgétaires doivent prioritairement alimenter l'effort de défense nationale.",
         "L'économie est au service de la sécurité — tout arbitrage budgétaire doit respecter cette hiérarchie.",
         "La rigueur financière est une discipline nationale, non une option politique.",
         "Les dépenses civiles ne peuvent excéder les marges laissées par les besoins stratégiques du commandement."
       ],
       "oligarchie": [
+        "La rentabilité de cette mesure pour les acteurs économiques dominants doit être préservée.",
+        "Les investisseurs scruteront cette décision. La clarté du signal envoyé est essentielle.",
+        "Les marchés récompensent la prévisibilité. Cette décision doit en tenir compte.",
+        "L'impact sur les flux de capitaux doit être anticipé pour éviter les effets de fuite.",
+        "La croissance profite à tous quand les conditions cadres sont favorables aux investissements.",
         "La rentabilité des secteurs économiques dominants doit être préservée dans toute décision du Conseil.",
         "L'impact sur les marchés financiers et les positions concurrentielles doit être anticipé avec précision.",
         "Les intérêts des acteurs économiques structurants ne peuvent être sacrifiés à des considérations secondaires.",
         "La stabilité des investissements stratégiques est une condition de la croissance durable du régime."
       ],
       "theocratie": [
+        "L'économie doit servir la communauté, pas l'inverse. Cette décision sera jugée à cette aune.",
+        "Le partage équitable des richesses est un impératif moral autant qu'économique.",
+        "L'usure et la spéculation contraires aux principes ne peuvent être encouragées par nos politiques.",
+        "La prospérité collective est la récompense d'une économie fondée sur des valeurs justes.",
+        "Les ressources sont un don. Leur gestion doit refléter l'humilité et la responsabilité.",
         "La prospérité économique doit être orientée vers le bien commun, non l'accumulation individuelle.",
         "L'usure et la spéculation sont contraires aux principes qui fondent la légitimité de notre ordre économique.",
         "Le partage équitable des ressources est une obligation morale, pas seulement une option politique.",
@@ -96,42 +173,77 @@
     },
     "defense": {
       "democratie_liberale": [
+        "Les implications sécuritaires de cette décision doivent être évaluées sans alarmisme excessif.",
+        "La défense des libertés est aussi une mission de sécurité nationale. Les deux sont liées.",
+        "Toute mesure de sécurité doit rester proportionnée et soumise au contrôle démocratique.",
+        "La coopération internationale est notre première ligne de défense. Cette décision doit la renforcer.",
+        "La sécurité ne peut pas être un prétexte à l'érosion des droits que nous cherchons à défendre.",
         "Les implications sécuritaires de la décision doivent être évaluées sans compromettre les libertés civiles.",
         "Toute mesure de défense doit s'inscrire dans le cadre du contrôle démocratique des forces armées.",
         "La sécurité nationale est un bien commun — sa gestion requiert transparence et débat public.",
         "L'équilibre entre impératif sécuritaire et respect des droits fondamentaux est non négociable."
       ],
       "republique_federale": [
+        "La coordination des dispositifs de sécurité entre les entités est indispensable à l'efficacité.",
+        "Une menace sur une région est une menace sur l'ensemble de la fédération. La solidarité s'impose.",
+        "Les compétences défensives fédérales et régionales doivent être clairement articulées.",
+        "La résilience de la fédération passe par la cohésion de ses dispositifs de sécurité.",
+        "L'effort de défense collectif doit être réparti équitablement entre les entités.",
         "La coordination des capacités défensives entre entités fédérées est un prérequis à toute décision stratégique.",
         "La souveraineté partagée implique une doctrine de défense commune validée par l'ensemble des membres.",
         "Les zones de compétence défensive entre niveaux fédéral et régional doivent être respectées.",
         "Aucune décision unilatérale ne peut engager l'ensemble de la fédération sans consultation préalable."
       ],
       "monarchie_constitutionnelle": [
+        "L'honneur et la sécurité du Royaume sont des missions que la Couronne ne délègue pas.",
+        "Les alliances historiques de la Couronne sont notre premier rempart. Ne les fragilisons pas.",
+        "La puissance militaire du Royaume se construit sur des traditions éprouvées qu'il faut préserver.",
+        "La défense du Royaume est aussi la défense de ses valeurs et de son héritage.",
+        "Tout engagement militaire engage la parole de la Couronne. La prudence s'impose.",
         "La défense du Royaume est l'obligation première de la Couronne — toute menace doit être traitée avec gravité.",
         "La tradition militaire nationale est un pilier de l'identité institutionnelle qui ne saurait être compromis.",
         "La stabilité intérieure conditionne la capacité de défense extérieure — les deux sont indissociables.",
         "Les décisions engageant les forces armées requièrent l'aval symbolique de la Couronne pour leur légitimité."
       ],
       "technocratie_ia": [
+        "L'analyse prédictive des risques sécuritaires doit guider le calibrage de cette décision.",
+        "Les systèmes de détection automatisée doivent être intégrés dans tout dispositif de réponse.",
+        "La cybersécurité est une dimension de défense que cette décision ne peut ignorer.",
+        "L'optimisation des ressources défensives passe par une modélisation rigoureuse des menaces.",
+        "Les données de renseignement doivent alimenter les algorithmes de décision stratégique.",
         "Les modèles de risque sécuritaire sont à jour — aucune menace de niveau critique n'est détectée.",
         "L'optimisation du dispositif défensif est en cours selon les paramètres stratégiques validés.",
         "Les systèmes de surveillance et d'analyse des menaces fonctionnent dans les marges nominales.",
         "L'intégration des données de renseignement dans les modèles décisionnels est opérationnelle."
       ],
       "junte_militaire": [
+        "La sécurité de l'État est la condition de tout le reste. Cette décision doit d'abord la servir.",
+        "La faiblesse invite l'agression. Cette décision doit projeter la force et la détermination.",
+        "Le commandement militaire doit être associé à toute décision ayant des implications sécuritaires.",
+        "La chaîne de commandement doit rester intacte quelle que soit l'orientation retenue.",
+        "La préparation opérationnelle des forces ne peut pas être sacrifiée à d'autres priorités.",
         "La sécurité nationale est la priorité absolue — toute décision doit renforcer, non affaiblir, le dispositif.",
         "Le commandement militaire doit être consulté en amont de toute décision aux implications sécuritaires.",
         "L'ordre intérieur est la condition de toute politique extérieure — la discipline prime.",
         "Aucune concession sur les capacités défensives ne sera tolérée, quelle qu'en soit la justification civile."
       ],
       "oligarchie": [
+        "La sécurité des routes commerciales et des actifs stratégiques doit être préservée.",
+        "L'instabilité sécuritaire coûte plus cher que la prévention. Cette décision doit en tenir compte.",
+        "Les contrats de défense et les industries stratégiques doivent être protégés par cette orientation.",
+        "La sécurité est un bien public dont la défaillance affecte directement la confiance économique.",
+        "Les intérêts économiques nationaux à l'étranger requièrent une protection sécuritaire adéquate.",
         "La stabilité sécuritaire est un prérequis à la protection des intérêts économiques et des investissements.",
         "Les menaces à l'ordre établi doivent être neutralisées avant qu'elles n'atteignent les secteurs stratégiques.",
         "La privatisation de certaines fonctions sécuritaires pourrait optimiser les coûts sans perte d'efficacité.",
         "La défense des actifs stratégiques est une priorité qui conditionne la compétitivité nationale à long terme."
       ],
       "theocratie": [
+        "La défense de la communauté est un devoir sacré qui transcende les calculs politiques ordinaires.",
+        "La force n'est légitime que lorsqu'elle protège les valeurs et les membres de la communauté.",
+        "Toute décision militaire doit être pesée à l'aune des principes moraux qui nous gouvernent.",
+        "La paix est préférable à la guerre quand elle peut être obtenue sans compromettre nos valeurs.",
+        "La protection de la communauté spirituelle est aussi importante que la protection du territoire.",
         "La défense de la foi et de l'ordre moral est aussi une mission des forces armées de la nation.",
         "La guerre juste, telle que définie par les textes fondateurs, est la seule forme de violence légitime.",
         "La force militaire doit protéger les valeurs spirituelles du régime, non seulement son territoire.",
@@ -140,42 +252,77 @@
     },
     "sante": {
       "democratie_liberale": [
+        "L'impact sanitaire de cette décision sur les populations les plus vulnérables doit être évalué.",
+        "La santé publique est un bien commun que cette orientation ne doit pas fragiliser.",
+        "L'accès universel aux soins est un droit fondamental que nous rappelons à chaque délibération.",
+        "Les données épidémiologiques doivent être intégrées dans l'analyse d'impact de cette mesure.",
+        "Le bien-être des citoyens est la finalité ultime de toute politique publique.",
         "L'impact sur la santé publique doit être évalué indépendamment des considérations économiques.",
         "L'accès universel aux soins est un droit fondamental que cette décision ne doit pas remettre en cause.",
         "Les populations les plus vulnérables seront les premières affectées — leur situation doit guider la délibération.",
         "Une évaluation épidémiologique préalable est nécessaire avant toute décision aux conséquences sanitaires."
       ],
       "republique_federale": [
+        "Les disparités sanitaires entre régions que cette décision pourrait accentuer nous préoccupent.",
+        "La coordination des systèmes de santé régionaux est indispensable pour une réponse cohérente.",
+        "L'équité d'accès aux soins sur l'ensemble du territoire fédéral est notre ligne directrice.",
+        "Les ressources médicales doivent être mutualisées pour absorber les déséquilibres territoriaux.",
+        "La solidarité sanitaire entre entités est une condition de la cohésion fédérale.",
         "Les disparités sanitaires entre régions doivent être réduites, non aggravées, par cette décision.",
         "La coordination des systèmes de santé fédéraux est indispensable pour une réponse cohérente.",
         "L'accès équitable aux soins, quelle que soit la région, est une condition non négociable.",
         "Les données épidémiologiques régionales doivent alimenter une analyse différenciée de l'impact sanitaire."
       ],
       "monarchie_constitutionnelle": [
+        "Le souverain veille sur la santé de son peuple. Cette décision sera jugée à cette aune.",
+        "La bienveillance royale envers les plus fragiles est un principe que nous rappelons ici.",
+        "Les traditions médicales du Royaume offrent une sagesse que les réformes doivent respecter.",
+        "La santé du peuple est la richesse première du Royaume. Cette décision doit la préserver.",
+        "L'institution médicale royale a une responsabilité historique qu'elle entend assumer.",
         "La santé de la population est un devoir de la Couronne — la stabilité du système médical doit être préservée.",
         "Les réformes sanitaires doivent s'inscrire dans la continuité des institutions de soins héritées.",
         "La tradition médicale nationale est un patrimoine à protéger face aux réformes précipitées.",
         "L'accès aux soins des populations les moins favorisées est une responsabilité morale de l'institution royale."
       ],
       "technocratie_ia": [
+        "Les indicateurs sanitaires doivent être intégrés dans les modèles d'impact de cette décision.",
+        "La médecine préventive algorithmique offre des outils d'anticipation que cette mesure doit utiliser.",
+        "Les données de santé publique disponibles éclairent les conséquences probables de cette orientation.",
+        "L'optimisation des ressources médicales passe par une modélisation rigoureuse des besoins.",
+        "Les systèmes de surveillance épidémiologique doivent être maintenus dans tout contexte de changement.",
         "Les indicateurs sanitaires sont dans les marges nominales selon les dernières analyses des données disponibles.",
         "L'optimisation des ressources médicales est modélisée — aucun déséquilibre systémique n'est projeté.",
         "Les données de santé publique alimentent les modèles prédictifs sans anomalie détectée.",
         "Le système de surveillance épidémiologique automatisé n'indique aucune alerte de niveau supérieur."
       ],
       "junte_militaire": [
+        "La santé des forces actives est une priorité stratégique que cette décision ne doit pas compromettre.",
+        "La résilience sanitaire de la population est un facteur de puissance nationale.",
+        "Les ressources médicales militaires doivent rester disponibles pour l'effort national.",
+        "La gestion des blessés et des malades est un impératif opérationnel de premier rang.",
+        "La santé collective est une composante de la capacité de résistance de la nation.",
         "La santé des forces actives est prioritaire — la capacité opérationnelle du corps militaire doit être préservée.",
         "La résilience sanitaire nationale est un enjeu stratégique de premier ordre pour la défense du régime.",
         "La discipline médicale et les protocoles de triage doivent guider les arbitrages en situation de crise.",
         "La population en bonne santé est une ressource stratégique — sa gestion relève de la sécurité nationale."
       ],
       "oligarchie": [
+        "L'impact de cette décision sur la productivité de la main-d'œuvre doit être évalué.",
+        "La santé des travailleurs est un actif économique que les entreprises ont intérêt à préserver.",
+        "Les coûts de santé induits par cette décision doivent être anticipés et encadrés.",
+        "Le secteur médical privé doit pouvoir opérer dans un cadre prévisible et rentable.",
+        "La santé productive de la population conditionne la croissance économique à long terme.",
         "L'impact sur la productivité de la main-d'œuvre doit être évalué avant toute décision aux effets sanitaires.",
         "Les investissements dans la santé doivent être orientés vers les secteurs économiquement stratégiques.",
         "La privatisation partielle de l'offre de soins pourrait générer des gains d'efficacité mesurables.",
         "La santé des travailleurs qualifiés est un actif économique dont la préservation doit être prioritaire."
       ],
       "theocratie": [
+        "Le corps est le temple de l'âme. Toute décision touchant à la santé est une question morale.",
+        "Les soins doivent être dispensés dans le respect de la dignité et des valeurs de la communauté.",
+        "La médecine et la foi ne s'opposent pas — elles se complètent. Cette décision doit le reconnaître.",
+        "La souffrance des membres de la communauté est une responsabilité collective.",
+        "Le soin des malades est un acte de foi autant qu'un acte médical.",
         "Le corps est le temple de l'âme — toute politique sanitaire doit respecter ce principe fondateur.",
         "La médecine doit être guidée par des valeurs éthiques compatibles avec les textes sacrés du régime.",
         "Le soin des plus faibles est une obligation morale avant d'être une politique publique.",
@@ -184,42 +331,77 @@
     },
     "education": {
       "democratie_liberale": [
+        "L'impact de cette décision sur la formation des citoyens de demain mérite une attention particulière.",
+        "L'éducation est le fondement du jugement critique que la démocratie exige de ses citoyens.",
+        "L'égalité des chances éducatives doit rester une priorité dans l'analyse de cette mesure.",
+        "Les jeunes générations seront les premiers touchés par les conséquences de cette orientation.",
+        "Une société instruite et critique est la meilleure garantie contre les dérives du pouvoir.",
         "L'impact sur les générations futures doit être au cœur de cette délibération.",
         "Le droit à une éducation de qualité est le fondement d'une démocratie vivante et éclairée.",
         "Toute décision doit être évaluée à l'aune de son effet sur l'égalité des chances scolaires.",
         "La transmission du savoir critique est une condition de la participation citoyenne active."
       ],
       "republique_federale": [
+        "Les spécificités pédagogiques régionales doivent être respectées dans toute politique nationale.",
+        "L'éducation est un terrain où la diversité fédérale est une richesse, pas un obstacle.",
+        "La mobilité éducative entre régions doit être facilitée, pas entravée par cette décision.",
+        "Les identités culturelles régionales se transmettent par l'éducation. Préservons-les.",
+        "Un socle commun de compétences doit coexister avec la diversité pédagogique des entités.",
         "Les curricula doivent refléter la diversité des identités régionales sans fragmenter la cohésion nationale.",
         "L'harmonisation des standards éducatifs entre entités fédérées est une priorité pour l'équité territoriale.",
         "Les disparités de ressources scolaires entre régions riches et pauvres doivent être réduites.",
         "Une éducation civique fédérale commune est le ciment de l'unité dans la diversité."
       ],
       "monarchie_constitutionnelle": [
+        "L'éducation transmet les valeurs et l'histoire qui font la grandeur du Royaume.",
+        "La formation des futurs serviteurs de l'État et de la Couronne est une mission nationale.",
+        "Le respect de l'autorité et des traditions s'apprend. L'éducation en est le premier vecteur.",
+        "Les institutions d'excellence du Royaume sont un héritage que cette décision doit préserver.",
+        "L'éducation royale a toujours formé des esprits au service de la nation et de la Couronne.",
         "L'éducation doit transmettre les valeurs fondatrices du Royaume et nourrir le sentiment d'appartenance nationale.",
         "La continuité pédagogique est une condition de la cohésion intergénérationnelle que la Couronne protège.",
         "Les réformes scolaires doivent préserver le lien entre culture nationale et formation des jeunes citoyens.",
         "L'histoire et les traditions doivent occuper une place centrale dans les programmes d'enseignement."
       ],
       "technocratie_ia": [
+        "Les compétences nécessaires à l'économie de demain doivent guider les orientations pédagogiques.",
+        "L'adaptabilité des programmes d'enseignement aux évolutions du marché est une nécessité mesurable.",
+        "Les données de performance éducative doivent alimenter les décisions de politique pédagogique.",
+        "L'individualisation des parcours par l'analyse algorithmique optimise les résultats d'apprentissage.",
+        "Les systèmes éducatifs adaptatifs offrent une réponse plus efficiente aux besoins réels.",
         "Les indicateurs de performance scolaire sont dans les marges prévues par les modèles d'optimisation.",
         "L'intégration des outils d'apprentissage adaptatif est en cours selon les protocoles établis.",
         "Les données d'évaluation scolaire alimentent les modèles prédictifs sans anomalie significative.",
         "L'optimisation des parcours éducatifs par intelligence artificielle est déployée selon les paramètres validés."
       ],
       "junte_militaire": [
+        "L'éducation forge le caractère national et la cohésion sociale dont la défense a besoin.",
+        "La formation civique et patriotique est un investissement stratégique pour la stabilité.",
+        "Les disciplines qui renforcent la résilience nationale doivent être prioritaires dans les curricula.",
+        "Un peuple instruit dans ses devoirs envers la nation est un peuple plus fort.",
+        "L'éducation à la discipline et au service collectif est un pilier de notre système.",
         "L'éducation doit forger des citoyens disciplinés, patriotes et prêts à défendre la nation.",
         "Les programmes scolaires doivent transmettre les valeurs d'ordre, de rigueur et de sacrifice collectif.",
         "La formation civique et militaire des jeunes est une priorité stratégique pour la pérennité du régime.",
         "Tout contenu scolaire subversif ou contraire à l'unité nationale doit être écarté des programmes."
       ],
       "oligarchie": [
+        "Le système éducatif doit produire les compétences que l'économie requiert pour rester compétitive.",
+        "L'adéquation formation-emploi est un impératif économique que cette décision doit servir.",
+        "Les filières d'excellence forment les leaders économiques de demain. Préservons-les.",
+        "L'investissement dans le capital humain est le plus rentable qui soit sur le long terme.",
+        "Un système éducatif performant attire les talents et les investissements étrangers.",
         "L'éducation doit prioritairement former les compétences dont les secteurs économiques dominants ont besoin.",
         "Le retour sur investissement des filières éducatives doit guider les arbitrages de financement public.",
         "Les établissements d'élite doivent être préservés et renforcés comme vivier des futurs dirigeants économiques.",
         "L'éducation est un investissement stratégique — son financement doit être orienté vers les formations rentables."
       ],
       "theocratie": [
+        "L'éducation transmet la foi, les valeurs et la sagesse de nos ancêtres. C'est sa mission première.",
+        "Former des âmes droites est plus important que former des esprits performants.",
+        "Les contenus pédagogiques doivent être conformes aux principes moraux de la communauté.",
+        "L'éducation est le terrain où se joue la transmission de notre identité collective.",
+        "Apprendre à vivre selon les valeurs est la plus haute forme d'éducation.",
         "L'éducation doit former des âmes avant de former des esprits — la dimension morale prime.",
         "Aucun contenu contraire aux valeurs fondatrices du régime ne peut être enseigné aux jeunes générations.",
         "La formation religieuse est le socle sur lequel tout apprentissage doit s'appuyer.",
@@ -228,42 +410,77 @@
     },
     "ecologie": {
       "democratie_liberale": [
+        "L'impact environnemental de cette décision doit être évalué avec la rigueur que le sujet impose.",
+        "Les générations futures ne peuvent pas voter aujourd'hui. Nous devons les représenter ici.",
+        "La transition écologique est une responsabilité collective que cette décision doit servir.",
+        "Les données environnementales disponibles ne peuvent pas être ignorées dans cette délibération.",
+        "L'empreinte écologique de cette mesure est une dimension de son coût réel pour la société.",
         "La soutenabilité environnementale de cette décision doit être évaluée sur le long terme.",
         "Les générations futures ont le droit à un environnement préservé — cette délibération les engage.",
         "Le principe de précaution doit s'appliquer face aux incertitudes sur les impacts écologiques.",
         "La transition vers un modèle soutenable est une responsabilité collective, non un choix optionnel."
       ],
       "republique_federale": [
+        "Les ressources naturelles traversent les frontières régionales. La coordination s'impose.",
+        "Chaque entité a le droit de gérer son environnement, mais les effets dépassent ses frontières.",
+        "La politique écologique fédérale doit créer un cadre cohérent que les régions peuvent décliner.",
+        "Les territoires les plus exposés aux risques climatiques méritent une solidarité fédérale accrue.",
+        "La diversité des écosystèmes régionaux est une richesse nationale à préserver collectivement.",
         "Les impacts environnementaux transfrontaliers entre régions doivent être pris en compte dans cette décision.",
         "Une politique écologique cohérente à l'échelle fédérale est indispensable pour éviter les passagers clandestins.",
         "Les ressources naturelles partagées entre régions exigent une gouvernance commune et transparente.",
         "Aucune entité fédérée ne peut se soustraire à ses obligations environnementales au détriment des autres."
       ],
       "monarchie_constitutionnelle": [
+        "Le Royaume administre ses terres depuis des siècles. Cette sagesse doit guider nos décisions.",
+        "Le patrimoine naturel royal est un héritage que nous avons le devoir de transmettre intact.",
+        "La gestion durable des ressources naturelles est une tradition royale que nous perpétuons.",
+        "La protection des forêts et des eaux du Royaume est une responsabilité de la Couronne.",
+        "L'équilibre entre développement et préservation est au cœur de la vision royale.",
         "La préservation du patrimoine naturel national est une mission historique de l'institution royale.",
         "L'équilibre entre développement et conservation est une tradition que la Couronne a toujours su maintenir.",
         "Les paysages et écosystèmes hérités sont un bien commun que cette délibération doit protéger.",
         "La responsabilité envers les générations futures s'inscrit dans la continuité de la tradition monarchique."
       ],
       "technocratie_ia": [
+        "Les modèles climatiques projettent des conséquences que cette décision doit intégrer.",
+        "L'optimisation de l'empreinte environnementale nationale passe par une analyse rigoureuse des données.",
+        "Les systèmes de surveillance écologique fournissent des indicateurs que cette mesure doit respecter.",
+        "La transition énergétique optimale est calculable. Les données doivent guider nos choix.",
+        "L'efficience environnementale est mesurable et doit devenir un critère de décision systématique.",
         "Les capteurs environnementaux indiquent des paramètres dans les marges tolérables selon les modèles actuels.",
         "L'optimisation énergétique du système est en cours — les projections d'impact carbone sont calculées.",
         "Les données écologiques alimentent les modèles de soutenabilité sans alerte critique détectée.",
         "L'analyse algorithmique des externalités environnementales de la décision est disponible sur demande."
       ],
       "junte_militaire": [
+        "Les ressources naturelles sont des actifs stratégiques que cette décision ne doit pas dilapider.",
+        "La dépendance aux ressources étrangères est une vulnérabilité. L'autonomie écologique est défensive.",
+        "La sécurité alimentaire et hydrique est un impératif de défense nationale.",
+        "Les catastrophes écologiques déstabilisent les nations. La prévention est une mission de sécurité.",
+        "Le contrôle des ressources vitales du territoire est une priorité souveraine absolue.",
         "Les ressources naturelles sont un actif stratégique national à protéger contre toute exploitation étrangère.",
         "La souveraineté sur les ressources du territoire est une ligne rouge défensive non négociable.",
         "L'environnement ne doit pas devenir un prétexte pour affaiblir la capacité productive et militaire nationale.",
         "La gestion des ressources naturelles relève de la sécurité nationale — elle doit être contrôlée en conséquence."
       ],
       "oligarchie": [
+        "Les risques environnementaux mal gérés se traduisent en risques économiques et réputationnels.",
+        "Les marchés verts offrent des opportunités que cette décision peut contribuer à saisir.",
+        "La conformité environnementale est devenue un critère d'attractivité pour les investisseurs.",
+        "La transition écologique bien gérée crée des avantages compétitifs durables.",
+        "Les coûts de la dégradation environnementale dépassent les coûts de la prévention.",
         "Les contraintes environnementales doivent être calibrées pour ne pas entraver la compétitivité économique.",
         "Les marchés de droits à polluer sont l'outil le plus efficace pour une transition écologique sans rupture.",
         "Les investissements verts doivent être orientés vers les secteurs offrant le meilleur retour sur capital.",
         "La réglementation environnementale ne peut excéder ce que les acteurs économiques dominants peuvent absorber."
       ],
       "theocratie": [
+        "La création nous a été confiée. En prendre soin est un devoir religieux autant qu'écologique.",
+        "Le respect de la nature est une forme de gratitude envers Celui qui nous l'a donnée.",
+        "La sobriété dans l'usage des ressources est une vertu que nos valeurs nous imposent.",
+        "La protection de la création est un commandement que nos décisions doivent honorer.",
+        "L'harmonie avec la nature reflète l'harmonie avec les principes qui ordonnent le monde.",
         "La Création est un don sacré — la dégrader est une faute morale avant d'être un problème politique.",
         "La sobriété et le respect de la nature sont des valeurs spirituelles fondatrices de notre rapport au monde.",
         "L'exploitation irresponsable des ressources naturelles trahit l'obligation de gérance que nous avons reçue.",
@@ -272,42 +489,77 @@
     },
     "industrie": {
       "democratie_liberale": [
+        "La compétitivité industrielle et la protection sociale ne sont pas des objectifs incompatibles.",
+        "L'innovation technologique doit bénéficier à tous les citoyens, pas seulement à ses promoteurs.",
+        "L'impact de cette décision sur l'emploi industriel doit être évalué avec soin.",
+        "La transition industrielle doit être accompagnée pour ne laisser aucun territoire dérrière.",
+        "Un tissu industriel diversifié est un gage de résilience démocratique.",
         "La compétitivité industrielle doit être préservée sans sacrifier les droits sociaux des travailleurs.",
         "L'innovation est le moteur d'une industrie souveraine — elle mérite un cadre réglementaire favorable.",
         "La réindustrialisation nationale est un enjeu stratégique qui dépasse les seules logiques de marché.",
         "L'impact de cette décision sur l'emploi industriel doit être évalué de façon transparente."
       ],
       "republique_federale": [
+        "Les spécialisations industrielles régionales sont une force que cette décision doit valoriser.",
+        "La coordination des politiques industrielles entre entités évite les doublons et les rivalités.",
+        "Les chaînes de valeur industrielles traversent les frontières régionales. La cohérence s'impose.",
+        "L'équilibre industriel entre les régions est un facteur de cohésion fédérale.",
+        "Un développement industriel équilibré entre les entités renforce la solidarité nationale.",
         "Les filières industrielles régionales doivent être coordonnées pour éviter les doublons et les rivalités.",
         "La complémentarité des spécialisations industrielles entre régions est un atout fédéral à préserver.",
         "Les politiques industrielles locales ne peuvent contredire la stratégie nationale sans arbitrage fédéral.",
         "Le développement industriel d'une région ne doit pas se faire au détriment des autres entités fédérées."
       ],
       "monarchie_constitutionnelle": [
+        "L'industrie nationale est un pilier de la puissance et du prestige du Royaume.",
+        "Les savoir-faire industriels ancestraux sont un patrimoine que cette décision doit protéger.",
+        "La Couronne a toujours soutenu les industries qui servent la grandeur nationale.",
+        "L'innovation industrielle doit s'inscrire dans la continuité des traditions techniques du Royaume.",
+        "La prospérité industrielle du Royaume est une expression de la sagesse de sa gouvernance.",
         "Les industries nationales historiques sont des symboles identitaires autant que des outils économiques.",
         "La modernisation industrielle doit se faire dans la continuité des savoir-faire nationaux reconnus.",
         "La Couronne garantit la stabilité du tissu industriel comme condition de la cohésion sociale nationale.",
         "Les artisans et industries traditionnelles méritent une protection particulière dans cette délibération."
       ],
       "technocratie_ia": [
+        "L'optimisation des chaînes de production passe par une intégration systématique des données de performance.",
+        "L'automatisation industrielle doit être pilotée par des métriques rigoureuses de rentabilité.",
+        "Les décisions industrielles basées sur les données produisent des résultats supérieurs.",
+        "La modélisation prédictive des marchés industriels doit guider les investissements stratégiques.",
+        "L'efficience industrielle est mesurable. Elle doit devenir le critère premier de nos politiques.",
         "L'automatisation des chaînes de production est en cours selon les calendriers d'optimisation validés.",
         "Les indicateurs de performance industrielle sont dans les marges prévues par les modèles de planification.",
         "L'intégration des systèmes industriels dans la plateforme de pilotage centralisé est opérationnelle.",
         "Les projections de rendement industriel post-décision sont favorables selon les analyses disponibles."
       ],
       "junte_militaire": [
+        "L'industrie nationale est la base matérielle de la puissance militaire. Elle doit être protégée.",
+        "L'autonomie industrielle est un impératif stratégique que cette décision doit servir.",
+        "Les industries de défense et les industries civiles doivent être coordonnées au service de la nation.",
+        "La dépendance industrielle envers l'étranger est une vulnérabilité stratégique inacceptable.",
+        "La mobilisation industrielle en cas de crise requiert une planification anticipée et rigoureuse.",
         "L'industrie nationale est un pilier de la souveraineté — elle doit être orientée vers les besoins stratégiques.",
         "La production d'armements et d'équipements militaires prime sur toute autre orientation industrielle.",
         "Le contrôle étatique des secteurs industriels critiques est une nécessité de sécurité nationale.",
         "La dépendance envers des fournisseurs étrangers dans des secteurs stratégiques est inacceptable."
       ],
       "oligarchie": [
+        "La rentabilité industrielle est le signal que les marchés envoient sur l'allocation optimale des ressources.",
+        "La compétitivité de nos industries nationales conditionne notre position dans l'économie mondiale.",
+        "Les investissements industriels suivent la prévisibilité réglementaire. Cette décision doit la garantir.",
+        "L'innovation industrielle privée produit plus d'efficience que l'intervention publique.",
+        "La protection de nos champions industriels est un investissement dans la puissance économique nationale.",
         "La rentabilité des secteurs industriels dominants doit guider les arbitrages de politique industrielle.",
         "Les subventions publiques doivent être orientées vers les filières à fort potentiel de retour sur capital.",
         "La flexibilité du marché du travail industriel est une condition de la compétitivité nationale.",
         "Les concentrations industrielles doivent être protégées contre les réglementations qui fragmentent les marchés."
       ],
       "theocratie": [
+        "Le travail est une vocation. L'industrie doit servir l'épanouissement humain, pas l'aliéner.",
+        "Les pratiques industrielles doivent respecter la dignité des travailleurs et les valeurs de la communauté.",
+        "Le progrès technique n'est légitime que s'il sert des fins conformes à nos principes.",
+        "L'industrie au service de la communauté est bénie. L'industrie au service du profit seul est vaine.",
+        "La modération dans la production et la consommation est une vertu que nos valeurs nous enseignent.",
         "L'industrie doit servir le bien commun et les valeurs du régime, non l'enrichissement d'une minorité.",
         "Le travail manuel et artisanal est une forme de dignité humaine que l'industrialisation ne doit pas effacer.",
         "Les activités industrielles contraires aux valeurs morales fondatrices du régime doivent être interdites.",

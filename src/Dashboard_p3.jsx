@@ -36,7 +36,8 @@ import {
 } from './features/council/services/councilEngine';
 import { useCouncilSession } from './features/council/hooks/useCouncilSession';
 import { GarbageModal, MismatchModal } from './features/council/components/CouncilModals';
-import { C, FONT, } from './shared/theme'
+import { C, FONT, } from './shared/theme';
+import { getIaStatus } from './shared/services/iaStatusStore';
 
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
@@ -653,18 +654,11 @@ function AddCountryModal({ onConfirm, onClose }) {
   const rcTimer   = useRef(null);
   const rcQueryRef = useRef('');
 
-  const TERRAIN_OPTS = [
-    'coastal','inland','highland','island','archipelago','desert','foret','tropical','toundra',
-  ].map(k => [k, getTerrainLabel(k, uiLang)]);
-  const REGIME_OPTS = [
-    'democratie_liberale','republique_federale','monarchie_constitutionnelle','democratie_directe',
-    'technocratie','oligarchie','junte_militaire','regime_autoritaire','monarchie_absolue','theocratie',
-  ].map(k => [k, getRegimeLabel(k, uiLang)]);
+  const TERRAIN_OPTS = Object.keys(getStats().terrains || {}).map(k => [k, getTerrainLabel(k, uiLang)]);
+  const REGIME_OPTS  = Object.keys(getStats().regimes  || {}).map(k => [k, getRegimeLabel(k, uiLang)]);
 
-  // Estimations fictif
-  const ARIA_EST = { democratie_liberale:48, republique_federale:44, monarchie_constitutionnelle:38, democratie_directe:52, technocratie:65, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocratie:18 };
-  const POP_EST  = { coastal:8e6, inland:5e6, highland:3.5e6, island:2e6, archipelago:1.5e6, desert:2.5e6, foret:4e6, tropical:6e6, toundra:1.5e6 };
-  const SAT_EST  = { democratie_liberale:62, republique_federale:58, monarchie_constitutionnelle:55, democratie_directe:65, technocratie:60, oligarchie:40, junte_militaire:35, regime_autoritaire:38, monarchie_absolue:48, theocratie:50 };
+  // Estimations fictif — depuis simulation.json
+  const { regimes: regSim, terrains: terSim } = getStats();
 
   // ── Validation pays réel en ligne ─────────────────────────────────────────
   const searchReal = async (query) => {
@@ -799,9 +793,9 @@ function AddCountryModal({ onConfirm, onClose }) {
               </div>
               {/* Estimations */}
               <div style={{ display:'flex', gap:'0.6rem', flexWrap:'wrap', padding:'0.4rem 0.6rem', background:'rgba(58,191,122,0.04)', borderLeft:'2px solid rgba(58,191,122,0.18)', borderRadius:'2px' }}>
-                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.55)' }}>👥 ~{((POP_EST[terrain]||5e6)/1e6).toFixed(1)} M</span>
-                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.55)' }}>😊 ~{SAT_EST[regime]||50}%</span>
-                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(100,130,200,0.70)' }}>◈ ARIA IRL ~{ARIA_EST[regime]||35}%</span>
+                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.55)' }}>👥 ~{(((terSim[terrain]?.pop_base)||5e6)/1e6).toFixed(1)} M</span>
+                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.55)' }}>😊 ~{regSim[regime]?.sat_base||50}%</span>
+                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(100,130,200,0.70)' }}>◈ ARIA IRL ~{regSim[regime]?.aria_irl_base||35}%</span>
               </div>
             </>
           )}
@@ -1058,6 +1052,58 @@ function DiplomacyModal({ sourceCountry, allCountries, alliances, onSetRelation,
 // ─────────────────────────────────────────────────────────────────────────────
 
 
+// ── Statut IA — badge persistant + toast reconnexion ─────────────────────────
+function useIaStatus(pushNotif) {
+  const [iaStatus, setLocal] = useState(() => getIaStatus());
+  const prevRef = useRef(iaStatus);
+  const lang = loadLang();
+
+  useEffect(() => {
+    const handler = (e) => {
+      const next = e.detail.status;
+      const prev = prevRef.current;
+      prevRef.current = next;
+      setLocal(next);
+      // Toast au retour de l'IA
+      if (prev !== null && next === null) {
+        pushNotif?.(
+          lang === 'en' ? '✅ AI reconnected — Board Game mode disabled' : '✅ IA reconnectée — mode Board Game désactivé',
+          'ok', 4000
+        );
+      }
+    };
+    window.addEventListener('aria:ia-status', handler);
+    return () => window.removeEventListener('aria:ia-status', handler);
+  }, [pushNotif, lang]);
+
+  return iaStatus;
+}
+
+function IaStatusBadge({ status }) {
+  if (!status) return null;
+  const lang = loadLang();
+  const isOffline = status === 'offline';
+  const color     = isOffline ? 'rgba(220,60,60,0.90)' : 'rgba(220,160,40,0.90)';
+  const border    = isOffline ? 'rgba(220,60,60,0.35)' : 'rgba(220,160,40,0.35)';
+  const label     = isOffline
+    ? (lang === 'en' ? '🔴 AI OFFLINE — BOARD GAME MODE' : '🔴 IA HORS-LIGNE — MODE BOARD GAME')
+    : (lang === 'en' ? '⚠ QUOTA EXCEEDED — BOARD GAME MODE' : '⚠ QUOTA DÉPASSÉ — MODE BOARD GAME');
+
+  return (
+    <div style={{
+      position: 'fixed', bottom: '1.4rem', left: '50%', transform: 'translateX(-50%)',
+      zIndex: 9000, pointerEvents: 'none',
+      background: 'rgba(4,8,18,0.88)', border: `1px solid ${border}`,
+      borderRadius: '3px', padding: '0.3rem 0.9rem',
+      fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.10em',
+      color, boxShadow: `0 0 14px ${border}`,
+      animation: 'fadeSlideInBadge 0.3s ease both',
+    }}>
+      {label}
+    </div>
+  );
+}
+
 // ── Toast notifications ──────────────────────────────────────────────────────
 function Toast({ notification }) {
   if (!notification) return null;
@@ -1187,6 +1233,7 @@ function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) 
 
 export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
+  const iaStatus = useIaStatus(aria.pushNotif);
 
   // Langue réactive (écoute event aria-lang-change émis par ariaI18n)
   const [uiLang, setUiLang] = useState(() => localStorage.getItem('aria_lang') || 'fr');
@@ -1419,7 +1466,22 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
           session={councilSession}
           onVote={handleVoteCouncil}
           isRunning={councilRunning}
-          countryContext={selectedCountry ? buildCountryContext(selectedCountry) : ''}
+          countryContext={(() => {
+            const c = selectedCountry;
+            if (!c) return '';
+            const isEn   = loadLang() === 'en';
+            const raw    = (isEn ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === c.id);
+            const geoText = raw?.triple_combo         || c.geoContext  || '';
+            const socText = raw?.aria_sociology_logic || c.description || '';
+            const sat     = Math.round(c.satisfaction ?? 50);
+            const aria    = Math.round(c.aria_current ?? c.aria_irl ?? 40);
+            const statsLine = isEn
+              ? `Approval: ${sat}%   ·   ARIA: ${aria}%`
+              : `Satisfaction : ${sat}%   ·   Adhésion ARIA : ${aria}%`;
+            const geoBlock = [geoText, socText].filter(Boolean).join('\n\n');
+            const baseText = c.contextOverride?.trim() || geoBlock;
+            return [baseText, statsLine].filter(Boolean).join('\n\n');
+          })()}
           countryNom={selectedCountry?.nom || ''}
           ctxMode={(() => {
             const c = selectedCountry;
@@ -1495,6 +1557,10 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
               0%   { transform: translateX(-100%); }
               100% { transform: translateX(250%); }
             }
+            @keyframes fadeSlideInBadge {
+              from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+              to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
           `}</style>
         </div>
       )}
@@ -1504,6 +1570,9 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
 
       {/* ── Toast notifications ── */}
       <Toast notification={aria.notification} />
+
+      {/* ── Badge statut IA ── */}
+      <IaStatusBadge status={iaStatus} />
 
       {/* ── Modal erreur IA ── */}
       <AIErrorModal

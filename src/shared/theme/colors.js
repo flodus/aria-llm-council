@@ -37,6 +37,10 @@ export const COLORS = {
     redDim:     'rgba(200,80,80,0.50)',
     redHex:     '#F44336',
 
+    // Cramoisi / Collégiale
+    crimson:    'rgba(165,55,75,0.88)',
+    crimsonDim: 'rgba(165,55,75,0.50)',
+
     // Textes
     text:       'rgba(200,215,240,0.88)',
     textDim:    'rgba(140,160,200,0.55)',
@@ -48,7 +52,7 @@ export const COLORS = {
 
     // Backgrounds
     bg:         'rgba(8,14,26,0.92)',
-    bgCard:     'rgba(14,20,36,0.45)',
+    bgCard:     'rgba(14,20,36,0.82)',
     bgDeep:     'rgba(6,10,18,0.95)',
 };
 

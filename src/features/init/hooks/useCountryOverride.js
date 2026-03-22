@@ -1,6 +1,7 @@
 // src/features/init/hooks/useCountryOverride.js
 
 import { useState } from 'react';
+import { getDestin } from '../../council/services/agentsManager';
 
 export default function useCountryOverride(perGov, setPerGov, commonAgents, commonMins, commonPres, commonMinsters) {
     const [plCountry, setPlCountry] = useState(0);
@@ -14,6 +15,8 @@ export default function useCountryOverride(perGov, setPerGov, commonAgents, comm
     const activeMins = curGov?.activeMins ?? commonMins;
     const activePres = curGov?.activePres ?? commonPres;
     const activeMinsters = curGov?.activeMinsters ?? commonMinsters;
+    const destinyMode = curGov?.destinyMode ?? false;
+    const activeDestinAgents = curGov?.activeDestinAgents ?? null; // null = tous actifs
 
     // Crée l'override à la volée si inexistant, puis applique la mise à jour
     const ensureFork = (p) => {
@@ -62,6 +65,39 @@ export default function useCountryOverride(perGov, setPerGov, commonAgents, comm
         });
     };
 
+    const setActiveDestinAgents = (v) => {
+        setPerGov(p => {
+            const a = [...p];
+            const fork = ensureFork(p);
+            const all = getDestin()?.agents || ['oracle', 'wyrd'];
+            const next = typeof v === 'function' ? v(fork.activeDestinAgents ?? null) : v;
+            // Liste vide → désactiver destiny_mode automatiquement
+            const newDestiny = (next !== null && next.length === 0) ? false : (fork.destinyMode ?? false);
+            a[plCountry] = { ...fork, activeDestinAgents: next, destinyMode: newDestiny };
+            return a;
+        });
+    };
+
+    const toggleDestinAgent = (id) => {
+        setActiveDestinAgents(prev => {
+            const all = getDestin()?.agents || ['oracle', 'wyrd'];
+            const cur = prev || all;
+            const on = cur.includes(id);
+            const next = on ? cur.filter(k => k !== id) : [...cur, id];
+            return next.length === all.length ? null : next;
+        });
+    };
+
+    const setDestinyMode = (v) => {
+        setPerGov(p => {
+            const a = [...p];
+            const fork = ensureFork(p);
+            const next = typeof v === 'function' ? v(fork.destinyMode ?? false) : v;
+            a[plCountry] = { ...fork, destinyMode: next };
+            return a;
+        });
+    };
+
     const forkCountry = () => {
         setPerGov(p => {
             if (p[plCountry]) return p;
@@ -102,12 +138,14 @@ export default function useCountryOverride(perGov, setPerGov, commonAgents, comm
         activeMins, setActiveMins,
         activePres, setActivePres,
         activeMinsters, setActiveMinsters,
+        destinyMode, setDestinyMode,
+        activeDestinAgents, setActiveDestinAgents, toggleDestinAgent,
         hasOverride,
         selectedMinistry, setSelectedMinistry,
         selectedMinister, setSelectedMinister,
         forkCountry,
-            resetCountryOverride,
-            toggleMinster,
-            setPlAgents
+        resetCountryOverride,
+        toggleMinster,
+        setPlAgents
     };
 }

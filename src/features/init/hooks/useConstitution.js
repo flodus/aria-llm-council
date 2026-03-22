@@ -3,10 +3,15 @@
 import { useState, useEffect } from 'react';
 import { loadLang } from '../../../ariaI18n';
 import { BASE_AGENTS, BASE_AGENTS_EN } from '../../../../templates';
+import { getAgents } from '../../../Dashboard_p1';
+
+function defaultMins() {
+    return getAgents().ministries.filter(m => m.base).map(m => m.id);
+}
 
 export default function useConstitution(pendingDefs) {
     const [commonAgents, setCommonAgents] = useState(null);
-    const [commonMins, setCommonMins] = useState(null);
+    const [commonMins, setCommonMins] = useState(() => defaultMins());
     const [commonPres, setCommonPres] = useState(['phare', 'boussole']);
     const [commonMinsters, setCommonMinsters] = useState(null);
     const [perGov, setPerGov] = useState(() => (pendingDefs || []).map(() => null));
@@ -37,7 +42,7 @@ export default function useConstitution(pendingDefs) {
 
     const resetAgents = () => {
         localStorage.removeItem('aria_agents_override');
-        setCommonMins(null);
+        setCommonMins(defaultMins());
         setCommonPres(['phare', 'boussole']);
         setCommonMinsters(null);
         setCommonAgents(null);

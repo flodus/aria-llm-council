@@ -5,7 +5,7 @@
 // ============================================================
 
 import { callAI, getApiKeys } from '../../../Dashboard_p1';
-import { getMinistriesList } from './agentsManager';
+import { getMinistriesList, getDestin } from './agentsManager';
 import { langPrefix } from './contextBuilder';
 
 /** Ministère par défaut si routing impossible (score keywords = 0 → question garbage) */
@@ -64,6 +64,19 @@ export async function routeQuestion(question, forceMinistryId = null) {
 function localKeywordRoute(questionLow) {
     const match = getBestMatch(questionLow);
     return match ? match.ministryId : null;
+}
+
+/**
+ * Détecte si une question relève du domaine "Destinée du Monde" (crise/anomalie/aléa).
+ * Synchrone, local uniquement — ne modifie pas le routage standard.
+ * @param {string} question
+ * @returns {boolean}
+ */
+export function detectCrisis(question) {
+    const destin = getDestin();
+    if (!destin?.keywords?.length) return false;
+    const q = question.toLowerCase();
+    return destin.keywords.some(kw => q.includes(kw.toLowerCase()));
 }
 
 /**

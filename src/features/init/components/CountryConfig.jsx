@@ -32,7 +32,7 @@ import {
     ContextPanel
 } from './index';
 
-export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove, reelOnly = false }) {
+export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove, reelOnly = false, selectedRealIds = [] }) {
     const { lang } = useLocale();
     const setField = (k, v) => onChange({ ...c, [k]: v });
 
@@ -196,6 +196,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             country={c}
             onChange={onChange}
             setField={setField}
+            selectedRealIds={selectedRealIds}
             />
         )}
 
@@ -205,6 +206,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             country={c}
             onChange={onChange}
             setField={setField}
+            selectedRealIds={selectedRealIds}
             />
         )}
 

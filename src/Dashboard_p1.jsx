@@ -13,6 +13,7 @@ import STATS     from '../templates/languages/fr/simulation.json';
 import STATS_EN  from '../templates/languages/en/simulation.json';
 import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN, LOCAL_COUNTRIES } from './ariaData';
 import { loadLang } from './ariaI18n';
+import { setIaStatus } from './shared/services/iaStatusStore';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  1. CONSTANTES DÉRIVÉES DES JSON
@@ -296,27 +297,14 @@ export function findSpawnPoint(worldData, existingCountries, preferredType = nul
 //  Dérive passive à chaque cycle : mean-reversion vers IRL + drift satisfaction.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Base IRL par régime pour les pays FICTIFS (déterministe, sans texte sociologique)
-const REGIME_ARIA_BASE_IRL = {
-  democratie_liberale:          48,
-  republique_federale:          44,
-  monarchie_constitutionnelle:  38,
-  technocratie_ia:              72,
-  oligarchie:                   26,
-  junte_militaire:              16,
-  regime_autoritaire:           20,
-  monarchie_absolue:            28,
-  theocratie:                   18,
-  communisme:                   32, // Méfiance envers tout contrôle algorithmique non-étatique
-  nationalisme_autoritaire:     12, // Rejet idéologique fort d'une délibération "froide" et supranationale
-};
+// Base IRL par régime pour les pays FICTIFS — lu depuis simulation.json (aria_irl_base)
 
 /**
  * Calcule le taux IRL pour un pays FICTIF (déterministe).
  * Les pays réels ont leur taux fourni directement dans aria_acceptance_irl.
  */
 export function calcAriaIRL(country) {
-  const base     = REGIME_ARIA_BASE_IRL[country.regime] ?? 35;
+  const base     = getStats().regimes[country.regime]?.aria_irl_base ?? 35;
   const satBonus = (country.satisfaction - 50) * 0.28;
   const ecoBonus = ((country.economie || 100) - 100) * 0.06;
   const island   = ['island', 'archipelago'].includes(country.terrain) ? 4 : 0;
@@ -547,15 +535,13 @@ export function calcSatisfactionDelta(country, alliances) {
   let delta = cfg.derive_satisfaction_base * regime.coeff_satisfaction;
 
   // Impact ressources présentes/absentes pondéré par les ministères concernés
-  const resMinisters = {
-    agriculture: poids.sante    * 0.5 + poids.economie * 0.5,
-    bois:        poids.ecologie * 0.6 + poids.economie * 0.4,
-    eau:         poids.sante    * 0.8 + poids.ecologie * 0.2,
-    energie:     poids.economie * 0.7 + poids.ecologie * 0.3,
-    mineraux:    poids.economie * 0.6 + poids.defense  * 0.4,
-    peche:       poids.sante    * 0.5 + poids.economie * 0.5,
-    petrole:     poids.economie * 0.8 + poids.defense  * 0.2,
-  };
+  const rmWeights = getStats().resource_ministry_weights || {};
+  const resMinisters = Object.fromEntries(
+    Object.entries(rmWeights).map(([res, w]) => [
+      res,
+      Object.entries(w).reduce((sum, [minId, coeff]) => sum + (poids[minId] || 0) * coeff, 0),
+    ])
+  );
 
   Object.entries(country.ressources).forEach(([k, present]) => {
     const weight = resMinisters[k] || 1.0;
@@ -953,34 +939,50 @@ export async function callAI(prompt, type = 'standard', context = {}) {
     return getLocalResponse(type, context);
   }
 
+  // Helper : notifie le statut IA selon le résultat de callModel
+  const _track = async (promise) => {
+    try {
+      const result = await promise;
+      if (result?.error) {
+        setIaStatus(result.code === 429 ? 'quota' : (!navigator.onLine ? 'offline' : 'quota'));
+      } else if (result !== null && result !== undefined) {
+        setIaStatus(null);
+      }
+      return result;
+    } catch {
+      setIaStatus(!navigator.onLine ? 'offline' : 'quota');
+      return null;
+    }
+  };
+
   // 2. Dispatcher intelligent (on passe le modèle de Settings + le prompt système)
   switch (type) {
     case 'ministre':
-      return callModel(roles.ministre_model || 'claude', prompt, keys);
+      return _track(callModel(roles.ministre_model || 'claude', prompt, keys));
 
     case 'synthese_ministere':
-      return callModel(roles.synthese_min || 'gemini', prompt, keys, promptsSys.synthese_ministere);
+      return _track(callModel(roles.synthese_min || 'gemini', prompt, keys, promptsSys.synthese_ministere));
 
     case 'phare':
-      return callModel(roles.phare_model || 'claude', prompt, keys);
+      return _track(callModel(roles.phare_model || 'claude', prompt, keys));
 
     case 'boussole':
-      return callModel(roles.boussole_model || 'claude', prompt, keys);
+      return _track(callModel(roles.boussole_model || 'claude', prompt, keys));
 
     case 'synthese_presidence':
-      return callModel(roles.synthese_pres || 'gemini', prompt, keys, promptsSys.synthese_presidence);
+      return _track(callModel(roles.synthese_pres || 'gemini', prompt, keys, promptsSys.synthese_presidence));
 
     case 'evenement':
-      return callModel(roles.evenement_model || 'claude', prompt, keys);
+      return _track(callModel(roles.evenement_model || 'claude', prompt, keys));
 
     case 'factcheck':
-      return callModel(roles.factcheck_model || 'gemini', prompt, keys, promptsSys.factcheck_evenement);
+      return _track(callModel(roles.factcheck_model || 'gemini', prompt, keys, promptsSys.factcheck_evenement));
 
     case 'pays':
-      // Génération de pays — utilise le modèle solo configuré (ou claude par défaut)
-      return callModel(opts.solo_model || 'claude', prompt, keys);
+      return _track(callModel(opts.solo_model || 'claude', prompt, keys));
+
     default:
-      return callModel(opts.solo_model || 'claude', prompt, keys);
+      return _track(callModel(opts.solo_model || 'claude', prompt, keys));
   }
 }
 export const DEFAULT_OPTIONS = {
@@ -1005,9 +1007,7 @@ export const DEFAULT_OPTIONS = {
   },
   world: { nb_pays_defaut: 3 },
   defaultGovernance: {
-    presidency:       'duale',
-    ministries:       ['justice','economie','defense','sante','education','ecologie','chance'],
-    crisis_ministry:  true,
+    presidency: 'duale',
   },
 };
 
@@ -1167,19 +1167,7 @@ function clearSession() {
 //  HELPER : construit des alliances par défaut basées sur l'idéologie et la proximité
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REGIME_BLOC = {
-  democratie_liberale: 'occident',
-  republique_federale: 'occident',
-  monarchie_constitutionnelle: 'occident',
-  technocratie_ia: 'techno',
-  oligarchie: 'autoritaire',
-  junte_militaire: 'autoritaire',
-  regime_autoritaire: 'autoritaire',
-  monarchie_absolue: 'autoritaire',
-  theocratie: 'autoritaire',
-  communisme: 'est',
-  nationalisme_autoritaire: 'autoritaire',
-};
+// REGIME_BLOC lu depuis simulation.json (champ bloc)
 
 function buildDefaultAlliances(countries) {
   if (!countries || countries.length < 2) return [];
@@ -1187,8 +1175,8 @@ function buildDefaultAlliances(countries) {
   for (let i = 0; i < countries.length; i++) {
     for (let j = i + 1; j < countries.length; j++) {
       const a = countries[i], b = countries[j];
-      const blocA = REGIME_BLOC[a.regime] || 'neutral';
-      const blocB = REGIME_BLOC[b.regime] || 'neutral';
+      const blocA = getStats().regimes[a.regime]?.bloc || 'neutral';
+      const blocB = getStats().regimes[b.regime]?.bloc || 'neutral';
       let type = 'Neutre';
       if (blocA === blocB && blocA !== 'neutral') type = 'Alliance';
       else if (blocA !== 'neutral' && blocB !== 'neutral' && blocA !== blocB) type = 'Tension';
@@ -1210,7 +1198,8 @@ function normalizeRealCountryTemplate(rc) {
     couleur:      rc.couleur || `hsl(${hue}, 55%, 34%)`,
     regime:       rc.regime || 'democratie_liberale',
     terrain:      rc.terrain || 'coastal',
-    description:  rc.aria_sociology_logic || rc.triple_combo || '',
+    description:  rc.aria_sociology_logic || '',
+    geoContext:   rc.triple_combo || '',
     leader:       rc.leader || null,
     population:   rc.population || 5_000_000,
     tauxNatalite: rc.tauxNatalite ?? rc.natalite  ?? 11,

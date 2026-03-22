@@ -13,7 +13,8 @@
     "aria_sociology_logic": "Scepticisme élevé dû à la culture de la contestation et à la sacralisation du politique humain. Passé révolutionnaire. Présent : crise de confiance institutionnelle profonde.",
     "triple_combo": "La France traverse une crise de confiance institutionnelle profonde après une décennie de mouvements sociaux (Gilets jaunes, réforme des retraites). Membre fondateur de l'UE et de l'OTAN, elle voit son influence africaine reculer depuis 2020. Les tensions internes se concentrent sur l'identité nationale, l'immigration et la fracture métropoles/périphéries.",
     "secteurs": ["aéronautique", "agroalimentaire", "luxe", "énergie nucléaire"],
-    "ressources": ["agriculture", "eau", "energie"]
+    "ressources": ["agriculture", "eau", "energie"],
+    "leader": { "nom": "Emmanuel Macron", "titre": "Président de la République", "trait": "réformiste" }
   },
   {
     "id": "allemagne",
@@ -29,7 +30,8 @@
     "aria_sociology_logic": "Pragmatisme industriel et besoin d'ordre, mais traumatisme historique face à la surveillance de masse qui freine l'adhésion totale à une IA centrale.",
     "triple_combo": "L'Allemagne post-Merkel cherche sa doctrine après le choc ukrainien qui a brisé sa dépendance au gaz russe (Zeitenwende). Sa puissance industrielle est fragilisée par la transition énergétique et la compétition chinoise dans l'automobile. Les tensions Est/Ouest alimentent la montée de l'AfD.",
     "secteurs": ["automobile", "chimie", "machine-outil", "pharmacie"],
-    "ressources": ["energie", "mineraux", "agriculture"]
+    "ressources": ["energie", "mineraux", "agriculture"],
+    "leader": { "nom": "Friedrich Merz", "titre": "Chancelier fédéral", "trait": "conservateur" }
   },
   {
     "id": "usa",
@@ -45,7 +47,8 @@
     "aria_sociology_logic": "Fracture nette : adhésion des pôles technologiques (Silicon Valley) mais rejet viscéral des zones rurales par peur d'un contrôle fédéral algorithmique.",
     "triple_combo": "Les États-Unis traversent une polarisation politique historique menaçant les fondements démocratiques. La compétition stratégique avec la Chine structure leur politique étrangère tandis que la doctrine America First fragilise les alliances OTAN. Les tensions internes portent sur les inégalités raciales, le contrôle des armes et la fracture côtes/intérieur.",
     "secteurs": ["technologie", "défense", "finance", "santé"],
-    "ressources": ["petrole", "agriculture", "mineraux", "energie"]
+    "ressources": ["petrole", "agriculture", "mineraux", "energie"],
+    "leader": { "nom": "Donald Trump", "titre": "Président", "trait": "imprévisible" }
   },
   {
     "id": "chine",
@@ -61,7 +64,8 @@
     "aria_sociology_logic": "Acceptation naturelle d'une gouvernance technocratique centralisée, déjà intégrée dans le contrat social de stabilité contre performances.",
     "triple_combo": "La Chine de Xi consolide son pouvoir dans un contexte de ralentissement économique post-zéro-Covid. En compétition directe avec les USA pour l'hégémonie technologique et maritime, elle maintient une pression croissante sur Taiwan. Les tensions internes portent sur le vieillissement démographique, la crise immobilière et la répression des minorités.",
     "secteurs": ["manufacture", "technologie", "construction", "énergie"],
-    "ressources": ["mineraux", "energie", "agriculture", "bois"]
+    "ressources": ["mineraux", "energie", "agriculture", "bois"],
+    "leader": { "nom": "Xi Jinping", "titre": "Secrétaire général du PCC", "trait": "autoritaire" }
   },
   {
     "id": "bresil",
@@ -77,7 +81,8 @@
     "aria_sociology_logic": "Besoin d'un arbitre neutre face à la corruption, mais la chaleur humaine et le charisme restent des piliers du consentement politique.",
     "triple_combo": "Le Brésil de Lula tente de réconcilier croissance et protection amazonienne. Puissance régionale, il joue un rôle de médiateur et renforce les BRICS. Les tensions portent sur les inégalités extrêmes, la violence urbaine et la question foncière entre agrobusiness et peuples autochtones.",
     "secteurs": ["agrobusiness", "pétrole", "mines", "aérospatial"],
-    "ressources": ["agriculture", "bois", "petrole", "eau", "peche"]
+    "ressources": ["agriculture", "bois", "petrole", "eau", "peche"],
+    "leader": { "nom": "Luiz Inácio Lula da Silva", "titre": "Président", "trait": "pragmatique" }
   },
   {
     "id": "inde",
@@ -93,7 +98,8 @@
     "aria_sociology_logic": "Espoir d'une justice impartiale pour briser la corruption bureaucratique, balancé par d'immenses défis de diversité culturelle.",
     "triple_combo": "L'Inde, première démocratie mondiale par la population, est le moteur émergent de l'économie mondiale. Son autonomie stratégique lui permet de maintenir des relations avec Russie, USA et Chine. Les tensions portent sur le nationalisme hindou, les discriminations de caste et les tensions intercommunautaires.",
     "secteurs": ["informatique", "pharmacie", "textile", "agriculture"],
-    "ressources": ["agriculture", "eau", "mineraux", "energie"]
+    "ressources": ["agriculture", "eau", "mineraux", "energie"],
+    "leader": { "nom": "Narendra Modi", "titre": "Premier ministre", "trait": "nationaliste" }
   },
   {
     "id": "russie",
@@ -109,7 +115,8 @@
     "aria_sociology_logic": "Attachement culturel au leadership humain fort. L'IA est perçue comme un outil suspect ou incapable de comprendre l'âme nationale.",
     "triple_combo": "La Russie en guerre depuis 2022 paie un isolement occidental croissant et réoriente ses exportations vers l'Asie. Elle renforce ses alliances avec la Chine, l'Iran et la Corée du Nord. Les tensions internes portent sur la mobilisation militaire, la fuite des cerveaux et la fragmentation ethnique.",
     "secteurs": ["hydrocarbures", "armement", "agriculture", "mines"],
-    "ressources": ["petrole", "energie", "mineraux", "agriculture", "bois"]
+    "ressources": ["petrole", "energie", "mineraux", "agriculture", "bois"],
+    "leader": { "nom": "Vladimir Poutine", "titre": "Président", "trait": "autocrate" }
   },
   {
     "id": "japon",
@@ -125,7 +132,8 @@
     "aria_sociology_logic": "Perception de l'IA comme une solution honorable et stable face au déclin démographique et à la fatigue des élites politiques humaines.",
     "triple_combo": "Le Japon fait face à une crise démographique structurelle et réoriente sa doctrine sécuritaire (réarmement) face aux menaces nord-coréenne et chinoise. Les tensions portent sur le tabou de l'immigration face au manque de main-d'œuvre et le poids des grandes entreprises sur la société.",
     "secteurs": ["automobile", "électronique", "robotique", "finance"],
-    "ressources": ["peche", "energie", "mineraux"]
+    "ressources": ["peche", "energie", "mineraux"],
+    "leader": { "nom": "Shigeru Ishiba", "titre": "Premier ministre", "trait": "prudent" }
   },
   {
     "id": "nigeria",
@@ -141,7 +149,8 @@
     "aria_sociology_logic": "Jeunesse connectée prête pour le futur, mais forte résistance des structures traditionnelles face à un contrôle algorithmique transparent.",
     "triple_combo": "Le Nigeria, première économie africaine, est englué dans une crise de gouvernance malgré ses ressources pétrolières. Il fait face à des insurrections multiples (Boko Haram, banditisme, séparatisme). Les tensions structurelles opposent 250 ethnies, chrétiens et musulmans, élites pétrolières et population pauvre.",
     "secteurs": ["pétrole", "agriculture", "télécoms", "services"],
-    "ressources": ["petrole", "agriculture", "peche", "mineraux"]
+    "ressources": ["petrole", "agriculture", "peche", "mineraux"],
+    "leader": { "nom": "Bola Tinubu", "titre": "Président", "trait": "populiste" }
   },
   {
     "id": "arabie",
@@ -157,6 +166,7 @@
     "aria_sociology_logic": "Adhésion Top-Down. Les élites voient ARIA comme le moteur de la Vision 2030, population habituée à une gouvernance performative.",
     "triple_combo": "L'Arabie Saoudite de MBS poursuit la Vision 2030 pour diversifier son économie. Sa normalisation avec l'Iran et ses hésitations sur les prix OPEP+ signalent une autonomie croissante vis-à-vis de Washington. Les tensions portent sur les inégalités entre citoyens et travailleurs immigrés, et la répression de l'opposition.",
     "secteurs": ["pétrole", "construction", "finance", "tourisme"],
-    "ressources": ["petrole", "energie", "mineraux"]
+    "ressources": ["petrole", "energie", "mineraux"],
+    "leader": { "nom": "Mohammed ben Salmane", "titre": "Prince héritier & Premier ministre", "trait": "modernisateur" }
   }
 ]

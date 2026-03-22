@@ -7,7 +7,7 @@
 import { PAYS_LOCAUX } from '../../../Dashboard_p1';
 import { getStats }    from '../../../Dashboard_p1';
 
-export { getTerrainLabel, getRegimeLabel, getTerrainLabelMap, getRegimeLabelMap }
+export { getTerrainLabel, getRegimeLabel, getTerrainLabelMap, getRegimeLabelMap, getTerrainIcon, getRegimeIcon }
     from '../../../shared/data/worldLabels';
 
 export function getPaysLocaux() {

@@ -17,7 +17,7 @@ import { getRealCountries } from '../services/realCountries';
 import { validateCountryWithAI } from '../../../shared/services/country';
 import { CountryInfoCard } from './index';
 
-export default function RealCountryAISection({ country, onChange, setField }) {
+export default function RealCountryAISection({ country, onChange, setField, selectedRealIds = [] }) {
     const { lang } = useLocale();
     const [rcSearch, setRcSearch] = useState(country.nom || '');
     const [rcStatus, setRcStatus] = useState(null);
@@ -37,6 +37,11 @@ export default function RealCountryAISection({ country, onChange, setField }) {
         );
 
         if (local) {
+            if (selectedRealIds.includes(local.id)) {
+                setRcStatus('duplicate');
+                onChange({ ...country, _rcStatus: 'duplicate', realData: null });
+                return;
+            }
             onChange({ ...country, nom: local.nom, regime: local.regime, terrain: local.terrain, realData: local, _rcStatus: 'found' });
             setRcStatus('found');
             return;
@@ -62,6 +67,12 @@ export default function RealCountryAISection({ country, onChange, setField }) {
 
             // found
             const nom = ai.displayName;
+            const synthId = nom.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            if (selectedRealIds.includes(synthId)) {
+                setRcStatus('duplicate');
+                onChange({ ...country, _rcStatus: 'duplicate', realData: null });
+                return;
+            }
             let flag = '🌐', population = 5_000_000, region = '';
             try {
                 const rc = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(ai.canonicalName || nom)}?fields=name,flag,population,region`)
@@ -70,13 +81,19 @@ export default function RealCountryAISection({ country, onChange, setField }) {
                     flag = rc[0].flag || '🌐';
                     population = rc[0].population || 5_000_000;
                     region = rc[0].region || '';
+                    if (selectedRealIds.includes(rc[0].cca2?.toLowerCase() || synthId)) {
+                        setRcStatus('duplicate');
+                        onChange({ ...country, _rcStatus: 'duplicate', realData: null });
+                        return;
+                    }
                 }
             } catch (_) { }
 
             const synth = {
-                id: nom.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+                id: synthId,
                 nom, flag, regime: 'democratie_liberale', terrain: 'coastal',
                 population, region, _fromApi: true,
+                leader: { nom, titre: lang === 'fr' ? 'Chef d\'État' : 'Head of State', trait: '' },
             };
             onChange({ ...country, nom, realData: synth, _rcStatus: 'found' });
             setRcStatus('found');
@@ -121,7 +138,17 @@ export default function RealCountryAISection({ country, onChange, setField }) {
         }}
         >
         <option value="_free">— Saisir librement —</option>
-        {getRealCountries().map(rc => <option key={rc.id} value={rc.id}>{rc.flag} {rc.nom}</option>)}
+        {[...getRealCountries()]
+            .sort((a, b) => {
+                const aPris = selectedRealIds.includes(a.id);
+                const bPris = selectedRealIds.includes(b.id);
+                if (aPris === bPris) return 0;
+                return aPris ? 1 : -1;
+            })
+            .map(rc => {
+                const pris = selectedRealIds.includes(rc.id);
+                return <option key={rc.id} value={rc.id} disabled={pris}>{rc.flag} {rc.nom}{pris ? ' ✗' : ''}</option>;
+            })}
         </select>
 
         {!knownMatch && (
@@ -131,6 +158,7 @@ export default function RealCountryAISection({ country, onChange, setField }) {
             {rcStatus === 'searching' && <span style={{ color: 'rgba(200,164,74,0.55)', fontSize: '0.38rem' }}>⟳ vérification…</span>}
             {rcStatus === 'found' && <span style={{ color: 'rgba(58,191,122,0.80)', fontSize: '0.38rem' }}>✓ pays reconnu</span>}
             {rcStatus === 'notfound' && <span style={{ color: 'rgba(200,80,80,0.70)', fontSize: '0.38rem' }}>✗ pays inconnu</span>}
+            {rcStatus === 'duplicate' && <span style={{ color: 'rgba(200,140,40,0.85)', fontSize: '0.38rem' }}>⚠ pays déjà sélectionné</span>}
             {rcStatus === 'error' && <span style={{ color: 'rgba(200,164,74,0.50)', fontSize: '0.38rem' }}>⚠ hors ligne</span>}
             {rcStatus === 'suggestion' && rcSuggestion && (
                 <button

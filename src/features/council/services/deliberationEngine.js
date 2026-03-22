@@ -5,7 +5,7 @@
 // ============================================================
 
 import { callAI, getApiKeys } from '../../../Dashboard_p1';
-import { getMinistersMapFor, getMinistriesListFor, getPresidencyFor } from './agentsManager';
+import { getMinistersMapFor, getMinistriesListFor, getPresidencyFor, getDestin } from './agentsManager';
 import { buildCountryContext, langPrefix } from './contextBuilder';  // direct
 import { FALLBACK_RESPONSES, localMinisterFallback, localSyntheseFallback, localAnnotationFallback } from './fallbacks';
 import { getSynthesePresidence } from '../../../shared/services/boardgame/responseService';
@@ -176,15 +176,71 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
 }
 
 /**
+ * Phase DESTIN : Oracle + Wyrd pour les crises existentielles
+ * N'est invoquée que si destiny_mode === true dans la gouvernance du pays.
+ * @param {string} question
+ * @param {object} country
+ * @param {boolean} crisisPrompts — utilise les prompts .crise au lieu de .normal
+ * @returns {Promise<{ oracle, wyrd }>}
+ */
+export async function runDestinPhase(question, country, crisisPrompts = false) {
+    const destin   = getDestin();
+    const ministers = getMinistersMapFor(country);
+    const oracleData = ministers.oracle || {};
+    const wyrdData   = ministers.wyrd   || {};
+    const keys = getApiKeys();
+    const ctx  = buildCountryContext(country);
+    const promptSrc = crisisPrompts ? destin?.ministerPrompts?.crise : destin?.ministerPrompts?.normal;
+
+    let oracleRes = null, wyrdRes = null;
+    if (keys.claude || keys.gemini) {
+        const pOracle = `${langPrefix()}Tu es ${oracleData.name || "l'Oracle"} du gouvernement ARIA.
+        ${oracleData.essence || ''}
+        ${ctx}
+        Question existentielle soumise au Conseil : "${question}"
+        ${promptSrc?.oracle || ''}
+        Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — vision prophétique, prudente et grave" }`;
+
+        const pWyrd = `${langPrefix()}Tu es ${wyrdData.name || "la Trame"} du gouvernement ARIA.
+        ${wyrdData.essence || ''}
+        ${ctx}
+        Question existentielle soumise au Conseil : "${question}"
+        ${promptSrc?.wyrd || ''}
+        Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — vision du destin, radicale et inéluctable" }`;
+
+        [oracleRes, wyrdRes] = await Promise.all([
+            callAI(pOracle, 'council_oracle').catch(() => null),
+            callAI(pWyrd,   'council_wyrd'  ).catch(() => null),
+        ]);
+    }
+
+    // Fallbacks locaux depuis aria_reponses.json
+    if (!oracleRes?.position) {
+        const fb = localMinisterFallback('oracle', question, country?.regime);
+        oracleRes = { position: fb?.position || "L'Oracle observe les fils du destin en silence." };
+    }
+    if (!wyrdRes?.position) {
+        const fb = localMinisterFallback('wyrd', question, country?.regime);
+        wyrdRes = { position: fb?.position || "La Trame se resserre — le destin suit son cours." };
+    }
+
+    return {
+        oracle: { ...oracleData, ...oracleRes },
+        wyrd:   { ...wyrdData,   ...wyrdRes   },
+    };
+}
+
+/**
  * Phase PRESIDENCE : Phare + Boussole + synthèse présidentielle
  * @param {string} question
  * @param {object} ministereResult  — résultat de runMinisterePhase
  * @param {Array}  cercleAnnotations — résultat de runCerclePhase
  * @param {object} country
+ * @param {object|null} destinVoices — résultat de runDestinPhase (optionnel, si destiny_mode actif)
  * @returns {Promise<{ phare, boussole, synthese }>}
  */
 
-export async function runPresidencePhase(question, ministereResult, cercleAnnotations, country) {
+export async function runPresidencePhase(question, ministereResult, cercleAnnotations, country, destinVoices = null) {
     const _pres = getPresidencyFor(country);
     const phareData    = _pres.phare    || {};
     const boussoleData = _pres.boussole || {};
@@ -206,6 +262,10 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
     .map(a => `${a.ministryEmoji} ${a.ministryName} : ${a.annotation}`)
     .join('\n');
 
+    const destinSummary = destinVoices
+    ? `\n    Voix de la Destinée :\n    👁️ Oracle : "${destinVoices.oracle?.position}"\n    🕸️ Wyrd : "${destinVoices.wyrd?.position}"`
+    : '';
+
     const context = `${ctx}
     Question : "${question}"
     Synthèse du ministère principal (${ministereResult.ministryEmoji} ${ministereResult.ministryName}) :
@@ -213,7 +273,7 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
     "${ministereResult.synthese?.synthese}"
     Recommandation : "${ministereResult.synthese?.recommandation}"
     Annotations des autres ministères :
-    ${cercleSummary}`;
+    ${cercleSummary}${destinSummary}`;
 
     // ── Phare ────────────────────────────────────────────────────────────────
     const pPhare = `${langPrefix()}Tu es ${phareData.name} (${phareData.symbol}) du gouvernement ARIA.

@@ -14,6 +14,8 @@ import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { Hint, ActiveToggle, ColorPicker, EmojiPicker, DeleteButton } from './government';
+import AgentGrid from '../../../shared/components/AgentGrid';
+import { getDestin } from '../../council/services/agentsManager';
 
 export default function MinistersDetail({
     plAgents,
@@ -30,7 +32,10 @@ export default function MinistersDetail({
     setPlAgents
 }) {
     const { lang } = useLocale();
-    const allEntries = Object.entries(plAgents.ministers);
+
+    // Exclure oracle/wyrd (agents destin — ont leur propre onglet)
+    const destingIds = new Set(getDestin()?.agents || []);
+    const allEntries = Object.entries(plAgents.ministers).filter(([id]) => !destingIds.has(id));
 
     // ── Helpers grille ────────────────────────────────────────────────────
 
@@ -70,67 +75,15 @@ export default function MinistersDetail({
         <Hint type="ministers" />
 
         {/* Grille */}
-        <div style={{ ...CARD_STYLE }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
-        <div style={labelStyle('0.42rem')}>
-        {allEntries.length} {lang === 'en' ? 'MINISTERS' : 'MINISTRES'}
-        </div>
-        <button
-        style={{ ...BTN_SECONDARY, fontSize: '0.38rem', padding: '0.14rem 0.38rem' }}
-        onClick={() => { setActiveMinsters(null); setSelectedMinister(null); }}
-        >
-        {lang === 'en' ? 'All active' : 'Tous actifs'}
-        </button>
-        </div>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.28rem' }}>
-        {gridMinsters.map(([key, min]) => {
-            const on = isMinsterOn(key);
-            const sel = selectedMinister === key;
-            return (
-                <div
-                key={key}
-                onClick={() => handleGridClickMinster(key)}
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.28rem',
-                    padding: '0.26rem 0.50rem',
-                    borderRadius: '3px',
-                    cursor: 'pointer',
-                    background: sel ? min.color + '38' : on ? min.color + '18' : 'rgba(8,14,26,0.60)',
-                    border: sel ? `2px solid ${min.color}EE` : on ? `1px solid ${min.color}70` : '1px solid rgba(140,160,200,0.10)',
-                    transition: 'all 0.13s',
-                    boxShadow: sel ? `0 0 8px ${min.color}33` : on ? `0 0 4px ${min.color}18` : 'none'
-                }}
-                >
-                <span style={{
-                    fontSize: '0.85rem',
-                    filter: on ? `drop-shadow(0 0 3px ${min.color}66)` : 'grayscale(1)',
-                    opacity: on ? 1 : 0.28,
-                    transition: 'all 0.13s'
-                }}>
-                {min.emoji}
-                </span>
-                <span style={{
-                    fontFamily: FONT.mono,
-                    fontSize: '0.41rem',
-                    color: sel ? min.color : on ? min.color + 'CC' : 'rgba(140,160,200,0.28)',
-                    transition: 'all 0.13s',
-                    textShadow: sel ? `0 0 6px ${min.color}55` : 'none'
-                }}>
-                {min.name}
-                </span>
-                {min.sign === 'Custom' && (
-                    <span style={{ fontFamily: FONT.mono, fontSize: '0.28rem', color: 'rgba(140,160,200,0.22)', marginLeft: '0.1rem' }}>
-                    custom
-                    </span>
-                )}
-                </div>
-            );
-        })}
-        </div>
-        </div>
+        <AgentGrid
+            agents={gridMinsters.map(([id, m]) => ({ id, ...m }))}
+            selectedId={selectedMinister}
+            activeIds={activeMinsters}
+            onAgentClick={handleGridClickMinster}
+            onResetAll={() => { setActiveMinsters(null); setSelectedMinister(null); }}
+            countLabel={`${allEntries.length} ${lang === 'en' ? 'MINISTERS' : 'MINISTRES'}`}
+            lang={lang}
+        />
 
         {/* Nouveau ministre */}
         {newMinForm ? (

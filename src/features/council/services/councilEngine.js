@@ -17,8 +17,8 @@
 import { callAI, getApiKeys, getStats } from '../../../Dashboard_p1';
 import { loadLang } from '../../../ariaI18n';
 import { getAgentsFor, getMinistriesList, getMinistriesListFor, getMinistersMapFor, getPresidencyFor, MINISTRIES_LIST, MINISTERS_MAP, PRESIDENCY } from './agentsManager';
-import { runMinisterePhase, runCerclePhase, runPresidencePhase } from './deliberationEngine';
-import { routeQuestion, isOrphanQuestion } from './routingEngine';
+import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from './deliberationEngine';
+import { routeQuestion, isOrphanQuestion, detectCrisis } from './routingEngine';
 import { computeVoteImpact } from './voteEngine';
 import { buildCountryContext } from './contextBuilder';
 import { FALLBACK_RESPONSES } from './fallbacks';
@@ -64,13 +64,26 @@ export async function runCouncilDeliberation(question, country, options = {}) {
     );
     if (onPhaseComplete) onPhaseComplete('cercle', cercleResult);
 
+    // Phase 2b : Destin (optionnel — si destiny_mode actif + crise détectée)
+    const gov = country?.governanceOverride || {};
+    const destinyActif = gov.destiny_mode === true;
+    const crisisActif  = gov.crisis_mode !== false;
+    const criseDetectee = crisisActif && detectCrisis(question);
+    let destinResult = null;
+    if (destinyActif && criseDetectee) {
+        if (onPhaseStart) onPhaseStart('destin');
+        destinResult = await runDestinPhase(question, country, false);
+        if (onPhaseComplete) onPhaseComplete('destin', destinResult);
+    }
+
     // Phase 3 : Présidence
     if (onPhaseStart) onPhaseStart('presidence');
     const presidenceResult = await runPresidencePhase(
       question,
       ministereResult,
       cercleResult,
-      country
+      country,
+      destinResult
     );
     if (onPhaseComplete) onPhaseComplete('presidence', presidenceResult);
 
@@ -79,6 +92,7 @@ export async function runCouncilDeliberation(question, country, options = {}) {
       country,
       ministry: ministereResult,
       cercle: cercleResult,
+      destin: destinResult,
       presidence: presidenceResult,
       timestamp: Date.now()
     };
@@ -95,7 +109,7 @@ export async function runCouncilDeliberation(question, country, options = {}) {
 
 // On réexporte tout ce qui peut être utile aux composants (imports directs — pas via index pour éviter le cycle)
 export { getAgentsFor, getMinistriesList, getMinistriesListFor, getMinistersMapFor, getPresidencyFor, MINISTRIES_LIST, MINISTERS_MAP, PRESIDENCY } from './agentsManager';
-export { runMinisterePhase, runCerclePhase, runPresidencePhase } from './deliberationEngine';
+export { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from './deliberationEngine';
 export { routeQuestion, isOrphanQuestion } from './routingEngine';
 export { computeVoteImpact } from './voteEngine';
 export { buildCountryContext } from './contextBuilder';

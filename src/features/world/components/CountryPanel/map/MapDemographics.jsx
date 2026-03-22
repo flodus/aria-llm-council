@@ -3,12 +3,23 @@
 import { fmtPop } from '../../../../../shared/theme';
 
 export default function Demographics({ country, isEn }) {
-    const { population, tauxNatalite, tauxMortalite } = country;
+    const { population, tauxNatalite, tauxMortalite, leader } = country;
+    const leaderNom   = typeof leader === 'string' ? leader : leader?.nom;
+    const leaderTitre = typeof leader === 'object' ? leader?.titre : null;
+    const leaderTrait = typeof leader === 'object' ? leader?.trait : null;
 
     return (
         <section>
         <div className="section-title">{isEn ? "DEMOGRAPHICS" : "DÉMOGRAPHIE"}</div>
-        <div className="stat-row">
+        {leaderNom && (
+            <div className="stat-row">
+            <span className="stat-label">{isEn ? "HEAD OF STATE" : "CHEF D'ÉTAT"}</span>
+            <span className="stat-value" style={{ fontSize: '0.44rem' }}>
+            {leaderTitre && `${leaderTitre} `}<strong>{leaderNom}</strong>{leaderTrait ? ` — ${leaderTrait}` : ''}
+            </span>
+            </div>
+        )}
+        <div className="stat-row" style={leaderNom ? { marginTop: '0.36rem' } : {}}>
         <span className="stat-label">{isEn ? "POPULATION" : "POPULATION"}</span>
         <span className="stat-value">{fmtPop(population)}</span>
         </div>

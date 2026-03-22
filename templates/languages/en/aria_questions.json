@@ -13,7 +13,8 @@
       "health",
       "education",
       "ecology",
-      "industry"
+      "industry",
+      "destin"
     ],
     "pool_categories": [
       "daily_life",
@@ -291,6 +292,17 @@
         "Should the State own all industrial patents?",
         "Should energy-intensive data centers be moved to the Arctic?",
         "Should we prioritize the development of fusion energy over everything else?"
+      ]
+    },
+    "destin": {
+      "questions": [
+        "A lightning-fast global pandemic has just been declared. What national emergency strategy should be adopted?",
+        "A meteorite impact threat within 72 hours has been confirmed by observatories. What immediate decisions must be made?",
+        "An imminent nuclear strike is reported by intelligence services. What protocol should be activated?",
+        "An uncontrolled AI has taken over critical national infrastructure. How do we respond?",
+        "A magnitude 9 earthquake has struck several regions. How do we coordinate the national response in real time?",
+        "A massive cyberattack has simultaneously paralysed banking systems, hospitals and defence. What should be done?",
+        "A systemic economic collapse threatens the very existence of the national currency. How to act under urgency?"
       ]
     }
   },

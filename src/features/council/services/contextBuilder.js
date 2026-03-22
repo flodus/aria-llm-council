@@ -81,10 +81,11 @@ export function buildCountryContext(country) {
         ctx += `\n- ${leaderLbl} : ${leaderTitre ? `${leaderTitre} ` : ''}${leaderName}`;
     }
 
-    const hasDesc = country.description && country.description.trim();
+    const descParts = [country.description, country.geoContext].filter(Boolean);
+    const hasDesc = descParts.length > 0;
     if (hasDesc) {
         const sitLbl = en ? 'Current situation' : 'Situation actuelle';
-        ctx += `\n- ${sitLbl} : ${country.description}`;
+        ctx += `\n- ${sitLbl} : ${descParts.join(' ')}`;
     }
 
     const isReal = hasDesc || leaderName;
