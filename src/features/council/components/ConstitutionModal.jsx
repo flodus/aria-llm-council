@@ -295,8 +295,10 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             value={regime}
             onChange={e => setRegime(e.target.value)}
             >
-            {Object.entries(getStats().regimes || {}).map(([k, v]) => (
-                <option key={k} value={k}>{`${v.name} ${v.emoji || ''}`}</option>
+            {Object.entries(getStats().regimes || {})
+              .sort(([, a], [, b]) => a.name.localeCompare(b.name, lang))
+              .map(([k, v]) => (
+                <option key={k} value={k}>{v.emoji || ''} {v.name}</option>
             ))}
             </select>
             </section>
