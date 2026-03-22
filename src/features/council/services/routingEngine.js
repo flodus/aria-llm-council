@@ -8,8 +8,8 @@ import { callAI, getApiKeys } from '../../../Dashboard_p1';
 import { getMinistriesList } from './agentsManager';
 import { langPrefix } from './contextBuilder';
 
-/** Ministère par défaut si routing impossible — désormais résolu par tirage aléatoire */
-const DEFAULT_MINISTRY_ID = null; // conservé pour compatibilité, non utilisé
+/** Ministère par défaut si routing impossible (score keywords = 0 → question garbage) */
+const DEFAULT_MINISTRY_ID = null;
 
 /** Retourne vrai si la question est orpheline (aucun keyword matche) */
 export function isOrphanQuestion(question) {
@@ -60,18 +60,25 @@ export async function routeQuestion(question, forceMinistryId = null) {
     return localKeywordRoute(q);
 }
 
-/** Score local sur keywords — ministère aléatoire si aucun keyword ne matche */
+/** Score local sur keywords — null si aucun keyword ne matche (question garbage) */
 function localKeywordRoute(questionLow) {
+    const match = getBestMatch(questionLow);
+    return match ? match.ministryId : null;
+}
+
+/**
+ * Retourne le meilleur ministère et son score pour une question (synchrone, local uniquement).
+ * Retourne null si score = 0 (question garbage — aucun keyword ne matche).
+ * @param {string} question
+ * @returns {{ ministryId: string, score: number } | null}
+ */
+export function getBestMatch(question) {
+    const q = question.toLowerCase();
     let best = null, bestScore = 0;
     for (const m of getMinistriesList()) {
         const kws = m.keywords || [];
-        const score = kws.filter(kw => questionLow.includes(kw.toLowerCase())).length;
+        const score = kws.filter(kw => q.includes(kw.toLowerCase())).length;
         if (score > bestScore) { bestScore = score; best = m.id; }
     }
-    // Aucun keyword ne matche → ministère aléatoire (évite le tunnel orphelin sans ministres réels)
-    if (!best) {
-        const liste = getMinistriesList();
-        return liste[Math.floor(Math.random() * liste.length)].id;
-    }
-    return best;
+    return best ? { ministryId: best, score: bestScore } : null;
 }

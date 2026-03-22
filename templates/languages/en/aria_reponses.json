@@ -2933,5 +2933,14 @@
         }
       }
     }
+  },
+  "garbage": {
+    "messages": [
+      "This question exceeds the ARIA Council's analytical capabilities. Please reformulate your request more precisely.",
+      "The ARIA Council is unable to process this input. Please ensure your question concerns a governmental topic.",
+      "Incomprehensible signal received. The ARIA protocol requires a question formulated in recognizable human language.",
+      "No competent ministry can be identified for this request. The Council invites you to ask a more... concrete question.",
+      "ARIA received your message. ARIA does not know what to do with it. Perhaps neither do you. Let's try something more governmental?"
+    ]
   }
 }

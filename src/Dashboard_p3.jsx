@@ -31,14 +31,11 @@ import ConstitutionModal from './features/council/components/ConstitutionModal';
 import CountryPanelCouncil from './features/world/components/CountryPanel/CountryPanelCouncil';
 import LLMCouncil from './LLMCouncil';
 import {
-  routeQuestion,
-  runMinisterePhase,
-  runCerclePhase,
-  runPresidencePhase,
-  computeVoteImpact,
   buildCountryContext,
   MINISTRIES_LIST,
 } from './features/council/services/councilEngine';
+import { useCouncilSession } from './features/council/hooks/useCouncilSession';
+import { GarbageModal, MismatchModal } from './features/council/components/CouncilModals';
 import { C, FONT, } from './shared/theme'
 
 function getLocalizedNom(country) {
@@ -1228,8 +1225,17 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   const [cycleHistory, setCycleHistory] = useState([]); // [{countryId, countryNom, countryEmoji, question, vote, label}]
 
   // ── Conseil LLM ──
-  const [councilSession,  setCouncilSession]  = useState(null);
-  const [councilRunning,  setCouncilRunning]  = useState(false);
+  // ── Conseil ARIA — logique extraite dans useCouncilSession ──
+  const {
+    session:        councilSession,
+    running:        councilRunning,
+    submitQuestion: handleSubmitQuestion,
+    vote:           handleVoteCouncil,
+    garbageModal,
+    closeGarbageModal,
+    mismatchModal,
+    resolveMismatch,
+  } = useCouncilSession(selectedCountry, handleVoteResult);
 
   // ── Handlers modales ──
   const openSecession    = () => setModalSecession(true);
@@ -1301,156 +1307,51 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     }
   }, [aria, selectedCountry, setSelectedCountry, pushEvent, cycleNumRef]);
 
-  // ── Délibération Council ──────────────────────────────────────────────────
-  const handleSubmitQuestion = useCallback(async (question, ministryId) => {
-    if (!selectedCountry || councilRunning) return;
-    setCouncilRunning(true);
-
-    // Phase 0 : question visible immédiatement (ministryId non résolu → ⏳ instantané)
-    const countryContext = buildCountryContext(selectedCountry);
-    setCouncilSession({ question, ministryId, countryId: selectedCountry?.id, countryContext, countryNom: selectedCountry?.nom });
-
-    // Routing → ministère (async)
-    const resolvedId = await routeQuestion(question, ministryId);
-    const ministry   = resolvedId ? MINISTRIES_LIST.find(m => m.id === resolvedId) : null;
-
-    // Mise à jour avec le ministryId résolu
-    setCouncilSession(prev => ({ ...prev, ministryId: resolvedId }));
-
-    try {
-      // Phase 1 : ministère (ou fallback orphelin)
-      const ministereResult = await runMinisterePhase(ministry, question, selectedCountry);
-      setCouncilSession(prev => ({ ...prev, ministere: ministereResult }));
-
-      // Phase 2 : cercle
-      const cercleResult = await runCerclePhase(resolvedId, question, ministereResult.synthese, selectedCountry);
-      setCouncilSession(prev => ({ ...prev, cercle: cercleResult }));
-
-      // Phase 3 : présidence
-      const presidenceResult = await runPresidencePhase(question, ministereResult, cercleResult, selectedCountry);
-      setCouncilSession(prev => ({ ...prev, presidence: presidenceResult, voteReady: true }));
-
-    } catch (e) {
-      console.warn('[ARIA Council]', e);
-    } finally {
-      setCouncilRunning(false);
-    }
-  }, [selectedCountry, councilRunning]);
-
-  // ── Vote du peuple ────────────────────────────────────────────────────────
-  const handleVote = useCallback((vote) => {
-    if (!councilSession?.presidence || !selectedCountry) return;
-    const impact = computeVoteImpact(vote, councilSession.presidence, selectedCountry);
-    const total = Math.max(Math.round(selectedCountry.population / 1_000_000 * 10) * 10_000, 500_000);
-    const bias = (vote === 'oui' || vote === 'phare')
-    ? 0.55 + Math.random() * 0.25   // si vote pour l'option "gagnante" par défaut
-    : 0.55 + Math.random() * 0.20;  // si vote contre
-    let ouiVotes, nonVotes, phareVotes, boussoleVotes;
-
-    if (vote === 'phare' || vote === 'boussole') {
-      // Vote binaire
-      phareVotes = vote === 'phare'
-      ? Math.round(total * bias)      // phare gagne
-      : Math.round(total * (1 - bias)); // boussole gagne
-      boussoleVotes = total - phareVotes;
-
-      // Pour compatibilité avec l'ancien code qui utilise oui/non
-      ouiVotes = phareVotes;
-      nonVotes = boussoleVotes;
-    } else {
-      // Vote référendum
-      ouiVotes = vote === 'oui'
-      ? Math.round(total * bias)      // oui gagne
-      : Math.round(total * (1 - bias)); // non gagne
-      nonVotes = total - ouiVotes;
-
-      // Pour compatibilité avec le nouveau code qui utilise phare/boussole
-      phareVotes = ouiVotes;
-      boussoleVotes = nonVotes;
-    }
-
-    const voteResult = {
-      ...impact,
-      vote,
-      oui: ouiVotes,
-      non: nonVotes,
-      phare: phareVotes,
-      boussole: boussoleVotes,
-    };
-    setCouncilSession(prev => ({ ...prev, voteResult, voteReady: false }));
-
-    // ── Persistance chronolog ─────────────────────────────────────────────
-    const resolvedQuestion = councilSession.presidence?.synthese?.question_referendum || councilSession.question;
-    const ministry = councilSession.ministryId ? MINISTRIES_LIST.find(m => m.id === councilSession.ministryId) : null;
-
-    // Extraire les synthèses textuelles (tronquées à 250 cars dans useChronolog)
-    // Question : toujours la vraie question du joueur, pas question_referendum
-    const originalQuestion = councilSession.question || '';
+  // ── Effets de bord du vote (chronolog, stats pays) — logique de session dans useCouncilSession ──
+  function handleVoteResult({ vote, voteResult: impact, session }) {
+    const ministry        = session.ministryId ? MINISTRIES_LIST.find(m => m.id === session.ministryId) : null;
+    const originalQuestion = session.question || '';
 
     const synthMin = (() => {
-      const s = councilSession.ministere?.synthese;
+      const s = session.ministere?.synthese;
       if (!s) return '';
       return s.synthese_debat || s.recommandation || s.analyse || s.position || '';
     })();
 
     const synthPres = (() => {
-      const s = councilSession.presidence?.synthese;
+      const s = session.presidence?.synthese;
       if (!s) return '';
-      // Priorité : synthèse globale > décision > enjeu principal
-      // On n'affiche JAMAIS les positions individuelles Phare/Boussole (redondant avec LLMCouncil)
-      return s.decision_recommandee
-        || s.synthese_debat
-        || s.analyse
-        || s.enjeu_principal
-        || '';
+      return s.decision_recommandee || s.synthese_debat || s.analyse || s.enjeu_principal || '';
     })();
 
-    pushEvent(cycleNumRef.current, selectedCountry.annee || 2026, {
-      type:         'vote',
-      countryId:    selectedCountry.id,
-      countryNom:   selectedCountry.nom,
-      countryEmoji: selectedCountry.emoji,
-      ministereId:  councilSession.ministryId || '',
-      ministereNom: ministry?.name || '',
-      question:     originalQuestion,
+    const entryBase = {
+      type:               'vote',
+      countryId:          selectedCountry.id,
+      countryNom:         selectedCountry.nom,
+      countryEmoji:       selectedCountry.emoji,
+      ministereId:        session.ministryId || '',
+      ministereNom:       ministry?.name || '',
+      question:           originalQuestion,
       syntheseMinistere:  synthMin,
       synthesePresidence: synthPres,
       vote,
-      label:        impact.label,
+      label:              impact.label,
       impacts: {
         satisfaction: impact.satisfaction,
         aria_delta:   impact.aria_current - (selectedCountry.aria_current ?? 40),
       },
-      voteCounts: { oui: ouiVotes, non: nonVotes },
-    });
+      voteCounts: { oui: impact.oui, non: impact.non },
+    };
 
-    // Notifie CouncilMinistryQuestions (rendu dans App.jsx) que le vote est en localStorage
+    pushEvent(cycleNumRef.current, selectedCountry.annee || 2026, entryBase);
+
     window.dispatchEvent(new CustomEvent('aria:vote-stored', {
       detail: { cycleNum: cycleNumRef.current }
     }));
 
-    // Historique cycle courant (pour CycleConfirmModal + live ChronologView)
-    const liveEntry = {
-      type:         'vote',
-      countryId:    selectedCountry.id,
-      countryNom:   selectedCountry.nom,
-      countryEmoji: selectedCountry.emoji,
-      ministereId:  councilSession.ministryId || '',
-      ministereNom: ministry?.name || '',
-      question:     originalQuestion,
-      syntheseMinistere:  synthMin,
-      synthesePresidence: synthPres,
-      vote,
-      label:        impact.label,
-      impacts: {
-        satisfaction: impact.satisfaction,
-        aria_delta:   impact.aria_current - (selectedCountry.aria_current ?? 40),
-      },
-      voteCounts: { oui: ouiVotes, non: nonVotes },
-    };
     setCycleHistory(prev => [
-      ...prev.filter(h => !(h.type === 'vote' && h.countryId === selectedCountry.id && h.ministereId === liveEntry.ministereId)),
-      liveEntry,
+      ...prev.filter(h => !(h.type === 'vote' && h.countryId === selectedCountry.id && h.ministereId === entryBase.ministereId)),
+      entryBase,
     ]);
 
     aria.setCountries(prev => prev.map(c => c.id !== selectedCountry.id ? c : {
@@ -1465,17 +1366,12 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       aria_current: Math.max(5, Math.min(95, impact.aria_current)),
     } : prev);
 
-    // Ouvrir le popup résultat
     setModalVoteResult(true);
 
-    if (selectedCountry && councilSession?.ministryId) {
-      setLastVoteTimestamp(prev => ({
-        ...prev,
-        [councilSession.ministryId]: Date.now()  // ← timestamp unique
-      }));
+    if (session.ministryId) {
+      setLastVoteTimestamp(prev => ({ ...prev, [session.ministryId]: Date.now() }));
     }
-
-}, [councilSession, selectedCountry, aria, pushEvent, cycleNumRef]);
+  }
 
   // Expose les fonctions du moteur au parent (App.jsx) dès que le hook est prêt
   useEffect(() => {
@@ -1521,7 +1417,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       return (
         <LLMCouncil
           session={councilSession}
-          onVote={handleVote}
+          onVote={handleVoteCouncil}
           isRunning={councilRunning}
           countryContext={selectedCountry ? buildCountryContext(selectedCountry) : ''}
           countryNom={selectedCountry?.nom || ''}
@@ -1726,6 +1622,8 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
               onClose={() => setModalVoteResult(false)}
             />
           )}
+          <GarbageModal msg={garbageModal?.msg} onClose={closeGarbageModal} />
+          <MismatchModal data={mismatchModal} onResolve={resolveMismatch} />
           {modalCycleConfirm && (
             <CycleConfirmModal
               countries={aria.countries}
