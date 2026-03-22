@@ -1314,12 +1314,15 @@ function SectionConseil() {
         const [openP, setOpenP] = [presOpenAcc, setPresOpenAcc];
         const toggleP = (key) => setOpenP(p => p === key ? null : key);
         const HDR_P = (key, agent) => {
-          const symbol = agent?.symbol || '';
-          const name   = agent?.name   || key;
-          const sub    = agent?.subtitle || '';
+          const symbol      = agent?.symbol || '';
+          const name        = agent?.name   || key;
+          const sub         = agent?.subtitle || '';
+          const symbolColor = key === 'phare'    ? 'rgba(200,164,74,0.90)'
+                            : key === 'boussole' ? 'rgba(150,100,220,0.90)'
+                            :                      'rgba(200,215,240,0.80)';
           return (
             <button className="aria-accordion__hdr" onClick={() => toggleP(key)}>
-              <span style={{ fontSize:'1.1rem', lineHeight:1, opacity:0.80 }}>{symbol}</span>
+              <span style={{ fontSize:'1.1rem', lineHeight:1, color:symbolColor }}>{symbol}</span>
               <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', letterSpacing:'0.12em',
                 color: openP===key ? 'rgba(200,164,74,0.92)' : 'rgba(200,215,240,0.70)', flex:1 }}>{name}</span>
               {sub && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
@@ -1462,11 +1465,11 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                 {/* Grille tuiles */}
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'0.5rem' }}>
                   {[
-                    { value:'solaire',    icon:'☉',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
-                    { value:'lunaire',    icon:'☽',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
-                    { value:'duale',      icon:'☉☽', iconSize:'1.2rem', ls:'-0.05em',  label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
-                    { value:'collegiale', icon:null, iconSize:'1.6rem', ls:'normal',   label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
-                  ].map(({ value, icon, iconSize, ls, label, tooltip }) => {
+                    { value:'solaire',    icon:'☉',  iconColor:'rgba(200,164,74,0.90)',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
+                    { value:'lunaire',    icon:'☽',  iconColor:'rgba(150,100,220,0.90)', iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
+                    { value:'duale',      icon:'☉☽', iconColor:null,                     iconSize:'1.2rem', ls:'-0.05em',  label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
+                    { value:'collegiale', icon:null,  iconColor:null,                    iconSize:'1.6rem', ls:'normal',   label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
+                  ].map(({ value, icon, iconColor, iconSize, ls, label, tooltip }) => {
                     const isSel = (gov.presidency || 'duale') === value;
                     return (
                       <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
@@ -1477,7 +1480,7 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                           transition:'all 0.12s' }}>
                         <span style={{ height:'2rem', display:'flex', alignItems:'center', justifyContent:'center' }}>
                           {icon
-                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{icon}</span>
+                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls, color: iconColor || (isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)') }}>{icon}</span>
                             : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)' }} />
                           }
                         </span>
