@@ -30,7 +30,7 @@ export default function RealWorldFlow({ worldName, mode, onBack, onPreLaunch, ba
     );
     const hasNotFound = countries.some(c =>
         mode === 'ai' && !c.realData?.id &&
-        (c._rcStatus === 'notfound' || c._rcStatus === 'suggestion')
+        (c._rcStatus === 'notfound' || c._rcStatus === 'suggestion' || c._rcStatus === 'duplicate')
     );
     const canGen = unvalidated.length === 0 && !hasNotFound;
 

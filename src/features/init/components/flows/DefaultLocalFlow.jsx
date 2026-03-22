@@ -101,10 +101,11 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
             return (
                 <MC key={p.id}
                 style={{
-                    border: sel ? `1px solid ${p.couleur}70` : undefined,
-                    background: sel ? `${p.couleur}14` : undefined,
+                    background: sel ? `linear-gradient(135deg, rgba(8,14,26,0.96) 60%, ${p.couleur}28)` : 'rgba(8,14,26,0.96)',
+                    border: sel ? `1px solid ${p.couleur}80` : '1px solid rgba(140,160,200,0.12)',
                     cursor: disabled ? 'not-allowed' : 'pointer',
                     opacity: disabled ? 0.45 : 1,
+                    backdropFilter: 'blur(2px)',
                 }}
                 onClick={() => !disabled && toggleFictif(p.id)}>
                 <div style={{ fontSize:'1.2rem' }}>{p.emoji}</div>
@@ -129,7 +130,7 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
             const irl = ARIA_BASE[c.regime] ?? 35;
             const col = irl >= 60 ? 'rgba(140,100,220,0.80)' : irl >= 40 ? 'rgba(100,130,200,0.70)' : 'rgba(90,110,160,0.50)';
             return (
-                <div key={c.id} style={{ ...mCard, border:'1px solid rgba(58,191,122,0.30)', background:'rgba(58,191,122,0.06)', position:'relative' }}>
+                <div key={c.id} style={{ ...mCard, border:'1px solid rgba(58,191,122,0.35)', background:'rgba(8,14,26,0.96)', backdropFilter:'blur(2px)', position:'relative' }}>
                 <button
                     onClick={() => removeCustom(c.id)}
                     style={{ position:'absolute', top:'0.35rem', right:'0.4rem', background:'none', border:'none', cursor:'pointer', fontSize:'0.70rem', color:'rgba(200,80,80,0.55)', lineHeight:1 }}
@@ -151,7 +152,7 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
         {/* Tuile CRÉER */}
         {canAdd && !creatingForm && (
             <MC
-            style={{ border:'1px dashed rgba(140,160,200,0.25)', background:'rgba(140,160,200,0.03)', cursor:'pointer', alignItems:'center', justifyContent:'center', minHeight:'7rem' }}
+            style={{ border:'1px dashed rgba(140,160,200,0.30)', background:'rgba(8,14,26,0.90)', backdropFilter:'blur(2px)', cursor:'pointer', alignItems:'center', justifyContent:'center', minHeight:'7rem' }}
             onClick={openCreating}>
             <div style={{ fontSize:'1.4rem', color:'rgba(140,160,200,0.35)' }}>＋</div>
             <div style={{ fontFamily:FONT.mono, fontSize:'0.44rem', color:'rgba(140,160,200,0.45)', letterSpacing:'0.12em', marginTop:'0.2rem' }}>

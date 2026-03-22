@@ -196,6 +196,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             country={c}
             onChange={onChange}
             setField={setField}
+            selectedRealIds={selectedRealIds}
             />
         )}
 
