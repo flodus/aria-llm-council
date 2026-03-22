@@ -1100,18 +1100,23 @@ function SectionConseil() {
   const [activeDestinSettings, setActiveDestinSettings] = useState(null); // null = tous actifs
   const [saved, setSaved]  = useState(false);
 
-  // Sync Gouvernance → Destinée : si destiny_mode désactivé → désactiver tous les agents destin
-  useEffect(() => {
-    if (!govOpts.defaultGovernance?.destiny_mode) {
-      setActiveDestinSettings([]);
+  // Gouvernance → Destinée : intercepte les changements de destiny_mode sans passer par useEffect
+  const handleSetGovOpts = (newOpts) => {
+    const prevMode = govOpts.defaultGovernance?.destiny_mode;
+    const nextMode = newOpts.defaultGovernance?.destiny_mode;
+    if (prevMode !== nextMode) {
+      setActiveDestinSettings(nextMode ? null : []);
     }
-  }, [govOpts.defaultGovernance?.destiny_mode]);
+    setGovOpts(newOpts);
+    setSaved(false);
+  };
 
-  // Active destiny_mode dans Gouvernance quand au moins un agent destin est actif dans Destinée
-  const activateGovDestiny = () => {
+  // Destinée → Gouvernance : met à jour destiny_mode selon l'état des agents
+  const syncGovDestiny = (activeAgents) => {
+    const hasActive = activeAgents === null || (Array.isArray(activeAgents) && activeAgents.length > 0);
     setGovOpts(prev => ({
       ...prev,
-      defaultGovernance: { ...(prev.defaultGovernance || {}), destiny_mode: true }
+      defaultGovernance: { ...(prev.defaultGovernance || {}), destiny_mode: hasActive }
     }));
     setSaved(false);
   };
@@ -1360,14 +1365,13 @@ function SectionConseil() {
                     const on = cur.includes(id);
                     const next = on ? cur.filter(k => k !== id) : [...cur, id];
                     const result = next.length === all.length ? null : next;
-                    // Si au moins un actif → activer destiny_mode dans Gouvernance
-                    if (result === null || result.length > 0) activateGovDestiny();
+                    syncGovDestiny(result);
                     return result;
                   });
                   setSelectedMin(null);
                 }
               }}
-              onResetAll={() => { setActiveDestinSettings(null); activateGovDestiny(); }}
+              onResetAll={() => { setActiveDestinSettings(null); syncGovDestiny(null); }}
               countLabel={isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}
               lang={lang}
             />
@@ -1398,7 +1402,7 @@ function SectionConseil() {
       })()}
 
       {tab === 'gouvernance' && (
-        <SectionGouvernanceDefaut opts={govOpts} setOpts={(v) => { setGovOpts(v); setSaved(false); }} />
+        <SectionGouvernanceDefaut opts={govOpts} setOpts={handleSetGovOpts} />
       )}
 
       <div className="settings-footer">
