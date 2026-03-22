@@ -122,7 +122,7 @@ export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaun
       const boardGame = (() => {
         try { return JSON.parse(localStorage.getItem('aria_options') || '{}').ia_mode === 'none'; } catch { return false; }
       })();
-      const computedMode = hasApiKeys && !boardGame ? 'ai' : 'local';
+      const computedMode = hasApiKeys && !boardGame && navigator.onLine ? 'ai' : 'local';
       setMode(computedMode);
       setPreset(selectedPreset);
       if (selectedPreset === 'reel') {

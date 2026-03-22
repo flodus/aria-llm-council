@@ -1,6 +1,6 @@
 // src/features/init/components/screens/NameScreen.jsx
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FONT, CARD_STYLE, labelStyle } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';
 import APIKeyInline from '../APIKeyInline';
@@ -17,6 +17,20 @@ export default function NameScreen({
     const [iaBoardGame, setIaBoardGame] = useState(() => {
         try { return JSON.parse(localStorage.getItem('aria_options') || '{}').ia_mode === 'none'; } catch { return false; }
     });
+
+    const [isOnline, setIsOnline] = useState(() => navigator.onLine);
+    useEffect(() => {
+        const goOnline  = () => setIsOnline(true);
+        const goOffline = () => setIsOnline(false);
+        window.addEventListener('online',  goOnline);
+        window.addEventListener('offline', goOffline);
+        return () => {
+            window.removeEventListener('online',  goOnline);
+            window.removeEventListener('offline', goOffline);
+        };
+    }, []);
+
+    const effectiveHasKeys = hasApiKeys && isOnline;
 
     const toggleBoardGame = () => {
         const next = !iaBoardGame;
@@ -42,10 +56,12 @@ export default function NameScreen({
         textAlign: 'center',
     };
 
-    const badgeColor = hasApiKeys ? 'rgba(100,200,120,0.80)' : 'rgba(200,100,74,0.70)';
-    const badgeText = hasApiKeys
-        ? (lang === 'en' ? '🔑 API KEYS ✓' : '🔑 CLÉS API ✓')
-        : (lang === 'en' ? '⚠ NO KEY — Board Game Mode' : '⚠ AUCUNE CLÉ — Mode Board Game');
+    const badgeColor = effectiveHasKeys ? 'rgba(100,200,120,0.80)' : 'rgba(200,100,74,0.70)';
+    const badgeText = !isOnline
+        ? (lang === 'en' ? '⚠ OFFLINE — Board Game Mode' : '⚠ HORS LIGNE — Mode Board Game')
+        : effectiveHasKeys
+            ? (lang === 'en' ? '🔑 API KEYS ✓' : '🔑 CLÉS API ✓')
+            : (lang === 'en' ? '⚠ NO KEY — Board Game Mode' : '⚠ AUCUNE CLÉ — Mode Board Game');
 
     return (
         <div style={{
@@ -99,7 +115,7 @@ export default function NameScreen({
                         <span style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: badgeColor, letterSpacing: '0.06em' }}>
                             {badgeText}
                         </span>
-                        {hasApiKeys && (
+                        {effectiveHasKeys && (
                             <div
                                 onClick={toggleBoardGame}
                                 title={lang === 'en' ? 'Force Board Game mode (no AI)' : 'Forcer le mode Board Game (hors IA)'}
@@ -119,25 +135,32 @@ export default function NameScreen({
                                 }} />
                             </div>
                         )}
-                        {hasApiKeys && (
+                        {effectiveHasKeys && (
                             <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: iaBoardGame ? 'rgba(80,200,200,0.70)' : 'rgba(140,160,200,0.35)' }}>
                                 🎲
                             </span>
                         )}
                     </div>
 
-                    <button
-                        style={{
-                            background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.25)',
-                            borderRadius: '2px', padding: '0.25rem 0.65rem', cursor: 'pointer',
-                            fontFamily: FONT.mono, fontSize: '0.42rem', letterSpacing: '0.10em',
-                            color: 'rgba(200,164,74,0.65)', flexShrink: 0,
-                        }}
-                        onClick={() => setShowKeys(true)}>
-                        {hasApiKeys
-                            ? (lang === 'en' ? 'MODIFY' : 'MODIFIER')
-                            : (lang === 'en' ? 'CONFIGURE' : 'CONFIGURER')}
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                        {hasApiKeys && !isOnline && (
+                            <span style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: 'rgba(200,100,74,0.60)' }}>
+                                {lang === 'en' ? '📡 no network' : '📡 sans réseau'}
+                            </span>
+                        )}
+                        <button
+                            style={{
+                                background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.25)',
+                                borderRadius: '2px', padding: '0.25rem 0.65rem', cursor: 'pointer',
+                                fontFamily: FONT.mono, fontSize: '0.42rem', letterSpacing: '0.10em',
+                                color: 'rgba(200,164,74,0.65)',
+                            }}
+                            onClick={() => setShowKeys(true)}>
+                            {hasApiKeys
+                                ? (lang === 'en' ? 'MODIFY' : 'MODIFIER')
+                                : (lang === 'en' ? 'CONFIGURE' : 'CONFIGURER')}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
