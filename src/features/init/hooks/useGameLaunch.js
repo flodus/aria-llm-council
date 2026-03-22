@@ -35,6 +35,7 @@ export default function useGameLaunch(constitution, iaConfig, countryContext, pe
                         active_presidency: gov.activePres,
                         active_ministers: gov.activeMinsters,
                         destiny_mode: gov.destinyMode || false,
+                        active_destin_agents: gov.activeDestinAgents ?? null,
                     }
                 } : {}),
             };

@@ -211,35 +211,6 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             {/* Onglet RÉSUMÉ */}
             {plTab === 'resume' && (
                 <>
-                {/* Toggle Destinée du monde */}
-                <button
-                onClick={() => {
-                    countryOverride.setDestinyMode(v => !v);
-                    if (countryOverride.destinyMode) setPlTab('resume');
-                }}
-                style={{
-                    display: 'flex', alignItems: 'center', gap: '0.55rem',
-                    padding: '0.48rem 0.65rem', width: '100%', textAlign: 'left',
-                    background: countryOverride.destinyMode ? 'rgba(140,100,220,0.12)' : 'rgba(20,28,45,0.55)',
-                    border: `1px solid ${countryOverride.destinyMode ? 'rgba(140,100,220,0.45)' : 'rgba(140,160,200,0.10)'}`,
-                    borderRadius: '2px', cursor: 'pointer', transition: 'all 0.15s',
-                    fontFamily: FONT.mono,
-                }}
-                >
-                <span style={{ fontSize: '1.05rem' }}>👁️</span>
-                <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.50rem', color: countryOverride.destinyMode ? 'rgba(140,100,220,0.85)' : 'rgba(200,215,240,0.50)' }}>
-                    {lang === 'en' ? 'Destiny of the World' : 'Destinée du Monde'}
-                    </div>
-                    <div style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.45)', marginTop: '0.06rem' }}>
-                    {lang === 'en' ? 'Oracle & Wyrd — existential crises' : 'Oracle & Wyrd — crises existentielles'}
-                    </div>
-                </div>
-                <span style={{ fontSize: '0.45rem', color: countryOverride.destinyMode ? 'rgba(140,100,220,0.85)' : 'rgba(140,160,200,0.22)' }}>
-                {countryOverride.destinyMode ? '● ACTIF' : '○ INACTIF'}
-                </span>
-                </button>
-
                 <ContextPanel
                 countryName={countries[countryOverride.plCountry]?.nom || countries[countryOverride.plCountry]?.realData?.nom || `Nation ${countryOverride.plCountry + 1}`}
                 open={countryContext.plCtxOpen === countryOverride.plCountry}
@@ -269,6 +240,31 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                     prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
                 )}
                 />
+
+                {/* Toggle Destinée du monde — entre présidence et ministères */}
+                <button
+                onClick={() => countryOverride.setDestinyMode(v => !v)}
+                style={{
+                    display: 'flex', alignItems: 'center', gap: '0.55rem',
+                    padding: '0.48rem 0.65rem', width: '100%', textAlign: 'left',
+                    background: countryOverride.destinyMode ? 'rgba(140,100,220,0.12)' : 'rgba(20,28,45,0.55)',
+                    border: `1px solid ${countryOverride.destinyMode ? 'rgba(140,100,220,0.45)' : 'rgba(140,160,200,0.10)'}`,
+                    borderRadius: '2px', cursor: 'pointer', transition: 'all 0.15s', fontFamily: FONT.mono,
+                }}
+                >
+                <span style={{ fontSize: '1.05rem' }}>👁️</span>
+                <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.50rem', color: countryOverride.destinyMode ? 'rgba(140,100,220,0.85)' : 'rgba(200,215,240,0.50)' }}>
+                    {lang === 'en' ? 'Destiny of the World' : 'Destinée du Monde'}
+                    </div>
+                    <div style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.45)', marginTop: '0.06rem' }}>
+                    {lang === 'en' ? 'Oracle & Wyrd — existential crises' : 'Oracle & Wyrd — crises existentielles'}
+                    </div>
+                </div>
+                <span style={{ fontSize: '0.45rem', color: countryOverride.destinyMode ? 'rgba(140,100,220,0.85)' : 'rgba(140,160,200,0.22)' }}>
+                {countryOverride.destinyMode ? '● ACTIF' : '○ INACTIF'}
+                </span>
+                </button>
 
                 <ActiveMinistriesSection
                 ministries={countryOverride.plAgents.ministries}
@@ -344,41 +340,43 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                 const destAgents = destingIds
                     .map(id => ({ id, ...(countryOverride.plAgents.ministers?.[id] || {}) }))
                     .filter(a => a.name);
+                const activeIds = countryOverride.activeDestinAgents;
                 return (
                     <>
-                    <div style={{ ...CARD_STYLE, border: '1px solid rgba(140,100,220,0.22)', background: 'rgba(140,100,220,0.04)' }}>
-                    <div style={labelStyle('0.42rem', 'rgba(140,100,220,0.65)')}>
-                    👁️ {lang === 'en' ? 'DESTINY OF THE WORLD' : 'DESTINÉE DU MONDE'}
-                    </div>
-                    <p style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: '0.3rem 0 0', lineHeight: 1.5 }}>
-                    {lang === 'en'
-                        ? 'Oracle and Wyrd intervene on existential crises. Configure their essence and communication style below.'
-                        : 'L\'Oracle et la Trame interviennent sur les crises existentielles. Configurez leur essence et style de communication ci-dessous.'}
-                    </p>
-                    </div>
-
+                    {/* Grille oracle/wyrd avec toggles individuels */}
                     <AgentGrid
                     agents={destAgents}
                     selectedId={selectedDestin}
-                    activeIds={null}
-                    onAgentClick={id => setSelectedDestin(p => p === id ? null : id)}
-                    onResetAll={null}
+                    activeIds={activeIds}
+                    onAgentClick={id => {
+                        // 1er clic = sélection, 2e clic = toggle actif
+                        if (selectedDestin !== id) {
+                            setSelectedDestin(id);
+                        } else {
+                            countryOverride.toggleDestinAgent(id);
+                            setSelectedDestin(null);
+                        }
+                    }}
+                    onResetAll={() => countryOverride.setActiveDestinAgents(null)}
                     countLabel={`${destAgents.length} ${lang === 'en' ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}`}
                     lang={lang}
                     />
 
+                    {/* Fiches éditables */}
                     {destAgents.map(agent => {
                         if (selectedDestin && selectedDestin !== agent.id) return null;
+                        const on = activeIds === null || activeIds.includes(agent.id);
                         return (
-                            <div key={agent.id} style={{ ...CARD_STYLE, border: `1px solid ${agent.color}33` }}>
+                            <div key={agent.id} style={{ ...CARD_STYLE, border: `1px solid ${agent.color}33`, opacity: on ? 1 : 0.4 }}>
                             <div style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: agent.color + 'CC', marginBottom: '0.4rem' }}>
                             {agent.emoji} {agent.name?.toUpperCase()}
                             </div>
                             <div style={{ fontFamily: FONT.mono, fontSize: '0.37rem', color: 'rgba(90,110,150,0.38)', marginBottom: '0.12rem' }}>ESSENCE</div>
                             <textarea
                             style={{ ...INPUT_STYLE, width: '100%', minHeight: '40px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5, marginBottom: '0.25rem' }}
+                            readOnly={!on}
                             value={agent.essence || ''}
-                            onChange={e => countryOverride.setPlAgents(a => ({
+                            onChange={e => on && countryOverride.setPlAgents(a => ({
                                 ...a,
                                 ministers: { ...a.ministers, [agent.id]: { ...a.ministers[agent.id], essence: e.target.value } }
                             }))}
@@ -388,8 +386,9 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                             </div>
                             <textarea
                             style={{ ...INPUT_STYLE, width: '100%', minHeight: '32px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5 }}
+                            readOnly={!on}
                             value={agent.comm || ''}
-                            onChange={e => countryOverride.setPlAgents(a => ({
+                            onChange={e => on && countryOverride.setPlAgents(a => ({
                                 ...a,
                                 ministers: { ...a.ministers, [agent.id]: { ...a.ministers[agent.id], comm: e.target.value } }
                             }))}

@@ -1095,8 +1095,9 @@ function SectionConseil() {
   const [govOpts, setGovOpts] = useState(() => getOptions());
   const [selectedMin, setSelectedMin] = useState('initiateur');
   const [selectedMin2, setSelectedMin2] = useState('justice');
-  const [tab, setTab]         = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres'
+  const [tab, setTab]         = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres' | 'destinee'
   const [presOpenAcc, setPresOpenAcc] = useState(null);
+  const [activeDestinSettings, setActiveDestinSettings] = useState(null); // null = tous actifs
   const [saved, setSaved]  = useState(false);
 
   const updateGovOpts = (path, val) => {
@@ -1331,9 +1332,23 @@ function SectionConseil() {
             <AgentGrid
               agents={destAgents}
               selectedId={selectedMin}
-              activeIds={null}
-              onAgentClick={setSelectedMin}
-              onResetAll={null}
+              activeIds={activeDestinSettings}
+              onAgentClick={id => {
+                if (selectedMin !== id) {
+                  setSelectedMin(id);
+                } else {
+                  // 2e clic = toggle actif/inactif
+                  setActiveDestinSettings(prev => {
+                    const all = destAgents.map(a => a.id);
+                    const cur = prev || all;
+                    const on = cur.includes(id);
+                    const next = on ? cur.filter(k => k !== id) : [...cur, id];
+                    return next.length === all.length ? null : next;
+                  });
+                  setSelectedMin(null);
+                }
+              }}
+              onResetAll={() => setActiveDestinSettings(null)}
               countLabel={isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}
               lang={lang}
             />

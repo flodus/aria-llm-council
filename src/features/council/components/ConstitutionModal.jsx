@@ -14,6 +14,8 @@ import { useState, useEffect } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { getStats, getAgents, getOptions, DEFAULT_OPTIONS } from '../../../Dashboard_p1';
+import { getDestin } from '../services/agentsManager';
+import AgentGrid from '../../../shared/components/AgentGrid';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../ariaData';
 import useConstitutionModal from '../hooks/useConstitutionModal';
 import {
@@ -103,6 +105,10 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     const [ctxOverrideOpen, setCtxOverrideOpen] = useState(!!country?.contextOverride);
     const [ctxAccOpen, setCtxAccOpen] = useState(country?.context_mode !== undefined || !!country?.contextOverride);
     const [destinyMode, setDestinyMode] = useState(!!(country?.governanceOverride?.destiny_mode));
+    const [activeDestinAgents, setActiveDestinAgents] = useState(
+        country?.governanceOverride?.active_destin_agents ?? (getDestin()?.agents || ['oracle', 'wyrd'])
+    );
+    const [selectedDestin, setSelectedDestin] = useState(null);
 
     // Hook personnalisé pour la constitution (gère tout sauf le régime)
     const {
@@ -199,6 +205,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 ministries: constitution.activeMins,
                 active_ministers: constitution.activeMinsters,
                 destiny_mode: destinyMode,
+                active_destin_agents: activeDestinAgents,
                 crisis_mode: constitution.crisisMode !== false,
             },
         };
@@ -281,11 +288,17 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid rgba(200,164,74,0.12)' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid rgba(200,164,74,0.12)', flexWrap: 'wrap' }}>
         <button style={tabStyle('regime')} onClick={() => setActiveTab('regime')}>{tr.tabRegime}</button>
         <button style={tabStyle('presidency')} onClick={() => setActiveTab('presidency')}>{tr.tabPres}</button>
         <button style={tabStyle('ministries')} onClick={() => setActiveTab('ministries')}>{tr.tabMins}</button>
         <button style={tabStyle('ministers')} onClick={() => setActiveTab('ministers')}>{tr.tabMinisters}</button>
+        {destinyMode && (
+            <button style={{ ...tabStyle('destin'), color: activeTab === 'destin' ? 'rgba(140,100,220,0.90)' : 'rgba(140,100,220,0.40)', borderBottom: activeTab === 'destin' ? '2px solid rgba(140,100,220,0.70)' : '2px solid transparent' }}
+            onClick={() => setActiveTab('destin')}>
+            {isEn ? 'DESTINY' : 'DESTIN'}
+            </button>
+        )}
         </div>
 
         {/* Corps défilant */}
@@ -616,6 +629,79 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
             </>
         )}
+
+        {/* ---------- ONGLET DESTIN ---------- */}
+        {activeTab === 'destin' && (() => {
+            const destin = getDestin();
+            const destingIds = destin?.agents || [];
+            const destAgents = destingIds
+                .map(id => ({ id, ...(constitution.ministers?.[id] || getAgents().ministers?.[id] || {}) }))
+                .filter(a => a.name);
+
+            const toggleDestinAgent = (id) => {
+                setActiveDestinAgents(prev => {
+                    const all = destin?.agents || [];
+                    const cur = prev || all;
+                    const on = cur.includes(id);
+                    const next = on ? cur.filter(k => k !== id) : [...cur, id];
+                    if (next.length === 0) {
+                        setDestinyMode(false);
+                        setActiveTab('regime');
+                        return all;
+                    }
+                    return next.length === all.length ? all : next;
+                });
+            };
+
+            return (
+                <>
+                <AgentGrid
+                agents={destAgents}
+                selectedId={selectedDestin}
+                activeIds={activeDestinAgents}
+                onAgentClick={id => {
+                    if (selectedDestin !== id) {
+                        setSelectedDestin(id);
+                    } else {
+                        toggleDestinAgent(id);
+                        setSelectedDestin(null);
+                    }
+                }}
+                onResetAll={() => setActiveDestinAgents(destin?.agents || [])}
+                countLabel={`${destAgents.length} ${isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}`}
+                lang={lang}
+                />
+
+                {destAgents.map(agent => {
+                    if (selectedDestin && selectedDestin !== agent.id) return null;
+                    const on = activeDestinAgents === null || activeDestinAgents.includes(agent.id);
+                    return (
+                        <div key={agent.id} style={{ ...CARD_STYLE, border: `1px solid ${agent.color}33`, opacity: on ? 1 : 0.4 }}>
+                        <div style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: agent.color + 'CC', marginBottom: '0.4rem' }}>
+                        {agent.emoji} {agent.name?.toUpperCase()}
+                        </div>
+                        <div style={{ fontFamily: FONT.mono, fontSize: '0.37rem', color: 'rgba(90,110,150,0.38)', marginBottom: '0.12rem' }}>ESSENCE</div>
+                        <textarea
+                        style={{ ...INPUT_STYLE, width: '100%', minHeight: '40px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5, marginBottom: '0.25rem' }}
+                        readOnly={!on}
+                        value={agent.essence || ''}
+                        onChange={e => on && updateMinisterEssence && updateMinisterEssence(agent.id, e.target.value)}
+                        />
+                        <div style={{ fontFamily: FONT.mono, fontSize: '0.37rem', color: 'rgba(90,110,150,0.38)', marginBottom: '0.12rem' }}>
+                        {isEn ? 'COMMUNICATION STYLE' : 'STYLE DE COMMUNICATION'}
+                        </div>
+                        <textarea
+                        style={{ ...INPUT_STYLE, width: '100%', minHeight: '32px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5 }}
+                        readOnly={!on}
+                        value={agent.comm || ''}
+                        onChange={e => on && updateMinisterComm && updateMinisterComm(agent.id, e.target.value)}
+                        />
+                        </div>
+                    );
+                })}
+                </>
+            );
+        })()}
         </div>
 
         {/* Footer */}
