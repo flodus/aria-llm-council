@@ -126,6 +126,14 @@ _(bloqué sur refonte carte V1)_
 
 ---
 
+## ✅ LIVRÉ cette session (2026-03-22, suite)
+
+- [x] **B5b — Badge statut IA mid-session** : `iaStatusStore.js` singleton + event `aria:ia-status`
+  `callAI` détecte erreurs réseau/quota → badge 🔴/⚠ centré bas de page
+  Toast ✅ au retour IA · bouton Tester désactivé si offline seulement
+
+---
+
 ## ✅ LIVRÉ cette session (2026-03-22)
 
 - [x] **Routing Board Game enrichi** : questions sans keyword → ministère aléatoire (plus d'Agent Δ fantôme) · garbage/mismatch routé proprement
