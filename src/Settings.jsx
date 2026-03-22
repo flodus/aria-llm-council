@@ -1467,9 +1467,9 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                   {[
                     { value:'solaire',    icon:'☉',  iconColor:'rgba(200,164,74,0.90)',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
                     { value:'lunaire',    icon:'☽',  iconColor:'rgba(150,100,220,0.90)', iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
-                    { value:'duale',      icon:'☉☽', iconColor:null,                     iconSize:'1.2rem', ls:'-0.05em',  label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
-                    { value:'collegiale', icon:null,  iconColor:'rgba(165,55,75,0.88)',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
-                  ].map(({ value, icon, iconColor, iconSize, ls, label, tooltip }) => {
+                    { value:'duale',      iconRender:<><span style={{color:'rgba(200,164,74,0.90)'}}>☉</span><span style={{color:'rgba(150,100,220,0.90)'}}>☽</span></>, iconSize:'1.2rem', ls:'-0.05em', label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
+                    { value:'collegiale', icon:null, iconColor:'rgba(165,55,75,0.88)',   iconSize:'1.6rem', ls:'normal',  label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
+                  ].map(({ value, icon, iconRender, iconColor, iconSize, ls, label, tooltip }) => {
                     const isSel = (gov.presidency || 'duale') === value;
                     return (
                       <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
@@ -1479,9 +1479,11 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                           border: `1px solid ${isSel ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
                           transition:'all 0.12s' }}>
                         <span style={{ height:'2rem', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                          {icon
+                          {iconRender
+                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{iconRender}</span>
+                            : icon
                             ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls, color: iconColor || (isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)') }}>{icon}</span>
-                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: isSel?(iconColor||'rgba(200,164,74,0.9)'):'rgba(170,185,215,0.55)' }} />
+                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: iconColor }} />
                           }
                         </span>
                         <span style={{ fontSize:'0.52rem', color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',

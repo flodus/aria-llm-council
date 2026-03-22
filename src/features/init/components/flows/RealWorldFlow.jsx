@@ -80,7 +80,6 @@ export default function RealWorldFlow({ worldName, mode, onBack, onPreLaunch, ba
             />
             );
         })}
-        ))}
         </div>
 
         <div style={{ position: 'fixed', bottom: '8vh', left: '50%', transform: 'translateX(-50%)', width: 'min(700px, 90vw)', display: 'flex', gap: '0.6rem', justifyContent: 'space-between', zIndex: 20 }}>

@@ -32,10 +32,17 @@ export default function RealCountryLocalSection({ country, onChange, setField, s
         }}
         >
         <option value="">— Choisir —</option>
-        {getRealCountries().map(rc => {
-            const pris = selectedRealIds.includes(rc.id);
-            return <option key={rc.id} value={rc.id} disabled={pris}>{pris ? '✗ ' : ''}{rc.flag} {rc.nom}</option>;
-        })}
+        {[...getRealCountries()]
+            .sort((a, b) => {
+                const aPris = selectedRealIds.includes(a.id);
+                const bPris = selectedRealIds.includes(b.id);
+                if (aPris === bPris) return 0;
+                return aPris ? 1 : -1;
+            })
+            .map(rc => {
+                const pris = selectedRealIds.includes(rc.id);
+                return <option key={rc.id} value={rc.id} disabled={pris} style={{ color: pris ? 'rgba(140,160,200,0.35)' : undefined }}>{rc.flag} {rc.nom}{pris ? ' ✗' : ''}</option>;
+            })}
         </select>
         </div>
 
