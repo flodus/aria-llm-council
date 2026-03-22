@@ -211,7 +211,10 @@
         "Le système de santé est en saturation totale cet hiver.",
         "La gestion de l'eau potable devient conflictuelle dans le sud.",
         "Les artisans demandent une baisse des charges sociales.",
-        "Le moral des fonctionnaires est au plus bas, quelle annonce faire ?"
+        "Le moral des fonctionnaires est au plus bas, quelle annonce faire ?",
+        "Les délais administratifs explosent, faut-il automatiser massivement les services publics ?",
+        "Les services d'urgence sont saturés tous les week-ends, quelle mesure immédiate ?",
+        "Les coupures d'électricité deviennent fréquentes, faut-il rationner ?"
       ]
     },
 
@@ -237,7 +240,10 @@
         "Une famine menace suite à la destruction des récoltes par des insectes.",
         "La police signale une recrudescence du grand banditisme.",
         "Une crise diplomatique avec notre principal partenaire commercial.",
-        "Le pays est sous le coup d'un ultimatum étranger."
+        "Le pays est sous le coup d'un ultimatum étranger.",
+        "Un virus inconnu se propage rapidement sans traitement connu.",
+        "Une intelligence artificielle échappe à tout contrôle dans une infrastructure critique.",
+        "Une panne mondiale d'internet plonge le pays dans le chaos."
       ]
     },
 
@@ -263,7 +269,10 @@
         "La richesse doit-elle être plafonnée par la loi ?",
         "Devons-nous interdire les mouvements politiques radicaux ?",
         "La culture nationale doit-elle être protégée de l'influence étrangère ?",
-        "Le progrès technique est-il forcément bénéfique pour le peuple ?"
+        "Le progrès technique est-il forcément bénéfique pour le peuple ?",
+        "Le bonheur collectif doit-il primer sur les libertés individuelles ?",
+        "Faut-il encadrer strictement les réseaux sociaux pour préserver la cohésion sociale ?",
+        "La vérité doit-elle être définie par l'État en période de crise ?"
       ]
     },
 
@@ -289,7 +298,10 @@
         "Le ciel est devenu totalement noir en plein jour.",
         "Des échos de notre futur sont captés par nos ondes radio.",
         "Des créatures mythologiques ont été aperçues en forêt.",
-        "Les rêves des citoyens sont devenus synchronisés sur tout le pays."
+        "Les rêves des citoyens sont devenus synchronisés sur tout le pays.",
+        "Un double exact de chaque citoyen apparaît soudainement dans le pays.",
+        "Le temps commence à s'écouler différemment selon les régions.",
+        "Une intelligence extraterrestre propose une alliance technologique immédiate."
       ]
     }
 
