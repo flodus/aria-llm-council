@@ -163,7 +163,14 @@ export function getPresidency() {
     return Object.fromEntries(Object.entries(full).filter(([k]) => active.includes(k)));
 }
 
+/** Retourne le bloc "destin" (Oracle + Wyrd) depuis governance.json (lang-aware) */
+export function getDestin() {
+    const BASE = loadLang() === 'en' ? AGENTS_RAW_EN : AGENTS_RAW;
+    return BASE.destin || null;
+}
+
 // Aliases pour compatibilité (valeurs au moment de l'import — utilisées dans les fallbacks statiques)
+// oracle et wyrd sont dans MINISTERS_MAP mais PAS dans MINISTRIES_LIST (pas un ministère)
 export const MINISTRIES_LIST = AGENTS_RAW.ministries || [];
 export const MINISTERS_MAP   = AGENTS_RAW.ministers  || {};
 export const PRESIDENCY      = AGENTS_RAW.presidency  || {};
