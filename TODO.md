@@ -13,10 +13,7 @@ _Dernière mise à jour : 2026-03-22_
   - Masquer les options IA exactement comme pour 0 clé configurée
   - Fichiers : `InitScreen.jsx` (PreLaunchScreen ariaMode init + filtre boutons)
 
-- [ ] **B6 — Corbeille suppression clé API** : bouton 🗑 pour effacer une clé dans `APIKeyInline`
-  - Icône corbeille à droite du champ input (à côté du bouton Test)
-  - Vide la clé + réinitialise le statut de validation du provider
-  - Fichier : `InitScreen.jsx` (composant `APIKeyInline`, lignes ~265-285)
+- [x] **B6 — Corbeille suppression clé API** : `removeEntry` + `onRemoveEntry` implémentés dans `APIKeyInline.jsx`
 
 - [x] **B3 — Accordéons invisibles InitScreen RÉSUMÉ**
   - Cause racine : `overflow:hidden` sur `.aria-accordion` supprime `min-height:auto` des flex children
