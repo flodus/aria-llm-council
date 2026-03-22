@@ -85,9 +85,10 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
     // États pour l'onglet régime
     const [regime, setRegime] = useState(country?.regime || 'democratie_liberale');
-    const [leader, setLeader] = useState(typeof country?.leader === 'string' ? country.leader : (country?.leader?.name || ''));
+    const [leader, setLeader] = useState(typeof country?.leader === 'string' ? country.leader : (country?.leader?.nom || ''));
     const [contextMode, setContextMode] = useState(country?.context_mode || '');
     const [contextOverride, setContextOverride] = useState(country?.contextOverride || '');
+    const [ctxOverrideOpen, setCtxOverrideOpen] = useState(!!country?.contextOverride);
 
     // Hook personnalisé pour la constitution (gère tout sauf le régime)
     const {
@@ -374,53 +375,60 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             </div>
             </section>
 
-            {/* Contexte personnalisé libre */}
+            {/* Contexte actuel + personnalisé */}
             <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
             <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
-            {tr.secCustomCtx}
+            {isEn ? 'CURRENT CONTEXT' : 'CONTEXTE ACTUEL'}
             </h3>
-            <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.48)', margin: 0, lineHeight: 1.5 }}>
-            {isEn
-                ? 'Free text injected as-is into each deliberation for this country. If set, it '
-        : 'Texte libre injecté tel quel dans chaque délibération de ce pays. Si renseigné, il '}
-        <em>{isEn ? 'entirely replaces' : 'remplace entièrement'}</em>
-        {isEn
-            ? ' the auto/enriched context. Ideal for anchoring a fictional country in a precise lore.'
-        : ' le contexte auto/enrichi. Idéal pour ancrer un pays fictif dans une lore précise.'}
-        </p>
-        <textarea
-        style={{
-            background: 'rgba(255,255,255,0.04)',
-                                    border: '1px solid rgba(200,164,74,0.18)',
-                                    borderRadius: '2px',
-                                    padding: '0.38rem 0.55rem',
-                                    color: 'rgba(220,228,240,0.85)',
-                                    fontFamily: FONT,
-                                    fontSize: '0.50rem',
-                                    outline: 'none',
-                                    minHeight: '80px',
-                                    resize: 'vertical',
-                                    lineHeight: 1.55
-        }}
-        value={contextOverride}
-        onChange={e => setContextOverride(e.target.value)}
-        placeholder={isEn
-            ? `E.g. ${country?.nom || 'This country'} is an island theocracy whose constitution dates from 1847. The council deliberates according to the tradition of the Elders and tensions with the neighboring Republic of Valmoria…`
-            : `Ex : ${country?.nom || 'Ce pays'} est une théocratie insulaire dont la constitution date de 1847. Le conseil délibère en tenant compte de la tradition des Anciens et des tensions avec la République voisine de Valmoria…`}
-            />
-            {contextOverride && (
-                <button
+            {country?.description
+                ? <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.55)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
+                {country.description}
+                </p>
+                : <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.28)', margin: 0 }}>—</p>
+            }
+            <button
+            style={{ ...BTN_SECONDARY, alignSelf: 'flex-start', fontSize: '0.42rem', padding: '0.22rem 0.55rem' }}
+            onClick={() => setCtxOverrideOpen(v => !v)}
+            >
+            {ctxOverrideOpen ? '▾' : '▸'} {isEn ? 'Custom context' : 'Contexte personnalisé'}
+            {contextOverride ? ' ●' : ''}
+            </button>
+            {ctxOverrideOpen && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.32rem' }}>
+                <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: 0, lineHeight: 1.5 }}>
+                {isEn
+                    ? 'Replaces the context above in all AI deliberations for this country.'
+                    : 'Remplace le contexte ci-dessus dans toutes les délibérations IA pour ce pays.'}
+                </p>
+                <textarea
                 style={{
-                    ...BTN_SECONDARY,
-                    alignSelf: 'flex-end',
-                    fontSize: '0.42rem',
-                    color: 'rgba(200,80,80,0.50)',
-                                 border: '1px solid rgba(200,80,80,0.20)'
+                    background: 'rgba(255,255,255,0.04)',
+                    border: `1px solid ${contextOverride ? 'rgba(200,164,74,0.30)' : 'rgba(200,164,74,0.18)'}`,
+                    borderRadius: '2px',
+                    padding: '0.38rem 0.55rem',
+                    color: 'rgba(220,228,240,0.85)',
+                    fontFamily: FONT,
+                    fontSize: '0.50rem',
+                    outline: 'none',
+                    minHeight: '80px',
+                    resize: 'vertical',
+                    lineHeight: 1.55
                 }}
-                onClick={() => setContextOverride('')}
-                >
-                {isEn ? '✕ Clear' : '✕ Effacer'}
-                </button>
+                value={contextOverride}
+                onChange={e => setContextOverride(e.target.value)}
+                placeholder={isEn
+                    ? `E.g. ${country?.nom || 'This country'} is an island theocracy whose constitution dates from 1847…`
+                    : `Ex : ${country?.nom || 'Ce pays'} est une théocratie insulaire dont la constitution date de 1847…`}
+                />
+                {contextOverride && (
+                    <button
+                    style={{ ...BTN_SECONDARY, alignSelf: 'flex-end', fontSize: '0.42rem', color: 'rgba(200,80,80,0.50)', border: '1px solid rgba(200,80,80,0.20)' }}
+                    onClick={() => setContextOverride('')}
+                    >
+                    {isEn ? '✕ Clear' : '✕ Effacer'}
+                    </button>
+                )}
+                </div>
             )}
             </section>
             </>

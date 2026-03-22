@@ -41,8 +41,9 @@ export function useCouncilSession(country, onVoteResult) {
         if (!country) return;
         setRunning(true);
 
-        const countryContext = buildCountryContext(country);
-        setSession({ question, ministryId, countryId: country.id, countryContext, countryNom: country.nom });
+        const countryContext     = buildCountryContext(country);
+        const countryDescription = country.contextOverride?.trim() || country.description || '';
+        setSession({ question, ministryId, countryId: country.id, countryContext, countryNom: country.nom, countryDescription });
 
         const resolvedId = await routeQuestion(question, ministryId);
         const ministry   = resolvedId ? MINISTRIES_LIST.find(m => m.id === resolvedId) : null;
