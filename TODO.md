@@ -8,10 +8,7 @@ _Dernière mise à jour : 2026-03-22_
 
 - [x] **B1 — Ajout pays in-game** : corrigé — `addFictionalCountry` dans `Dashboard_p1.jsx`
 
-- [ ] **B5 — Mode IA offline** : si hors ligne (pas de réseau détecté), ne proposer que Board Game
-  - Détecter `navigator.onLine` ou écouter `offline`/`online` events
-  - Masquer les options IA exactement comme pour 0 clé configurée
-  - Fichiers : `InitScreen.jsx` (PreLaunchScreen ariaMode init + filtre boutons)
+- [x] **B5 — Mode IA offline** : `navigator.onLine` + listeners `online`/`offline` dans `NameScreen.jsx` · badge "⚠ HORS LIGNE", toggle masqué, `computedMode` sécurisé dans `InitScreen.jsx`
 
 - [x] **B6 — Corbeille suppression clé API** : `removeEntry` + `onRemoveEntry` implémentés dans `APIKeyInline.jsx`
 
