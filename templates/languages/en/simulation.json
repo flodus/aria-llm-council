@@ -182,6 +182,22 @@
         "education": 0.9,
         "ecologie": 0.5
       }
+    },
+    "democratie_directe": {
+      "name": "Direct Democracy",
+      "emoji": "🗳️",
+      "coeff_satisfaction": 1.35,
+      "coeff_croissance": 0.9,
+      "taux_natalite": 0.013,
+      "taux_mortalite": 0.009,
+      "poids_ministeriel": {
+        "justice": 1.4,
+        "economie": 0.85,
+        "defense": 0.7,
+        "sante": 1.2,
+        "education": 1.3,
+        "ecologie": 1.2
+      }
     }
   },
   "terrains": {
@@ -197,7 +213,8 @@
         "petrole",
         "energie",
         "commerce"
-      ]
+      ],
+      "emoji": "🌊"
     },
     "inland": {
       "name": "Landlocked",
@@ -211,7 +228,8 @@
         "bois",
         "energie",
         "eau"
-      ]
+      ],
+      "emoji": "🏔️"
     },
     "island": {
       "name": "Island",
@@ -224,7 +242,8 @@
         "petrole",
         "energie",
         "eau"
-      ]
+      ],
+      "emoji": "🏝️"
     },
     "archipelago": {
       "name": "Archipelago",
@@ -237,7 +256,8 @@
       "ressources_possibles": [
         "petrole",
         "energie"
-      ]
+      ],
+      "emoji": "⛵"
     },
     "highland": {
       "name": "Highland",
@@ -251,6 +271,62 @@
         "bois",
         "energie",
         "agriculture"
+      ],
+      "emoji": "⛰️"
+    },
+    "desert": {
+      "name": "Desert",
+      "emoji": "🏜️",
+      "modificateur_pop": 0.7,
+      "modificateur_eco": 0.8,
+      "ressources_garanties": [
+        "petrole"
+      ],
+      "ressources_possibles": [
+        "mineraux",
+        "energie"
+      ]
+    },
+    "foret": {
+      "name": "Forest",
+      "emoji": "🌲",
+      "modificateur_pop": 0.9,
+      "modificateur_eco": 0.95,
+      "ressources_garanties": [
+        "bois"
+      ],
+      "ressources_possibles": [
+        "eau",
+        "agriculture",
+        "mineraux"
+      ]
+    },
+    "tropical": {
+      "name": "Tropical",
+      "emoji": "🌴",
+      "modificateur_pop": 1.05,
+      "modificateur_eco": 1.0,
+      "ressources_garanties": [
+        "agriculture"
+      ],
+      "ressources_possibles": [
+        "bois",
+        "eau",
+        "peche"
+      ]
+    },
+    "toundra": {
+      "name": "Tundra",
+      "emoji": "❄️",
+      "modificateur_pop": 0.65,
+      "modificateur_eco": 0.75,
+      "ressources_garanties": [
+        "mineraux"
+      ],
+      "ressources_possibles": [
+        "petrole",
+        "eau",
+        "energie"
       ]
     }
   },
@@ -297,5 +373,39 @@
       "label": "On the Brink",
       "color": "#8A2020"
     }
-  ]
+  ],
+  "ressources": {
+    "agriculture": {
+      "name": "Agriculture",
+      "emoji": "🌾"
+    },
+    "bois": {
+      "name": "Timber",
+      "emoji": "🪵"
+    },
+    "eau": {
+      "name": "Fresh Water",
+      "emoji": "💧"
+    },
+    "energie": {
+      "name": "Energy",
+      "emoji": "⚡"
+    },
+    "mineraux": {
+      "name": "Minerals",
+      "emoji": "💎"
+    },
+    "peche": {
+      "name": "Fishing",
+      "emoji": "🐟"
+    },
+    "petrole": {
+      "name": "Oil",
+      "emoji": "🛢️"
+    },
+    "commerce": {
+      "name": "Trade",
+      "emoji": "🏪"
+    }
+  }
 }

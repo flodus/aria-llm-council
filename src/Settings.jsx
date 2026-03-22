@@ -97,11 +97,8 @@ const TOOLTIP_MINISTERES = {
   chance:    "Ministère de la Chance et de l'Imprévu",
 };
 
-// REGIME_LABELS → getRegimeLabel(key, lang) depuis ariaTheme
+// Régimes affichés dans la section coefficients (les 7 principaux)
 const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocratie'];
-function getRegimeLabelMap(lang) {
-  return Object.fromEntries(REGIME_LABEL_KEYS.map(k => [k, getRegimeLabel(k, lang)]));
-}
 
 const DEFAULT_PROMPTS = {
   global_system: `Tu es un ministre du gouvernement ARIA, système de gouvernance augmentée par IA. Tu délibères avec rigueur, cohérence et fidélité à ta philosophie fondatrice. Chaque prise de position doit être argumentée, contextualisée et orientée vers le bien collectif à long terme.`,

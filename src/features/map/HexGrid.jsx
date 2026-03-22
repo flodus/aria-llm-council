@@ -27,16 +27,11 @@
 
 import { useCallback, useState, useMemo, memo } from 'react';
 import { BIOME, BIOME_COLOR, MAP_W, MAP_H, HEX_R, hexPointsStr } from '../world/services/WorldEngine';
+import { getRegimeIcon } from '../../shared/data/worldLabels';
 
-const REGIME_EMOJI_FALLBACK = {
-  democratie_liberale:'🗳️', republique_federale:'🏛️', monarchie_constitutionnelle:'👑',
-  monarchie_absolue:'👑', technocratie_ia:'🤖', oligarchie:'💼', junte_militaire:'🎖️',
-  regime_autoritaire:'🔒', theocratie:'🕌', communisme:'☭',
-  nationalisme_autoritaire:'⚡',
-};
 function getCountryEmoji(country) {
   if (country?.emoji) return country.emoji;
-  return REGIME_EMOJI_FALLBACK[country?.regime] || '🌍';
+  return getRegimeIcon(country?.regime) !== '❓' ? getRegimeIcon(country?.regime) : '🌍';
 }
 
 // ── Helpers couleur ───────────────────────────────────────────────────────
