@@ -1468,7 +1468,7 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                     { value:'solaire',    icon:'☉',  iconColor:'rgba(200,164,74,0.90)',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
                     { value:'lunaire',    icon:'☽',  iconColor:'rgba(150,100,220,0.90)', iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
                     { value:'duale',      icon:'☉☽', iconColor:null,                     iconSize:'1.2rem', ls:'-0.05em',  label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
-                    { value:'collegiale', icon:null,  iconColor:null,                    iconSize:'1.6rem', ls:'normal',   label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
+                    { value:'collegiale', icon:null,  iconColor:'rgba(165,55,75,0.88)',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
                   ].map(({ value, icon, iconColor, iconSize, ls, label, tooltip }) => {
                     const isSel = (gov.presidency || 'duale') === value;
                     return (
@@ -1481,7 +1481,7 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                         <span style={{ height:'2rem', display:'flex', alignItems:'center', justifyContent:'center' }}>
                           {icon
                             ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls, color: iconColor || (isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)') }}>{icon}</span>
-                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)' }} />
+                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: isSel?(iconColor||'rgba(200,164,74,0.9)'):'rgba(170,185,215,0.55)' }} />
                           }
                         </span>
                         <span style={{ fontSize:'0.52rem', color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
@@ -1496,6 +1496,12 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                 {/* Description sélection */}
                 {(() => {
                   const sel = gov.presidency || 'duale';
+                  const modeAccent = {
+                    solaire:    'rgba(200,164,74,0.80)',
+                    lunaire:    'rgba(140,100,220,0.80)',
+                    duale:      'rgba(170,132,147,0.80)',
+                    collegiale: 'rgba(165,55,75,0.80)',
+                  }[sel] || 'rgba(200,164,74,0.70)';
                   const desc = {
                     solaire:    isEn ? '☉ The Phare\npresides alone\nThe Will'                           : '☉ Le Phare\npréside seul\nLa Volonté',
                     lunaire:    isEn ? '☽ The Boussole\npresides alone\nThe Soul'                        : '☽ La Boussole\npréside seule\nL\'Âme',
@@ -1503,8 +1509,8 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                     collegiale: isEn ? '✡ Vote of 12 ministers\nConstitutional Synthesis'                : '✡ Vote des 12 ministres\nSynthèse Constitutionnelle',
                   }[sel] || '';
                   return (
-                    <div style={{ borderLeft:'2px solid rgba(200,164,74,0.2)', paddingLeft:'1rem',
-                      fontStyle:'italic', color:'rgba(200,164,74,0.7)', fontSize:'0.52rem',
+                    <div style={{ borderLeft:`2px solid ${modeAccent}44`, paddingLeft:'1rem',
+                      fontStyle:'italic', color:modeAccent, fontSize:'0.52rem',
                       lineHeight:1.7, whiteSpace:'pre-line', alignSelf:'center' }}>
                       {desc}
                     </div>

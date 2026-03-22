@@ -18,7 +18,9 @@ import { FONT, CARD_STYLE, INPUT_STYLE, BTN_SECONDARY, labelStyle } from '../../
 
 export default function PresidencyDetail({ presidency, activePres, setActivePres, setPlAgents }) {
     const { lang } = useLocale();
-    const GOLD = 'rgba(200,164,74,0.88)';
+    const GOLD   = 'rgba(200,164,74,0.88)';
+    const PURPLE = 'rgba(140,100,220,0.85)';
+    const presAccent = (k) => k === 'phare' ? GOLD : PURPLE;
 
     return (
         <div style={{ ...CARD_STYLE }}>
@@ -37,9 +39,9 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
                     padding: '0.28rem 0.6rem',
                     fontSize: '0.44rem',
                     ...(on ? {
-                        border: '1px solid rgba(200,164,74,0.50)',
-                        color: GOLD,
-                        background: 'rgba(200,164,74,0.08)'
+                        border: `1px solid ${presAccent(key)}55`,
+                        color: presAccent(key),
+                        background: `${presAccent(key)}18`
                     } : {})
                 }}
                 onClick={() => setActivePres(prev => on ? prev.filter(k => k !== key) : [...prev, key])}
@@ -56,7 +58,7 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
             const on = activePres.includes(key);
             return (
                 <div key={key} style={{ marginBottom: '0.9rem', opacity: on ? 1 : 0.45 }}>
-                <div style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(200,164,74,0.72)', marginBottom: '0.3rem' }}>
+                <div style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: `${presAccent(key)}bb`, marginBottom: '0.3rem' }}>
                 {p.symbol} {p.name.toUpperCase()} — {p.subtitle}
                 </div>
 

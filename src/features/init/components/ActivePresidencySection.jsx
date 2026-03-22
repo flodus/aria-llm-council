@@ -14,7 +14,9 @@ import { FONT, CARD_STYLE, BTN_SECONDARY, labelStyle } from '../../../shared/the
 
 export default function ActivePresidencySection({ presidency, activePres, onTogglePresidency }) {
     const { lang } = useLocale();
-    const GOLD = 'rgba(200,164,74,0.88)';
+    const GOLD   = 'rgba(200,164,74,0.88)';
+    const PURPLE = 'rgba(140,100,220,0.85)';
+    const presAccent = (k) => k === 'phare' ? GOLD : PURPLE;
 
     return (
         <div style={{ ...CARD_STYLE }}>
@@ -36,8 +38,8 @@ export default function ActivePresidencySection({ presidency, activePres, onTogg
                     padding: '0.5rem 0.6rem',
                     cursor: 'pointer',
                     borderRadius: '2px',
-                    background: on ? 'rgba(200,164,74,0.06)' : 'rgba(255,255,255,0.01)',
-                    border: `1px solid ${on ? 'rgba(200,164,74,0.40)' : 'rgba(255,255,255,0.06)'}`,
+                    background: on ? `${presAccent(key)}18` : 'rgba(255,255,255,0.01)',
+                    border: `1px solid ${on ? `${presAccent(key)}55` : 'rgba(255,255,255,0.06)'}`,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '0.15rem',
@@ -48,7 +50,7 @@ export default function ActivePresidencySection({ presidency, activePres, onTogg
                 <div style={{
                     fontFamily: FONT.mono,
                     fontSize: '0.44rem',
-                    color: on ? 'rgba(200,164,74,0.85)' : 'rgba(140,160,200,0.35)'
+                    color: on ? presAccent(key) : 'rgba(140,160,200,0.35)'
                 }}>
                 {p.symbol} {p.name} {on ? '✓' : '○'}
                 </div>

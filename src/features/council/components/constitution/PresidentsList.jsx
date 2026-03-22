@@ -5,8 +5,10 @@ import { FONT, CARD_STYLE, BTN_SECONDARY, labelStyle } from '../../../../shared/
 
 export default function PresidentsList({ presidents, activePres, onPresidentClick }) {
     const { lang } = useLocale();
-    const GOLD = 'rgba(200,164,74,0.88)';
-    const DIM = 'rgba(140,160,200,0.48)';
+    const GOLD   = 'rgba(200,164,74,0.88)';
+    const PURPLE = 'rgba(140,100,220,0.85)';
+    const DIM    = 'rgba(140,160,200,0.48)';
+    const presAccent = (id) => id === 'phare' ? GOLD : PURPLE;
 
     // Ordre fixe : phare, boussole
     const presidentEntries = [
@@ -39,8 +41,8 @@ export default function PresidentsList({ presidents, activePres, onPresidentClic
                 alignItems: 'center',
                 gap: '0.55rem',
                 padding: '0.52rem 0.68rem',
-                background: isActive ? 'rgba(200,164,74,0.07)' : 'rgba(255,255,255,0.025)',
-                border: `1px solid ${isActive ? 'rgba(200,164,74,0.36)' : 'rgba(255,255,255,0.07)'}`,
+                background: isActive ? `${presAccent(id)}18` : 'rgba(255,255,255,0.025)',
+                border: `1px solid ${isActive ? `${presAccent(id)}55` : 'rgba(255,255,255,0.07)'}`,
                 borderRadius: '2px',
                 cursor: 'pointer',
                 width: '100%',
@@ -48,14 +50,14 @@ export default function PresidentsList({ presidents, activePres, onPresidentClic
                 transition: 'all 0.15s'
             }}
             >
-            <span style={{ fontSize: '1.15rem', minWidth: '1.4rem' }}>{data.symbol}</span>
+            <span style={{ fontSize: '1.15rem', minWidth: '1.4rem', color: presAccent(id) }}>{data.symbol}</span>
             <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '0.56rem', letterSpacing: '0.10em', color: isActive ? GOLD : 'rgba(200,215,240,0.50)' }}>
+            <div style={{ fontSize: '0.56rem', letterSpacing: '0.10em', color: isActive ? presAccent(id) : 'rgba(200,215,240,0.50)' }}>
             {data.name}
             </div>
             <div style={{ fontSize: '0.44rem', color: DIM, marginTop: '0.08rem' }}>{data.subtitle}</div>
             </div>
-            <span style={{ fontFamily: FONT, fontSize: '0.48rem', color: isActive ? GOLD : 'rgba(140,160,200,0.22)' }}>
+            <span style={{ fontFamily: FONT, fontSize: '0.48rem', color: isActive ? presAccent(id) : 'rgba(140,160,200,0.22)' }}>
             {isActive ? '● ACTIF' : '○ INACTIF'}
             </span>
             </button>
