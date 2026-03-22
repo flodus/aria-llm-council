@@ -13,7 +13,8 @@
       "sante",
       "education",
       "ecologie",
-      "industrie"
+      "industrie",
+      "destin"
     ],
     "pool_categories": [
       "quotidien",
@@ -292,6 +293,17 @@
         "L'État doit-il posséder tous les brevets industriels ?",
         "Faut-il déplacer les centres de données énergivores vers l'Arctique ?",
         "Doit-on faire de la fusion énergétique une priorité absolue ?"
+      ]
+    },
+    "destin": {
+      "questions": [
+        "Une pandémie mondiale à propagation foudroyante vient d'être déclarée. Quelle stratégie nationale d'urgence adopter ?",
+        "Une menace d'impact météoritique dans 72 heures est confirmée par les observatoires. Quelles décisions prendre immédiatement ?",
+        "Une attaque nucléaire est imminente selon les services de renseignement. Quel protocole activer ?",
+        "Une IA incontrôlée a pris le contrôle des infrastructures critiques nationales. Comment répondre ?",
+        "Un séisme de magnitude 9 vient de frapper plusieurs régions. Comment coordonner la réponse nationale en temps réel ?",
+        "Une cyberattaque massive a paralysé les systèmes bancaires, les hôpitaux et la défense simultanément. Que faire ?",
+        "Un effondrement économique systémique menace l'existence même de la monnaie nationale. Comment agir dans l'urgence ?"
       ]
     }
   },
