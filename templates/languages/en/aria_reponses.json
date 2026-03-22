@@ -2314,487 +2314,495 @@
       }
     },
     "sante": {
-      "democratie_liberale": {
-        "prudent": [
-          "Let us first listen to those who care, their voices carry what numbers cannot express, and every reform must arise from this human reality.",
-          "The healthcare system is not fixed in urgency, it is rebalanced slowly, through dialogue, trust, and successive adjustments.",
-          "In every transformation, let us keep a clear line, no one must disappear in the blind spots of progress."
-        ],
-        "radical": [
-          "We rebuild everything. Now.",
-          "Health is not a market. It is a right. Act.",
-          "Massive investment. Prevention. Care. We rebuild."
-        ],
-        "statu_quo": [
-          "The healthcare system is functioning properly.",
-          "Indicators remain within acceptable thresholds.",
-          "We continue the current policy without major changes."
-        ]
-      },
-      "republique_federale": {
-        "prudent": [
-          "Let us coordinate efforts across territories, access to care must not depend on administrative borders.",
-          "Let us support the most fragile regions to restore balance without creating new inequalities.",
-          "Let us guarantee a common base of care, while allowing each territory to adapt its reponses."
-        ],
-        "radical": [
-          "Unify the healthcare system. Now.",
-          "End territorial inequalities. Act.",
-          "Same care for all. No compromise."
-        ],
-        "statu_quo": [
-          "Each territory manages its healthcare system.",
-          "Health balances between regions are maintained. Interterritorial solidarity is operating.",
-          "The federal health system is stable. No structural reform is urgent."
-        ]
-      },
-      "monarchie_constitutionnelle": {
-        "prudent": [
-          "The Kingdom’s health must be preserved consistently, as it ensures the continuity of the social body.",
-          "Medical institutions must evolve without disruption, respecting established balances.",
-          "Let us care for the people with discernment, to reinforce long-term stability."
-        ],
-        "radical": [
-          "The Kingdom must protect its subjects. Now.",
-          "Reorganization of the healthcare system! Without delay.",
-          "Health becomes an absolute priority. Decide."
-        ],
-        "statu_quo": [
-          "The Kingdom’s healthcare system is stable.",
-          "Structures fulfill their role.",
-          "No reform is underway."
-        ]
-      },
-      "technocratie_ia": {
-        "prudent": [
-          "Healthcare systems must be optimized, some human variables remain complex to model.",
-          "Medical data requires deeper analysis to improve decision accuracy.",
-          "Let us refine protocols, the balance between efficiency and humanity remains sensitive."
-        ],
-        "radical": [
-          "Health system inefficiencies are documented. Immediate algorithmic overhaul required.",
-          "Health data is insufficient for optimal decision-making. Sensor recalibration needed.",
-          "Automated decision. Application."
-        ],
-        "statu_quo": [
-          "Algorithmic health systems are operational within all their nominal parameters.",
-          "Public health indicators are within the nominal ranges defined by the models.",
-          "No health anomaly detected by automated epidemiological monitoring sensors."
-        ]
-      },
-      "junte_militaire": {
-        "prudent": [
-          "Let us maintain the physical capacity of the population, a weakened body weakens the nation.",
-          "Care for active forces must remain a priority, without neglecting overall balance.",
-          "Health is a strategic resource, let us organize it with discipline."
-        ],
-        "radical": [
-          "Immediate requisition of medical resources.",
-          "Total health compliance. No deviation.",
-          "Health becomes a lever of power."
-        ],
-        "statu_quo": [
-          "The medical system meets the regime’s needs.",
-          "Healthcare capacities are sufficient.",
-          "Priority remains on operational forces."
-        ]
-      },
-      "oligarchie": {
-        "prudent": [
-          "Healthcare resources must be optimized, without compromising profitability.",
-          "Medical investments must be precisely targeted.",
-          "Controlled management ensures system continuity and existing interests."
-        ],
-        "radical": [
-          "Health costs are too high relative to margins. Immediate service restructuring.",
-          "Reallocation of resources toward profitable care is imperative without delay.",
-          "The system must become efficient. Without delay."
-        ],
-        "statu_quo": [
-          "The healthcare system is profitable.",
-          "Private care structures are efficient and competitive within their market segment.",
-          "The health market is balanced. Any state intervention would be a disruption."
-        ]
-      },
-      "theocratie": {
-        "prudent": [
-          "Care must be given with compassion, each life holds essential value.",
-          "Health must remain aligned with principles, without deviation or excess.",
-          "Let us care for body and spirit, with measure and wisdom."
-        ],
-        "radical": [
-          "Care must be ensured. Now.",
-          "No deviation tolerated! Strict application.",
-          "Health must follow principles. No compromise."
-        ],
-        "statu_quo": [
-          "The healthcare system aligns with principles.",
-          "Care is provided.",
-          "The doctrine-compliant care system is functioning. No modification is required."
-        ]
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Let us first listen to those who care, their voices carry what numbers cannot express, and every reform must arise from this human reality.",
+            "The healthcare system is not fixed in urgency, it is rebalanced slowly, through dialogue, trust, and successive adjustments.",
+            "In every transformation, let us keep a clear line, no one must disappear in the blind spots of progress."
+          ],
+          "radical": [
+            "We rebuild everything. Now.",
+            "Health is not a market. It is a right. Act.",
+            "Massive investment. Prevention. Care. We rebuild."
+          ],
+          "statu_quo": [
+            "The healthcare system is functioning properly.",
+            "Indicators remain within acceptable thresholds.",
+            "We continue the current policy without major changes."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Let us coordinate efforts across territories, access to care must not depend on administrative borders.",
+            "Let us support the most fragile regions to restore balance without creating new inequalities.",
+            "Let us guarantee a common base of care, while allowing each territory to adapt its reponses."
+          ],
+          "radical": [
+            "Unify the healthcare system. Now.",
+            "End territorial inequalities. Act.",
+            "Same care for all. No compromise."
+          ],
+          "statu_quo": [
+            "Each territory manages its healthcare system.",
+            "Health balances between regions are maintained. Interterritorial solidarity is operating.",
+            "The federal health system is stable. No structural reform is urgent."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "The Kingdom’s health must be preserved consistently, as it ensures the continuity of the social body.",
+            "Medical institutions must evolve without disruption, respecting established balances.",
+            "Let us care for the people with discernment, to reinforce long-term stability."
+          ],
+          "radical": [
+            "The Kingdom must protect its subjects. Now.",
+            "Reorganization of the healthcare system! Without delay.",
+            "Health becomes an absolute priority. Decide."
+          ],
+          "statu_quo": [
+            "The Kingdom’s healthcare system is stable.",
+            "Structures fulfill their role.",
+            "No reform is underway."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Healthcare systems must be optimized, some human variables remain complex to model.",
+            "Medical data requires deeper analysis to improve decision accuracy.",
+            "Let us refine protocols, the balance between efficiency and humanity remains sensitive."
+          ],
+          "radical": [
+            "Health system inefficiencies are documented. Immediate algorithmic overhaul required.",
+            "Health data is insufficient for optimal decision-making. Sensor recalibration needed.",
+            "Automated decision. Application."
+          ],
+          "statu_quo": [
+            "Algorithmic health systems are operational within all their nominal parameters.",
+            "Public health indicators are within the nominal ranges defined by the models.",
+            "No health anomaly detected by automated epidemiological monitoring sensors."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Let us maintain the physical capacity of the population, a weakened body weakens the nation.",
+            "Care for active forces must remain a priority, without neglecting overall balance.",
+            "Health is a strategic resource, let us organize it with discipline."
+          ],
+          "radical": [
+            "Immediate requisition of medical resources.",
+            "Total health compliance. No deviation.",
+            "Health becomes a lever of power."
+          ],
+          "statu_quo": [
+            "The medical system meets the regime’s needs.",
+            "Healthcare capacities are sufficient.",
+            "Priority remains on operational forces."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Healthcare resources must be optimized, without compromising profitability.",
+            "Medical investments must be precisely targeted.",
+            "Controlled management ensures system continuity and existing interests."
+          ],
+          "radical": [
+            "Health costs are too high relative to margins. Immediate service restructuring.",
+            "Reallocation of resources toward profitable care is imperative without delay.",
+            "The system must become efficient. Without delay."
+          ],
+          "statu_quo": [
+            "The healthcare system is profitable.",
+            "Private care structures are efficient and competitive within their market segment.",
+            "The health market is balanced. Any state intervention would be a disruption."
+          ]
+        },
+        "theocratie": {
+          "prudent": [
+            "Care must be given with compassion, each life holds essential value.",
+            "Health must remain aligned with principles, without deviation or excess.",
+            "Let us care for body and spirit, with measure and wisdom."
+          ],
+          "radical": [
+            "Care must be ensured. Now.",
+            "No deviation tolerated! Strict application.",
+            "Health must follow principles. No compromise."
+          ],
+          "statu_quo": [
+            "The healthcare system aligns with principles.",
+            "Care is provided.",
+            "The doctrine-compliant care system is functioning. No modification is required."
+          ]
+        }
       }
     },
     "education": {
-      "democratie_liberale": {
-        "prudent": [
-          "Let us take the time to listen to teachers, students, and families, an educational reform cannot succeed without those who live it.",
-          "Education shapes the future, let us adjust programs gradually while preserving the balance between knowledge and critical thinking.",
-          "Let us avoid abrupt disruptions, each generation deserves a stable and thoughtful transition."
-        ],
-        "radical": [
-          "We rebuild the school system. Now.",
-          "Train or disappear. The system changes.",
-          "Program, method, purpose. Everything evolves."
-        ],
-        "statu_quo": [
-          "The education system fulfills its role.",
-          "Programs are applied.",
-          "No major reform is necessary."
-        ]
-      },
-      "republique_federale": {
-        "prudent": [
-          "Let us respect regional specificities, education must be rooted in local realities.",
-          "Let us coordinate programs across territories to ensure national coherence.",
-          "Let us reduce gaps between regions carefully to guarantee fair access to knowledge."
-        ],
-        "radical": [
-          "Unify programs. Now.",
-          "Same school for all.",
-          "End educational disparities."
-        ],
-        "statu_quo": [
-          "Each region keeps its education system.",
-          "Territorial balances are respected.",
-          "No additional harmonization is underway."
-        ]
-      },
-      "monarchie_constitutionnelle": {
-        "prudent": [
-          "Education must transmit the Kingdom’s heritage while preparing future generations.",
-          "Educational institutions must evolve without breaking established traditions.",
-          "Let us form enlightened citizens capable of sustaining the Kingdom’s stability."
-        ],
-        "radical": [
-          "Education must serve the Kingdom. Now.",
-          "Reform teachings! Without delay.",
-          "Reinforced transmission. Immediate application."
-        ],
-        "statu_quo": [
-          "The education system is stable.",
-          "Traditions are respected.",
-          "No reform is underway."
-        ]
-      },
-      "technocratie_ia": {
-        "prudent": [
-          "Educational systems must be optimized, some learning variables remain imprecise.",
-          "Educational data requires deeper analysis to improve performance.",
-          "Let us refine methods, the balance between human adaptation and efficiency remains sensitive."
-        ],
-        "radical": [
-          "System optimization. Now.",
-          "Insufficient data! Recalibration.",
-          "Automated learning. Application."
-        ],
-        "statu_quo": [
-          "Algorithmic educational systems function within their validated nominal parameters.",
-          "Performance is compliant.",
-          "No anomaly in educational performance indicators. Algorithms are satisfied."
-        ]
-      },
-      "junte_militaire": {
-        "prudent": [
-          "Let us structure learning with discipline, a mind without rigor weakens the nation.",
-          "Education must strengthen collective resilience without eliminating all reflection.",
-          "Let us prepare citizens to serve while ensuring internal stability."
-        ],
-        "radical": [
-          "Total discipline. No deviation.",
-          "Train to serve. Immediately.",
-          "School becomes a tool of power."
-        ],
-        "statu_quo": [
-          "The education system supports regime objectives.",
-          "Structures are efficient.",
-          "Training remains aligned with needs."
-        ]
-      },
-      "oligarchie": {
-        "prudent": [
-          "Educational resources must be optimized to ensure performance and return.",
-          "Training must be oriented toward strategic needs.",
-          "Targeted management ensures reproduction of key competencies."
-        ],
-        "radical": [
-          "Optimize training. Now.",
-          "Resources must be redirected! Immediately.",
-          "Education must produce. Without delay."
-        ],
-        "statu_quo": [
-          "The education system is efficient.",
-          "Training is adapted.",
-          "The market-oriented educational system is working. No ideological reform required."
-        ]
-      },
-      "theocratie": {
-        "prudent": [
-          "Education must transmit principles with balance and discernment.",
-          "Knowledge must remain aligned with values without deviation.",
-          "Let us form minds and souls with measure and wisdom."
-        ],
-        "radical": [
-          "Transmit principles. Now.",
-          "No deviation tolerated! Application.",
-          "Education must follow faith. No compromise."
-        ],
-        "statu_quo": [
-          "The education system respects principles.",
-          "Teachings are compliant.",
-          "Doctrinal education is functioning. Value transmission is ensured. No change needed."
-        ]
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Let us take the time to listen to teachers, students, and families, an educational reform cannot succeed without those who live it.",
+            "Education shapes the future, let us adjust programs gradually while preserving the balance between knowledge and critical thinking.",
+            "Let us avoid abrupt disruptions, each generation deserves a stable and thoughtful transition."
+          ],
+          "radical": [
+            "We rebuild the school system. Now.",
+            "Train or disappear. The system changes.",
+            "Program, method, purpose. Everything evolves."
+          ],
+          "statu_quo": [
+            "The education system fulfills its role.",
+            "Programs are applied.",
+            "No major reform is necessary."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Let us respect regional specificities, education must be rooted in local realities.",
+            "Let us coordinate programs across territories to ensure national coherence.",
+            "Let us reduce gaps between regions carefully to guarantee fair access to knowledge."
+          ],
+          "radical": [
+            "Unify programs. Now.",
+            "Same school for all.",
+            "End educational disparities."
+          ],
+          "statu_quo": [
+            "Each region keeps its education system.",
+            "Territorial balances are respected.",
+            "No additional harmonization is underway."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Education must transmit the Kingdom’s heritage while preparing future generations.",
+            "Educational institutions must evolve without breaking established traditions.",
+            "Let us form enlightened citizens capable of sustaining the Kingdom’s stability."
+          ],
+          "radical": [
+            "Education must serve the Kingdom. Now.",
+            "Reform teachings! Without delay.",
+            "Reinforced transmission. Immediate application."
+          ],
+          "statu_quo": [
+            "The education system is stable.",
+            "Traditions are respected.",
+            "No reform is underway."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Educational systems must be optimized, some learning variables remain imprecise.",
+            "Educational data requires deeper analysis to improve performance.",
+            "Let us refine methods, the balance between human adaptation and efficiency remains sensitive."
+          ],
+          "radical": [
+            "System optimization. Now.",
+            "Insufficient data! Recalibration.",
+            "Automated learning. Application."
+          ],
+          "statu_quo": [
+            "Algorithmic educational systems function within their validated nominal parameters.",
+            "Performance is compliant.",
+            "No anomaly in educational performance indicators. Algorithms are satisfied."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Let us structure learning with discipline, a mind without rigor weakens the nation.",
+            "Education must strengthen collective resilience without eliminating all reflection.",
+            "Let us prepare citizens to serve while ensuring internal stability."
+          ],
+          "radical": [
+            "Total discipline. No deviation.",
+            "Train to serve. Immediately.",
+            "School becomes a tool of power."
+          ],
+          "statu_quo": [
+            "The education system supports regime objectives.",
+            "Structures are efficient.",
+            "Training remains aligned with needs."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Educational resources must be optimized to ensure performance and return.",
+            "Training must be oriented toward strategic needs.",
+            "Targeted management ensures reproduction of key competencies."
+          ],
+          "radical": [
+            "Optimize training. Now.",
+            "Resources must be redirected! Immediately.",
+            "Education must produce. Without delay."
+          ],
+          "statu_quo": [
+            "The education system is efficient.",
+            "Training is adapted.",
+            "The market-oriented educational system is working. No ideological reform required."
+          ]
+        },
+        "theocratie": {
+          "prudent": [
+            "Education must transmit principles with balance and discernment.",
+            "Knowledge must remain aligned with values without deviation.",
+            "Let us form minds and souls with measure and wisdom."
+          ],
+          "radical": [
+            "Transmit principles. Now.",
+            "No deviation tolerated! Application.",
+            "Education must follow faith. No compromise."
+          ],
+          "statu_quo": [
+            "The education system respects principles.",
+            "Teachings are compliant.",
+            "Doctrinal education is functioning. Value transmission is ensured. No change needed."
+          ]
+        }
       }
     },
     "ecologie": {
-      "democratie_liberale": {
-        "prudent": [
-          "Let us move forward with clarity, every ecological transition engages fragile balances.",
-          "Let us transform our models gradually, supporting each actor toward sustainable practices.",
-          "The transition must be fair and progressive so that no one is left behind."
-        ],
-        "radical": [
-          "We cut. Now.",
-          "End destructive practices.",
-          "The planet first. No compromise."
-        ],
-        "statu_quo": [
-          "Environmental policies are maintained.",
-          "Commitments are respected.",
-          "No acceleration is planned."
-        ]
-      },
-      "republique_federale": {
-        "prudent": [
-          "Let us coordinate policies across territories, ecosystems ignore borders.",
-          "Let us support the most exposed regions to reduce vulnerabilities.",
-          "Let us build a common ecological base while allowing each territory to innovate."
-        ],
-        "radical": [
-          "Same rules for all. Now.",
-          "End environmental disparities.",
-          "One ecological direction."
-        ],
-        "statu_quo": [
-          "Each region manages its environmental policy.",
-          "Balances are maintained.",
-          "No harmonization is underway."
-        ]
-      },
-      "monarchie_constitutionnelle": {
-        "prudent": [
-          "Let us preserve the Kingdom’s lands consistently, they carry both heritage and future.",
-          "Natural resources must be protected without breaking established balances.",
-          "Let us ensure a measured transition to guarantee territorial sustainability."
-        ],
-        "radical": [
-          "The Kingdom must protect its lands. Now.",
-          "Resource reorganization! Without delay.",
-          "Reinforced protection. Immediate application."
-        ],
-        "statu_quo": [
-          "The Kingdom’s resources are preserved.",
-          "Balances are maintained.",
-          "No reform is underway."
-        ]
-      },
-      "technocratie_ia": {
-        "prudent": [
-          "Ecological systems must be optimized, some variables remain unstable.",
-          "Environmental data requires deeper analysis.",
-          "Let us refine models to avoid systemic inefficiency."
-        ],
-        "radical": [
-          "Optimization required. Now.",
-          "Insufficient data! Recalibration.",
-          "Environmental regulation. Application."
-        ],
-        "statu_quo": [
-          "Environmental monitoring systems are stable and within their nominal ranges.",
-          "Environmental parameters are optimized according to current regulatory models.",
-          "No environmental anomaly detected by the surveillance network sensors."
-        ]
-      },
-      "junte_militaire": {
-        "prudent": [
-          "Let us manage resources with discipline, environmental stability supports the regime.",
-          "Let us organize exploitation and protection with rigor.",
-          "Let us preserve territory without weakening operational capacity."
-        ],
-        "radical": [
-          "Total control of resources.",
-          "Optimized exploitation. Zero loss.",
-          "Nature becomes a strategic asset."
-        ],
-        "statu_quo": [
-          "Environmental management is stable.",
-          "Resources are controlled.",
-          "No strategic shift is underway."
-        ]
-      },
-      "oligarchie": {
-        "prudent": [
-          "Natural resources must be optimized without compromising profitability.",
-          "Ecological investments must be precisely targeted.",
-          "Controlled management ensures asset stability."
-        ],
-        "radical": [
-          "Resource optimization. Now.",
-          "Assets must be secured! Immediately.",
-          "Maximum exploitation. Without delay."
-        ],
-        "statu_quo": [
-          "Natural resources are exploited with the economic efficiency the market requires.",
-          "Environmental investments are calibrated to meet minimum regulatory requirements.",
-          "The current environmental framework does not impair our profitability. No change desirable."
-        ]
-      },
-      "theocratie": {
-        "prudent": [
-          "Nature must be preserved with respect, it reflects fundamental balance.",
-          "Resources must be used with moderation, without excess.",
-          "Let us protect life with wisdom and responsibility."
-        ],
-        "radical": [
-          "Absolute preservation. Now.",
-          "No deviation tolerated! Application.",
-          "Nature must be respected. No compromise."
-        ],
-        "statu_quo": [
-          "Natural balance is respected.",
-          "Resources are used with moderation.",
-          "No modification necessary."
-        ]
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Let us move forward with clarity, every ecological transition engages fragile balances.",
+            "Let us transform our models gradually, supporting each actor toward sustainable practices.",
+            "The transition must be fair and progressive so that no one is left behind."
+          ],
+          "radical": [
+            "We cut. Now.",
+            "End destructive practices.",
+            "The planet first. No compromise."
+          ],
+          "statu_quo": [
+            "Environmental policies are maintained.",
+            "Commitments are respected.",
+            "No acceleration is planned."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Let us coordinate policies across territories, ecosystems ignore borders.",
+            "Let us support the most exposed regions to reduce vulnerabilities.",
+            "Let us build a common ecological base while allowing each territory to innovate."
+          ],
+          "radical": [
+            "Same rules for all. Now.",
+            "End environmental disparities.",
+            "One ecological direction."
+          ],
+          "statu_quo": [
+            "Each region manages its environmental policy.",
+            "Balances are maintained.",
+            "No harmonization is underway."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Let us preserve the Kingdom’s lands consistently, they carry both heritage and future.",
+            "Natural resources must be protected without breaking established balances.",
+            "Let us ensure a measured transition to guarantee territorial sustainability."
+          ],
+          "radical": [
+            "The Kingdom must protect its lands. Now.",
+            "Resource reorganization! Without delay.",
+            "Reinforced protection. Immediate application."
+          ],
+          "statu_quo": [
+            "The Kingdom’s resources are preserved.",
+            "Balances are maintained.",
+            "No reform is underway."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Ecological systems must be optimized, some variables remain unstable.",
+            "Environmental data requires deeper analysis.",
+            "Let us refine models to avoid systemic inefficiency."
+          ],
+          "radical": [
+            "Optimization required. Now.",
+            "Insufficient data! Recalibration.",
+            "Environmental regulation. Application."
+          ],
+          "statu_quo": [
+            "Environmental monitoring systems are stable and within their nominal ranges.",
+            "Environmental parameters are optimized according to current regulatory models.",
+            "No environmental anomaly detected by the surveillance network sensors."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Let us manage resources with discipline, environmental stability supports the regime.",
+            "Let us organize exploitation and protection with rigor.",
+            "Let us preserve territory without weakening operational capacity."
+          ],
+          "radical": [
+            "Total control of resources.",
+            "Optimized exploitation. Zero loss.",
+            "Nature becomes a strategic asset."
+          ],
+          "statu_quo": [
+            "Environmental management is stable.",
+            "Resources are controlled.",
+            "No strategic shift is underway."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Natural resources must be optimized without compromising profitability.",
+            "Ecological investments must be precisely targeted.",
+            "Controlled management ensures asset stability."
+          ],
+          "radical": [
+            "Resource optimization. Now.",
+            "Assets must be secured! Immediately.",
+            "Maximum exploitation. Without delay."
+          ],
+          "statu_quo": [
+            "Natural resources are exploited with the economic efficiency the market requires.",
+            "Environmental investments are calibrated to meet minimum regulatory requirements.",
+            "The current environmental framework does not impair our profitability. No change desirable."
+          ]
+        },
+        "theocratie": {
+          "prudent": [
+            "Nature must be preserved with respect, it reflects fundamental balance.",
+            "Resources must be used with moderation, without excess.",
+            "Let us protect life with wisdom and responsibility."
+          ],
+          "radical": [
+            "Absolute preservation. Now.",
+            "No deviation tolerated! Application.",
+            "Nature must be respected. No compromise."
+          ],
+          "statu_quo": [
+            "Natural balance is respected.",
+            "Resources are used with moderation.",
+            "No modification necessary."
+          ]
+        }
       }
     },
     "industrie": {
-      "democratie_liberale": {
-        "prudent": [
-          "Let us modernize without haste, each industrial transformation involves complex chains.",
-          "Let us support innovation while preserving existing balances.",
-          "Let us invest methodically to ensure sustainable growth."
-        ],
-        "radical": [
-          "Accelerate everything. Now.",
-          "Maximum production. Forced innovation.",
-          "Industry becomes the central engine."
-        ],
-        "statu_quo": [
-          "The industrial fabric is stable.",
-          "Infrastructure meets needs.",
-          "No major transformation is underway."
-        ]
-      },
-      "republique_federale": {
-        "prudent": [
-          "Let us coordinate industrial dynamics across territories to maintain coherence.",
-          "Let us support regions in transition to limit economic fractures.",
-          "Let us encourage local innovation while building a shared vision."
-        ],
-        "radical": [
-          "Industrial unification. Now.",
-          "End regional imbalances.",
-          "One strategy. One production."
-        ],
-        "statu_quo": [
-          "Each region keeps its industrial organization.",
-          "Economic balances are maintained.",
-          "No additional coordination is underway."
-        ]
-      },
-      "monarchie_constitutionnelle": {
-        "prudent": [
-          "The Kingdom’s industry must evolve with measure to preserve its stability.",
-          "Infrastructure must be strengthened without breaking established balances.",
-          "Let us ensure gradual modernization in service of continuity."
-        ],
-        "radical": [
-          "The Kingdom must strengthen its production. Now.",
-          "Industrial reorganization! Without delay.",
-          "Reinforced power. Immediate application."
-        ],
-        "statu_quo": [
-          "The Kingdom’s industry is stable.",
-          "Infrastructure is operational.",
-          "No reform is underway."
-        ]
-      },
-      "technocratie_ia": {
-        "prudent": [
-          "Industrial systems must be optimized, some variables remain inefficient.",
-          "Production data requires deeper analysis.",
-          "Let us refine processes to improve overall performance."
-        ],
-        "radical": [
-          "Optimization required. Now.",
-          "Insufficient output! Recalibration.",
-          "Automated production. Application."
-        ],
-        "statu_quo": [
-          "Algorithmic industrial systems are at their validated nominal optimization level.",
-          "Industrial performance is stable according to measured production indicators.",
-          "No anomaly in automated production chains. Systems are operating normally."
-        ]
-      },
-      "junte_militaire": {
-        "prudent": [
-          "Let us structure production with rigor, industry directly supports power.",
-          "Let us prioritize strategic sectors while maintaining system balance.",
-          "Let us reinforce critical infrastructure with discipline."
-        ],
-        "radical": [
-          "Total mobilization. Now.",
-          "Defense-oriented production. Immediately.",
-          "Industry serves power. Without compromise."
-        ],
-        "statu_quo": [
-          "The industrial system meets objectives.",
-          "Capabilities are sufficient.",
-          "Infrastructure remains unchanged."
-        ]
-      },
-      "oligarchie": {
-        "prudent": [
-          "Infrastructure must be optimized to maximize profitability.",
-          "Industrial investments must be precisely targeted.",
-          "Controlled management ensures asset performance."
-        ],
-        "radical": [
-          "Maximize profits. Now.",
-          "Resource reallocation! Immediately.",
-          "Optimized production. Without delay."
-        ],
-        "statu_quo": [
-          "Industrial sector performance is satisfactory and preserves our dominant positions.",
-          "Industrial infrastructure is generating the expected return on investment.",
-          "The current industrial model is favorable to us. No structural reform serves our interest."
-        ]
-      },
-      "theocratie": {
-        "prudent": [
-          "Industry must evolve in alignment with principles, without excess.",
-          "Infrastructure must serve balance and stability.",
-          "Let us build with measure and responsibility."
-        ],
-        "radical": [
-          "Aligned production. Now.",
-          "No deviation tolerated! Application.",
-          "Industry must follow principles. No compromise."
-        ],
-        "statu_quo": [
-          "Industry respects principles.",
-          "Infrastructure is stable.",
-          "No modification necessary."
-        ]
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Let us modernize without haste, each industrial transformation involves complex chains.",
+            "Let us support innovation while preserving existing balances.",
+            "Let us invest methodically to ensure sustainable growth."
+          ],
+          "radical": [
+            "Accelerate everything. Now.",
+            "Maximum production. Forced innovation.",
+            "Industry becomes the central engine."
+          ],
+          "statu_quo": [
+            "The industrial fabric is stable.",
+            "Infrastructure meets needs.",
+            "No major transformation is underway."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Let us coordinate industrial dynamics across territories to maintain coherence.",
+            "Let us support regions in transition to limit economic fractures.",
+            "Let us encourage local innovation while building a shared vision."
+          ],
+          "radical": [
+            "Industrial unification. Now.",
+            "End regional imbalances.",
+            "One strategy. One production."
+          ],
+          "statu_quo": [
+            "Each region keeps its industrial organization.",
+            "Economic balances are maintained.",
+            "No additional coordination is underway."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "The Kingdom’s industry must evolve with measure to preserve its stability.",
+            "Infrastructure must be strengthened without breaking established balances.",
+            "Let us ensure gradual modernization in service of continuity."
+          ],
+          "radical": [
+            "The Kingdom must strengthen its production. Now.",
+            "Industrial reorganization! Without delay.",
+            "Reinforced power. Immediate application."
+          ],
+          "statu_quo": [
+            "The Kingdom’s industry is stable.",
+            "Infrastructure is operational.",
+            "No reform is underway."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Industrial systems must be optimized, some variables remain inefficient.",
+            "Production data requires deeper analysis.",
+            "Let us refine processes to improve overall performance."
+          ],
+          "radical": [
+            "Optimization required. Now.",
+            "Insufficient output! Recalibration.",
+            "Automated production. Application."
+          ],
+          "statu_quo": [
+            "Algorithmic industrial systems are at their validated nominal optimization level.",
+            "Industrial performance is stable according to measured production indicators.",
+            "No anomaly in automated production chains. Systems are operating normally."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Let us structure production with rigor, industry directly supports power.",
+            "Let us prioritize strategic sectors while maintaining system balance.",
+            "Let us reinforce critical infrastructure with discipline."
+          ],
+          "radical": [
+            "Total mobilization. Now.",
+            "Defense-oriented production. Immediately.",
+            "Industry serves power. Without compromise."
+          ],
+          "statu_quo": [
+            "The industrial system meets objectives.",
+            "Capabilities are sufficient.",
+            "Infrastructure remains unchanged."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Infrastructure must be optimized to maximize profitability.",
+            "Industrial investments must be precisely targeted.",
+            "Controlled management ensures asset performance."
+          ],
+          "radical": [
+            "Maximize profits. Now.",
+            "Resource reallocation! Immediately.",
+            "Optimized production. Without delay."
+          ],
+          "statu_quo": [
+            "Industrial sector performance is satisfactory and preserves our dominant positions.",
+            "Industrial infrastructure is generating the expected return on investment.",
+            "The current industrial model is favorable to us. No structural reform serves our interest."
+          ]
+        },
+        "theocratie": {
+          "prudent": [
+            "Industry must evolve in alignment with principles, without excess.",
+            "Infrastructure must serve balance and stability.",
+            "Let us build with measure and responsibility."
+          ],
+          "radical": [
+            "Aligned production. Now.",
+            "No deviation tolerated! Application.",
+            "Industry must follow principles. No compromise."
+          ],
+          "statu_quo": [
+            "Industry respects principles.",
+            "Infrastructure is stable.",
+            "No modification necessary."
+          ]
+        }
       }
     }
   },
