@@ -1815,6 +1815,210 @@
           ]
         }
       }
+    },
+    "oracle": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Probabilities never reveal themselves in the noise of public debate. What the people sense without articulating is often the most accurate sign.",
+            "Democracy generates weak signals that only patient reading can decipher."
+          ],
+          "radical": [
+            "The vote sometimes masks the true signal. What citizens leave unsaid weighs more than what they proclaim.",
+            "Revelation sometimes demands breaking the apparent consensus."
+          ],
+          "statu_quo": [
+            "Democratic cycles repeat themselves. What seems new has been seen before, and its outcome is written in the archives of time.",
+            "Observing without intervening is sometimes the wisest decision."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Federal balance is itself a sign. Tensions between entities reveal fractures that deliberation alone cannot bridge.",
+            "Each level of governance carries a partial truth — wisdom lies in their convergence."
+          ],
+          "radical": [
+            "Federal fragmentation sometimes hides an opportunity for deep transformation.",
+            "What federal entities refuse to admit individually becomes readable in their ensemble."
+          ],
+          "statu_quo": [
+            "The federation survives crises because it distributes shocks. This sign does not threaten the system — it tests it.",
+            "Reading federal balances takes time. Do not rush anything."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Monarchies carry a memory that republics have forgotten. The current sign has a precedent in dynastic archives.",
+            "The monarchical institution absorbs symbolic shocks that elected officials cannot bear."
+          ],
+          "radical": [
+            "The sign is clear: tradition no longer protects. A paradigm shift is necessary.",
+            "What the crown conceals in its silence reveals more than what it expresses."
+          ],
+          "statu_quo": [
+            "Constitutional stability is itself a sign of resilience. Do not weaken it.",
+            "Constitutional-monarchical balances have weathered far graver crises."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Data converges toward a signal that algorithms have not yet identified. That is precisely where the truth hides.",
+            "Technocracy excels at reading the present — but the signs of destiny lie in the margins of models."
+          ],
+          "radical": [
+            "The predictive system has reached its limits. The unexpected is exactly what it was incapable of modelling.",
+            "Breaking the algorithmic framework is sometimes the only correct answer."
+          ],
+          "statu_quo": [
+            "Predictive models indicate a zone of uncertainty. Suspend interpretation until data converges.",
+            "Continuous optimisation sometimes masks rupture signals. Observe."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Military discipline creates blind spots. The sign comes precisely from where the hierarchy is not looking.",
+            "What generals cannot see, the people feel in their bones."
+          ],
+          "radical": [
+            "The junta understands only force. Destiny, however, only speaks to those who know how to be silent and listen.",
+            "Chaos is sometimes the form that order takes when it renews itself."
+          ],
+          "statu_quo": [
+            "Military regimes resist signs until it is too late. Observe without interfering.",
+            "Stability imposed by force carries within it the seeds of its own rupture."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Oligarchs read economic signs — but ignore social signs. That is where their blind spot lies.",
+            "Concentration of power creates distortions in reading probabilities."
+          ],
+          "radical": [
+            "The sign indicates an imminent redistribution of power. Oligarchs feel it — which is why they are agitated.",
+            "Accumulation always reaches a breaking point. This sign announces it."
+          ],
+          "statu_quo": [
+            "Oligarchy perpetuates balances by suppressing signals. Observe the pressure building.",
+            "Do not challenge the oligarchy without measuring the systemic consequences."
+          ]
+        },
+        "theocratie": {
+          "prudent": [
+            "The divine sign and the sign of destiny sometimes merge. The distinction matters for interpretation.",
+            "Theocracies have a particular relationship with the unexpected — they see it as divine manifestation."
+          ],
+          "radical": [
+            "What doctrine interprets as divine will is sometimes simply probability at work.",
+            "Religious rupture and political rupture are often two sides of the same sign."
+          ],
+          "statu_quo": [
+            "Theocratic stability rests on the interpretation of divine signs. Avoid contradicting it frontally.",
+            "Observe how the regime integrates the unexpected into its sacred narrative."
+          ]
+        }
+      }
+    },
+    "wyrd": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Even popular freedom has threads that can be woven. Identify the bearing currents to orient the decision.",
+            "The destiny of a democracy is forged in the interstices between two votes."
+          ],
+          "radical": [
+            "Break the consensus to force the emergence of an option no one dared envision.",
+            "National audacity sometimes demands defying what the people think they want to offer them what they need."
+          ],
+          "statu_quo": [
+            "Weave in silence the conditions of a future opportunity. Do not force it now.",
+            "Accumulate resources and alliances before acting on the weave."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Use federal tensions as levers rather than obstacles.",
+            "Federal complexity offers more threads to weave — and therefore more creative opportunities."
+          ],
+          "radical": [
+            "Force federal convergence by creating an event that transcends inter-entity divides.",
+            "The audacity here is to short-circuit federal slowness to impose a national decision."
+          ],
+          "statu_quo": [
+            "Let federal entities exhaust themselves before proposing the synthesis.",
+            "Prepare the ground for future reform without triggering current resistance."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Monarchical symbolism can be used as a vector for profound transformation.",
+            "Weave change into the language of tradition — it is more effective than fighting it."
+          ],
+          "radical": [
+            "The crown can be the instrument of a rupture if given the right words.",
+            "Monarchical audacity is paradoxical — it changes everything while appearing to change nothing."
+          ],
+          "statu_quo": [
+            "Let the monarchical institution absorb the shock while waiting for the right moment.",
+            "Constitutional tradition offers subtle adaptation mechanisms to exploit."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Bypass the algorithm through human creativity it cannot model.",
+            "The system predicts — but cannot foresee the unexpected we are about to create."
+          ],
+          "radical": [
+            "Inject an off-model variable to force the system to recalculate. That is how one forces destiny.",
+            "Uncontrolled AI is an opportunity if one knows how to reframe it before others."
+          ],
+          "statu_quo": [
+            "Use technocracy's tools to prepare a decision that will surpass it.",
+            "Optimise the present to free the resources needed for future rupture."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "Military force is a thread that can be pulled toward an unexpected opportunity.",
+            "Use the junta's discipline as a lever to accelerate a transition no one anticipated."
+          ],
+          "radical": [
+            "Force destiny by using military structure to contain chaos and impose a direction.",
+            "Military audacity is not in the attack — it is in redefining the objective under pressure."
+          ],
+          "statu_quo": [
+            "Maintain pressure without triggering rupture. Prepare conditions for a future opportunity.",
+            "The junta functions better when it believes it controls the situation. Do not disorient it prematurely."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Oligarchs have resources that can be oriented toward a collective opportunity.",
+            "Identify the private interest that converges with the general interest — that is the thread to weave."
+          ],
+          "radical": [
+            "Force redistribution by creating a situation where inaction costs more than action.",
+            "The audacity is to make the opportunity so obvious that even the oligarchy cannot refuse it."
+          ],
+          "statu_quo": [
+            "Let the oligarchy's internal tensions create the cracks to be exploited.",
+            "Accumulate political capital without revealing the final objective."
+          ]
+        },
+        "theocratie": {
+          "prudent": [
+            "Weave change into sacred language — it is the only way to pass between dogmas.",
+            "Identify the thread of doctrine that can legitimise the audacious action."
+          ],
+          "radical": [
+            "Force destiny by presenting the opportunity as a manifestation of divine will.",
+            "Theological rupture is sometimes the most powerful of all — if the timing is exact."
+          ],
+          "statu_quo": [
+            "Let doctrine absorb the unexpected while waiting for a favourable interpretation.",
+            "Prepare the theological argument that will render the action legitimate in the eyes of the regime."
+          ]
+        }
+      }
     }
   },
   "ministeres": {

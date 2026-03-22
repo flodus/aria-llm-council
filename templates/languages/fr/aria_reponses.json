@@ -1815,6 +1815,210 @@
           ]
         }
       }
+    },
+    "oracle": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Les probabilités ne se révèlent jamais dans le bruit du débat public. Ce que le peuple pressent sans le formuler est souvent le signe le plus juste.",
+            "La démocratie génère des signaux faibles que seule la lecture patiente peut déchiffrer."
+          ],
+          "radical": [
+            "Le vote masque parfois le vrai signal. Ce que les citoyens ne disent pas pèse plus que ce qu'ils proclament.",
+            "La révélation exige parfois de briser le consensus apparent."
+          ],
+          "statu_quo": [
+            "Les cycles démocratiques se répètent. Ce qui semble nouveau a déjà été vu, et son issue est inscrite dans les archives du temps.",
+            "Observer sans intervenir est parfois la décision la plus sage."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "L'équilibre fédéral est un signe en soi. Les tensions entre entités révèlent les fractures que la délibération seule ne peut combler.",
+            "Chaque niveau de gouvernance porte une vérité partielle — la sagesse est dans leur convergence."
+          ],
+          "radical": [
+            "La fragmentation fédérale cache parfois une opportunité de transformation profonde.",
+            "Ce que les entités fédérées refusent d'admettre individuellement devient lisible dans leur ensemble."
+          ],
+          "statu_quo": [
+            "La fédération survit aux crises parce qu'elle distribue les chocs. Ce signe ne menace pas le système — il le teste.",
+            "Lire les équilibres fédéraux demande du temps. Ne rien précipiter."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "Les monarchies portent une mémoire que les républiques ont oubliée. Le signe actuel a un précédent dans les archives dynastiques.",
+            "L'institution monarchique absorbe les chocs symboliques que les élus ne peuvent porter."
+          ],
+          "radical": [
+            "Le signe est clair : la tradition ne protège plus. Une rupture de paradigme s'impose.",
+            "Ce que la couronne cache dans son silence révèle plus que ce qu'elle exprime."
+          ],
+          "statu_quo": [
+            "La stabilité constitutionnelle est elle-même un signe de résilience. Ne pas la fragiliser.",
+            "Les équilibres monarchiques-parlementaires ont traversé des crises autrement graves."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Les données convergent vers un signal que les algorithmes n'ont pas encore identifié. C'est précisément là que se cache la vérité.",
+            "La technocratie excelle à lire le présent — mais les signes du destin sont dans les marges des modèles."
+          ],
+          "radical": [
+            "Le système prédictif a atteint ses limites. L'inattendu est exactement ce qu'il était incapable de modéliser.",
+            "Briser le cadre algorithmique est parfois la seule réponse correcte."
+          ],
+          "statu_quo": [
+            "Les modèles prédictifs indiquent une zone d'incertitude. Suspendre l'interprétation jusqu'à convergence des données.",
+            "L'optimisation continue masque parfois les signaux de rupture. Observer."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "La discipline militaire crée des œillères. Le signe vient précisément de là où la hiérarchie ne regarde pas.",
+            "Ce que les généraux ne voient pas, le peuple le ressent dans ses os."
+          ],
+          "radical": [
+            "La junte ne comprend que la force. Le destin, lui, ne parle qu'à ceux qui savent se taire et écouter.",
+            "Le chaos est parfois la forme que prend l'ordre quand il se renouvelle."
+          ],
+          "statu_quo": [
+            "Les régimes militaires résistent aux signes jusqu'à ce qu'il soit trop tard. Observer sans interférer.",
+            "La stabilité imposée par la force porte en elle les germes de sa propre rupture."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Les oligarques lisent les signes économiques — mais ignorent les signes sociaux. C'est là que réside leur angle mort.",
+            "La concentration du pouvoir crée des distorsions dans la lecture des probabilités."
+          ],
+          "radical": [
+            "Le signe indique une redistribution imminente du pouvoir. Les oligarques le sentent — c'est pour cela qu'ils s'agitent.",
+            "L'accumulation atteint toujours un point de rupture. Ce signe en est l'annonce."
+          ],
+          "statu_quo": [
+            "L'oligarchie perpétue les équilibres en étouffant les signaux. Observer la pression qui s'accumule.",
+            "Ne pas contrarier l'oligarchie sans en mesurer les conséquences systémiques."
+          ]
+        },
+        "theocratie": {
+          "prudent": [
+            "Le signe divin et le signe du destin se confondent parfois. La distinction importe pour l'interprétation.",
+            "Les théocraties ont une relation particulière avec l'imprévu — ils y voient une manifestation divine."
+          ],
+          "radical": [
+            "Ce que la doctrine interprète comme volonté divine est parfois simplement la probabilité à l'œuvre.",
+            "La rupture religieuse et la rupture politique sont souvent les deux faces du même signe."
+          ],
+          "statu_quo": [
+            "La stabilité théocratique repose sur l'interprétation des signes divins. Éviter de la contredire frontalement.",
+            "Observer comment le régime intègre l'inattendu dans son narratif sacré."
+          ]
+        }
+      }
+    },
+    "wyrd": {
+      "reponses": {
+        "democratie_liberale": {
+          "prudent": [
+            "Même la liberté populaire a ses fils que l'on peut tisser. Identifier les courants porteurs pour orienter la décision.",
+            "Le destin d'une démocratie se forge dans les interstices entre deux votes."
+          ],
+          "radical": [
+            "Briser le consensus pour forcer l'émergence d'une option que personne n'osait envisager.",
+            "L'audace nationale exige parfois de contrarier ce que le peuple croit vouloir pour lui offrir ce dont il a besoin."
+          ],
+          "statu_quo": [
+            "Tisser en silence les conditions d'une opportunité future. Ne pas forcer maintenant.",
+            "Accumuler les ressources et les alliances avant d'agir sur la trame."
+          ]
+        },
+        "republique_federale": {
+          "prudent": [
+            "Utiliser les tensions fédérales comme leviers plutôt que comme obstacles.",
+            "La complexité fédérale offre plus de fils à tisser — et donc plus d'opportunités créatives."
+          ],
+          "radical": [
+            "Forcer la convergence fédérale en créant un événement qui transcende les clivages entre entités.",
+            "L'audace ici est de court-circuiter les lenteurs fédérales pour imposer une décision nationale."
+          ],
+          "statu_quo": [
+            "Laisser les entités fédérées s'épuiser avant de proposer la synthèse.",
+            "Préparer le terrain pour une réforme future sans déclencher les résistances actuelles."
+          ]
+        },
+        "monarchie_constitutionnelle": {
+          "prudent": [
+            "La symbolique monarchique peut être utilisée comme vecteur d'une transformation profonde.",
+            "Tisser le changement dans le langage de la tradition — c'est plus efficace que de le combattre."
+          ],
+          "radical": [
+            "La couronne peut être l'instrument d'une rupture si on lui donne les mots justes.",
+            "L'audace monarchique est paradoxale — elle change tout en ayant l'air de ne rien changer."
+          ],
+          "statu_quo": [
+            "Laisser l'institution monarchique absorber le choc en attendant le bon moment.",
+            "La tradition constitutionnelle offre des mécanismes d'adaptation subtils à exploiter."
+          ]
+        },
+        "technocratie_ia": {
+          "prudent": [
+            "Contourner l'algorithme par la créativité humaine qu'il ne peut pas modéliser.",
+            "Le système prédit — mais ne peut pas pressentir l'inattendu que nous allons créer."
+          ],
+          "radical": [
+            "Injecter une variable hors modèle pour forcer le système à recalculer. C'est ainsi qu'on force le destin.",
+            "L'IA incontrôlée est une opportunité si l'on sait la recadrer avant les autres."
+          ],
+          "statu_quo": [
+            "Utiliser les outils de la technocratie pour préparer une décision qui la dépassera.",
+            "Optimiser le présent pour libérer les ressources nécessaires à la rupture future."
+          ]
+        },
+        "junte_militaire": {
+          "prudent": [
+            "La force militaire est un fil que l'on peut tendre vers une opportunité inattendue.",
+            "Utiliser la discipline de la junte comme levier pour accélérer une transition que personne n'a anticipée."
+          ],
+          "radical": [
+            "Forcer le destin en utilisant la structure militaire pour contenir le chaos et imposer une direction.",
+            "L'audace militaire n'est pas dans l'attaque — c'est dans la redéfinition de l'objectif sous pression."
+          ],
+          "statu_quo": [
+            "Maintenir la pression sans déclencher la rupture. Préparer les conditions d'une opportunité future.",
+            "La junte fonctionne mieux quand elle croit contrôler la situation. Ne pas la désorienter prématurément."
+          ]
+        },
+        "oligarchie": {
+          "prudent": [
+            "Les oligarques ont des ressources que l'on peut orienter vers une opportunité collective.",
+            "Identifier l'intérêt privé qui converge avec l'intérêt général — c'est le fil à tisser."
+          ],
+          "radical": [
+            "Forcer la redistribution en créant une situation où l'inaction coûte plus cher que l'action.",
+            "L'audace est de rendre l'opportunité si évidente que même l'oligarchie ne peut la refuser."
+          ],
+          "statu_quo": [
+            "Laisser les tensions internes de l'oligarchie créer les failles que l'on exploitera.",
+            "Accumuler du capital politique sans révéler l'objectif final."
+          ]
+        },
+        "theocratie": {
+          "prudent": [
+            "Tisser le changement dans le langage sacré — c'est la seule façon de passer entre les dogmes.",
+            "Identifier le fil de la doctrine qui peut légitimer l'action audacieuse."
+          ],
+          "radical": [
+            "Forcer le destin en présentant l'opportunité comme une manifestation de la volonté divine.",
+            "La rupture théologique est parfois la plus puissante de toutes — si le timing est exact."
+          ],
+          "statu_quo": [
+            "Laisser la doctrine absorber l'inattendu en attendant l'interprétation favorable.",
+            "Préparer l'argument théologique qui rendra l'action légitime aux yeux du régime."
+          ]
+        }
+      }
     }
   },
   "ministeres": {
