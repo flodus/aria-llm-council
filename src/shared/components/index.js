@@ -6,3 +6,5 @@ export { default as Card } from './Card';
 export { default as TitleCard } from './TitleCard';
 export { default as SubtitleCard } from './SubtitleCard';
 export { default as ButtonRow } from './ButtonRow';
+export { default as AgentGrid } from './AgentGrid';
+export { default as PresidencyList } from './PresidencyList';

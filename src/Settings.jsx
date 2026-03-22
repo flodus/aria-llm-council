@@ -7,6 +7,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { getRegimeLabel, getTerrainLabel } from './shared/data/worldLabels';
+import AgentGrid from './shared/components/AgentGrid';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
 import { getIaStatus } from './shared/services/iaStatusStore';
@@ -1193,33 +1194,15 @@ function SectionConseil() {
       {tab === 'ministres' && (
         <div>
           {/* Grille icônes ministres */}
-          <div style={{marginBottom:'1.2rem'}}>
-            <div style={{fontSize:'0.75rem',color:'rgba(200,164,74,0.7)',letterSpacing:'0.10em',marginBottom:'0.6rem',textTransform:'uppercase'}}>
-              {isEn ? 'Select a minister' : 'Sélectionner un ministre'}
-            </div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
-              {Object.keys(getAgents().ministers || {}).map(k => {
-                const isSelected = selectedMin === k;
-                return (
-                  <button key={k}
-                    title={ministerLabels[k] || k}
-                    onClick={() => setSelectedMin(k)}
-                    style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem',
-                      padding:'0.6rem 0.7rem',borderRadius:'6px',cursor:'pointer',minWidth:'3.5rem',
-                      background: isSelected ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${isSelected ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                      transition:'all 0.12s'}}>
-                    <span style={{fontSize:'1.2rem',lineHeight:1}}>{ministerEmojis[k]}</span>
-                    <span style={{fontSize:'0.52rem',color:isSelected?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
-                      letterSpacing:'0.03em',textAlign:'center',maxWidth:'4rem',
-                      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3}}>
-                      {(ministerLabels[k]?.split(' (')[0] || k).replace(/^(Le |La |L')/, '')}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <AgentGrid
+            agents={Object.entries(getAgents().ministers || {}).map(([id, m]) => ({ id, name: (ministerLabels[id]?.split(' (')[0] || id).replace(/^(Le |La |L')/, ''), emoji: m.emoji, color: m.color }))}
+            selectedId={selectedMin}
+            activeIds={null}
+            onAgentClick={setSelectedMin}
+            onResetAll={null}
+            countLabel={isEn ? 'SELECT A MINISTER' : 'SÉLECTIONNER UN MINISTRE'}
+            lang={lang}
+          />
 
           <Field label="Essence" hint={trC.essence_hint}>
             <TextArea value={getVal(`ministers.${selectedMin}.essence`, minFallback('essence'))}
@@ -1244,36 +1227,15 @@ function SectionConseil() {
       {tab === 'ministeres' && (
         <div>
           {/* Grille tuiles ministères */}
-          <div style={{marginBottom:'1.2rem'}}>
-            <div style={{fontSize:'0.75rem',color:'rgba(200,164,74,0.7)',letterSpacing:'0.10em',marginBottom:'0.6rem',textTransform:'uppercase'}}>
-              {isEn ? 'Select a ministry' : 'Sélectionner un ministère'}
-            </div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
-              {getAgents().ministries.map(m => m.id).map(k => {
-                const isSelected = selectedMin2 === k;
-                const fullLabel = ministryLabels[k] || k;
-                const name = fullLabel.split(' ').slice(1).join(' ') || k;
-                const missionTooltip = getAgents().ministries.find(m => m.id === k)?.mission || fullLabel;
-                return (
-                  <button key={k}
-                    title={missionTooltip}
-                    onClick={() => setSelectedMin2(k)}
-                    style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem',
-                      padding:'0.6rem 0.7rem',borderRadius:'6px',cursor:'pointer',minWidth:'3.5rem',
-                      background: isSelected ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${isSelected ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                      transition:'all 0.12s'}}>
-                    <span style={{fontSize:'1.2rem',lineHeight:1}}>{ministryEmojis[k]}</span>
-                    <span style={{fontSize:'0.52rem',color:isSelected?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
-                      letterSpacing:'0.03em',textAlign:'center',maxWidth:'4rem',
-                      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3}}>
-                      {name}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <AgentGrid
+            agents={getAgents().ministries.map(m => ({ id: m.id, name: (ministryLabels[m.id] || m.id).split(' ').slice(1).join(' ') || m.id, emoji: m.emoji, color: m.color }))}
+            selectedId={selectedMin2}
+            activeIds={null}
+            onAgentClick={setSelectedMin2}
+            onResetAll={null}
+            countLabel={isEn ? 'SELECT A MINISTRY' : 'SÉLECTIONNER UN MINISTÈRE'}
+            lang={lang}
+          />
 
           <Field label={trC.missionLabel} hint={trC.missionHint}>
             <TextArea value={getVal(`ministries.${selectedMin2}.mission`, ministryFallback('mission'))}

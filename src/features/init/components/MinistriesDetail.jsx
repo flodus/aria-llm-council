@@ -16,6 +16,7 @@ import { useLocale, t } from '../../../ariaI18n';
 import { getAgents } from '../../../Dashboard_p1';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { Hint, ActiveToggle, ColorPicker, EmojiPicker, DeleteButton } from './government';
+import AgentGrid from '../../../shared/components/AgentGrid';
 
 export default function MinistriesDetail({
     plAgents,
@@ -80,68 +81,15 @@ export default function MinistriesDetail({
         <Hint type="ministries" />
 
         {/* Grille */}
-        <div style={{ ...CARD_STYLE }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
-        <div style={labelStyle('0.42rem')}>
-        {plAgents.ministries.length} {lang === 'en' ? 'MINISTRIES' : 'MINISTÈRES'}
-        </div>
-        <button
-        style={{ ...BTN_SECONDARY, fontSize: '0.38rem', padding: '0.14rem 0.38rem' }}
-        onClick={() => { setActiveMins(null); setSelectedMinistry(null); }}
-        >
-        {lang === 'en' ? 'All active' : 'Tous actifs'}
-        </button>
-        </div>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.28rem' }}>
-        {gridMins.map(m => {
-            const on = isMinOn(m.id);
-            const sel = selectedMinistry === m.id;
-            return (
-                <div
-                key={m.id}
-                onClick={() => handleGridClickMin(m.id)}
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.28rem',
-                    padding: '0.26rem 0.50rem',
-                    borderRadius: '3px',
-                    cursor: 'pointer',
-                    background: sel ? m.color + '38' : on ? m.color + '18' : 'rgba(8,14,26,0.60)',
-                    border: sel ? `2px solid ${m.color}EE` : on ? `1px solid ${m.color}70` : '1px solid rgba(140,160,200,0.10)',
-                    transition: 'all 0.13s',
-                    boxShadow: sel ? `0 0 12px ${m.color}44, inset 0 0 6px ${m.color}10` : on ? `0 0 6px ${m.color}22` : 'none'
-                }}
-                >
-                <span style={{
-                    fontSize: '0.85rem',
-                    filter: on ? `drop-shadow(0 0 4px ${m.color}88)` : 'grayscale(1)',
-                    opacity: on ? 1 : 0.28,
-                    transition: 'all 0.13s'
-                }}>
-                {m.emoji}
-                </span>
-                <span style={{
-                    fontFamily: FONT.mono,
-                    fontSize: '0.41rem',
-                    color: sel ? m.color : on ? m.color + 'CC' : 'rgba(140,160,200,0.28)',
-                    transition: 'all 0.13s',
-                    textShadow: (sel || on) ? `0 0 8px ${m.color}66` : 'none'
-                }}>
-                {m.name}
-                </span>
-                </div>
-            );
-        })}
-        </div>
-
-        {(activeMins?.length === 0) && (
-            <p style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: 'rgba(200,100,60,0.55)', margin: '0.3rem 0 0' }}>
-            ⚠ {lang === 'en' ? 'No active ministry — presidency only' : 'Aucun ministère actif — seule la présidence arbitrera'}
-            </p>
-        )}
-        </div>
+        <AgentGrid
+            agents={gridMins}
+            selectedId={selectedMinistry}
+            activeIds={activeMins}
+            onAgentClick={handleGridClickMin}
+            onResetAll={() => { setActiveMins(null); setSelectedMinistry(null); }}
+            countLabel={`${plAgents.ministries.length} ${lang === 'en' ? 'MINISTRIES' : 'MINISTÈRES'}`}
+            lang={lang}
+        />
 
         {/* Nouveau ministère */}
         {newMinistryForm ? (
