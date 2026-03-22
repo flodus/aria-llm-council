@@ -1008,8 +1008,8 @@ export const DEFAULT_OPTIONS = {
   world: { nb_pays_defaut: 3 },
   defaultGovernance: {
     presidency:       'duale',
-    ministries:       ['justice','economie','defense','sante','education','ecologie','chance'],
-    crisis_ministry:  true,
+    ministries:       ['justice','economie','defense','sante','education','ecologie','industrie'],
+    crisis_ministry:  false,
   },
 };
 
