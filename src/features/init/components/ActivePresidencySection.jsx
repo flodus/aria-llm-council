@@ -14,9 +14,11 @@ import { FONT, CARD_STYLE, BTN_SECONDARY, labelStyle } from '../../../shared/the
 
 export default function ActivePresidencySection({ presidency, activePres, onTogglePresidency }) {
     const { lang } = useLocale();
-    const GOLD   = 'rgba(200,164,74,0.88)';
-    const PURPLE = 'rgba(140,100,220,0.85)';
-    const presAccent = (k) => k === 'phare' ? GOLD : PURPLE;
+    const GOLD        = 'rgba(200,164,74,0.88)';
+    const PURPLE      = 'rgba(140,100,220,0.85)';
+    const presAccent  = (k) => k === 'phare' ? GOLD : PURPLE;
+    const presAccentBg= (k) => k === 'phare' ? 'rgba(200,164,74,0.10)' : 'rgba(140,100,220,0.12)';
+    const presAccentBd= (k) => k === 'phare' ? 'rgba(200,164,74,0.45)' : 'rgba(140,100,220,0.45)';
 
     return (
         <div style={{ ...CARD_STYLE }}>
@@ -38,8 +40,8 @@ export default function ActivePresidencySection({ presidency, activePres, onTogg
                     padding: '0.5rem 0.6rem',
                     cursor: 'pointer',
                     borderRadius: '2px',
-                    background: on ? `${presAccent(key)}18` : 'rgba(20,28,45,0.55)',
-                    border: `1px solid ${on ? `${presAccent(key)}55` : 'rgba(140,160,200,0.10)'}`,
+                    background: on ? presAccentBg(key) : 'rgba(20,28,45,0.55)',
+                    border: `1px solid ${on ? presAccentBd(key) : 'rgba(140,160,200,0.10)'}`,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '0.15rem',

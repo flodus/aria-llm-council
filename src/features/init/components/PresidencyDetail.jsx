@@ -18,9 +18,11 @@ import { FONT, CARD_STYLE, INPUT_STYLE, BTN_SECONDARY, labelStyle } from '../../
 
 export default function PresidencyDetail({ presidency, activePres, setActivePres, setPlAgents }) {
     const { lang } = useLocale();
-    const GOLD   = 'rgba(200,164,74,0.88)';
-    const PURPLE = 'rgba(140,100,220,0.85)';
-    const presAccent = (k) => k === 'phare' ? GOLD : PURPLE;
+    const GOLD        = 'rgba(200,164,74,0.88)';
+    const PURPLE      = 'rgba(140,100,220,0.85)';
+    const presAccent  = (k) => k === 'phare' ? GOLD : PURPLE;
+    const presAccentBg= (k) => k === 'phare' ? 'rgba(200,164,74,0.10)' : 'rgba(140,100,220,0.12)';
+    const presAccentBd= (k) => k === 'phare' ? 'rgba(200,164,74,0.45)' : 'rgba(140,100,220,0.45)';
 
     return (
         <div style={{ ...CARD_STYLE }}>
@@ -39,9 +41,9 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
                     padding: '0.28rem 0.6rem',
                     fontSize: '0.44rem',
                     ...(on ? {
-                        border: `1px solid ${presAccent(key)}55`,
+                        border: `1px solid ${presAccentBd(key)}`,
                         color: presAccent(key),
-                        background: `${presAccent(key)}18`
+                        background: presAccentBg(key)
                     } : {})
                 }}
                 onClick={() => setActivePres(prev => on ? prev.filter(k => k !== key) : [...prev, key])}

@@ -5,10 +5,12 @@ import { FONT, CARD_STYLE, BTN_SECONDARY, labelStyle } from '../../../../shared/
 
 export default function PresidentsList({ presidents, activePres, onPresidentClick }) {
     const { lang } = useLocale();
-    const GOLD   = 'rgba(200,164,74,0.88)';
-    const PURPLE = 'rgba(140,100,220,0.85)';
-    const DIM    = 'rgba(140,160,200,0.48)';
-    const presAccent = (id) => id === 'phare' ? GOLD : PURPLE;
+    const GOLD        = 'rgba(200,164,74,0.88)';
+    const PURPLE      = 'rgba(140,100,220,0.85)';
+    const DIM         = 'rgba(140,160,200,0.48)';
+    const presAccent  = (id) => id === 'phare' ? GOLD : PURPLE;
+    const presAccentBg= (id) => id === 'phare' ? 'rgba(200,164,74,0.10)' : 'rgba(140,100,220,0.12)';
+    const presAccentBd= (id) => id === 'phare' ? 'rgba(200,164,74,0.45)' : 'rgba(140,100,220,0.45)';
 
     // Ordre fixe : phare, boussole
     const presidentEntries = [
@@ -41,8 +43,8 @@ export default function PresidentsList({ presidents, activePres, onPresidentClic
                 alignItems: 'center',
                 gap: '0.55rem',
                 padding: '0.52rem 0.68rem',
-                background: isActive ? `${presAccent(id)}18` : 'rgba(255,255,255,0.025)',
-                border: `1px solid ${isActive ? `${presAccent(id)}55` : 'rgba(255,255,255,0.07)'}`,
+                background: isActive ? presAccentBg(id) : 'rgba(20,28,45,0.55)',
+                border: `1px solid ${isActive ? presAccentBd(id) : 'rgba(140,160,200,0.10)'}`,
                 borderRadius: '2px',
                 cursor: 'pointer',
                 width: '100%',
