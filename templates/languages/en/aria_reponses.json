@@ -749,8 +749,8 @@
           ],
           "statu_quo": [
             "Models are stable.",
-            "Parameters are optimized.",
-            "No anomaly detected.",
+            "Current optimization has reached its efficiency plateau. Any intervention would be a regression.",
+            "Models are running within nominal parameters. No correction required.",
             "System operates normally.",
             "No adjustment required."
           ]
@@ -794,7 +794,7 @@
             "Data converges. Immediate decision."
           ],
           "statu_quo": [
-            "Performance is stable.",
+            "Returns are within acceptable margins. Let us not touch what is working.",
             "Financial indicators are consistent.",
             "Projections remain unchanged.",
             "No significant variation.",
@@ -845,7 +845,7 @@
           ],
           "statu_quo": [
             "The current legal framework is respected.",
-            "Institutions ensure balance.",
+            "The rule of law is functioning. Checks and balances are working. Let us preserve this equilibrium.",
             "Justice is proceeding normally.",
             "No irregularities detected.",
             "Maintain the existing framework."
@@ -914,8 +914,8 @@
           ],
           "statu_quo": [
             "Decision system is stable.",
-            "Parameters are consistent.",
-            "No anomaly detected.",
+            "Algorithmic jurisprudence is consistent with established legal parameters.",
+            "No legal irregularity detected in the automated decision streams.",
             "Decisions remain optimized.",
             "Maintain current model."
           ]
@@ -937,9 +937,9 @@
           ],
           "statu_quo": [
             "The situation is controlled.",
-            "Order is maintained.",
+            "Legal order follows military order. Procedures are being respected.",
             "No intervention required.",
-            "Rules are respected.",
+            "Legal discipline is intact. The rules are serving their function.",
             "Maintain current control."
           ]
         },
@@ -983,7 +983,7 @@
           ],
           "statu_quo": [
             "Principles are respected.",
-            "Order is maintained.",
+            "Divine law is applied. The spiritual balance of the community is preserved.",
             "No new decision required.",
             "Rules remain unchanged.",
             "Maintain current balance."
@@ -1078,7 +1078,7 @@
             "Inconsistency confirmed. Investigation initiated."
           ],
           "statu_quo": [
-            "Data is consistent.",
+            "Data is internally consistent. No manipulation detected in the systems.",
             "No anomalies detected.",
             "Systems are reliable.",
             "Results are validated.",
@@ -1104,7 +1104,7 @@
             "Intelligence is reliable.",
             "No threat identified.",
             "Information is consistent.",
-            "Situation is under control.",
+            "My sources confirm: no leak, no detected betrayal. The perimeter is secure.",
             "Maintain current setup."
           ]
         },
@@ -1125,7 +1125,7 @@
           ],
           "statu_quo": [
             "Information is reliable.",
-            "Data is consistent.",
+            "No anomaly in financial flows. The interests at play are stable.",
             "No notable anomalies.",
             "Analyses are confirmed.",
             "Maintain current reading."
@@ -1456,7 +1456,7 @@
           "statu_quo": [
             "The current strategy is profitable.",
             "Positions are optimized.",
-            "Indicators are stable.",
+            "The strategic position is solid. Our gains are preserved, our flanks covered.",
             "No reorientation necessary.",
             "Maintain the current line."
           ]
@@ -1552,7 +1552,7 @@
           "statu_quo": [
             "Tradition is sufficient to guide our practices.",
             "Current systems are proven.",
-            "No innovation necessary.",
+            "Ancestral know-how has proven its worth. Innovation will wait until the ground is ready.",
             "Existing practices remain relevant.",
             "Maintain existing methods."
           ]
@@ -1575,7 +1575,7 @@
           "statu_quo": [
             "Current systems are optimized.",
             "No improvement detected.",
-            "Performance is stable.",
+            "The current system is at its measured optimum. Any modification would introduce uncertainty.",
             "No innovation required.",
             "Maintain current architecture."
           ]
@@ -1597,7 +1597,7 @@
           ],
           "statu_quo": [
             "Current methods are reliable.",
-            "No innovation necessary.",
+            "The current arsenal is sufficient for ongoing missions. No urgent development needed.",
             "Systems are proven.",
             "Stability comes first.",
             "Maintain existing practices."
@@ -1622,7 +1622,7 @@
             "Current solutions are profitable.",
             "No urgent innovation.",
             "Existing models are sufficient.",
-            "Performance is stable.",
+            "Current patents are generating stable revenue. No need to take unnecessary risks.",
             "Maintain current strategies."
           ]
         },
@@ -1644,7 +1644,7 @@
           "statu_quo": [
             "Current practices are sufficient.",
             "Traditions guide our actions.",
-            "No innovation necessary.",
+            "What is divinely ordered does not need to be improved by human hands.",
             "Methods remain valid.",
             "Maintain existing practices."
           ]
@@ -1670,7 +1670,7 @@
           ],
           "statu_quo": [
             "Balances have been restored.",
-            "Tensions are contained.",
+            "Social tension is managed. Spaces for dialogue are still functioning.",
             "The situation is stabilized.",
             "No corrective action necessary.",
             "Maintaining the current state."
@@ -1695,7 +1695,7 @@
             "Regional balances are maintained.",
             "Local tensions are under control.",
             "The situation is stable.",
-            "No intervention necessary.",
+            "The federal health system meets current needs. No urgent reform required.",
             "Maintaining current systems."
           ]
         },
@@ -1762,9 +1762,9 @@
           ],
           "statu_quo": [
             "The situation is under control.",
-            "Tensions are contained.",
-            "Order is maintained.",
-            "No intervention necessary.",
+            "Psychological pressure is within tolerable thresholds. The corps is holding.",
+            "Sanitary discipline is respected. Medical resources are stable.",
+            "The general health state does not require emergency measures. Protocol maintained.",
             "Maintaining the current system."
           ]
         },
@@ -1810,7 +1810,7 @@
             "Peace is maintained.",
             "Souls are at ease.",
             "Balance is preserved.",
-            "No intervention necessary.",
+            "The community is at peace with itself. Faith heals what medicine cannot reach.",
             "Maintaining current harmony."
           ]
         }

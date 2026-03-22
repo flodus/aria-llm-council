@@ -5,7 +5,7 @@
 // ============================================================
 
 import { loadLang } from '../../../ariaI18n';
-import { getLocalResponse } from '../../../shared/services/boardgame/responseService';
+import { getLocalResponse, getSyntheseMinistere } from '../../../shared/services/boardgame/responseService';
 
 // ============================================================
 // FALLBACK BUREAUCRATIQUE — questions orphelines hors-ligne
@@ -79,17 +79,18 @@ export function localMinisterFallback(ministerId, question, regime = null) {
     };
 }
 
-export function localSyntheseFallback(ministry, resA, resB) {
+export function localSyntheseFallback(ministry, resA, resB, regime = null) {
     const isEn = ((() => { try { return localStorage.getItem('aria_lang'); } catch { return 'fr'; } })()) === 'en';
+    const texte = getSyntheseMinistere(ministry?.id, regime, true);
     return {
         convergence: true,
-        synthese: isEn
-        ? `The ${ministry.name} ministry has deliberated on the submitted question. Both ministers have presented their analyses. A common position will be submitted to the Ministerial Circle.`
-        : `Le ministère ${ministry.name} a délibéré sur la question soumise. Les deux ministres ont exposé leurs analyses respectives. Une position commune sera présentée au Cercle Ministériel.`,
+        synthese: texte || (isEn
+            ? `The ${ministry.name} ministry has deliberated on the submitted question. Both ministers have presented their analyses. A common position will be submitted to the Ministerial Circle.`
+            : `Le ministère ${ministry.name} a délibéré sur la question soumise. Les deux ministres ont exposé leurs analyses respectives. Une position commune sera présentée au Cercle Ministériel.`),
         tension_residuelle: null,
         recommandation: isEn
-        ? 'The ministry recommends a progressive and concerted approach.'
-        : 'Le ministère recommande une approche progressive et concertée.',
+            ? 'The ministry recommends a progressive and concerted approach.'
+            : 'Le ministère recommande une approche progressive et concertée.',
     };
 }
 

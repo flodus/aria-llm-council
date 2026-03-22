@@ -10,8 +10,10 @@
 //  Fallbacks : régime inconnu → _meta.fallbacks → democratie_liberale
 // ═══════════════════════════════════════════════════════════════════════════
 
-import REPONSES_FR from '../../../../templates/languages/fr/aria_reponses.json';
-// import REPONSES_EN from '../../../../templates/languages/en/aria_reponses.json'; // à activer
+import REPONSES_FR   from '../../../../templates/languages/fr/aria_reponses.json';
+import SYNTHESES_FR  from '../../../../templates/languages/fr/aria_syntheses.json';
+// import REPONSES_EN  from '../../../../templates/languages/en/aria_reponses.json';  // à activer
+// import SYNTHESES_EN from '../../../../templates/languages/en/aria_syntheses.json'; // à activer
 
 // Table archétype → posture par défaut
 const ARCHETYPE_POSTURE = {
@@ -32,6 +34,11 @@ const ARCHETYPE_POSTURE = {
 function chargerReponses() {
     // Plus tard : if (loadLang() === 'en') { try { return REPONSES_EN; } catch {} }
     return REPONSES_FR;
+}
+
+function chargerSyntheses() {
+    // Plus tard : if (loadLang() === 'en') { try { return SYNTHESES_EN; } catch {} }
+    return SYNTHESES_FR;
 }
 
 function resoudreRegime(regime, fallbacks) {
@@ -124,6 +131,52 @@ export function getPresidenceResponse(role, style) {
         return piocherDansPool(pool);
     } catch (e) {
         console.warn('getPresidenceResponse — lookup échoué :', e);
+        return null;
+    }
+}
+
+/**
+ * Récupère un texte de synthèse pour un ministère (mode offline)
+ * @param {string} ministereId  - justice, economie, defense, etc.
+ * @param {string|null} regime  - régime politique du pays
+ * @param {boolean} convergence - true = convergence, false = divergence
+ * @returns {string|null}
+ */
+export function getSyntheseMinistere(ministereId, regime = null, convergence = true) {
+    const data = chargerSyntheses();
+    if (!data) return null;
+
+    const fallbacks    = data._meta?.fallbacks || {};
+    const regimeResolu = resoudreRegime(regime, fallbacks);
+    const typeKey      = convergence ? 'convergence' : 'divergence';
+
+    try {
+        const pool = data.ministeres?.[ministereId]?.[regimeResolu]?.[typeKey];
+        const resultat = piocherDansPool(pool);
+        if (resultat) return resultat;
+
+        const poolFallback = data.ministeres?.[ministereId]?.democratie_liberale?.[typeKey];
+        return piocherDansPool(poolFallback);
+    } catch (e) {
+        console.warn('getSyntheseMinistere — lookup échoué :', e);
+        return null;
+    }
+}
+
+/**
+ * Récupère un texte de synthèse présidentielle (mode offline)
+ * @param {boolean} convergence - true = convergence, false = divergence
+ * @returns {string|null}
+ */
+export function getSynthesePresidence(convergence = true) {
+    const data = chargerSyntheses();
+    if (!data) return null;
+
+    const typeKey = convergence ? 'convergence' : 'divergence';
+    try {
+        return piocherDansPool(data.presidence?.[typeKey]);
+    } catch (e) {
+        console.warn('getSynthesePresidence — lookup échoué :', e);
         return null;
     }
 }
