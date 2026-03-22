@@ -19,6 +19,8 @@ import { runMinisterePhase, runCerclePhase, runPresidencePhase } from '../servic
 import { computeVoteImpact } from '../services/voteEngine';
 import { buildCountryContext } from '../services/contextBuilder';
 import { MINISTRIES_LIST } from '../services/agentsManager';
+import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../ariaData';
+import { loadLang } from '../../../ariaI18n';
 import REPONSES_FR from '../../../../templates/languages/fr/aria_reponses.json';
 
 function pickGarbage() {
@@ -41,10 +43,22 @@ export function useCouncilSession(country, onVoteResult) {
         if (!country) return;
         setRunning(true);
 
-        const countryContext     = buildCountryContext(country);
+        const countryContext = buildCountryContext(country);
+
+        const en      = loadLang() === 'en';
+        const rawReal = (en ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === country.id);
+        const geoText = rawReal?.triple_combo         || country.geoContext  || '';
+        const socText = rawReal?.aria_sociology_logic || country.description || '';
+        const sat     = Math.round(country.satisfaction ?? 50);
+        const aria    = Math.round(country.aria_current ?? country.aria_irl ?? 40);
+        const statsLine = en
+            ? `Approval: ${sat}%   ·   ARIA: ${aria}%`
+            : `Satisfaction : ${sat}%   ·   Adhésion ARIA : ${aria}%`;
+        const geoBlock  = [geoText, socText].filter(Boolean).join('\n\n');
         const countryDescription = country.contextOverride?.trim()
-            || [country.description, country.geoContext].filter(Boolean).join('\n\n')
+            || [geoBlock, statsLine].filter(Boolean).join('\n\n')
             || '';
+
         setSession({ question, ministryId, countryId: country.id, countryContext, countryNom: country.nom, countryDescription });
 
         const resolvedId = await routeQuestion(question, ministryId);

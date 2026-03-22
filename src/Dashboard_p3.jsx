@@ -1473,7 +1473,21 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
           session={councilSession}
           onVote={handleVoteCouncil}
           isRunning={councilRunning}
-          countryContext={selectedCountry ? [selectedCountry.description, selectedCountry.geoContext].filter(Boolean).join('\n\n') : ''}
+          countryContext={(() => {
+            const c = selectedCountry;
+            if (!c) return '';
+            const isEn   = loadLang() === 'en';
+            const raw    = (isEn ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === c.id);
+            const geoText = raw?.triple_combo         || c.geoContext  || '';
+            const socText = raw?.aria_sociology_logic || c.description || '';
+            const sat     = Math.round(c.satisfaction ?? 50);
+            const aria    = Math.round(c.aria_current ?? c.aria_irl ?? 40);
+            const statsLine = isEn
+              ? `Approval: ${sat}%   ·   ARIA: ${aria}%`
+              : `Satisfaction : ${sat}%   ·   Adhésion ARIA : ${aria}%`;
+            const geoBlock = [geoText, socText].filter(Boolean).join('\n\n');
+            return c.contextOverride?.trim() || [geoBlock, statsLine].filter(Boolean).join('\n\n');
+          })()}
           countryNom={selectedCountry?.nom || ''}
           ctxMode={(() => {
             const c = selectedCountry;

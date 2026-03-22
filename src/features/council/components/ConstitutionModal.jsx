@@ -85,6 +85,10 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
     // États pour l'onglet régime
     const [regime, setRegime] = useState(country?.regime || 'democratie_liberale');
+    const rawReal = (isEn ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === country?.id);
+    const ctxGeo  = rawReal?.triple_combo        || country?.geoContext  || '';
+    const ctxSoc  = rawReal?.aria_sociology_logic || country?.description || '';
+
     const [leader, setLeader] = useState(typeof country?.leader === 'string' ? country.leader : (country?.leader?.nom || ''));
     const [contextMode, setContextMode] = useState(country?.context_mode || '');
     const [contextOverride, setContextOverride] = useState(country?.contextOverride || '');
@@ -380,16 +384,16 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
             {isEn ? 'CURRENT CONTEXT' : 'CONTEXTE ACTUEL'}
             </h3>
-            {(country?.description || country?.geoContext)
+            {(ctxGeo || ctxSoc)
                 ? <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                {country.description && (
-                    <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.55)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
-                    {country.description}
+                {ctxGeo && (
+                    <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.55)', margin: 0, lineHeight: 1.6 }}>
+                    {ctxGeo}
                     </p>
                 )}
-                {country.geoContext && (
-                    <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.50)', margin: 0, lineHeight: 1.6 }}>
-                    {country.geoContext}
+                {ctxSoc && (
+                    <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.45)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
+                    {ctxSoc}
                     </p>
                 )}
                 </div>
