@@ -47,14 +47,14 @@ export default function CountryInfoCard({ data }) {
         </div>
       </div>
       {/* Sociologie ARIA */}
-      <div style={{ fontSize:'0.44rem', color:'rgba(120,140,180,0.55)', lineHeight:1.55, fontStyle:'italic', padding:'0.35rem 0.5rem', background:'rgba(200,164,74,0.03)', borderRadius:'2px', borderLeft:'2px solid rgba(200,164,74,0.15)' }}>
+      <div style={{ fontSize:'0.52rem', color:'rgba(180,200,230,0.82)', lineHeight:1.6, fontStyle:'italic', padding:'0.4rem 0.6rem', background:'rgba(6,12,24,0.78)', borderRadius:'2px', borderLeft:'2px solid rgba(200,164,74,0.28)' }}>
         {data.aria_sociology_logic}
       </div>
       {/* Contexte géopolitique — expandable */}
       {data.triple_combo && (
         <button
           onClick={() => setOpen(o=>!o)}
-          style={{ background:'none', border:'1px solid rgba(90,110,160,0.20)', borderRadius:'2px', padding:'0.28rem 0.55rem', cursor:'pointer', fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(90,110,160,0.55)', textAlign:'left', letterSpacing:'0.08em' }}>
+          style={{ background:'none', border:'1px solid rgba(200,164,74,0.22)', borderRadius:'2px', padding:'0.28rem 0.55rem', cursor:'pointer', fontFamily:FONT.mono, fontSize:'0.42rem', color:'rgba(200,164,74,0.65)', textAlign:'left', letterSpacing:'0.08em' }}>
           {open ? lang==='en'?'▲ Hide geopolitical context':'▲ Masquer le contexte géopolitique' : lang==='en'?'▼ Show geopolitical context':'▼ Voir le contexte géopolitique'}
         </button>
       )}
