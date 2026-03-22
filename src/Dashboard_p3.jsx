@@ -654,13 +654,8 @@ function AddCountryModal({ onConfirm, onClose }) {
   const rcTimer   = useRef(null);
   const rcQueryRef = useRef('');
 
-  const TERRAIN_OPTS = [
-    'coastal','inland','highland','island','archipelago','desert','foret','tropical','toundra',
-  ].map(k => [k, getTerrainLabel(k, uiLang)]);
-  const REGIME_OPTS = [
-    'democratie_liberale','republique_federale','monarchie_constitutionnelle','democratie_directe',
-    'technocratie','oligarchie','junte_militaire','regime_autoritaire','monarchie_absolue','theocratie',
-  ].map(k => [k, getRegimeLabel(k, uiLang)]);
+  const TERRAIN_OPTS = Object.keys(getStats().terrains || {}).map(k => [k, getTerrainLabel(k, uiLang)]);
+  const REGIME_OPTS  = Object.keys(getStats().regimes  || {}).map(k => [k, getRegimeLabel(k, uiLang)]);
 
   // Estimations fictif
   const ARIA_EST = { democratie_liberale:48, republique_federale:44, monarchie_constitutionnelle:38, democratie_directe:52, technocratie:65, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocratie:18 };

@@ -58,10 +58,6 @@ function getSections(isEn) {
   ];
 }
 
-const MINISTER_KEYS = [
-  'initiateur','gardien','communicant','protecteur','ambassadeur','analyste',
-  'arbitre','enqueteur','guide','stratege','inventeur','guerisseur',
-];
 // ── Getters dynamiques — labels localisés selon aria_lang ─────────────────
 function getMinisterLabels() {
   const ag = getAgents();
@@ -86,19 +82,6 @@ function getMinistryEmojis() {
   const mins = Array.isArray(ag.ministries) ? ag.ministries : Object.values(ag.ministries || {});
   return Object.fromEntries(mins.map(m => [m.id, m.emoji || '🏛️']));
 }
-const MINISTRY_KEYS = ['justice','economie','defense','sante','education','ecologie','chance'];
-const TOOLTIP_MINISTERES = {
-  justice:   'Ministère de la Justice et de la Vérité',
-  economie:  "Ministère de l'Économie et des Ressources",
-  defense:   'Ministère de la Défense et de la Souveraineté',
-  sante:     'Ministère de la Santé et de la Protection Sociale',
-  education: "Ministère de l'Éducation et de l'Élévation",
-  ecologie:  'Ministère de la Transition Écologique',
-  chance:    "Ministère de la Chance et de l'Imprévu",
-};
-
-// Régimes affichés dans la section coefficients (les 7 principaux)
-const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocratie'];
 
 const DEFAULT_PROMPTS = {
   global_system: `Tu es un ministre du gouvernement ARIA, système de gouvernance augmentée par IA. Tu délibères avec rigueur, cohérence et fidélité à ta philosophie fondatrice. Chaque prise de position doit être argumentée, contextualisée et orientée vers le bien collectif à long terme.`,
@@ -1215,7 +1198,7 @@ function SectionConseil() {
               {isEn ? 'Select a minister' : 'Sélectionner un ministre'}
             </div>
             <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
-              {MINISTER_KEYS.map(k => {
+              {Object.keys(getAgents().ministers || {}).map(k => {
                 const isSelected = selectedMin === k;
                 return (
                   <button key={k}
@@ -1266,13 +1249,14 @@ function SectionConseil() {
               {isEn ? 'Select a ministry' : 'Sélectionner un ministère'}
             </div>
             <div style={{display:'flex',flexWrap:'wrap',gap:'0.5rem'}}>
-              {MINISTRY_KEYS.map(k => {
+              {getAgents().ministries.map(m => m.id).map(k => {
                 const isSelected = selectedMin2 === k;
                 const fullLabel = ministryLabels[k] || k;
                 const name = fullLabel.split(' ').slice(1).join(' ') || k;
+                const missionTooltip = getAgents().ministries.find(m => m.id === k)?.mission || fullLabel;
                 return (
                   <button key={k}
-                    title={TOOLTIP_MINISTERES[k] || fullLabel}
+                    title={missionTooltip}
                     onClick={() => setSelectedMin2(k)}
                     style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem',
                       padding:'0.6rem 0.7rem',borderRadius:'6px',cursor:'pointer',minWidth:'3.5rem',
@@ -1388,7 +1372,7 @@ function SectionConseil() {
 //  SOUS-COMPOSANT : GOUVERNANCE PAR DÉFAUT (dans SectionConseil)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ALL_MINISTRY_IDS = ['justice','economie','defense','sante','education','ecologie','chance'];
+function getAllMinistryIds() { return getAgents().ministries.map(m => m.id); }
 // MINISTRY_META dynamique depuis getAgents()
 function getMinistryMeta() {
   const agents = getAgents();
@@ -1413,21 +1397,23 @@ function getPresidencyOpts(isEn) {
   ];
 }
 
-const DEFAULT_GOVERNANCE = {
-  presidency: 'duale',
-  ministries: ['justice','economie','defense','sante','education','ecologie'],
-};
+function getDefaultGovernance() {
+  return {
+    presidency: 'duale',
+    ministries: getAgents().ministries.filter(m => m.base).map(m => m.id),
+  };
+}
 
 function SectionGouvernanceDefaut({ opts, setOpts }) {
   const { lang } = useLocale();
   const isEn = lang === 'en';
-  const gov = opts.defaultGovernance || DEFAULT_GOVERNANCE;
+  const gov = opts.defaultGovernance || getDefaultGovernance();
   const [openAcc, setOpenAcc] = useState(null);
 
   const toggleAcc = (key) => setOpenAcc(p => p === key ? null : key);
 
   const setGov = (key, val) => {
-    setOpts({ ...opts, defaultGovernance: { ...(opts.defaultGovernance || DEFAULT_GOVERNANCE), [key]: val } });
+    setOpts({ ...opts, defaultGovernance: { ...(opts.defaultGovernance || getDefaultGovernance()), [key]: val } });
   };
 
   const setCtx = (val) => {
@@ -1530,10 +1516,10 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
       {/* ▸ MINISTÈRES */}
       <div className={`aria-accordion${openAcc==='mins' ? ' open' : ''}`}>
         {HDR('mins', isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT',
-          `${(gov.ministries||[]).length}/${ALL_MINISTRY_IDS.length}`)}
+          `${(gov.ministries||[]).length}/${getAllMinistryIds().length}`)}
         {openAcc==='mins' && (
           <div className="aria-accordion__body">
-            {ALL_MINISTRY_IDS.map(id => {
+            {getAllMinistryIds().map(id => {
               const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
               const active = (gov.ministries||[]).includes(id);
               const isMin  = (gov.ministries||[]).length <= 2 && active;
@@ -1693,10 +1679,10 @@ function SectionSimulation() {
 
       {/* ▸ COEFFICIENTS DES RÉGIMES */}
       <div className={`aria-accordion${openAcc==='regimes' ? ' open' : ''}`}>
-        {HDR('regimes', isEn?'REGIME COEFFICIENTS':'COEFFICIENTS DES RÉGIMES', `${REGIME_LABEL_KEYS.length}`)}
+        {HDR('regimes', isEn?'REGIME COEFFICIENTS':'COEFFICIENTS DES RÉGIMES', `${Object.keys(getStats().regimes || {}).length}`)}
         {openAcc==='regimes' && (
         <div className="aria-accordion__body">
-        {REGIME_LABEL_KEYS.map(rk => {
+        {Object.keys(getStats().regimes || {}).map(rk => {
           const coeff_sat  = getReg(rk, 'coeff_satisfaction');
           const coeff_cro  = getReg(rk, 'coeff_croissance');
           const natalite   = getReg(rk, 'taux_natalite');

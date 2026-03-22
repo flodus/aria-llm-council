@@ -13,6 +13,7 @@
 
 import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
+import { getAgents } from '../../../Dashboard_p1';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { Hint, ActiveToggle, ColorPicker, EmojiPicker, DeleteButton } from './government';
 
@@ -30,7 +31,7 @@ export default function MinistriesDetail({
     setPlAgents
 }) {
     const { lang } = useLocale();
-    const BASE_IDS = ['justice', 'economie', 'defense', 'sante', 'education', 'ecologie', 'chance'];
+    const BASE_IDS = getAgents().ministries.filter(m => m.base).map(m => m.id);
 
     // ── Helpers grille ────────────────────────────────────────────────────
 

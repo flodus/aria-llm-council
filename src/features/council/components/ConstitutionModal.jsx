@@ -13,7 +13,7 @@
 import { useState, useEffect } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
-import { getStats, getOptions, DEFAULT_OPTIONS } from '../../../Dashboard_p1';
+import { getStats, getAgents, getOptions, DEFAULT_OPTIONS } from '../../../Dashboard_p1';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../ariaData';
 import useConstitutionModal from '../hooks/useConstitutionModal';
 import {
@@ -77,7 +77,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     // Récupération des options globales pour les valeurs par défaut
     const globalGov = getOptions().defaultGovernance || DEFAULT_OPTIONS.defaultGovernance;
     const current = { ...globalGov, ...(country?.governanceOverride || {}) };
-    const BASE_IDS = ['justice', 'economie', 'defense', 'sante', 'education', 'ecologie', 'chance'];
+    const BASE_IDS = getAgents().ministries.filter(m => m.base).map(m => m.id);
 
 
     // État local pour l'onglet actif

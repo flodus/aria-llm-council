@@ -88,7 +88,7 @@ export default function NameScreen({
                             {lang === 'en' ? 'Real Earth' : 'Terre réelle'}
                         </div>
                         <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.50)', lineHeight: 1.55, whiteSpace: 'pre-line' }}>
-                            {lang === 'en' ? 'Real countries · GeoJSON\nGeopolitics 2025' : 'Pays réels · GeoJSON\nGéopolitique 2025'}
+                            {lang === 'en' ? 'Real countries · GeoJSON\nGeopolitics 2026' : 'Pays réels · GeoJSON\nGéopolitique 2026'}
                         </div>
                     </button>
 

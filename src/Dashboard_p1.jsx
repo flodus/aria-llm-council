@@ -548,15 +548,13 @@ export function calcSatisfactionDelta(country, alliances) {
   let delta = cfg.derive_satisfaction_base * regime.coeff_satisfaction;
 
   // Impact ressources présentes/absentes pondéré par les ministères concernés
-  const resMinisters = {
-    agriculture: poids.sante    * 0.5 + poids.economie * 0.5,
-    bois:        poids.ecologie * 0.6 + poids.economie * 0.4,
-    eau:         poids.sante    * 0.8 + poids.ecologie * 0.2,
-    energie:     poids.economie * 0.7 + poids.ecologie * 0.3,
-    mineraux:    poids.economie * 0.6 + poids.defense  * 0.4,
-    peche:       poids.sante    * 0.5 + poids.economie * 0.5,
-    petrole:     poids.economie * 0.8 + poids.defense  * 0.2,
-  };
+  const rmWeights = getStats().resource_ministry_weights || {};
+  const resMinisters = Object.fromEntries(
+    Object.entries(rmWeights).map(([res, w]) => [
+      res,
+      Object.entries(w).reduce((sum, [minId, coeff]) => sum + (poids[minId] || 0) * coeff, 0),
+    ])
+  );
 
   Object.entries(country.ressources).forEach(([k, present]) => {
     const weight = resMinisters[k] || 1.0;

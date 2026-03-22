@@ -10,6 +10,7 @@
 //  Fallbacks : régime inconnu → _meta.fallbacks → democratie_liberale
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { getAgents } from '../../../Dashboard_p1';
 import REPONSES_FR    from '../../../../templates/languages/fr/aria_reponses.json';
 import SYNTHESES_FR   from '../../../../templates/languages/fr/aria_syntheses.json';
 import ANNOTATIONS_FR from '../../../../templates/languages/fr/aria_annotations.json';
@@ -17,21 +18,6 @@ import ANNOTATIONS_FR from '../../../../templates/languages/fr/aria_annotations.
 // import SYNTHESES_EN   from '../../../../templates/languages/en/aria_syntheses.json';   // à activer
 // import ANNOTATIONS_EN from '../../../../templates/languages/en/aria_annotations.json'; // à activer
 
-// Table archétype → posture par défaut
-const ARCHETYPE_POSTURE = {
-    initiateur:  'radical',
-    inventeur:   'radical',
-    gardien:     'prudent',
-    analyste:    'prudent',
-    protecteur:  'prudent',
-    guerisseur:  'prudent',
-    communicant: 'statu_quo',
-    guide:       'statu_quo',
-    ambassadeur: 'statu_quo',
-    arbitre:     'statu_quo',
-    enqueteur:   'statu_quo',
-    stratege:    'statu_quo',
-};
 
 function chargerReponses() {
     // Plus tard : if (loadLang() === 'en') { try { return REPONSES_EN; } catch {} }
@@ -62,7 +48,7 @@ function piocherDansPool(pool) {
  * Retourne la posture par défaut d'un archétype
  */
 export function getPostureForArchetype(archetypeId) {
-    return ARCHETYPE_POSTURE[archetypeId] || 'statu_quo';
+    return getAgents().ministers[archetypeId]?.posture_defaut || 'statu_quo';
 }
 
 /**
