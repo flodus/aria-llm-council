@@ -64,10 +64,14 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         secCustomCtx: isEn ? 'CUSTOM CONTEXT'           : 'CONTEXTE PERSONNALISÉ',
         secPres:      isEn ? 'PRESIDENCY'               : 'PRÉSIDENCE',
         secMins:      isEn ? 'MINISTRIES'               : 'MINISTÈRES',
+        destinyTitle: isEn ? 'DESTINY OF THE WORLD'     : 'DESTINÉE DU MONDE',
+        destinyLabel: isEn ? '👁️ Oracle & Wyrd'          : '👁️ Oracle & Wyrd',
+        destinyDesc:  isEn ? 'Activates Oracle and Wyrd for existential crises.'
+        : 'Active Oracle et Wyrd pour les crises existentielles.',
         crisisTitle:  isEn ? 'CRISIS MANAGEMENT'        : 'GESTION DE CRISE',
-        crisisLabel:  isEn ? '🎲 Ministry of Chance & Crises' : '🎲 Ministère de la Chance & Crises',
-        crisisDesc:   isEn ? 'Activates the 7th ministry for emergency management.'
-        : 'Active le 7e ministère pour la gestion des urgences.',
+        crisisLabel:  isEn ? '⚡ Crisis mode'            : '⚡ Mode crise',
+        crisisDesc:   isEn ? 'Activates automatic crisis detection and adapted deliberation.'
+        : 'Active la détection automatique des crises et la délibération adaptée.',
         assignedMins: isEn ? 'ASSIGNED MINISTERS'       : 'MINISTRES ASSIGNÉS',
         secMinisters: isEn ? 'MINISTERS'                : 'MINISTRES',
         cancel:       isEn ? 'Cancel'                   : 'Annuler',
@@ -192,7 +196,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 active_presidency: constitution.activePres,
                 ministries: constitution.activeMins,
                 active_ministers: constitution.activeMinsters,
-                crisis_ministry: constitution.activeMins?.includes('chance') || false,
+                destiny_mode: constitution.destinyMode || false,
+                crisis_mode: constitution.crisisMode !== false,
             },
         };
 

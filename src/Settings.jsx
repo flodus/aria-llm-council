@@ -1541,15 +1541,29 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
         )}
       </div>
 
+      {/* ▸ DESTINÉE DU MONDE */}
+      <div className={`aria-accordion${openAcc==='destin' ? ' open' : ''}`}>
+        {HDR('destin', isEn ? 'DESTINY OF THE WORLD' : 'DESTINÉE DU MONDE')}
+        {openAcc==='destin' && (
+          <div className="aria-accordion__body">
+            <Field label={isEn ? "Oracle & Wyrd" : "Oracle & Wyrd"}
+              hint={isEn ? "Activates the Oracle and Wyrd agents for existential crises (pandemics, nuclear threats, systemic collapses…)" : "Active les agents Oracle et Wyrd pour les crises existentielles (pandémies, menaces nucléaires, effondrements systémiques…)"}>
+              <Toggle value={gov.destiny_mode === true} onChange={v => setGov('destiny_mode', v)}
+                label={gov.destiny_mode === true ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
+            </Field>
+          </div>
+        )}
+      </div>
+
       {/* ▸ GESTION DE CRISE */}
       <div className={`aria-accordion${openAcc==='crise' ? ' open' : ''}`}>
         {HDR('crise', isEn ? 'CRISIS MANAGEMENT' : 'GESTION DE CRISE')}
         {openAcc==='crise' && (
           <div className="aria-accordion__body">
-            <Field label={isEn ? "Ministry of Chance & Crises" : "Ministère de la Chance & Crises"}
-              hint={isEn ? "Activates the 7th ministry for emergency management" : "Active le 7e ministère pour la gestion des urgences"}>
-              <Toggle value={gov.crisis_ministry !== false} onChange={v => setGov('crisis_ministry', v)}
-                label={gov.crisis_ministry !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
+            <Field label={isEn ? "Crisis mode" : "Mode crise"}
+              hint={isEn ? "Activates automatic crisis detection and adapted deliberation" : "Active la détection automatique des crises et la délibération adaptée"}>
+              <Toggle value={gov.crisis_mode !== false} onChange={v => setGov('crisis_mode', v)}
+                label={gov.crisis_mode !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
             </Field>
           </div>
         )}
