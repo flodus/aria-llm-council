@@ -297,27 +297,14 @@ export function findSpawnPoint(worldData, existingCountries, preferredType = nul
 //  Dérive passive à chaque cycle : mean-reversion vers IRL + drift satisfaction.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Base IRL par régime pour les pays FICTIFS (déterministe, sans texte sociologique)
-const REGIME_ARIA_BASE_IRL = {
-  democratie_liberale:          48,
-  republique_federale:          44,
-  monarchie_constitutionnelle:  38,
-  technocratie_ia:              72,
-  oligarchie:                   26,
-  junte_militaire:              16,
-  regime_autoritaire:           20,
-  monarchie_absolue:            28,
-  theocratie:                   18,
-  communisme:                   32, // Méfiance envers tout contrôle algorithmique non-étatique
-  nationalisme_autoritaire:     12, // Rejet idéologique fort d'une délibération "froide" et supranationale
-};
+// Base IRL par régime pour les pays FICTIFS — lu depuis simulation.json (aria_irl_base)
 
 /**
  * Calcule le taux IRL pour un pays FICTIF (déterministe).
  * Les pays réels ont leur taux fourni directement dans aria_acceptance_irl.
  */
 export function calcAriaIRL(country) {
-  const base     = REGIME_ARIA_BASE_IRL[country.regime] ?? 35;
+  const base     = getStats().regimes[country.regime]?.aria_irl_base ?? 35;
   const satBonus = (country.satisfaction - 50) * 0.28;
   const ecoBonus = ((country.economie || 100) - 100) * 0.06;
   const island   = ['island', 'archipelago'].includes(country.terrain) ? 4 : 0;
@@ -1182,19 +1169,7 @@ function clearSession() {
 //  HELPER : construit des alliances par défaut basées sur l'idéologie et la proximité
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REGIME_BLOC = {
-  democratie_liberale: 'occident',
-  republique_federale: 'occident',
-  monarchie_constitutionnelle: 'occident',
-  technocratie_ia: 'techno',
-  oligarchie: 'autoritaire',
-  junte_militaire: 'autoritaire',
-  regime_autoritaire: 'autoritaire',
-  monarchie_absolue: 'autoritaire',
-  theocratie: 'autoritaire',
-  communisme: 'est',
-  nationalisme_autoritaire: 'autoritaire',
-};
+// REGIME_BLOC lu depuis simulation.json (champ bloc)
 
 function buildDefaultAlliances(countries) {
   if (!countries || countries.length < 2) return [];
@@ -1202,8 +1177,8 @@ function buildDefaultAlliances(countries) {
   for (let i = 0; i < countries.length; i++) {
     for (let j = i + 1; j < countries.length; j++) {
       const a = countries[i], b = countries[j];
-      const blocA = REGIME_BLOC[a.regime] || 'neutral';
-      const blocB = REGIME_BLOC[b.regime] || 'neutral';
+      const blocA = getStats().regimes[a.regime]?.bloc || 'neutral';
+      const blocB = getStats().regimes[b.regime]?.bloc || 'neutral';
       let type = 'Neutre';
       if (blocA === blocB && blocA !== 'neutral') type = 'Alliance';
       else if (blocA !== 'neutral' && blocB !== 'neutral' && blocA !== blocB) type = 'Tension';

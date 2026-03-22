@@ -8,6 +8,7 @@ import {
     wrapWide, mCard
 } from '../../../../shared/theme';
 import { getTerrainLabelMap, getRegimeLabelMap, getTerrainIcon, getRegimeIcon, getPaysLocaux } from '../../services/labels';
+import { getStats } from '../../../../Dashboard_p1';
 import ARIAHeader from '../ARIAHeader';
 
 export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
@@ -69,22 +70,8 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
         onPreLaunch('defaut_local', defs);
     };
 
-    // Estimations pour les pays custom
-    const POP_BASE = {
-        coastal:8_000_000, inland:5_000_000, highland:3_500_000,
-        island:2_000_000, archipelago:1_500_000,
-        desert:1_800_000, foret:2_500_000, tropical:4_200_000, toundra:900_000,
-    };
-    const SAT_BASE = {
-        democratie_liberale:62, republique_federale:58, monarchie_constitutionnelle:55,
-        democratie_directe:66, technocratie_ia:60, oligarchie:40, junte_militaire:35,
-        regime_autoritaire:38, theocratie:50, communisme:45, nationalisme_autoritaire:36, monarchie_absolue:42,
-    };
-    const ARIA_BASE = {
-        republique_federale:44, democratie_liberale:48, monarchie_constitutionnelle:38, democratie_directe:52,
-        technocratie_ia:72, oligarchie:26, junte_militaire:16, regime_autoritaire:20,
-        monarchie_absolue:28, theocratie:18, communisme:32, nationalisme_autoritaire:14,
-    };
+    // Estimations pour les pays custom — depuis simulation.json
+    const { regimes: regSim, terrains: terSim } = getStats();
 
     return (
         <div style={wrapWide}>
@@ -127,7 +114,7 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
 
         {/* Tuiles nations custom confirmées */}
         {customCountries.map(c => {
-            const irl = ARIA_BASE[c.regime] ?? 35;
+            const irl = regSim[c.regime]?.aria_irl_base ?? 35;
             const col = irl >= 60 ? 'rgba(140,100,220,0.80)' : irl >= 40 ? 'rgba(100,130,200,0.70)' : 'rgba(90,110,160,0.50)';
             return (
                 <div key={c.id} style={{ ...mCard, border:'1px solid rgba(58,191,122,0.35)', background:'rgba(8,14,26,0.78)', backdropFilter:'blur(2px)', position:'relative' }}>
@@ -140,8 +127,8 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
                 <div style={{ fontFamily:FONT.cinzel, fontSize:'0.54rem', letterSpacing:'0.14em', color:'rgba(58,191,122,0.85)' }}>{c.nom}</div>
                 <McSub t={`${getTerrainIcon(c.terrain)} ${getTerrainLabelMap(lang)[c.terrain] || c.terrain} · ${getRegimeIcon(c.regime)} ${getRegimeLabelMap(lang)[c.regime] || c.regime.replace(/_/g,' ')}`} />
                 <div style={{ display:'flex', gap:'0.5rem', marginTop:'0.2rem', flexWrap:'wrap' }}>
-                    <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.40)' }}>👥 {((POP_BASE[c.terrain]||5e6)/1e6).toFixed(1)}M</span>
-                    <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.40)' }}>😊 ~{SAT_BASE[c.regime]||50}%</span>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.40)' }}>👥 {(((terSim[c.terrain]?.pop_base)||5e6)/1e6).toFixed(1)}M</span>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(140,160,200,0.40)' }}>😊 ~{regSim[c.regime]?.sat_base||50}%</span>
                     <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:col }}>◈ ARIA IRL ~{irl}%</span>
                 </div>
                 <div style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(58,191,122,0.70)', letterSpacing:'0.10em', marginTop:'0.1rem' }}>✓ CONFIRMÉ</div>

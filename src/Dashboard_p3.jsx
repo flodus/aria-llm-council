@@ -657,10 +657,8 @@ function AddCountryModal({ onConfirm, onClose }) {
   const TERRAIN_OPTS = Object.keys(getStats().terrains || {}).map(k => [k, getTerrainLabel(k, uiLang)]);
   const REGIME_OPTS  = Object.keys(getStats().regimes  || {}).map(k => [k, getRegimeLabel(k, uiLang)]);
 
-  // Estimations fictif
-  const ARIA_EST = { democratie_liberale:48, republique_federale:44, monarchie_constitutionnelle:38, democratie_directe:52, technocratie:65, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocratie:18 };
-  const POP_EST  = { coastal:8e6, inland:5e6, highland:3.5e6, island:2e6, archipelago:1.5e6, desert:2.5e6, foret:4e6, tropical:6e6, toundra:1.5e6 };
-  const SAT_EST  = { democratie_liberale:62, republique_federale:58, monarchie_constitutionnelle:55, democratie_directe:65, technocratie:60, oligarchie:40, junte_militaire:35, regime_autoritaire:38, monarchie_absolue:48, theocratie:50 };
+  // Estimations fictif — depuis simulation.json
+  const { regimes: regSim, terrains: terSim } = getStats();
 
   // ── Validation pays réel en ligne ─────────────────────────────────────────
   const searchReal = async (query) => {
@@ -795,9 +793,9 @@ function AddCountryModal({ onConfirm, onClose }) {
               </div>
               {/* Estimations */}
               <div style={{ display:'flex', gap:'0.6rem', flexWrap:'wrap', padding:'0.4rem 0.6rem', background:'rgba(58,191,122,0.04)', borderLeft:'2px solid rgba(58,191,122,0.18)', borderRadius:'2px' }}>
-                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.55)' }}>👥 ~{((POP_EST[terrain]||5e6)/1e6).toFixed(1)} M</span>
-                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.55)' }}>😊 ~{SAT_EST[regime]||50}%</span>
-                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(100,130,200,0.70)' }}>◈ ARIA IRL ~{ARIA_EST[regime]||35}%</span>
+                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.55)' }}>👥 ~{(((terSim[terrain]?.pop_base)||5e6)/1e6).toFixed(1)} M</span>
+                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.55)' }}>😊 ~{regSim[regime]?.sat_base||50}%</span>
+                <span style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(100,130,200,0.70)' }}>◈ ARIA IRL ~{regSim[regime]?.aria_irl_base||35}%</span>
               </div>
             </>
           )}

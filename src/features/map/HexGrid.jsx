@@ -28,6 +28,7 @@
 import { useCallback, useState, useMemo, memo } from 'react';
 import { BIOME, BIOME_COLOR, MAP_W, MAP_H, HEX_R, hexPointsStr } from '../world/services/WorldEngine';
 import { getRegimeIcon } from '../../shared/data/worldLabels';
+import { getStats } from '../../Dashboard_p1';
 
 function getCountryEmoji(country) {
   if (country?.emoji) return country.emoji;
@@ -47,19 +48,9 @@ function hexRgba(hex, a) {
   return `rgba(${r},${g},${b},${a})`;
 }
 
-const REGIME_COLORS = {
-  democratie_liberale: '#4A90D9',
-  democratie_sociale:  '#3ABF7A',
-  technocratie:        '#9060C8',
-  autocratie:          '#C05050',
-  theacratie:          '#C8A030',
-  anarchie:            '#708090',
-  federation:          '#4AB0A0',
-};
-
 function countryNeon(country) {
   const c = country?.couleur;
-  if (!c) return REGIME_COLORS[country?.regime] || '#8090B0';
+  if (!c) return getStats().regimes[country?.regime]?.couleur || '#8090B0';
   // Accepte #RRGGBB ET hsl(...) ET toute string CSS valide
   if (isValidHex(c) || c.startsWith('hsl') || c.startsWith('rgb')) return c;
   return REGIME_COLORS[country?.regime] || '#8090B0';

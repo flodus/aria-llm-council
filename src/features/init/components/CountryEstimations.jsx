@@ -13,47 +13,15 @@
 import { useLocale } from '../../../ariaI18n';
 import { FONT } from '../../../shared/theme';
 import { getTerrainLabelMap } from '../services/labels';
-
-// Constantes (pourraient être déplacées plus tard dans shared/constants/)
-const ARIA_BASE = {
-    republique_federale: 44,
-    democratie_liberale: 48,
-    monarchie_constitutionnelle: 38,
-    technocratie_ia: 72,
-    oligarchie: 26,
-    junte_militaire: 16,
-    regime_autoritaire: 20,
-    monarchie_absolue: 28,
-    theocratie: 18,
-    communisme: 32
-};
-
-const POP_BASE = {
-    coastal: 8_000_000,
-    inland: 5_000_000,
-    highland: 3_500_000,
-    island: 2_000_000,
-    archipelago: 1_500_000
-};
-
-const SAT_BASE = {
-    democratie_liberale: 62,
-    republique_federale: 58,
-    monarchie_constitutionnelle: 55,
-    technocratie_ia: 60,
-    oligarchie: 40,
-    junte_militaire: 35,
-    regime_autoritaire: 38,
-    theocratie: 50,
-    communisme: 45
-};
+import { getStats } from '../../../Dashboard_p1';
 
 export default function CountryEstimations({ regime, terrain }) {
     const { lang } = useLocale();
+    const stats = getStats();
 
-    const irl = ARIA_BASE[regime] ?? 35;
-    const pop = POP_BASE[terrain] ?? 5_000_000;
-    const sat = SAT_BASE[regime] ?? 50;
+    const irl = stats.regimes[regime]?.aria_irl_base ?? 35;
+    const pop = stats.terrains[terrain]?.pop_base    ?? 5_000_000;
+    const sat = stats.regimes[regime]?.sat_base      ?? 50;
     const ariaCol = irl >= 60 ? 'rgba(140,100,220,0.80)' : irl >= 40 ? 'rgba(100,130,200,0.70)' : 'rgba(90,110,160,0.50)';
 
     return (
