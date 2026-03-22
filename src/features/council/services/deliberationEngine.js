@@ -167,7 +167,7 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
                 ministryName:  m.name,
                 ministryEmoji: m.emoji,
                 ministryColor: m.color,
-                annotation:    result?.annotation || localAnnotationFallback(m, question),
+                annotation:    result?.annotation || localAnnotationFallback(m, question, country?.regime),
             };
         })
     );

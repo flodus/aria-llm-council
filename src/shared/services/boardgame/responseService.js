@@ -10,10 +10,12 @@
 //  Fallbacks : régime inconnu → _meta.fallbacks → democratie_liberale
 // ═══════════════════════════════════════════════════════════════════════════
 
-import REPONSES_FR   from '../../../../templates/languages/fr/aria_reponses.json';
-import SYNTHESES_FR  from '../../../../templates/languages/fr/aria_syntheses.json';
-// import REPONSES_EN  from '../../../../templates/languages/en/aria_reponses.json';  // à activer
-// import SYNTHESES_EN from '../../../../templates/languages/en/aria_syntheses.json'; // à activer
+import REPONSES_FR    from '../../../../templates/languages/fr/aria_reponses.json';
+import SYNTHESES_FR   from '../../../../templates/languages/fr/aria_syntheses.json';
+import ANNOTATIONS_FR from '../../../../templates/languages/fr/aria_annotations.json';
+// import REPONSES_EN    from '../../../../templates/languages/en/aria_reponses.json';    // à activer
+// import SYNTHESES_EN   from '../../../../templates/languages/en/aria_syntheses.json';   // à activer
+// import ANNOTATIONS_EN from '../../../../templates/languages/en/aria_annotations.json'; // à activer
 
 // Table archétype → posture par défaut
 const ARCHETYPE_POSTURE = {
@@ -39,6 +41,11 @@ function chargerReponses() {
 function chargerSyntheses() {
     // Plus tard : if (loadLang() === 'en') { try { return SYNTHESES_EN; } catch {} }
     return SYNTHESES_FR;
+}
+
+function chargerAnnotations() {
+    // Plus tard : if (loadLang() === 'en') { try { return ANNOTATIONS_EN; } catch {} }
+    return ANNOTATIONS_FR;
 }
 
 function resoudreRegime(regime, fallbacks) {
@@ -177,6 +184,32 @@ export function getSynthesePresidence(convergence = true) {
         return piocherDansPool(data.presidence?.[typeKey]);
     } catch (e) {
         console.warn('getSynthesePresidence — lookup échoué :', e);
+        return null;
+    }
+}
+
+/**
+ * Récupère un texte d'annotation pour un ministère du cercle (mode offline)
+ * @param {string} ministereId  - justice, economie, defense, etc.
+ * @param {string|null} regime  - régime politique du pays
+ * @returns {string|null}
+ */
+export function getAnnotationMinistere(ministereId, regime = null) {
+    const data = chargerAnnotations();
+    if (!data) return null;
+
+    const fallbacks    = data._meta?.fallbacks || {};
+    const regimeResolu = resoudreRegime(regime, fallbacks);
+
+    try {
+        const pool = data.ministeres?.[ministereId]?.[regimeResolu];
+        const resultat = piocherDansPool(pool);
+        if (resultat) return resultat;
+
+        const poolFallback = data.ministeres?.[ministereId]?.democratie_liberale;
+        return piocherDansPool(poolFallback);
+    } catch (e) {
+        console.warn('getAnnotationMinistere — lookup échoué :', e);
         return null;
     }
 }
