@@ -31,7 +31,7 @@ import { BIOME, BIOME_COLOR, MAP_W, MAP_H, HEX_R, hexPointsStr } from '../world/
 const REGIME_EMOJI_FALLBACK = {
   democratie_liberale:'🗳️', republique_federale:'🏛️', monarchie_constitutionnelle:'👑',
   monarchie_absolue:'👑', technocratie_ia:'🤖', oligarchie:'💼', junte_militaire:'🎖️',
-  regime_autoritaire:'🔒', theocracie:'🕌', theocratie:'🕌', communisme:'☭',
+  regime_autoritaire:'🔒', theocratie:'🕌', theocratie:'🕌', communisme:'☭',
   nationalisme_autoritaire:'⚡',
 };
 function getCountryEmoji(country) {

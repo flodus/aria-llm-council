@@ -658,13 +658,13 @@ function AddCountryModal({ onConfirm, onClose }) {
   ].map(k => [k, getTerrainLabel(k, uiLang)]);
   const REGIME_OPTS = [
     'democratie_liberale','republique_federale','monarchie_constitutionnelle','democratie_directe',
-    'technocratie','oligarchie','junte_militaire','regime_autoritaire','monarchie_absolue','theocracie',
+    'technocratie','oligarchie','junte_militaire','regime_autoritaire','monarchie_absolue','theocratie',
   ].map(k => [k, getRegimeLabel(k, uiLang)]);
 
   // Estimations fictif
-  const ARIA_EST = { democratie_liberale:48, republique_federale:44, monarchie_constitutionnelle:38, democratie_directe:52, technocratie:65, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocracie:18 };
+  const ARIA_EST = { democratie_liberale:48, republique_federale:44, monarchie_constitutionnelle:38, democratie_directe:52, technocratie:65, oligarchie:26, junte_militaire:16, regime_autoritaire:20, monarchie_absolue:28, theocratie:18 };
   const POP_EST  = { coastal:8e6, inland:5e6, highland:3.5e6, island:2e6, archipelago:1.5e6, desert:2.5e6, foret:4e6, tropical:6e6, toundra:1.5e6 };
-  const SAT_EST  = { democratie_liberale:62, republique_federale:58, monarchie_constitutionnelle:55, democratie_directe:65, technocratie:60, oligarchie:40, junte_militaire:35, regime_autoritaire:38, monarchie_absolue:48, theocracie:50 };
+  const SAT_EST  = { democratie_liberale:62, republique_federale:58, monarchie_constitutionnelle:55, democratie_directe:65, technocratie:60, oligarchie:40, junte_militaire:35, regime_autoritaire:38, monarchie_absolue:48, theocratie:50 };
 
   // ── Validation pays réel en ligne ─────────────────────────────────────────
   const searchReal = async (query) => {
@@ -928,7 +928,7 @@ function SecessionModal({ parent, onConfirm, onClose }) {
 
   const REGIME_LIST = [
     'democratie_liberale','republique_federale','monarchie_constitutionnelle',
-    'technocratie_ia','oligarchie','junte_militaire','regime_autoritaire','theocracie',
+    'technocratie_ia','oligarchie','junte_militaire','regime_autoritaire','theocratie',
   ].map(k => ({ value: k, label: getRegimeLabel(k, uiLang) }));
 
   return (

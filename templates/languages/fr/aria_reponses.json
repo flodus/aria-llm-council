@@ -2950,5 +2950,14 @@
       "Aucun ministère compétent ne peut être identifié pour cette requête. Le Conseil vous invite à poser une question plus... concrète.",
       "ARIA a bien reçu votre message. ARIA ne sait pas quoi en faire. Peut-être que vous non plus. Essayons quelque chose de plus gouvernemental ?"
     ]
+  },
+  "systeme": {
+    "garbage": [
+      "Le Conseil a reçu votre transmission. Après analyse approfondie, il semblerait que le contenu ne corresponde à aucune question de gouvernance connue. Nous vous invitons à reformuler avec la gravité que mérite l'avenir de votre nation.",
+      "Les ministres ont examiné votre requête avec le sérieux qui leur est coutumier. Le verdict est unanime : ils n'ont rien compris non plus. Veuillez resoumettre une question que le peuple pourrait un jour comprendre.",
+      "Le système de routage institutionnel ARIA a tenté de traiter votre question. Il a échoué. Ce n'est pas dans ses habitudes. Merci de l'aider en formulant une question cohérente.",
+      "Le Phare cherche. La Boussole cherche. Les douze ministres cherchent. Personne ne trouve. Il est possible que la question soit d'une profondeur insondable — ou qu'il s'agisse d'une erreur de saisie. Dans le doute, reformulez.",
+      "Le Conseil a bien pris note de votre contribution. Elle a été classée dans la catégorie « Énigmes non résolues de la gouvernance mondiale ». Pour débloquer le processus délibératif, une question formulée en mots reconnus est nécessaire."
+    ]
   }
 }

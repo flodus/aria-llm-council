@@ -1415,7 +1415,7 @@
             "Maintain current strategy."
           ]
         },
-        "military_junta": {
+        "junte_militaire": {
           "prudent": [
             "Let’s plan every move, a strategic mistake would be fatal.",
             "Let’s assess power dynamics, every action must be controlled.",
@@ -1580,7 +1580,7 @@
             "Maintain current architecture."
           ]
         },
-        "military_junta": {
+        "junte_militaire": {
           "prudent": [
             "Every innovation must be tested before use, reliability is essential.",
             "Let’s experiment under control, an error would be critical.",
@@ -2941,6 +2941,15 @@
       "Incomprehensible signal received. The ARIA protocol requires a question formulated in recognizable human language.",
       "No competent ministry can be identified for this request. The Council invites you to ask a more... concrete question.",
       "ARIA received your message. ARIA does not know what to do with it. Perhaps neither do you. Let's try something more governmental?"
+    ]
+  },
+  "systeme": {
+    "garbage": [
+      "The Council has received your transmission. Following thorough analysis, it appears the content does not correspond to any known governance question. Please reformulate with the gravity your nation's future deserves.",
+      "The ministers examined your request with their customary seriousness. The verdict is unanimous: none of them understood it either. Please resubmit a question that the people might one day comprehend.",
+      "The ARIA institutional routing system attempted to process your question. It failed. This is not its usual performance. Please assist it by formulating a coherent question.",
+      "The Lighthouse searches. The Compass searches. All twelve ministers search. No one finds anything. The question may be of unfathomable depth — or it may be a typo. When in doubt, reformulate.",
+      "The Council has duly noted your contribution. It has been filed under 'Unresolved Enigmas of Global Governance'. To unlock the deliberative process, a question composed of recognizable words is required."
     ]
   }
 }
