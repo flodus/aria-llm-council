@@ -24,11 +24,10 @@ _Dernière mise à jour : 2026-03-22 (session refactor+destin)_
 
 - [x] **U5 — Confirmation nouvelle partie** : modale légère avant ↺ — livré 2026-03-12
 
-- [ ] **T1 — Multi-clés par provider** : permettre plusieurs clés API par provider (Init + Settings)
-  - Structure cible `aria_api_keys` : `{ claude: [{key, model, default:true}, {key, model}], gemini: [...] }`
-  - UI : bouton "+ Ajouter une clé" par provider, select modèle par clé, étoile clé par défaut, bouton supprimer
+- [ ] **T1 — Ajout de provider + modèle custom** : permettre d'ajouter des providers non listés (ex: DeepSeek, Mistral, Ollama local…)
+  - UI : bouton "+ Ajouter un provider" dans Init + Settings · champs : nom, endpoint, clé API, modèle par défaut
   - Impacte : `aria_api_keys` localStorage · `callAI()` dans Dashboard_p1.jsx · InitScreen.jsx · Settings.jsx
-  - _À faire après refonte Settings terminée_
+  - _Assess dédié requis — impacts sur callAI() et le sélecteur de provider_
 
 - [ ] **U1 — Icônes régimes** : dans les listes déroulantes Init (création pays) et in-game (settings)
 - [ ] **U2 — Harmonisation tuiles** : même style glow ministres/ministères dans les 3 contextes
@@ -39,16 +38,7 @@ _Dernière mise à jour : 2026-03-22 (session refactor+destin)_
   depuis les options système (Settings) vers la ConstitutionModal par pays
   — logique : le contexte de délibération est une propriété du pays, pas un réglage global
 
-- [ ] **U8 — Mécanique questions LLM Council**
-  - Questions déjà posées : grisées + déplacées en bas de liste + badge "✓ Cycle X" au hover
-  - Questions champ libre : ajoutées dans la liste avec badge "✏️ Personnalisée"
-    et insérées dans le ministère vers lequel elles ont été redirigées
-  - Routing champ libre :
-    - Mode IA : l'IA route vers le bon ministère selon le contenu
-    - Board Game : matching local via keywords (gemini.json) + correction manuelle possible
-    - Dans les deux cas le joueur peut corriger le ministère suggéré
-  - Lien : ariaQA.json (questions hardcodées) + chronolog (filtre cycle) + keywords (routing offline)
-  - Assess dédié requis — touche LLMCouncil.jsx + llmCouncilEngine.js + chronolog
+- [x] **U8 — Mécanique questions LLM Council** : livré
 
 - [ ] **U7 — Emoji picker pays** : permettre au joueur de choisir l'emoji de son pays
   - À la création (InitScreen) : après génération IA, proposer de changer l'emoji suggéré
