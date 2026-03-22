@@ -5,6 +5,37 @@ Ne pas implémenter sans Assess complet.
 
 ---
 
+## Pistes V2 / Backend
+
+### Éditeur de données pays (piste V2 — nécessite backend)
+
+Contexte : les données pays (ariaData.js, base_stats.json) sont hardcodées.
+Quand les données réelles changent (nouveau régime, nouveau leader, etc.),
+la mise à jour est manuelle dans le code.
+
+Contrainte web : même en clone local, le navigateur ne peut pas écrire dans
+src/templates/ — Vite bundle les JSON au build, ce ne sont pas des fichiers
+accessibles au runtime. Impossible depuis le browser dans tous les cas.
+
+Deux voies si ARIA évolue :
+
+1. Backend Express (hébergement avec serveur)
+   POST /api/update-country → écrase le JSON sur le disque.
+   Formulaire ingame → fetch() → mise à jour visible par tous les joueurs.
+   Deux routes suffisent (lecture + écriture).
+
+2. Script Node standalone (utilisateurs qui clonent)
+   scripts/edit-country.js — lit un JSON patch en argument, met à jour
+   ariaData.js directement en terminal. Pas de formulaire, pas de serveur.
+   Résout le problème "la France a changé en 2035" sans infrastructure.
+
+Question ouverte : ARIA reste-t-il local-first pur, ou prend-il un backend ?
+C'est cette décision qui détermine laquelle des deux voies implémenter.
+
+Statut : réflexion. Aucune action avant décision architecture backend.
+
+---
+
 ## ADD ↔ Agents ARIA
 
 **Idée** : Enrichir les prompts de délibération avec la philosophie ADD.
