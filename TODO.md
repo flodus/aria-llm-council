@@ -29,7 +29,7 @@ _Dernière mise à jour : 2026-03-22 (session refactor+destin)_
   - Impacte : `aria_api_keys` localStorage · `callAI()` dans Dashboard_p1.jsx · InitScreen.jsx · Settings.jsx
   - _Assess dédié requis — impacts sur callAI() et le sélecteur de provider_
 
-- [ ] **U1 — Icônes régimes** : dans les listes déroulantes Init (création pays) et in-game (settings)
+- [x] **U1 — Icônes régimes** : dans les listes déroulantes Init (création pays) et in-game (settings)
 - [ ] **U2 — Harmonisation tuiles** : même style glow ministres/ministères dans les 3 contextes
   (Init PreLaunchScreen · Settings in-game · popup ConstitutionModal in-game)
 - [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
