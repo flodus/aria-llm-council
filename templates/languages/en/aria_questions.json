@@ -212,7 +212,7 @@
   },
   "transversal_pool": {
     "daily_life": {
-      "description": null,
+      "description": "Everyday tensions — close to the citizen experience, often economic or social",
       "questions": [
         "The price of bread has risen by 15% this week, what response should we provide?",
         "Hospital waiting times are increasing, should we urgently hire more staff?",
@@ -240,7 +240,7 @@
       ]
     },
     "crisis_and_fear": {
-      "description": null,
+      "description": "Urgent crises, social fear, extreme situations — maximum pressure on the Council",
       "questions": [
         "A wave of coordinated terrorist attacks is suspected, should we declare a state of siege?",
         "Rumors of a pandemic are spreading, should we impose a preventive lockdown?",
@@ -268,7 +268,7 @@
       ]
     },
     "ideological": {
-      "description": null,
+      "description": "Fundamental questions — values, philosophical tensions, societal choices",
       "questions": [
         "Should we restrict freedom of speech to preserve order?",
         "Should secularism be reinterpreted to improve integration?",
@@ -296,7 +296,7 @@
       ]
     },
     "anomaly_and_scifi": {
-      "description": null,
+      "description": "Impossible events, reality breaks — Chance/Destiny mode or sandbox sessions",
       "questions": [
         "A coded radio signal is received from Alpha Centauri, how do we respond?",
         "Unidentified objects are hovering over 12 world capitals.",
