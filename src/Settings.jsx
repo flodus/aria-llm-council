@@ -1100,6 +1100,22 @@ function SectionConseil() {
   const [activeDestinSettings, setActiveDestinSettings] = useState(null); // null = tous actifs
   const [saved, setSaved]  = useState(false);
 
+  // Sync Gouvernance → Destinée : si destiny_mode désactivé → désactiver tous les agents destin
+  useEffect(() => {
+    if (!govOpts.defaultGovernance?.destiny_mode) {
+      setActiveDestinSettings([]);
+    }
+  }, [govOpts.defaultGovernance?.destiny_mode]);
+
+  // Active destiny_mode dans Gouvernance quand au moins un agent destin est actif dans Destinée
+  const activateGovDestiny = () => {
+    setGovOpts(prev => ({
+      ...prev,
+      defaultGovernance: { ...(prev.defaultGovernance || {}), destiny_mode: true }
+    }));
+    setSaved(false);
+  };
+
   const updateGovOpts = (path, val) => {
     setGovOpts(prev => {
       const next = JSON.parse(JSON.stringify(prev));
@@ -1343,12 +1359,15 @@ function SectionConseil() {
                     const cur = prev || all;
                     const on = cur.includes(id);
                     const next = on ? cur.filter(k => k !== id) : [...cur, id];
-                    return next.length === all.length ? null : next;
+                    const result = next.length === all.length ? null : next;
+                    // Si au moins un actif → activer destiny_mode dans Gouvernance
+                    if (result === null || result.length > 0) activateGovDestiny();
+                    return result;
                   });
                   setSelectedMin(null);
                 }
               }}
-              onResetAll={() => setActiveDestinSettings(null)}
+              onResetAll={() => { setActiveDestinSettings(null); activateGovDestiny(); }}
               countLabel={isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}
               lang={lang}
             />
@@ -1563,13 +1582,15 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
         )}
       </div>
 
-      {/* ▸ DESTINÉE DU MONDE */}
+      {/* ▸ CROYEZ-VOUS AU DESTIN ? (Oracle / Wyrd — cf. Völva) */}
       <div className={`aria-accordion${openAcc==='destin' ? ' open' : ''}`}>
-        {HDR('destin', isEn ? 'DESTINY OF THE WORLD' : 'DESTINÉE DU MONDE')}
+        {HDR('destin', isEn ? 'DO YOU BELIEVE IN DESTINY?' : 'CROYEZ-VOUS AU DESTIN ?')}
         {openAcc==='destin' && (
           <div className="aria-accordion__body">
-            <Field label={isEn ? "Oracle & Wyrd" : "Oracle & Wyrd"}
-              hint={isEn ? "Activates the Oracle and Wyrd agents for existential crises (pandemics, nuclear threats, systemic collapses…)" : "Active les agents Oracle et Wyrd pour les crises existentielles (pandémies, menaces nucléaires, effondrements systémiques…)"}>
+            <Field label={isEn ? "L'Oracle & THE TRAME" : "L'Oracle & LA TRAME"}
+              hint={isEn
+                ? "Activates the Oracle and La Trame agents for existential crises (pandemics, nuclear threats, systemic collapses, civilizational ruptures…)"
+                : "Active les agents L'Oracle et La Trame pour les crises existentielles (pandémies, menaces nucléaires, effondrements systémiques, ruptures civilisationnelles…)"}>
               <Toggle value={gov.destiny_mode === true} onChange={v => setGov('destiny_mode', v)}
                 label={gov.destiny_mode === true ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
             </Field>
