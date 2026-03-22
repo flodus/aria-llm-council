@@ -14,8 +14,8 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useCallback } from 'react';
-import { routeQuestion, getBestMatch } from '../services/routingEngine';
-import { runMinisterePhase, runCerclePhase, runPresidencePhase } from '../services/deliberationEngine';
+import { routeQuestion, getBestMatch, detectCrisis } from '../services/routingEngine';
+import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from '../services/deliberationEngine';
 import { computeVoteImpact } from '../services/voteEngine';
 import { buildCountryContext } from '../services/contextBuilder';
 import { MINISTRIES_LIST } from '../services/agentsManager';
@@ -71,7 +71,15 @@ export function useCouncilSession(country, onVoteResult) {
             const cercleResult = await runCerclePhase(resolvedId, question, ministereResult.synthese, country);
             setSession(prev => ({ ...prev, cercle: cercleResult }));
 
-            const presidenceResult = await runPresidencePhase(question, ministereResult, cercleResult, country);
+            // Phase Destin — optionnelle si destiny_mode actif + crise détectée
+            const gov = country?.governanceOverride || {};
+            let destinResult = null;
+            if (gov.destiny_mode === true && gov.crisis_mode !== false && detectCrisis(question)) {
+                destinResult = await runDestinPhase(question, country, false);
+                setSession(prev => ({ ...prev, destin: destinResult }));
+            }
+
+            const presidenceResult = await runPresidencePhase(question, ministereResult, cercleResult, country, destinResult);
             setSession(prev => ({ ...prev, presidence: presidenceResult, voteReady: true }));
         } catch (e) {
             console.warn('[ARIA Council]', e);
