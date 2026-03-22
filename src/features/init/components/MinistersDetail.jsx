@@ -15,6 +15,7 @@ import { useLocale, t } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { Hint, ActiveToggle, ColorPicker, EmojiPicker, DeleteButton } from './government';
 import AgentGrid from '../../../shared/components/AgentGrid';
+import { getDestin } from '../../council/services/agentsManager';
 
 export default function MinistersDetail({
     plAgents,
@@ -31,7 +32,10 @@ export default function MinistersDetail({
     setPlAgents
 }) {
     const { lang } = useLocale();
-    const allEntries = Object.entries(plAgents.ministers);
+
+    // Exclure oracle/wyrd (agents destin — ont leur propre onglet)
+    const destingIds = new Set(getDestin()?.agents || []);
+    const allEntries = Object.entries(plAgents.ministers).filter(([id]) => !destingIds.has(id));
 
     // ── Helpers grille ────────────────────────────────────────────────────
 

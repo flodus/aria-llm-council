@@ -8,6 +8,7 @@
 
 import { getRegimeLabel, getTerrainLabel } from './shared/data/worldLabels';
 import AgentGrid from './shared/components/AgentGrid';
+import { getDestin } from './features/council/services/agentsManager';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
 import { getIaStatus } from './shared/services/iaStatusStore';
@@ -1195,7 +1196,7 @@ function SectionConseil() {
         <div>
           {/* Grille icônes ministres */}
           <AgentGrid
-            agents={Object.entries(getAgents().ministers || {}).map(([id, m]) => ({ id, name: (ministerLabels[id]?.split(' (')[0] || id).replace(/^(Le |La |L')/, ''), emoji: m.emoji, color: m.color }))}
+            agents={Object.entries(getAgents().ministers || {}).filter(([id]) => !new Set(getDestin()?.agents || []).has(id)).map(([id, m]) => ({ id, name: (ministerLabels[id]?.split(' (')[0] || id).replace(/^(Le |La |L')/, ''), emoji: m.emoji, color: m.color }))}
             selectedId={selectedMin}
             activeIds={null}
             onAgentClick={setSelectedMin}
@@ -1257,63 +1258,55 @@ function SectionConseil() {
       )}
 
       {tab === 'presidence' && (() => {
-        const [openP, setOpenP] = [presOpenAcc, setPresOpenAcc];
-        const toggleP = (key) => setOpenP(p => p === key ? null : key);
-        const HDR_P = (key, agent) => {
-          const symbol      = agent?.symbol || '';
-          const name        = agent?.name   || key;
-          const sub         = agent?.subtitle || '';
-          const symbolColor = key === 'phare'    ? 'rgba(200,164,74,0.90)'
-                            : key === 'boussole' ? 'rgba(150,100,220,0.90)'
-                            :                      'rgba(200,215,240,0.80)';
-          return (
-            <button className="aria-accordion__hdr" onClick={() => toggleP(key)}>
-              <span style={{ fontSize:'1.1rem', lineHeight:1, color:symbolColor }}>{symbol}</span>
-              <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem', letterSpacing:'0.12em',
-                color: openP===key ? 'rgba(200,164,74,0.92)' : 'rgba(200,215,240,0.70)', flex:1 }}>{name}</span>
-              {sub && <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-                color:'rgba(140,160,200,0.35)', letterSpacing:'0.08em' }}>{sub}</span>}
-              <span className="aria-accordion__arrow">{openP===key?'▾':'▸'}</span>
-            </button>
-          );
-        };
+        const toggleP = (key) => setPresOpenAcc(p => p === key ? null : key);
+        const openP = presOpenAcc;
         return (
-          <div>
-            <div className={`aria-accordion${openP==='phare' ? ' open' : ''}`}>
-              {HDR_P('phare', liveAgents.presidency?.phare)}
-              {openP==='phare' && (
-                <div className="aria-accordion__body">
-                  <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.phare?.subtitle || ''}>
-                    <TextArea value={getVal('presidency.phare.role', liveAgents.presidency?.phare?.role_long || PRESIDENCY?.phare?.role_long || '')}
-                      onChange={v => updateAgent('presidency.phare.role', v)}
-                    />
-                  </Field>
-                  <Field label="Essence">
-                    <TextArea value={getVal('presidency.phare.essence', liveAgents.presidency?.phare?.essence || PRESIDENCY?.phare?.essence || '')}
-                      onChange={v => updateAgent('presidency.phare.essence', v)}
-                    />
-                  </Field>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+            {['phare', 'boussole'].map(key => {
+              const agent = liveAgents.presidency?.[key];
+              if (!agent) return null;
+              const clr = key === 'phare' ? 'rgba(200,164,74,0.88)' : 'rgba(140,100,220,0.85)';
+              const bg  = key === 'phare' ? 'rgba(200,164,74,0.10)' : 'rgba(140,100,220,0.12)';
+              const bd  = key === 'phare' ? 'rgba(200,164,74,0.45)' : 'rgba(140,100,220,0.45)';
+              const isOpen = openP === key;
+              return (
+                <div key={key}>
+                  <button
+                    onClick={() => toggleP(key)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '0.55rem',
+                      padding: '0.52rem 0.68rem',
+                      background: isOpen ? bg : 'rgba(20,28,45,0.55)',
+                      border: `1px solid ${isOpen ? bd : 'rgba(140,160,200,0.10)'}`,
+                      borderRadius: isOpen ? '2px 2px 0 0' : '2px',
+                      cursor: 'pointer', width: '100%', textAlign: 'left',
+                      transition: 'all 0.15s', fontFamily: 'inherit',
+                    }}
+                  >
+                    <span style={{ fontSize: '1.15rem', minWidth: '1.4rem', color: clr }}>{agent.symbol}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.56rem', letterSpacing: '0.10em', color: isOpen ? clr : 'rgba(200,215,240,0.50)' }}>{agent.name}</div>
+                      {agent.subtitle && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.44rem', color: 'rgba(140,160,200,0.48)', marginTop: '0.08rem' }}>{agent.subtitle}</div>}
+                    </div>
+                    <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.48rem', color: isOpen ? clr : 'rgba(140,160,200,0.22)' }}>{isOpen ? '▾' : '▸'}</span>
+                  </button>
+                  {isOpen && (
+                    <div style={{ border: `1px solid ${bd}`, borderTop: 'none', borderRadius: '0 0 2px 2px', padding: '0.6rem 0.68rem', background: bg, display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                      <Field label={isEn ? 'Role' : 'Rôle'} hint={agent.subtitle || ''}>
+                        <TextArea value={getVal(`presidency.${key}.role`, agent.role_long || PRESIDENCY?.[key]?.role_long || '')}
+                          onChange={v => updateAgent(`presidency.${key}.role`, v)}
+                        />
+                      </Field>
+                      <Field label="Essence">
+                        <TextArea value={getVal(`presidency.${key}.essence`, agent.essence || PRESIDENCY?.[key]?.essence || '')}
+                          onChange={v => updateAgent(`presidency.${key}.essence`, v)}
+                        />
+                      </Field>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-
-            <div className={`aria-accordion${openP==='boussole' ? ' open' : ''}`}>
-              {HDR_P('boussole', liveAgents.presidency?.boussole)}
-              {openP==='boussole' && (
-                <div className="aria-accordion__body">
-                  <Field label={isEn?"Role":"Rôle"} hint={liveAgents.presidency?.boussole?.subtitle || ''}>
-                    <TextArea value={getVal('presidency.boussole.role', liveAgents.presidency?.boussole?.role_long || PRESIDENCY?.boussole?.role_long || '')}
-                      onChange={v => updateAgent('presidency.boussole.role', v)}
-                    />
-                  </Field>
-                  <Field label="Essence">
-                    <TextArea value={getVal('presidency.boussole.essence', liveAgents.presidency?.boussole?.essence || PRESIDENCY?.boussole?.essence || '')}
-                      onChange={v => updateAgent('presidency.boussole.essence', v)}
-                    />
-                  </Field>
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         );
       })()}
