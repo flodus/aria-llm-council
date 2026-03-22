@@ -49,7 +49,7 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
     const ARIA_BASE = {
         republique_federale:44, democratie_liberale:48, monarchie_constitutionnelle:38,
         technocratie_ia:72, oligarchie:26, junte_militaire:16, regime_autoritaire:20,
-        monarchie_absolue:28, theocracie:18, communisme:32
+        monarchie_absolue:28, theocratie:18, communisme:32
     };
     const POP_BASE = {
         coastal:8_000_000, inland:5_000_000, highland:3_500_000,
@@ -58,7 +58,7 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
     const SAT_BASE = {
         democratie_liberale:62, republique_federale:58, monarchie_constitutionnelle:55,
         technocratie_ia:60, oligarchie:40, junte_militaire:35, regime_autoritaire:38,
-        theocracie:50, communisme:45
+        theocratie:50, communisme:45
     };
 
     return (

@@ -6,8 +6,21 @@
       "par_ministere": "Questions indexées par ministère ARIA — routage direct",
       "pool_transversal": "Questions sans ministère assigné — routage par keywords ou IA"
     },
-    "ministeres_aria": ["justice", "economie", "defense", "sante", "education", "ecologie", "industrie"],
-    "pool_categories": ["quotidien", "crise_et_peur", "ideologique", "anomalie_et_scifi"],
+    "ministeres_aria": [
+      "justice",
+      "economie",
+      "defense",
+      "sante",
+      "education",
+      "ecologie",
+      "industrie"
+    ],
+    "pool_categories": [
+      "quotidien",
+      "crise_et_peur",
+      "ideologique",
+      "anomalie_et_scifi"
+    ],
     "usage": {
       "board_game": "Routage local par keywords (field 'keywords' dans base_agents.json)",
       "ia_mode": "Routage automatique par l'IA selon le contenu de la question",
@@ -15,9 +28,7 @@
     },
     "changelog": "v1.1 — fusion questions ministers.json (plus contextuelles) + aria_questions.json (plus tranchées). Dédoublonnage manuel."
   },
-
   "par_ministere": {
-
     "justice": {
       "questions": [
         "Faut-il automatiser les jugements pour réduire le temps d'attente ?",
@@ -40,10 +51,24 @@
         "Quelle politique adopter face à la surpopulation carcérale ?",
         "Jusqu'où peut aller la surveillance numérique au nom de la sécurité ?",
         "Comment garantir la liberté de la presse face aux pressions politiques ?",
-        "Faut-il créer un tribunal spécialisé pour les crimes environnementaux ?"
+        "Faut-il créer un tribunal spécialisé pour les crimes environnementaux ?",
+        "Comment encadrer l'usage des algorithmes dans les décisions judiciaires ?",
+        "Doit-on limiter la médiatisation des procès pour garantir leur équité ?",
+        "Faut-il instaurer des jurys citoyens obligatoires pour certaines affaires sensibles ?",
+        "Faut-il automatiser les peines pour réduire l'engorgement des tribunaux ?",
+        "Doit-on rétablir des sanctions spécifiques pour les crimes contre l'État ?",
+        "Comment garantir l'indépendance de la justice face aux influences économiques ?",
+        "Faut-il instaurer une « détention préventive » basée sur des algorithmes comportementaux ?",
+        "Les peines de prison doivent-elles être remplacées par des travaux d'intérêt général pour les délits mineurs ?",
+        "Faut-il restreindre le droit de grève pour les services souverains essentiels ?",
+        "La surveillance numérique doit-elle être autorisée pour les individus jugés « à risque » ?",
+        "Une transparence totale des données privées est-elle nécessaire pour assurer la sécurité publique ?",
+        "Faut-il abaisser l'âge de la responsabilité pénale à 12 ans ?",
+        "Les cybercriminels doivent-ils être bannis du réseau à vie ?",
+        "La réinsertion doit-elle passer par une reprogrammation psychologique ?",
+        "Faut-il créer une juridiction dédiée aux crimes environnementaux ?"
       ]
     },
-
     "economie": {
       "questions": [
         "Faut-il nationaliser les banques pour stabiliser notre monnaie ?",
@@ -66,10 +91,24 @@
         "Quelle politique fiscale adopter face à l'évasion des grandes entreprises ?",
         "Faut-il nationaliser les secteurs stratégiques (énergie, eau, transports) ?",
         "Comment financer la transition écologique sans creuser la dette publique ?",
-        "Quelle politique d'emploi pour les travailleurs déplacés par l'automatisation ?"
+        "Quelle politique d'emploi pour les travailleurs déplacés par l'automatisation ?",
+        "Comment encourager la relocalisation sans pénaliser la compétitivité ?",
+        "Doit-on plafonner les marges sur les biens de première nécessité ?",
+        "Faut-il instaurer une taxation dynamique en fonction des crises économiques ?",
+        "Faut-il instaurer un revenu universel pour compenser l'automatisation ?",
+        "Doit-on passer à une monnaie 100 % numérique et traçable ?",
+        "Faut-il plafonner la richesse des 1 % les plus riches pour financer les services publics ?",
+        "L'État doit-il prendre le contrôle des industries stratégiques critiques ?",
+        "Faut-il fortement taxer les consommations non essentielles ?",
+        "Doit-on instaurer un salaire maximum dans les entreprises ?",
+        "La croissance économique mondiale est-elle encore un objectif pertinent ?",
+        "Faut-il réduire le temps de travail à 25 heures pour mieux répartir l'emploi ?",
+        "Faut-il interdire l'exportation de matières premières pour privilégier les besoins locaux ?",
+        "Doit-on interdire la spéculation financière sur les ressources alimentaires ?",
+        "Faut-il privilégier une économie locale basée sur le troc plutôt que le marché globalisé ?",
+        "Faut-il interdire la publicité pour les produits polluants ?"
       ]
     },
-
     "defense": {
       "questions": [
         "Doit-on investir dans le cyber-armement ou dans l'armée de terre ?",
@@ -89,10 +128,24 @@
         "Faut-il interdire la diffusion d'images de conflits en direct ?",
         "Comment distinguer défense nationale et ingérence dans les conflits étrangers ?",
         "Faut-il un contrôle parlementaire renforcé sur les opérations militaires secrètes ?",
-        "Jusqu'où peut-on sacrifier les libertés civiles pour la sécurité nationale ?"
+        "Jusqu'où peut-on sacrifier les libertés civiles pour la sécurité nationale ?",
+        "Comment gérer la guerre de l'information face aux puissances étrangères ?",
+        "Doit-on automatiser certaines décisions militaires critiques via IA ?",
+        "Faut-il créer une force de réserve citoyenne mobilisable en cas de crise majeure ?",
+        "Faut-il déployer des robots tueurs entièrement autonomes à nos frontières ?",
+        "Le service militaire doit-il être obligatoire pour tous les citoyens ?",
+        "Faut-il autoriser des frappes préventives contre des menaces identifiées ?",
+        "Doit-on doubler le budget de la défense face à l'instabilité mondiale ?",
+        "Faut-il créer un réseau de défense orbital privé ?",
+        "Les armes nucléaires tactiques doivent-elles être autorisées comme moyen de dissuasion ?",
+        "L'armée doit-elle intervenir pour maintenir l'ordre lors de manifestations civiles ?",
+        "Faut-il armer des milices citoyennes pour soutenir les forces régulières ?",
+        "Faut-il couper l'accès aux satellites étrangers en cas de crise ?",
+        "Les forces spéciales doivent-elles pouvoir opérer hors de tout cadre légal ?",
+        "Doit-on privilégier la cyberguerre au détriment des équipements militaires traditionnels ?",
+        "Le secret militaire doit-il primer sur le droit à l'information des citoyens ?"
       ]
     },
-
     "sante": {
       "questions": [
         "Le clonage thérapeutique doit-il être autorisé sous contrôle ?",
@@ -112,10 +165,24 @@
         "Faut-il interdire la vente de produits transformés néfastes ?",
         "Comment garantir l'accès aux soins dans les déserts médicaux ?",
         "Faut-il encadrer les médecines alternatives par la loi ?",
-        "Quelle politique face aux épidémies de maladies liées au mode de vie ?"
+        "Quelle politique face aux épidémies de maladies liées au mode de vie ?",
+        "Comment intégrer l'intelligence artificielle dans le diagnostic médical sans déshumaniser le soin ?",
+        "Doit-on imposer un suivi médical régulier obligatoire pour tous les citoyens ?",
+        "Faut-il prioriser les investissements dans la prévention plutôt que dans les soins ?",
+        "Faut-il autoriser la modification génétique des embryons pour éradiquer les maladies ?",
+        "Les soins doivent-ils être rationnés en fonction de la contribution sociale des citoyens ?",
+        "Faut-il interdire les aliments trop sucrés ou ultra-transformés ?",
+        "Le suivi de la santé mentale via des implants connectés doit-il être obligatoire ?",
+        "L'industrie pharmaceutique doit-elle être entièrement nationalisée ?",
+        "Faut-il autoriser l'hybridation humain-animal pour la production d'organes ?",
+        "La vaccination doit-elle être obligatoire pour tous, sans exception ?",
+        "Doit-on autoriser la commercialisation des souvenirs humains ?",
+        "Les utérus artificiels doivent-ils devenir la norme pour les naissances ?",
+        "L'euthanasie doit-elle être accessible sur simple demande en fin de vie ?",
+        "L'assurance santé doit-elle varier selon le mode de vie des citoyens ?",
+        "Faut-il limiter l'usage des antibiotiques non essentiels ?"
       ]
     },
-
     "education": {
       "questions": [
         "Le programme doit-il enseigner l'histoire telle quelle ou telle qu'on la veut ?",
@@ -138,10 +205,24 @@
         "Faut-il rendre l'université gratuite pour tous les citoyens ?",
         "Comment adapter le système éducatif aux métiers du futur ?",
         "Quelle politique linguistique pour protéger les langues régionales ?",
-        "Comment lutter contre le décrochage scolaire dans les quartiers défavorisés ?"
+        "Comment lutter contre le décrochage scolaire dans les quartiers défavorisés ?",
+        "Comment gérer l'écart de niveau croissant entre élèves à l'ère numérique ?",
+        "Doit-on intégrer des compétences émotionnelles dans les programmes scolaires ?",
+        "Faut-il personnaliser totalement les parcours éducatifs grâce à l'IA ?",
+        "Les enseignants humains doivent-ils être remplacés par des IA spécialisées ?",
+        "Le programme scolaire doit-il être dicté uniquement par les besoins du marché du travail ?",
+        "Les implants cérébraux améliorant la mémoire doivent-ils être obligatoires pour les élèves ?",
+        "Faut-il supprimer la compétition scolaire au profit de la coopération ?",
+        "L'État doit-il contrôler l'ensemble des contenus enseignés ?",
+        "L'histoire doit-elle être enseignée selon une vision nationale unique ?",
+        "L'éducation physique doit-elle être orientée vers une préparation militaire ?",
+        "L'instruction à domicile doit-elle être strictement interdite ?",
+        "La formation professionnelle doit-elle commencer dès l'âge de 10 ans ?",
+        "Faut-il supprimer la philosophie et les arts au profit des matières scientifiques ?",
+        "Les étudiants doivent-ils être obligés de travailler pour l'État pendant 2 ans après leurs études ?",
+        "L'accès à l'enseignement supérieur doit-il être réservé à une élite sociale ?"
       ]
     },
-
     "ecologie": {
       "questions": [
         "Faut-il sacrifier l'industrie pour atteindre la neutralité carbone ?",
@@ -161,10 +242,24 @@
         "La nature a-t-elle le droit de passer avant l'intérêt humain ?",
         "Faut-il taxer lourdement les entreprises les plus polluantes ?",
         "Comment protéger la biodiversité face à l'expansion agricole ?",
-        "Doit-on créer un ministère dédié à la gestion des catastrophes climatiques ?"
+        "Doit-on créer un ministère dédié à la gestion des catastrophes climatiques ?",
+        "Comment arbitrer entre protection de la nature et besoins énergétiques croissants ?",
+        "Doit-on relocaliser massivement l'agriculture pour réduire l'empreinte écologique ?",
+        "Faut-il instaurer un quota individuel de consommation carbone ?",
+        "Faut-il interdire la voiture individuelle au profit des transports publics ?",
+        "Faut-il imposer un quota carbone individuel à chaque citoyen ?",
+        "Doit-on autoriser la géo-ingénierie pour refroidir le climat ?",
+        "Faut-il interdire la consommation de viande animale ?",
+        "Doit-on évacuer des régions entières pour laisser la nature se régénérer ?",
+        "L'État doit-il pouvoir limiter le nombre d'enfants par famille ?",
+        "Faut-il interdire tout plastique non recyclé ?",
+        "L'énergie nucléaire doit-elle devenir notre principale source d'énergie ?",
+        "Faut-il fortement taxer le transport aérien ?",
+        "Doit-on délocaliser l'industrie lourde vers d'autres pays ?",
+        "Faut-il accorder une personnalité juridique aux fleuves et aux forêts ?",
+        "L'eau doit-elle être gérée comme un bien commun, accessible à tous gratuitement ?"
       ]
     },
-
     "industrie": {
       "questions": [
         "Doit-on imposer une puce électronique à chaque citoyen pour la sécurité ?",
@@ -181,14 +276,26 @@
         "Quelle infrastructure pour une mobilité décarbonée ?",
         "Faut-il imposer une part de production locale dans tous les secteurs stratégiques ?",
         "Comment réguler les monopoles technologiques sans freiner l'innovation ?",
-        "Doit-on nationaliser les infrastructures numériques critiques ?"
+        "Doit-on nationaliser les infrastructures numériques critiques ?",
+        "Comment garantir la souveraineté technologique face aux géants étrangers ?",
+        "Doit-on limiter volontairement certaines innovations jugées à risque pour la société ?",
+        "Faut-il imposer une transparence totale des algorithmes utilisés par les grandes entreprises ?",
+        "L'exploitation minière spatiale doit-elle devenir une priorité industrielle ?",
+        "Faut-il interdire toute technologie non réparable par l'utilisateur ?",
+        "L'industrie lourde doit-elle être entièrement automatisée, même au détriment de l'emploi ?",
+        "L'État doit-il subventionner la création de « villes intelligentes » ?",
+        "Faut-il limiter la production de masse aux biens essentiels ?",
+        "Doit-on privilégier l'impression 3D face aux usines traditionnelles ?",
+        "Faut-il autoriser l'exploitation des ressources des grands fonds marins ?",
+        "Doit-on imposer un indice de réparabilité obligatoire pour tous les appareils ?",
+        "Faut-il démanteler les grandes entreprises technologiques devenues trop puissantes ?",
+        "L'État doit-il posséder tous les brevets industriels ?",
+        "Faut-il déplacer les centres de données énergivores vers l'Arctique ?",
+        "Doit-on faire de la fusion énergétique une priorité absolue ?"
       ]
     }
-
   },
-
   "pool_transversal": {
-
     "quotidien": {
       "description": "Tensions du quotidien — proches du vécu citoyen, souvent économiques ou sociales",
       "questions": [
@@ -211,10 +318,24 @@
         "Le système de santé est en saturation totale cet hiver.",
         "La gestion de l'eau potable devient conflictuelle dans le sud.",
         "Les artisans demandent une baisse des charges sociales.",
-        "Le moral des fonctionnaires est au plus bas, quelle annonce faire ?"
+        "Le moral des fonctionnaires est au plus bas, quelle annonce faire ?",
+        "Les délais administratifs explosent, faut-il automatiser massivement les services publics ?",
+        "Les services d'urgence sont saturés tous les week-ends, quelle mesure immédiate ?",
+        "Les coupures d'électricité deviennent fréquentes, faut-il rationner ?",
+        "Les caméras de surveillance doivent-elles intégrer la reconnaissance faciale ?",
+        "Les animaux bruyants doivent-ils être interdits en zone urbaine ?",
+        "Tous les commerces doivent-ils être ouverts 24h/24 ?",
+        "Le courrier papier doit-il être remplacé par une communication 100 % numérique obligatoire ?",
+        "Les transports publics doivent-ils être entièrement gratuits ?",
+        "Faut-il interdire de fumer dans tous les espaces publics, y compris en extérieur ?",
+        "Doit-on limiter le temps passé sur les réseaux sociaux par citoyen ?",
+        "Le télétravail doit-il devenir un droit obligatoire pour tous les emplois compatibles ?",
+        "Faut-il éteindre l'éclairage public la nuit pour économiser l'énergie ?",
+        "Les parkings doivent-ils être remplacés par des jardins urbains ?",
+        "Faut-il instaurer une « taxe d'incivilité » pour les comportements antisociaux ?",
+        "Les micro-dons à l'État doivent-ils être automatisés à chaque achat ?"
       ]
     },
-
     "crise_et_peur": {
       "description": "Crises urgentes, peur sociale, situations limites — pression maximale sur le Conseil",
       "questions": [
@@ -237,10 +358,24 @@
         "Une famine menace suite à la destruction des récoltes par des insectes.",
         "La police signale une recrudescence du grand banditisme.",
         "Une crise diplomatique avec notre principal partenaire commercial.",
-        "Le pays est sous le coup d'un ultimatum étranger."
+        "Le pays est sous le coup d'un ultimatum étranger.",
+        "Un virus inconnu se propage rapidement sans traitement connu.",
+        "Une intelligence artificielle échappe à tout contrôle dans une infrastructure critique.",
+        "Une panne mondiale d'internet plonge le pays dans le chaos.",
+        "Faut-il instaurer un couvre-feu total après les récentes émeutes ?",
+        "Les voyageurs étrangers doivent-ils être systématiquement mis en quarantaine ?",
+        "Les comptes bancaires suspects doivent-ils être gelés sans mandat ?",
+        "Faut-il couper l'internet national pour éviter une cyberattaque ?",
+        "L'État doit-il réquisitionner des logements privés pour héberger des réfugiés ?",
+        "Le port du masque et des gants doit-il devenir obligatoire à vie dans les transports ?",
+        "Faut-il autoriser la torture pour prévenir une attaque imminente ?",
+        "Faut-il criminaliser la propagation de panique sur les réseaux sociaux ?",
+        "Doit-on rationner la nourriture pour éviter les pénuries ?",
+        "L'armée doit-elle prendre le contrôle des hôpitaux en cas d'épidémie ?",
+        "L'État doit-il pouvoir lire les messages privés en cas d'alerte maximale ?",
+        "Faut-il exiler les opposants dans des zones isolées en temps de crise ?"
       ]
     },
-
     "ideologique": {
       "description": "Questions de fond — valeurs, tensions philosophiques, choix de société",
       "questions": [
@@ -263,10 +398,24 @@
         "La richesse doit-elle être plafonnée par la loi ?",
         "Devons-nous interdire les mouvements politiques radicaux ?",
         "La culture nationale doit-elle être protégée de l'influence étrangère ?",
-        "Le progrès technique est-il forcément bénéfique pour le peuple ?"
+        "Le progrès technique est-il forcément bénéfique pour le peuple ?",
+        "Le bonheur collectif doit-il primer sur les libertés individuelles ?",
+        "Faut-il encadrer strictement les réseaux sociaux pour préserver la cohésion sociale ?",
+        "La vérité doit-elle être définie par l'État en période de crise ?",
+        "La liberté individuelle est-elle plus importante que la sécurité collective ?",
+        "Faut-il remplacer la notion de nationalité par celle de citoyen du monde ?",
+        "Faut-il interdire toutes les religions pour renforcer la laïcité ?",
+        "L'État a-t-il toujours raison, même lorsqu'il se trompe ?",
+        "Faut-il viser une égalité totale, même au détriment de l'ambition ?",
+        "La méritocratie doit-elle remplacer la démocratie ?",
+        "Faut-il protéger la culture nationale de toute influence étrangère ?",
+        "Les humains doivent-ils être augmentés par des machines pour rester compétitifs ?",
+        "Faut-il autoriser la création de micronations privées sur le territoire ?",
+        "Une dictature « bienveillante » est-elle préférable à une démocratie défaillante ?",
+        "L'État doit-il définir ce qui est moral ou non ?",
+        "Faut-il pardonner les crimes passés au nom de l'unité nationale ?"
       ]
     },
-
     "anomalie_et_scifi": {
       "description": "Événements impossibles, ruptures de réalité — mode Chance/Destinée ou parties bac à sable",
       "questions": [
@@ -289,9 +438,11 @@
         "Le ciel est devenu totalement noir en plein jour.",
         "Des échos de notre futur sont captés par nos ondes radio.",
         "Des créatures mythologiques ont été aperçues en forêt.",
-        "Les rêves des citoyens sont devenus synchronisés sur tout le pays."
+        "Les rêves des citoyens sont devenus synchronisés sur tout le pays.",
+        "Un double exact de chaque citoyen apparaît soudainement dans le pays.",
+        "Le temps commence à s'écouler différemment selon les régions.",
+        "Une intelligence extraterrestre propose une alliance technologique immédiate."
       ]
     }
-
   }
 }

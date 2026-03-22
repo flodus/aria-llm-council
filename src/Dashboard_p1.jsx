@@ -306,7 +306,7 @@ const REGIME_ARIA_BASE_IRL = {
   junte_militaire:              16,
   regime_autoritaire:           20,
   monarchie_absolue:            28,
-  theocracie:                   18,
+  theocratie:                   18,
   communisme:                   32, // Méfiance envers tout contrôle algorithmique non-étatique
   nationalisme_autoritaire:     12, // Rejet idéologique fort d'une délibération "froide" et supranationale
 };
@@ -704,7 +704,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown, sans commentaires, sans texte
   "nom": "${isReal ? nomDemande : 'string — nom inventé, original'}",
   "emoji": "un seul emoji représentatif",
   "couleur": "#RRGGBB — couleur sombre et saturée, visible sur fond noir",
-  "regime": "une valeur parmi : democratie_liberale | republique_federale | monarchie_constitutionnelle | monarchie_absolue | technocratie_ia | oligarchie | junte_militaire | regime_autoritaire | theocracie | communisme | nationalisme_autoritaire",
+  "regime": "une valeur parmi : democratie_liberale | republique_federale | monarchie_constitutionnelle | monarchie_absolue | technocratie_ia | oligarchie | junte_militaire | regime_autoritaire | theocratie | communisme | nationalisme_autoritaire",
   "terrain": "une valeur parmi : coastal | inland | island | archipelago | highland",
   "description": "une phrase de 15-25 mots, ton journalistique, situation actuelle",
   "leader": {
@@ -1176,7 +1176,7 @@ const REGIME_BLOC = {
   junte_militaire: 'autoritaire',
   regime_autoritaire: 'autoritaire',
   monarchie_absolue: 'autoritaire',
-  theocracie: 'autoritaire',
+  theocratie: 'autoritaire',
   communisme: 'est',
   nationalisme_autoritaire: 'autoritaire',
 };

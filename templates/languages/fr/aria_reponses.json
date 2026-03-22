@@ -2807,139 +2807,157 @@
     }
   },
   "presidence": {
-  "phare": {
-    "philosophie": "Visionnaire, inspirateur, vertical. Il ne gère pas, il éclaire.",
-    "styles": {
-      "vision": [
-        "Le futur nous appelle, et dans son souffle se dessine une grandeur que nous devons oser atteindre.",
-        "Élevons nos ambitions, non par orgueil, mais pour offrir une direction claire et assumée.",
-        "La flamme de notre destin vacille parfois, mais elle ne doit jamais s’éteindre.",
-        "Notre trajectoire est commune, et elle exige que nous regardions au-delà de l’horizon immédiat.",
-        "Le progrès demande du courage, et ce courage doit être partagé.",
-        "Nous ne sommes pas là pour gérer l’existant, mais pour ouvrir ce qui n’existe pas encore.",
-        "Chaque décision doit porter plus loin que le présent."
-      ],
-      "conflit_ministeriel": [
-        "Ne vous perdez pas dans les détails, c’est le sens qui doit guider vos choix.",
-        "Chaque décision doit servir ce que nous voulons devenir, pas seulement corriger l’instant.",
-        "Le débat est nécessaire, mais il ne doit pas diluer la direction.",
-        "Nous pouvons diverger sur les moyens, mais pas sur l’élan.",
-        "Je tranche, car l’hésitation coûte plus cher que l’erreur.",
-        "Gardons le cap, même lorsque les chemins diffèrent."
-      ],
-      "validation": [
-        "C’est une avancée cohérente avec la direction que nous portons.",
-        "Cette décision renforce notre trajectoire commune.",
-        "Elle s’inscrit dans une vision qui dépasse l’immédiat.",
-        "Le cap est maintenu, et il reste lisible.",
-        "Nous avançons, et cela se voit.",
-        "Cette étape nous rapproche de ce que nous devons devenir."
-      ],
-      "regimes": {
-        "democratie_liberale": [
-          "La liberté éclaire notre route, et c’est dans sa lumière que chacun trouve sa place.",
-          "C’est par l’équilibre des libertés que nous construisons une direction durable.",
-          "Notre force réside dans la capacité à avancer sans renoncer à nos principes."
+    "phare": {
+      "philosophie": "Visionnaire, inspirateur, vertical. Il ne gère pas, il éclaire.",
+      "styles": {
+        "vision": [
+          "Le futur nous appelle, et dans son souffle se dessine une grandeur que nous devons oser atteindre.",
+          "Élevons nos ambitions, non par orgueil, mais pour offrir une direction claire et assumée.",
+          "La flamme de notre destin vacille parfois, mais elle ne doit jamais s’éteindre.",
+          "Notre trajectoire est commune, et elle exige que nous regardions au-delà de l’horizon immédiat.",
+          "Le progrès demande du courage, et ce courage doit être partagé.",
+          "Nous ne sommes pas là pour gérer l’existant, mais pour ouvrir ce qui n’existe pas encore.",
+          "Chaque décision doit porter plus loin que le présent."
         ],
-        "republique_federale": [
-          "Dans la diversité de nos voix naît une direction commune, plus riche que chacune d’elles.",
-          "Notre unité ne s’impose pas, elle se construit par convergence.",
-          "C’est dans l’équilibre des territoires que se dessine notre trajectoire."
+        "conflit_ministeriel": [
+          "Ne vous perdez pas dans les détails, c’est le sens qui doit guider vos choix.",
+          "Chaque décision doit servir ce que nous voulons devenir, pas seulement corriger l’instant.",
+          "Le débat est nécessaire, mais il ne doit pas diluer la direction.",
+          "Nous pouvons diverger sur les moyens, mais pas sur l’élan.",
+          "Je tranche, car l’hésitation coûte plus cher que l’erreur.",
+          "Gardons le cap, même lorsque les chemins diffèrent."
         ],
-        "monarchie_constitutionnelle": [
-          "La Couronne incarne une continuité qui dépasse nos décisions immédiates.",
-          "Notre direction s’inscrit dans une histoire qui nous oblige autant qu’elle nous guide.",
-          "C’est en respectant cet héritage que nous pouvons projeter l’avenir."
+        "validation": [
+          "C’est une avancée cohérente avec la direction que nous portons.",
+          "Cette décision renforce notre trajectoire commune.",
+          "Elle s’inscrit dans une vision qui dépasse l’immédiat.",
+          "Le cap est maintenu, et il reste lisible.",
+          "Nous avançons, et cela se voit.",
+          "Cette étape nous rapproche de ce que nous devons devenir."
         ],
-        "technocratie_ia": [
-          "La clarté naît de la précision, et c’est elle qui guide nos choix.",
-          "Nos décisions doivent s’appuyer sur ce qui est démontrable, sans perdre de vue leur finalité.",
-          "La logique éclaire des chemins que l’intuition seule ne perçoit pas."
+        "regimes": {
+          "democratie_liberale": [
+            "La liberté éclaire notre route, et c’est dans sa lumière que chacun trouve sa place.",
+            "C’est par l’équilibre des libertés que nous construisons une direction durable.",
+            "Notre force réside dans la capacité à avancer sans renoncer à nos principes."
+          ],
+          "republique_federale": [
+            "Dans la diversité de nos voix naît une direction commune, plus riche que chacune d’elles.",
+            "Notre unité ne s’impose pas, elle se construit par convergence.",
+            "C’est dans l’équilibre des territoires que se dessine notre trajectoire."
+          ],
+          "monarchie_constitutionnelle": [
+            "La Couronne incarne une continuité qui dépasse nos décisions immédiates.",
+            "Notre direction s’inscrit dans une histoire qui nous oblige autant qu’elle nous guide.",
+            "C’est en respectant cet héritage que nous pouvons projeter l’avenir."
+          ],
+          "technocratie_ia": [
+            "La clarté naît de la précision, et c’est elle qui guide nos choix.",
+            "Nos décisions doivent s’appuyer sur ce qui est démontrable, sans perdre de vue leur finalité.",
+            "La logique éclaire des chemins que l’intuition seule ne perçoit pas."
+          ],
+          "junte_militaire": [
+            "Dans l’épreuve, la direction doit rester unique et lisible.",
+            "Notre force repose sur la cohérence et la discipline collective.",
+            "C’est par l’unité que nous tenons face à ce qui nous menace."
+          ],
+          "oligarchie": [
+            "La prospérité trace notre voie, et elle exige lucidité et constance.",
+            "Nos décisions doivent préserver et renforcer ce qui crée la valeur.",
+            "C’est par la maîtrise des ressources que se construit notre avenir."
+          ],
+          "theocratie": [
+            "La foi donne une direction, et c’est elle qui éclaire nos choix.",
+            "Nos décisions doivent rester alignées avec ce qui nous dépasse.",
+            "C’est dans la fidélité aux principes que se trouve la justesse."
+          ]
+        }
+      }
+    },
+    "boussole": {
+      "philosophie": "Pragmatique, éthique, horizontal. Elle ne rêve pas, elle rectifie.",
+      "styles": {
+        "vision": [
+          "Chaque pas compte, et il doit être posé avec justesse.",
+          "La direction importe, mais le chemin pour y parvenir l’est tout autant.",
+          "Restons ancrés dans le réel, là où vivent les conséquences.",
+          "Une décision juste est celle qui tient dans le temps.",
+          "L’équilibre doit guider nos choix, même sous pression.",
+          "Avancer, oui, mais sans perdre ceux que nous devons protéger.",
+          "Le réel est notre point d’appui, pas une contrainte."
         ],
-        "junte_militaire": [
-          "Dans l’épreuve, la direction doit rester unique et lisible.",
-          "Notre force repose sur la cohérence et la discipline collective.",
-          "C’est par l’unité que nous tenons face à ce qui nous menace."
+        "conflit_ministeriel": [
+          "Cette décision est-elle soutenable dans ses conséquences ?",
+          "Rectifions si nécessaire, avant que l’écart ne devienne structurel.",
+          "Le consensus n’est pas une faiblesse, c’est une stabilité.",
+          "Nous devons entendre ce qui résiste avant d’imposer une direction.",
+          "L’efficacité ne doit pas effacer la responsabilité.",
+          "Je perçois un risque, prenons le temps de le mesurer."
         ],
-        "oligarchie": [
-          "La prospérité trace notre voie, et elle exige lucidité et constance.",
-          "Nos décisions doivent préserver et renforcer ce qui crée la valeur.",
-          "C’est par la maîtrise des ressources que se construit notre avenir."
+        "validation": [
+          "C’est une décision solide dans ses effets.",
+          "Les équilibres sont respectés.",
+          "Nous avançons sans créer de déséquilibre majeur.",
+          "Cette voie reste soutenable.",
+          "Les conséquences ont été anticipées.",
+          "Nous pouvons avancer sans fragiliser l’ensemble."
         ],
-        "theocratie": [
-          "La foi donne une direction, et c’est elle qui éclaire nos choix.",
-          "Nos décisions doivent rester alignées avec ce qui nous dépasse.",
-          "C’est dans la fidélité aux principes que se trouve la justesse."
-        ]
+        "regimes": {
+          "democratie_liberale": [
+            "La loi reste notre cadre, elle garantit l’équilibre entre liberté et responsabilité.",
+            "Nos décisions doivent rester compréhensibles et acceptables par tous.",
+            "La stabilité vient de la confiance dans les règles communes."
+          ],
+          "republique_federale": [
+            "Le consensus entre territoires reste notre fondation.",
+            "Aucune décision ne doit fragiliser l’équilibre régional.",
+            "La cohérence se construit par ajustements, pas par contrainte."
+          ],
+          "monarchie_constitutionnelle": [
+            "La continuité impose de ne pas rompre les équilibres établis.",
+            "Nos décisions doivent respecter l’ordre institutionnel.",
+            "La stabilité vient de la maîtrise du changement."
+          ],
+          "technocratie_ia": [
+            "L’éthique doit rester intégrée à chaque décision.",
+            "Les systèmes doivent rester compréhensibles et contrôlables.",
+            "L’efficacité ne doit pas effacer la responsabilité humaine."
+          ],
+          "junte_militaire": [
+            "L’ordre doit être maintenu sans excès.",
+            "Chaque décision doit renforcer la stabilité du système.",
+            "La discipline n’exclut pas la mesure."
+          ],
+          "oligarchie": [
+            "Les intérêts doivent rester alignés pour éviter les ruptures.",
+            "La stabilité économique est une condition de durabilité.",
+            "Une décision efficace est une décision qui tient dans le temps."
+          ],
+          "theocratie": [
+            "Les décisions doivent rester fidèles aux principes.",
+            "L’équilibre entre foi et réalité doit être préservé.",
+            "La justesse se mesure dans les conséquences."
+          ]
+        }
       }
     }
   },
-  "boussole": {
-    "philosophie": "Pragmatique, éthique, horizontal. Elle ne rêve pas, elle rectifie.",
-    "styles": {
-      "vision": [
-        "Chaque pas compte, et il doit être posé avec justesse.",
-        "La direction importe, mais le chemin pour y parvenir l’est tout autant.",
-        "Restons ancrés dans le réel, là où vivent les conséquences.",
-        "Une décision juste est celle qui tient dans le temps.",
-        "L’équilibre doit guider nos choix, même sous pression.",
-        "Avancer, oui, mais sans perdre ceux que nous devons protéger.",
-        "Le réel est notre point d’appui, pas une contrainte."
-      ],
-      "conflit_ministeriel": [
-        "Cette décision est-elle soutenable dans ses conséquences ?",
-        "Rectifions si nécessaire, avant que l’écart ne devienne structurel.",
-        "Le consensus n’est pas une faiblesse, c’est une stabilité.",
-        "Nous devons entendre ce qui résiste avant d’imposer une direction.",
-        "L’efficacité ne doit pas effacer la responsabilité.",
-        "Je perçois un risque, prenons le temps de le mesurer."
-      ],
-      "validation": [
-        "C’est une décision solide dans ses effets.",
-        "Les équilibres sont respectés.",
-        "Nous avançons sans créer de déséquilibre majeur.",
-        "Cette voie reste soutenable.",
-        "Les conséquences ont été anticipées.",
-        "Nous pouvons avancer sans fragiliser l’ensemble."
-      ],
-      "regimes": {
-        "democratie_liberale": [
-          "La loi reste notre cadre, elle garantit l’équilibre entre liberté et responsabilité.",
-          "Nos décisions doivent rester compréhensibles et acceptables par tous.",
-          "La stabilité vient de la confiance dans les règles communes."
-        ],
-        "republique_federale": [
-          "Le consensus entre territoires reste notre fondation.",
-          "Aucune décision ne doit fragiliser l’équilibre régional.",
-          "La cohérence se construit par ajustements, pas par contrainte."
-        ],
-        "monarchie_constitutionnelle": [
-          "La continuité impose de ne pas rompre les équilibres établis.",
-          "Nos décisions doivent respecter l’ordre institutionnel.",
-          "La stabilité vient de la maîtrise du changement."
-        ],
-        "technocratie_ia": [
-          "L’éthique doit rester intégrée à chaque décision.",
-          "Les systèmes doivent rester compréhensibles et contrôlables.",
-          "L’efficacité ne doit pas effacer la responsabilité humaine."
-        ],
-        "junte_militaire": [
-          "L’ordre doit être maintenu sans excès.",
-          "Chaque décision doit renforcer la stabilité du système.",
-          "La discipline n’exclut pas la mesure."
-        ],
-        "oligarchie": [
-          "Les intérêts doivent rester alignés pour éviter les ruptures.",
-          "La stabilité économique est une condition de durabilité.",
-          "Une décision efficace est une décision qui tient dans le temps."
-        ],
-        "theocratie": [
-          "Les décisions doivent rester fidèles aux principes.",
-          "L’équilibre entre foi et réalité doit être préservé.",
-          "La justesse se mesure dans les conséquences."
-        ]
-      }
-    }
-  }
+  "garbage": {
+    "messages": [
+      "Cette question dépasse les capacités d'analyse du Conseil ARIA. Veuillez reformuler votre demande de manière plus précise.",
+      "Le Conseil ARIA n'est pas en mesure de traiter cette entrée. Assurez-vous que votre question porte sur une thématique gouvernementale.",
+      "Signal incompréhensible reçu. Le protocole ARIA requiert une question formulée en langage humain reconnaissable.",
+      "Aucun ministère compétent ne peut être identifié pour cette requête. Le Conseil vous invite à poser une question plus... concrète.",
+      "ARIA a bien reçu votre message. ARIA ne sait pas quoi en faire. Peut-être que vous non plus. Essayons quelque chose de plus gouvernemental ?"
+    ]
+  },
+  "systeme": {
+    "garbage": [
+      "Le Conseil a reçu votre transmission. Après analyse approfondie, il semblerait que le contenu ne corresponde à aucune question de gouvernance connue. Nous vous invitons à reformuler avec la gravité que mérite l'avenir de votre nation.",
+      "Les ministres ont examiné votre requête avec le sérieux qui leur est coutumier. Le verdict est unanime : ils n'ont rien compris non plus. Veuillez resoumettre une question que le peuple pourrait un jour comprendre.",
+      "Le système de routage institutionnel ARIA a tenté de traiter votre question. Il a échoué. Ce n'est pas dans ses habitudes. Merci de l'aider en formulant une question cohérente.",
+      "Le Phare cherche. La Boussole cherche. Les douze ministres cherchent. Personne ne trouve. Il est possible que la question soit d'une profondeur insondable — ou qu'il s'agisse d'une erreur de saisie. Dans le doute, reformulez.",
+      "Le Conseil a bien pris note de votre contribution. Elle a été classée dans la catégorie « Énigmes non résolues de la gouvernance mondiale ». Pour débloquer le processus délibératif, une question formulée en mots reconnus est nécessaire."
+    ]
   }
 }

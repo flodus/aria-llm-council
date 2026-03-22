@@ -97,7 +97,7 @@ const TOOLTIP_MINISTERES = {
 };
 
 // REGIME_LABELS → getRegimeLabel(key, lang) depuis ariaTheme
-const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocracie'];
+const REGIME_LABEL_KEYS = ['democratie_liberale', 'republique_federale', 'monarchie_constitutionnelle', 'technocratie_ia', 'junte_militaire', 'oligarchie', 'theocratie'];
 function getRegimeLabelMap(lang) {
   return Object.fromEntries(REGIME_LABEL_KEYS.map(k => [k, getRegimeLabel(k, lang)]));
 }

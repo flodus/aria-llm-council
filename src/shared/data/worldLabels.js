@@ -38,7 +38,7 @@ export const REGIME_DEFS = [
 { key: 'oligarchie',                  icon: '💼',  label: { fr: 'Oligarchie',                   en: 'Oligarchy'                  } },
 { key: 'junte_militaire',              icon: '🎖️',  label: { fr: 'Junte militaire',              en: 'Military Junta'             } },
 { key: 'regime_autoritaire',           icon: '🔒',  label: { fr: 'Régime autoritaire',           en: 'Authoritarian Regime'       } },
-{ key: 'theocracie',                   icon: '🕌',  label: { fr: 'Théocratie',                   en: 'Theocracy'                  } },
+{ key: 'theocratie',                   icon: '🕌',  label: { fr: 'Théocratie',                   en: 'Theocracy'                  } },
 { key: 'communisme',                   icon: '☭',  label: { fr: 'Parti communiste',             en: 'Communist Party'            } },
 { key: 'nationalisme_autoritaire',     icon: '⚡',  label: { fr: 'Nationalisme autoritaire',     en: 'Authoritarian Nationalism'  } },
 { key: 'democratie_directe',           icon: '🗳️',  label: { fr: 'Démocratie directe',           en: 'Direct Democracy'           } },

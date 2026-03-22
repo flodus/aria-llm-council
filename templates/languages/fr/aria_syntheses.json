@@ -1,10 +1,848 @@
 {
   "_meta": {
-    "version": "0.0",
-    "description": "ARIA — Synthèses offline Board Game (TODO N2)",
+    "version": "1.0",
+    "description": "ARIA — Synthèses offline Board Game",
     "structure": "ministeres[id][regime][convergence|divergence][] + presidence[convergence|divergence][]",
-    "status": "TODO"
+    "langue": "fr"
   },
-  "ministeres": {},
-  "presidence": {}
+  "ministeres": {
+    "justice": {
+      "democratie_liberale": {
+        "convergence": [
+          "Une réforme équilibrée de la justice est retenue afin de renforcer l'équité et l'accès au droit.",
+          "Les procédures doivent être simplifiées tout en garantissant la protection des libertés fondamentales.",
+          "L'indépendance judiciaire est réaffirmée comme pierre angulaire de l'équilibre institutionnel.",
+          "Le renforcement des mécanismes de contrôle judiciaire est retenu comme condition d'une réforme légitime.",
+          "La transparence des procédures est érigée en garantie fondamentale de la confiance citoyenne dans l'institution."
+        ],
+        "divergence": [
+          "Des désaccords persistants opposent les partisans de la fermeté pénale aux défenseurs de la réinsertion.",
+          "L'équilibre entre efficacité procédurale et garanties juridiques demeure une ligne de fracture.",
+          "Aucun consensus n'émerge sur l'intégration des nouvelles technologies dans les procédures judiciaires.",
+          "Le traitement différencié des infractions selon leur nature sociale divise profondément les positions internes.",
+          "La question de l'accès à la justice pour les populations les plus précaires reste sans réponse partagée."
+        ]
+      },
+      "republique_federale": {
+        "convergence": [
+          "Une coordination judiciaire renforcée entre les entités régionales est validée sans remettre en cause leur autonomie.",
+          "L'harmonisation des standards juridiques est jugée nécessaire pour garantir la cohérence territoriale.",
+          "Un cadre fédéral partagé est adopté pour unifier les pratiques sans effacer les particularités locales.",
+          "Les mécanismes de recours inter-régionaux sont clarifiés pour éviter les conflits de compétence juridictionnelle.",
+          "Une instance fédérale de médiation judiciaire est instituée pour résoudre les litiges entre entités."
+        ],
+        "divergence": [
+          "Les autorités régionales s'opposent sur le degré d'autonomie judiciaire acceptable face au centre.",
+          "Les pratiques juridiques divergentes entravent la cohérence du système dans son ensemble.",
+          "La portée du contrôle fédéral sur les tribunaux régionaux reste un point de litige majeur.",
+          "L'interprétation des droits fondamentaux varie selon les régions, créant des inégalités de traitement persistantes.",
+          "La volonté d'harmonisation se heurte aux résistances identitaires de certaines entités fédérées."
+        ]
+      },
+      "monarchie_constitutionnelle": {
+        "convergence": [
+          "La justice s'inscrit dans la continuité des institutions héritées, garantissant stabilité et prévisibilité.",
+          "Des réformes graduelles sont introduites sans remettre en cause les équilibres fondamentaux établis.",
+          "La primauté du droit est réaffirmée dans le respect des traditions constitutionnelles du Royaume.",
+          "La révision des procédures s'effectue sous l'autorité symbolique de la Couronne, garante de leur légitimité.",
+          "Les réformes engagées consolident la confiance des citoyens dans un système perçu comme stable et juste."
+        ],
+        "divergence": [
+          "Des tensions émergent entre les partisans du maintien strict des traditions et ceux qui appellent à l'adaptation.",
+          "Certains conseillers exigent une modernisation plus rapide que ne le permet le cadre hérité.",
+          "Le rôle symbolique de la Couronne dans la désignation des juges divise les approches institutionnelles.",
+          "La question de la séparation effective des pouvoirs dans un régime monarchique reste structurellement sensible.",
+          "Certains juristes contestent la compatibilité des réformes proposées avec les fondements constitutionnels hérités."
+        ]
+      },
+      "technocratie_ia": {
+        "convergence": [
+          "Les processus judiciaires sont optimisés par l'analyse algorithmique des données de jurisprudence.",
+          "Les outils automatisés sont intégrés sous des protocoles stricts de validation humaine préalable.",
+          "La cohérence des jugements est renforcée par des modèles prédictifs validés par le comité d'éthique.",
+          "Les protocoles d'audit des systèmes judiciaires automatisés sont renforcés pour garantir leur fiabilité mesurée.",
+          "La traçabilité des décisions algorithmiques est imposée comme condition sine qua non de leur déploiement."
+        ],
+        "divergence": [
+          "Les réserves éthiques sur les biais algorithmiques freinent l'adoption unanime des outils automatisés.",
+          "La légitimité des décisions rendues par des systèmes non humains reste profondément contestée.",
+          "La marge d'erreur acceptable dans les recommandations algorithmiques n'est pas définie de façon consensuelle.",
+          "Le statut juridique des décisions rendues par des systèmes autonomes n'a pas encore été tranché par la doctrine.",
+          "Les garanties procédurales applicables aux jugements assistés par l'IA restent incomplètes et contestées."
+        ]
+      },
+      "junte_militaire": {
+        "convergence": [
+          "L'autorité judiciaire est alignée sur l'impératif de maintien de l'ordre et de la discipline nationale.",
+          "Des procédures accélérées sont instaurées pour garantir la réactivité en cas de menace à la stabilité.",
+          "La sécurité prime dans l'administration des peines, sans concession aux délais ordinaires.",
+          "Les juridictions d'exception sont encadrées par des règles claires pour éviter les abus dans leur application.",
+          "La chaîne de responsabilité judiciaire est clarifiée pour garantir l'imputabilité des décisions prises."
+        ],
+        "divergence": [
+          "Des tensions persistent sur les limites acceptables des mesures coercitives dans le cadre légal.",
+          "Certains officiers contestent le recours aux tribunaux d'exception pour les affaires civiles.",
+          "Le degré de sévérité des sanctions en temps de crise divise la chaîne de commandement.",
+          "L'application rétroactive de certaines dispositions légales suscite des résistances au sein même du dispositif.",
+          "La frontière entre mesures disciplinaires internes et poursuites judiciaires civiles reste imprécise."
+        ]
+      },
+      "oligarchie": {
+        "convergence": [
+          "La stabilité juridique est consolidée pour protéger les intérêts économiques des acteurs dominants.",
+          "La prévisibilité des décisions judiciaires est érigée en priorité pour sécuriser les investissements.",
+          "Des réformes ciblées visent à renforcer la confiance institutionnelle à long terme.",
+          "Les mécanismes d'arbitrage privé sont reconnus comme complémentaires au système judiciaire public.",
+          "La protection des secrets d'affaires est renforcée par des dispositions légales négociées et validées."
+        ],
+        "divergence": [
+          "Des tensions émergent sur le degré d'influence des intérêts privés dans les nominations judiciaires.",
+          "La perception d'une justice à deux vitesses fragilise la légitimité des institutions aux yeux du public.",
+          "L'étendue du contrôle réglementaire sur les pratiques économiques contestées reste un point de friction.",
+          "L'indépendance réelle du pouvoir judiciaire face aux pressions économiques dominantes est mise en doute.",
+          "Certains acteurs contestent ouvertement les décisions judiciaires qui menacent leurs intérêts consolidés."
+        ]
+      },
+      "theocratie": {
+        "convergence": [
+          "Les décisions judiciaires s'alignent sur les principes spirituels fondamentaux qui régissent la communauté.",
+          "La cohérence entre le droit civil et la doctrine morale est réaffirmée comme impératif institutionnel.",
+          "La stabilité est assurée par l'ancrage des jugements dans les valeurs transmises par la tradition.",
+          "Les instances religieuses et civiles œuvrent conjointement à l'élaboration d'un corpus juridique unifié.",
+          "La formation des juges intègre désormais une dimension doctrinale renforcée validée par les autorités."
+        ],
+        "divergence": [
+          "Des interprétations divergentes des textes sacrés créent des incohérences dans l'application des peines.",
+          "Le rôle des normes séculières face à la loi religieuse est l'objet d'un débat interne persistant.",
+          "Concilier les évolutions sociales et la rigueur doctrinale génère une tension difficile à résoudre.",
+          "Le recours aux précédents séculiers dans des affaires à dimension spirituelle divise les autorités religieuses.",
+          "L'évolution des mœurs sociales crée une pression croissante sur des règles juridiques perçues comme figées."
+        ]
+      }
+    },
+    "economie": {
+      "democratie_liberale": {
+        "convergence": [
+          "Une politique économique équilibrée est adoptée, visant à concilier croissance, redistribution et durabilité.",
+          "La régulation des marchés est ajustée pour garantir une concurrence loyale sans entraver l'initiative privée.",
+          "Les mesures fiscales sont alignées sur des objectifs de soutenabilité à long terme validés collectivement.",
+          "Les mécanismes de protection sociale sont maintenus comme socle non négociable de la politique économique.",
+          "Un plan d'investissement dans les infrastructures publiques est validé pour soutenir la demande intérieure."
+        ],
+        "divergence": [
+          "Un désaccord profond oppose les partisans d'une intervention étatique accrue à ceux qui défendent le libre marché.",
+          "Les politiques de taxation restent un point de friction majeur entre les différentes sensibilités du ministère.",
+          "La priorité accordée à la redistribution face à la stimulation de la croissance divise les orientations.",
+          "Le niveau d'endettement public acceptable pour financer la relance fait l'objet de visions irréconciliables.",
+          "La politique salariale et l'indexation sur l'inflation divisent les acteurs économiques et les représentants."
+        ]
+      },
+      "republique_federale": {
+        "convergence": [
+          "Une coordination économique renforcée entre les régions est validée dans le respect des spécificités locales.",
+          "Des objectifs fiscaux communs sont définis à l'échelle nationale pour garantir la cohérence des politiques.",
+          "La solidarité interrégionale est institutionnalisée sans remettre en cause l'autonomie budgétaire des entités.",
+          "Un fonds fédéral de péréquation est institué pour atténuer les déséquilibres économiques interrégionaux.",
+          "Les standards de gouvernance budgétaire sont harmonisés pour renforcer la crédibilité collective de la fédération."
+        ],
+        "divergence": [
+          "Les disparités économiques entre territoires génèrent des frictions durables dans l'alignement des politiques.",
+          "L'allocation des ressources fédérales entre régions riches et déficitaires reste un sujet de tension récurrent.",
+          "L'équilibre entre pilotage central et autonomie locale n'est pas stabilisé malgré les négociations.",
+          "Les régions à excédent budgétaire refusent de financer les déficits structurels des entités les plus fragiles.",
+          "La définition d'une politique commerciale commune se heurte aux intérêts économiques divergents des entités."
+        ]
+      },
+      "monarchie_constitutionnelle": {
+        "convergence": [
+          "La stabilité économique est maintenue dans la continuité des pratiques héritées et des équilibres établis.",
+          "Des réformes graduelles sont favorisées pour préserver la confiance des acteurs sans rupture brutale.",
+          "La crédibilité institutionnelle constitue le socle d'une planification économique à long terme sereine.",
+          "Les grands projets nationaux sont validés sous l'impulsion symbolique de la Couronne pour fédérer les soutiens.",
+          "La politique d'attraction des investissements étrangers est conduite avec le prestige des institutions royales."
+        ],
+        "divergence": [
+          "Des désaccords émergent sur le rythme des réformes nécessaires face aux défis économiques contemporains.",
+          "Certains conseillers plaident pour des transformations plus profondes que le cadre traditionnel ne permet.",
+          "La tension entre préservation des structures héritées et exigences de modernisation reste non résolue.",
+          "L'ouverture aux marchés internationaux est perçue par certains comme une menace à l'économie traditionnelle.",
+          "La réforme fiscale jugée nécessaire se heurte aux résistances des acteurs proches des cercles du pouvoir."
+        ]
+      },
+      "technocratie_ia": {
+        "convergence": [
+          "Les décisions économiques sont guidées par des modèles prédictifs validés et des données en temps réel.",
+          "L'allocation des ressources est optimisée par des algorithmes dont les paramètres sont régulièrement audités.",
+          "L'efficacité systémique et la stabilité des indicateurs sont érigées en critères premiers des politiques.",
+          "Les indicateurs macroéconomiques sont consolidés en un tableau de bord unifié accessible aux décideurs en temps réel.",
+          "Les scenarii de crise économique sont simulés en amont pour préparer des réponses calibrées et documentées."
+        ],
+        "divergence": [
+          "L'incertitude des projections en contexte volatile suscite des hésitations dans leur application directe.",
+          "La fiabilité des modèles économiques est remise en question par les événements que ceux-ci n'ont pas anticipés.",
+          "La tension entre automatisation des décisions et maintien d'un contrôle humain demeure un point de blocage.",
+          "Les recommandations des modèles entrent en contradiction avec les intuitions des experts humains les plus chevronnés.",
+          "La question de la responsabilité en cas de mauvaise décision fondée sur des données erronées n'est pas tranchée."
+        ]
+      },
+      "junte_militaire": {
+        "convergence": [
+          "Les ressources économiques sont orientées vers les priorités stratégiques définies par l'état-major.",
+          "La stabilité des flux est assurée par une centralisation renforcée des décisions budgétaires clés.",
+          "La production nationale est alignée sur les objectifs de sécurité et d'autosuffisance du régime.",
+          "Les secteurs industriels stratégiques sont nationalisés pour garantir leur disponibilité en toute circonstance.",
+          "Un plan de rationnement d'urgence est préparé pour faire face à d'éventuelles ruptures d'approvisionnement."
+        ],
+        "divergence": [
+          "Des tensions surgissent sur la répartition des ressources entre les secteurs militaires et civils prioritaires.",
+          "Le poids des dépenses de défense sur la productivité civile fait l'objet d'évaluations contradictoires.",
+          "Les besoins économiques de la population pèsent face aux exigences de l'effort stratégique national.",
+          "L'économie informelle tolérée en période de stabilité devient un sujet de tension en temps de mobilisation.",
+          "La politique de prix administrés génère des distorsions que le marché ne peut absorber sans friction croissante."
+        ]
+      },
+      "oligarchie": {
+        "convergence": [
+          "Les politiques économiques sont consolidées pour sécuriser les positions des acteurs dominants du marché.",
+          "La stabilité des marchés est renforcée par des mesures protégeant les investissements à long terme.",
+          "La rentabilité durable des acteurs stratégiques constitue le fil conducteur des décisions économiques.",
+          "Les fusions stratégiques entre acteurs dominants sont facilitées par un cadre réglementaire accommodant.",
+          "Les politiques de dividendes et de rachat d'actions sont encadrées pour préserver la stabilité des marchés."
+        ],
+        "divergence": [
+          "Des conflits d'intérêts émergent entre les grandes puissances économiques aux agendas divergents.",
+          "La légitimité d'une distribution très inégale des richesses est contestée en interne par certains acteurs.",
+          "Le cadre réglementaire jugé insuffisant par les uns est perçu comme excessif par les autres.",
+          "La question de la rémunération des dirigeants face aux salaires des employés génère des tensions publiques.",
+          "Certains acteurs contestent le partage des bénéfices issus des politiques favorables qu'ils ont contribué à obtenir."
+        ]
+      },
+      "theocratie": {
+        "convergence": [
+          "Les pratiques économiques sont encadrées par les principes moraux issus de la doctrine en vigueur.",
+          "L'équité dans les échanges est promue comme une obligation éthique autant qu'une nécessité politique.",
+          "La stabilité économique est assurée par l'adhésion collective à un cadre de valeurs partagées.",
+          "Les transactions financières sont soumises à une validation éthique garantissant leur conformité aux principes.",
+          "L'économie solidaire et le partage des ressources sont institutionnalisés comme piliers du modèle économique."
+        ],
+        "divergence": [
+          "Des divergences persistent sur la définition des pratiques économiques compatibles avec les principes sacrés.",
+          "Le rapport entre obligation morale et efficacité productive génère une tension doctrinale non résolue.",
+          "L'adaptation aux systèmes économiques modernes crée des frictions avec les préceptes traditionnels.",
+          "Les échanges avec des partenaires aux pratiques jugées contraires aux valeurs du régime suscitent des débats.",
+          "La définition du profit légitime face à l'usure prohibée génère des contentieux doctrinaux récurrents."
+        ]
+      }
+    },
+    "defense": {
+      "democratie_liberale": {
+        "convergence": [
+          "La politique de défense concilie exigences sécuritaires et respect des libertés civiles fondamentales.",
+          "Les capacités stratégiques sont renforcées dans le cadre strict des dispositions légales en vigueur.",
+          "La coopération internationale est reconnue comme un pilier indispensable de la sécurité nationale.",
+          "Le cadre légal des interventions militaires est précisé pour garantir leur conformité aux engagements internationaux.",
+          "Une stratégie de cyberdéfense nationale est adoptée comme priorité transversale du dispositif sécuritaire."
+        ],
+        "divergence": [
+          "Un débat structurant oppose les partisans d'un engagement militaire élargi aux défenseurs de la retenue.",
+          "L'étendue des mesures de surveillance acceptables au nom de la sécurité nationale reste profondément contestée.",
+          "L'arbitrage budgétaire entre investissement défensif et dépenses sociales divise les orientations du ministère.",
+          "La question du service militaire obligatoire versus une armée professionnelle divise les positions du ministère.",
+          "Le niveau d'engagement dans les alliances multilatérales suscite un désaccord persistant sur la souveraineté."
+        ]
+      },
+      "republique_federale": {
+        "convergence": [
+          "La coordination des forces régionales est renforcée dans un cadre de commandement unifié et concerté.",
+          "Des objectifs de sécurité partagés sont définis pour garantir une réponse cohérente aux menaces communes.",
+          "Les responsabilités défensives sont réparties entre les entités selon leurs capacités et leur exposition.",
+          "Un commandement opérationnel unifié est institué pour les situations nécessitant une réponse fédérale rapide.",
+          "Les investissements dans les capacités de défense collective sont mutualisés pour en maximiser l'efficacité."
+        ],
+        "divergence": [
+          "Des désaccords persistants portent sur la ligne de commandement entre autorité centrale et forces régionales.",
+          "L'autonomie opérationnelle des entités fédérées face aux directives nationales suscite des tensions récurrentes.",
+          "La répartition des budgets défensifs entre les régions à exposition inégale reste un contentieux non réglé.",
+          "Certaines entités refusent de contribuer à des opérations extérieures décidées sans leur consentement explicite.",
+          "La définition des menaces prioritaires diffère selon les expositions géographiques et historiques des régions."
+        ]
+      },
+      "monarchie_constitutionnelle": {
+        "convergence": [
+          "La stratégie défensive s'inscrit dans la continuité des alliances historiques et des engagements de la Couronne.",
+          "La stabilité stratégique est maintenue par la fidélité aux doctrines éprouvées sur le long terme.",
+          "Les institutions militaires opèrent dans le respect des prérogatives constitutionnelles établies.",
+          "Les forces armées opèrent sous l'autorité symbolique de la Couronne, renforçant leur cohésion et leur légitimité.",
+          "Les alliances historiques sont réaffirmées comme fondements de la doctrine de sécurité nationale."
+        ],
+        "divergence": [
+          "Des tensions émergent sur la nécessité d'adapter les capacités militaires aux menaces contemporaines.",
+          "Certains conseillers plaident pour une rupture doctrinale que le cadre traditionnel rend difficile à assumer.",
+          "La tension entre modernisation des forces et respect des structures héritées fragilise les décisions.",
+          "L'introduction de technologies défensives disruptives suscite des résistances au sein des corps traditionnels.",
+          "Le niveau d'investissement défensif jugé nécessaire entre en conflit avec d'autres priorités budgétaires royales."
+        ]
+      },
+      "technocratie_ia": {
+        "convergence": [
+          "Les capacités défensives sont renforcées par l'intégration de systèmes autonomes validés algorithmiquement.",
+          "La surveillance stratégique est optimisée par des outils d'analyse prédictive à haute fiabilité mesurée.",
+          "L'efficacité opérationnelle est maximisée par une allocation des ressources pilotée par les données.",
+          "Les systèmes de détection précoce des menaces sont optimisés par des algorithmes d'analyse des signaux faibles.",
+          "La simulation des scénarios d'affrontement est intégrée à la planification stratégique comme outil standard."
+        ],
+        "divergence": [
+          "L'acceptabilité éthique des systèmes d'armes autonomes fait l'objet de désaccords profonds et persistants.",
+          "La légitimité des décisions défensives déléguées à des algorithmes reste une ligne de fracture structurelle.",
+          "La définition du seuil de riposte acceptable dans un contexte automatisé divise les responsables.",
+          "La délégation de décisions létales à des systèmes autonomes suscite un débat éthique et juridique non résolu.",
+          "Les risques de manipulation des systèmes de renseignement par des acteurs adverses divisent les évaluations."
+        ]
+      },
+      "junte_militaire": {
+        "convergence": [
+          "La puissance militaire est consolidée comme garantie première de la souveraineté et de la stabilité du régime.",
+          "Les ressources nationales sont mobilisées sans restriction au profit de la capacité opérationnelle des forces.",
+          "La discipline de commandement et la cohésion des troupes sont érigées en valeurs défensives absolues.",
+          "La modernisation de l'équipement est engagée en priorité pour maintenir la supériorité opérationnelle.",
+          "La formation continue des troupes est intensifiée pour garantir la réactivité face à toute menace identifiée."
+        ],
+        "divergence": [
+          "Des tensions persistent sur la doctrine à adopter face à une menace aux contours encore mal définis.",
+          "L'arbitrage entre posture défensive et capacité d'action préventive divise les échelons du commandement.",
+          "La gestion des ressources en période prolongée de mobilisation génère des frictions internes significatives.",
+          "Les rivalités entre corps d'armée pour l'attribution des ressources génèrent des frictions institutionnelles.",
+          "La définition du périmètre de la menace intérieure versus extérieure suscite des désaccords doctrinaux internes."
+        ]
+      },
+      "oligarchie": {
+        "convergence": [
+          "La sécurité des routes commerciales et des intérêts économiques stratégiques est consolidée en priorité.",
+          "Des investissements ciblés dans les capacités défensives privées renforcent la résilience globale du système.",
+          "La stabilité sécuritaire est perçue comme une condition fondamentale à la continuité des activités économiques.",
+          "Les contrats d'armement avec les industriels du secteur sont sécurisés sur le long terme pour garantir la continuité.",
+          "La défense des intérêts économiques à l'étranger est intégrée aux missions des forces de sécurité projetées."
+        ],
+        "divergence": [
+          "Des désaccords émergent sur la part acceptable du budget public consacrée à la défense des intérêts privés.",
+          "La frontière entre sécurité nationale et protection des actifs économiques des élites est l'objet de tensions.",
+          "Certains acteurs contestent les choix d'équipement jugés favorables à des fournisseurs trop proches du pouvoir.",
+          "L'attribution des marchés de défense à des acteurs proches du pouvoir suscite des contestations internes.",
+          "La frontière entre mission régalienne et protection des actifs privés à l'étranger reste floue et contestée."
+        ]
+      },
+      "theocratie": {
+        "convergence": [
+          "La défense de la communauté est présentée comme un devoir sacré transcendant les calculs politiques ordinaires.",
+          "Les forces armées opèrent dans un cadre moral défini par la doctrine et les principes spirituels du régime.",
+          "La protection du territoire et des valeurs est perçue comme indissociable de la mission institutionnelle.",
+          "Les forces armées sont présentées comme les gardiens des valeurs et de l'intégrité spirituelle de la nation.",
+          "L'effort de défense est légitimé par le cadre doctrinal comme obligation collective envers la communauté."
+        ],
+        "divergence": [
+          "Des tensions apparaissent sur le recours à la force dans des situations où la doctrine reste ambiguë.",
+          "L'interprétation du concept de guerre juste divise les autorités religieuses et militaires du régime.",
+          "La limite entre défense légitime et expansion au nom de la foi fait l'objet de débats doctrinaux internes.",
+          "Les conditions d'une guerre juste selon la doctrine sont interprétées différemment par les autorités religieuses.",
+          "Le recours aux technologies de surveillance de masse crée des tensions avec les principes de dignité personnelle."
+        ]
+      }
+    },
+    "sante": {
+      "democratie_liberale": {
+        "convergence": [
+          "Un accès universel aux soins est réaffirmé comme droit fondamental et priorité budgétaire de premier rang.",
+          "Les politiques de prévention sont renforcées pour réduire la pression sur les structures hospitalières.",
+          "La recherche médicale publique est consolidée pour garantir l'indépendance thérapeutique nationale.",
+          "Un plan pluriannuel de recrutement dans les professions de santé est adopté pour combler les déficits structurels.",
+          "La prise en charge intégrale des maladies chroniques est maintenue comme engagement budgétaire non négociable."
+        ],
+        "divergence": [
+          "Un désaccord profond oppose les partisans d'un système entièrement public aux défenseurs d'un modèle mixte.",
+          "L'arbitrage entre financement de la prévention et prise en charge des soins curatifs divise les priorités.",
+          "L'encadrement des pratiques médicales alternatives par la loi reste un sujet de controverse persistante.",
+          "La définition du panier de soins remboursables fait l'objet de désaccords entre efficience économique et équité.",
+          "La régulation des déserts médicaux par l'installation obligatoire divise les professionnels et les décideurs."
+        ]
+      },
+      "republique_federale": {
+        "convergence": [
+          "Une solidarité sanitaire interrégionale est instituée pour réduire les inégalités d'accès aux soins.",
+          "Des protocoles communs sont définis pour harmoniser la qualité des soins sur l'ensemble du territoire.",
+          "Les ressources médicales sont mutualisées entre les entités pour faire face aux pics de demande.",
+          "Un registre de santé publique fédéral est institué pour améliorer la coordination épidémiologique nationale.",
+          "Les formations médicales sont harmonisées pour faciliter la mobilité des professionnels entre les régions."
+        ],
+        "divergence": [
+          "Les disparités de moyens entre régions créent des frictions durables dans l'organisation des soins.",
+          "L'uniformisation des protocoles médicaux est perçue comme une menace à l'autonomie sanitaire régionale.",
+          "La répartition des investissements hospitaliers entre territoires à démographie inégale reste contestée.",
+          "Les régions les mieux dotées refusent de financer la mise à niveau des systèmes de santé les plus défaillants.",
+          "La définition des priorités de santé publique au niveau fédéral empiète sur les compétences régionales revendiquées."
+        ]
+      },
+      "monarchie_constitutionnelle": {
+        "convergence": [
+          "Le système de santé est consolidé dans la continuité des politiques sanitaires qui ont fait leur preuve.",
+          "Des améliorations progressives sont introduites sans remettre en cause les équilibres institutionnels établis.",
+          "La bienveillance de la Couronne envers les plus vulnérables est affirmée comme principe directeur.",
+          "Des programmes de santé publique sont lancés sous le patronage royal pour en renforcer l'adhésion populaire.",
+          "L'accès aux soins dans les zones rurales est identifié comme priorité nationale dans la continuité des valeurs."
+        ],
+        "divergence": [
+          "Des tensions émergent entre la volonté de moderniser les pratiques et la résistance des structures héritées.",
+          "Certains conseillers exigent une réforme de fond que le cadre traditionnel rend politiquement difficile.",
+          "La place du secteur privé dans un système historiquement public suscite un débat institutionnel non tranché.",
+          "La modernisation des hôpitaux publics se heurte à des contraintes budgétaires que le régime peine à assumer.",
+          "Le financement de la recherche médicale privée versus publique divise les conseillers sur les priorités d'allocation."
+        ]
+      },
+      "technocratie_ia": {
+        "convergence": [
+          "Les indicateurs de santé publique sont optimisés par des systèmes de surveillance épidémiologique algorithmique.",
+          "Les ressources médicales sont allouées en temps réel selon les flux de données validés par les modèles.",
+          "La médecine préventive guidée par l'analyse prédictive est retenue comme axe prioritaire des politiques.",
+          "Les protocoles thérapeutiques sont actualisés en continu grâce à l'analyse des données cliniques en temps réel.",
+          "La détection précoce des épidémies est améliorée par des modèles de surveillance intégrés à l'échelle nationale."
+        ],
+        "divergence": [
+          "La fiabilité des diagnostics automatisés dans des cas complexes reste l'objet de réserves médicales sérieuses.",
+          "La déshumanisation perçue des soins pilotés par algorithme suscite une résistance dans le corps médical.",
+          "Le contrôle humain sur les décisions de triage algorithmique n'est pas défini de façon consensuelle.",
+          "L'utilisation des données de santé personnelles à des fins de modélisation soulève des objections éthiques.",
+          "La médecine personnalisée basée sur les données génomiques crée des inégalités d'accès non anticipées."
+        ]
+      },
+      "junte_militaire": {
+        "convergence": [
+          "Le système de santé est orienté vers le maintien de la capacité opérationnelle des forces actives.",
+          "Les ressources médicales stratégiques sont centralisées et sécurisées pour l'effort national prioritaire.",
+          "La résilience sanitaire de la population est traitée comme un facteur de puissance et de cohésion.",
+          "Les hôpitaux militaires sont mis en réseau avec les structures civiles pour optimiser la gestion des crises.",
+          "Un stock stratégique de médicaments essentiels est constitué et maintenu en prévision des situations d'urgence."
+        ],
+        "divergence": [
+          "Des tensions apparaissent entre les besoins de la population civile et les exigences sanitaires militaires.",
+          "L'allocation des ressources médicales limitées entre front et arrière génère des conflits de priorité.",
+          "Le niveau minimal de soins garanti aux civils en période de mobilisation fait l'objet de débats internes.",
+          "La priorité accordée aux militaires dans l'accès aux soins de pointe est contestée par les représentants civils.",
+          "Le financement de la recherche médicale militaire au détriment des soins courants suscite des tensions internes."
+        ]
+      },
+      "oligarchie": {
+        "convergence": [
+          "Le secteur de la santé est restructuré pour maximiser son efficacité économique et son attrait investisseur.",
+          "Les innovations thérapeutiques à haute valeur ajoutée reçoivent un soutien prioritaire des décideurs.",
+          "La santé productive de la main-d'œuvre est traitée comme un actif économique à préserver.",
+          "Les partenariats public-privé dans le secteur hospitalier sont institutionnalisés pour améliorer l'efficience.",
+          "Les assurances complémentaires privées sont encouragées comme levier de financement du système de santé."
+        ],
+        "divergence": [
+          "Des conflits d'intérêts émergent entre les opérateurs privés de santé et les partisans d'un accès universel.",
+          "L'étendue de la privatisation acceptable des soins essentiels divise profondément les positions du ministère.",
+          "Le rapport entre rentabilité des structures et qualité des soins pour les populations fragiles reste contesté.",
+          "La tarification des soins innovants inaccessibles à la majorité suscite une controverse politique croissante.",
+          "La gestion des données de santé par des acteurs privés crée des tensions avec les impératifs de confidentialité."
+        ]
+      },
+      "theocratie": {
+        "convergence": [
+          "Les politiques de santé sont élaborées dans le respect des prescriptions morales et des valeurs communautaires.",
+          "Le soin des malades est affirmé comme un devoir collectif ancré dans les principes de la doctrine.",
+          "La solidarité envers les plus faibles est promue comme expression concrète des valeurs spirituelles du régime.",
+          "Les établissements de soin confessionnels sont intégrés au réseau public avec des garanties de conformité doctrinale.",
+          "La dimension spirituelle de l'accompagnement des malades est reconnue comme composante légitime du soin."
+        ],
+        "divergence": [
+          "Des tensions persistent entre les approches thérapeutiques modernes et les préceptes de la tradition.",
+          "L'acceptabilité de certaines pratiques médicales au regard des interdits doctrinaux divise les autorités.",
+          "La frontière entre soin légitime et intervention contraire aux valeurs religieuses reste sujette à interprétation.",
+          "Certains traitements médicaux recommandés par la science sont contestés au nom des valeurs religieuses du régime.",
+          "La fin de vie et l'accompagnement palliatif suscitent des interprétations doctrinales divergentes et sensibles."
+        ]
+      }
+    },
+    "education": {
+      "democratie_liberale": {
+        "convergence": [
+          "L'égalité des chances éducatives est réaffirmée comme priorité nationale transversale à toutes les politiques.",
+          "Un investissement renforcé dans la formation des enseignants est retenu comme levier d'amélioration structurelle.",
+          "Le développement de l'esprit critique est confirmé comme objectif premier du système éducatif.",
+          "Le numérique éducatif est déployé comme outil d'équité en ciblant en priorité les établissements sous-dotés.",
+          "La formation continue des adultes est reconnue comme droit fondamental et intégrée aux politiques actives."
+        ],
+        "divergence": [
+          "Un débat persistant oppose les partisans d'un enseignement unifié à ceux qui défendent la différenciation.",
+          "Les modes d'évaluation et la place des notes dans le système suscitent des positions irréconciliables.",
+          "Les priorités budgétaires entre enseignement primaire et supérieur restent un point de friction majeur.",
+          "La place des langues régionales dans les programmes officiels suscite des désaccords culturels et politiques.",
+          "Le financement de l'enseignement privé à parité avec le public divise les sensibilités sur le rôle de l'État."
+        ]
+      },
+      "republique_federale": {
+        "convergence": [
+          "Un socle commun de compétences est défini au niveau national tout en respectant les identités régionales.",
+          "La coordination pédagogique entre les entités est renforcée pour réduire les inégalités territoriales.",
+          "La mobilité éducative entre régions est facilitée par l'harmonisation progressive des diplômes.",
+          "Un cadre de reconnaissance mutuelle des diplômes entre régions est adopté pour fluidifier la mobilité.",
+          "Des programmes d'excellence partagés sont créés pour valoriser les spécificités pédagogiques de chaque entité."
+        ],
+        "divergence": [
+          "Les programmes régionaux divergent sur des enjeux historiques, linguistiques et culturels sensibles.",
+          "L'harmonisation des curricula est perçue par certaines entités comme une atteinte à leur identité propre.",
+          "La répartition des financements éducatifs entre régions à revenus inégaux reste un contentieux ouvert.",
+          "L'enseignement de l'histoire nationale commune est perçu différemment selon les narratifs régionaux dominants.",
+          "La régulation des établissements privés confessionnels crée des tensions entre entités aux valeurs distinctes."
+        ]
+      },
+      "monarchie_constitutionnelle": {
+        "convergence": [
+          "Le système éducatif perpétue les valeurs et l'histoire nationale dans la continuité des traditions établies.",
+          "Des réformes progressives sont introduites pour adapter les programmes sans rompre avec l'héritage culturel.",
+          "La formation du caractère et du sens civique reste un objectif central affirmé par les institutions.",
+          "Les établissements d'excellence royaux sont maintenus comme symboles de la qualité éducative nationale.",
+          "L'histoire et les traditions de la nation sont transmises avec la solennité que requiert leur rôle fondateur."
+        ],
+        "divergence": [
+          "Des tensions émergent entre la volonté de moderniser les contenus et la résistance des structures héritées.",
+          "Certains acteurs exigent une réforme pédagogique plus profonde que le cadre traditionnel ne le permet.",
+          "La place de l'enseignement religieux dans les programmes publics suscite un débat institutionnel non résolu.",
+          "L'introduction de pédagogies alternatives dans les établissements publics suscite des résistances institutionnelles.",
+          "Le niveau d'autonomie accordé aux enseignants face aux prescriptions des programmes officiels divise les acteurs."
+        ]
+      },
+      "technocratie_ia": {
+        "convergence": [
+          "Les parcours éducatifs sont individualisés par des systèmes adaptatifs guidés par l'analyse des données.",
+          "Les compétences prioritaires sont définies selon les projections du marché du travail à horizon décennal.",
+          "L'efficacité pédagogique est mesurée en continu par des indicateurs de performance validés algorithmiquement.",
+          "Les outils d'orientation scolaire automatisés sont déployés pour optimiser l'adéquation formation-emploi.",
+          "Les résultats pédagogiques sont analysés en continu pour ajuster les programmes en temps quasi réel."
+        ],
+        "divergence": [
+          "L'usage de l'intelligence artificielle dans l'évaluation suscite des réserves éthiques parmi les pédagogues.",
+          "La réduction de l'éducation à des compétences mesurables est contestée par les partisans d'une formation globale.",
+          "Les questions de protection des données des élèves dans les systèmes adaptatifs restent non résolues.",
+          "Le remplacement partiel des enseignants par des systèmes adaptatifs divise profondément la communauté éducative.",
+          "La standardisation des apprentissages par les algorithmes est perçue comme une menace à la diversité pédagogique."
+        ]
+      },
+      "junte_militaire": {
+        "convergence": [
+          "Le système éducatif est orienté vers la formation de citoyens disciplinés, loyaux et prêts au service national.",
+          "Les curricula intègrent une dimension patriotique et civique renforcée validée par les autorités compétentes.",
+          "La cohésion nationale est affirmée comme finalité première de toute politique éducative du régime.",
+          "Les programmes d'éducation physique et de préparation militaire sont renforcés dans tous les établissements.",
+          "L'histoire nationale est enseignée selon un récit unifié validé par les autorités compétentes du régime."
+        ],
+        "divergence": [
+          "Des débats internes portent sur le degré d'endoctrinement acceptable dans le cadre d'une formation citoyenne.",
+          "L'arbitrage entre formation technique utilitaire et développement intellectuel plus large divise les stratèges.",
+          "La place des disciplines critiques dans un système visant avant tout la loyauté institutionnelle reste contestée.",
+          "Le degré de contrôle de l'État sur les établissements privés et confessionnels suscite des tensions persistantes.",
+          "La formation à la pensée critique est perçue par certains officiers comme incompatible avec la cohésion nationale."
+        ]
+      },
+      "oligarchie": {
+        "convergence": [
+          "Le système éducatif est restructuré pour former des profils directement opérationnels sur le marché du travail.",
+          "Les filières d'excellence reçoivent un soutien prioritaire pour alimenter les secteurs économiques stratégiques.",
+          "Les partenariats entre établissements privés et acteurs économiques sont encouragés et institutionnalisés.",
+          "Les certifications professionnelles alignées sur les besoins du marché sont institutionnalisées et valorisées.",
+          "Les grandes entreprises sont associées à la définition des curricula dans les filières stratégiques prioritaires."
+        ],
+        "divergence": [
+          "Des tensions émergent entre la logique de rentabilité éducative et l'impératif d'égalité des chances.",
+          "L'étendue acceptable de la privatisation de l'enseignement supérieur divise les positions du ministère.",
+          "La question de l'accès aux filières d'excellence pour les enfants de milieux défavorisés reste non tranchée.",
+          "L'accès inégal aux établissements d'excellence selon l'origine sociale est de plus en plus difficile à défendre.",
+          "La réduction de l'enseignement général au profit des compétences techniques suscite des résistances pédagogiques."
+        ]
+      },
+      "theocratie": {
+        "convergence": [
+          "Les contenus éducatifs sont alignés sur les valeurs et les prescriptions doctrinales du régime en place.",
+          "La transmission des principes moraux et spirituels est affirmée comme mission première des institutions.",
+          "La cohérence entre enseignement scolaire et formation religieuse est garantie par les autorités compétentes.",
+          "Les établissements scolaires confessionnels reçoivent un financement public en échange de garanties de conformité.",
+          "La formation morale et spirituelle est intégrée au cursus général comme discipline obligatoire et évaluée."
+        ],
+        "divergence": [
+          "Des tensions persistent entre l'ouverture aux savoirs scientifiques modernes et les limites doctrinales.",
+          "L'interprétation des textes fondateurs comme source pédagogique divise les courants internes du régime.",
+          "La place accordée aux disciplines critiques face aux enseignements de foi génère des désaccords persistants.",
+          "L'enseignement des sciences en contradiction avec certains dogmes génère une tension pédagogique non résolue.",
+          "Le niveau d'ouverture aux cultures et savoirs étrangers dans les programmes divise les courants internes du régime."
+        ]
+      }
+    },
+    "ecologie": {
+      "democratie_liberale": {
+        "convergence": [
+          "Une transition écologique progressive est adoptée, impliquant les acteurs économiques dans sa mise en œuvre.",
+          "Les normes environnementales sont renforcées dans un cadre négocié avec les parties prenantes concernées.",
+          "La durabilité devient un critère transversal intégré à l'ensemble des politiques publiques du gouvernement.",
+          "Un plan national de rénovation énergétique des bâtiments est adopté comme levier central de la transition.",
+          "La fiscalité carbone est progressivement augmentée avec des mécanismes de redistribution pour les ménages modestes."
+        ],
+        "divergence": [
+          "Un désaccord structurant oppose les partisans d'une transition rapide aux défenseurs d'un rythme économiquement soutenable.",
+          "Les mesures contraignantes imposées aux entreprises sont contestées par ceux qui privilégient les incitations.",
+          "L'arbitrage entre protection des emplois industriels et exigences environnementales reste non résolu.",
+          "Le niveau d'acceptabilité sociale des restrictions à la mobilité individuelle divise profondément les positions.",
+          "La place du nucléaire dans le mix énergétique de transition suscite un désaccord fondamental persistant."
+        ]
+      },
+      "republique_federale": {
+        "convergence": [
+          "Une coordination écologique entre les entités régionales est instituée pour harmoniser les normes territoriales.",
+          "Des objectifs environnementaux communs sont définis au niveau fédéral avec des marges d'adaptation locales.",
+          "La mutualisation des ressources entre régions est retenue pour financer les transitions les plus coûteuses.",
+          "Un fonds fédéral de transition écologique est institué pour soutenir les régions les plus exposées au changement.",
+          "Les normes environnementales minimales sont définies au niveau fédéral avec possibilité de rehaussement local."
+        ],
+        "divergence": [
+          "Les disparités économiques entre régions créent des inégalités dans la capacité à financer la transition.",
+          "Certaines entités contestent l'imposition de normes fédérales perçues comme inadaptées à leurs réalités locales.",
+          "La cohérence des politiques environnementales sur l'ensemble du territoire reste compromise par les divergences.",
+          "Les régions dont l'économie repose sur les énergies fossiles résistent aux calendriers nationaux de sortie.",
+          "La gouvernance des ressources en eau transfrontalières génère des contentieux récurrents entre entités voisines."
+        ]
+      },
+      "monarchie_constitutionnelle": {
+        "convergence": [
+          "La protection du patrimoine naturel est affirmée comme une responsabilité inscrite dans la tradition royale.",
+          "Une transition écologique mesurée est engagée dans le respect des équilibres économiques et sociaux établis.",
+          "La préservation des terres ancestrales est élevée au rang de priorité institutionnelle durable.",
+          "La gestion durable des forêts et des terres royales est érigée en modèle pour l'ensemble des politiques foncières.",
+          "Les investissements dans les énergies renouvelables sont présentés comme un legs de la Couronne aux générations futures."
+        ],
+        "divergence": [
+          "Des tensions émergent entre les exigences écologiques contemporaines et les intérêts économiques traditionnels.",
+          "Certains conseillers plaident pour une action plus résolue que le cadre hérité ne facilite politiquement.",
+          "Le rythme de la transition écologique fait l'objet d'un désaccord entre modernistes et conservateurs.",
+          "Les grandes propriétés foncières de la Couronne font l'objet de débats sur leur contribution à l'effort écologique.",
+          "La tension entre développement touristique du patrimoine naturel royal et sa préservation reste non résolue."
+        ]
+      },
+      "technocratie_ia": {
+        "convergence": [
+          "Les politiques environnementales sont optimisées par des modèles de simulation à haute résolution temporelle.",
+          "L'empreinte écologique nationale est suivie en temps réel par des systèmes de mesure algorithmique intégrés.",
+          "Les décisions de transition énergétique sont guidées par les trajectoires calculées à horizon long terme.",
+          "Les émissions de gaz à effet de serre sont suivies par des capteurs connectés dont les données alimentent la politique.",
+          "Les scénarios de transition énergétique optimale sont calculés et mis à jour trimestriellement par les systèmes."
+        ],
+        "divergence": [
+          "Les incertitudes persistantes des modèles climatiques freinent l'adhésion à des objectifs trop contraignants.",
+          "Le rôle des données prédictives face aux enjeux politiques de la transition suscite des désaccords méthodologiques.",
+          "Les stratégies de déploiement des solutions technologiques varient selon les analyses internes contradictoires.",
+          "Les recommandations algorithmiques de décroissance sélective se heurtent à des résistances politiques majeures.",
+          "La gestion des données environnementales sensibles par des systèmes privés suscite des inquiétudes souveraines."
+        ]
+      },
+      "junte_militaire": {
+        "convergence": [
+          "La sécurisation des ressources naturelles stratégiques est intégrée à la doctrine de souveraineté nationale.",
+          "Le contrôle étatique des réserves vitales est renforcé pour garantir l'autonomie du régime en toute situation.",
+          "La gestion écologique est traitée comme une composante de la résilience stratégique à long terme.",
+          "Les ressources hydriques stratégiques sont placées sous contrôle militaire comme actif de souveraineté absolue.",
+          "Les capacités de résilience face aux catastrophes climatiques sont intégrées aux plans de défense territoriale."
+        ],
+        "divergence": [
+          "Des tensions apparaissent entre l'exploitation immédiate des ressources et leur préservation à long terme.",
+          "L'arbitrage entre priorités militaires et contraintes environnementales génère des conflits de doctrine.",
+          "La légitimité des restrictions écologiques imposées à l'appareil productif est contestée par certains officiers.",
+          "L'exploitation des ressources naturelles en zone protégée pour des besoins stratégiques crée des tensions internes.",
+          "La contribution du secteur militaire aux émissions nationales est un sujet tabou qui génère des frictions croissantes."
+        ]
+      },
+      "oligarchie": {
+        "convergence": [
+          "Les investissements dans les technologies vertes sont ciblés sur les secteurs à plus haute rentabilité potentielle.",
+          "La transition écologique est encadrée pour préserver la compétitivité des acteurs économiques dominants.",
+          "Les normes environnementales sont négociées de façon à éviter toute rupture brutale des équilibres de marché.",
+          "Les marchés de crédits carbone sont institutionnalisés comme mécanisme central de la politique climatique.",
+          "Les acteurs industriels dominants co-définissent les standards environnementaux pour protéger leur compétitivité."
+        ],
+        "divergence": [
+          "Des conflits d'intérêts émergent entre les acteurs qui profitent du statu quo et ceux qui misent sur la transition.",
+          "Le niveau des contraintes réglementaires acceptables sans nuire à la rentabilité divise les positions internes.",
+          "La tension entre impératif de durabilité et maximisation des profits à court terme reste structurellement non résolue.",
+          "Les accusations de greenwashing adressées aux grandes entreprises alimentent un climat de défiance persistant.",
+          "La tension entre valorisation boursière à court terme et investissements verts à long terme reste non résolue."
+        ]
+      },
+      "theocratie": {
+        "convergence": [
+          "La protection de la création est affirmée comme un devoir moral ancré dans les valeurs fondamentales du régime.",
+          "Une vision éthique de l'environnement est adoptée, fondée sur la responsabilité envers les générations futures.",
+          "La sobriété et le respect de la nature sont promus comme expressions concrètes des principes spirituels.",
+          "Des journées de préservation de la nature sont institutionnalisées comme pratique spirituelle et civique collective.",
+          "L'agriculture biologique et les pratiques ancestrales de gestion des terres sont valorisées et soutenues."
+        ],
+        "divergence": [
+          "Des tensions persistent entre les impératifs de développement économique et les prescriptions de sobriété.",
+          "L'interprétation du devoir de gestion de la création divise les courants doctrinaux internes du régime.",
+          "La limite entre exploitation légitime des ressources et atteinte à l'ordre naturel voulu reste contestée.",
+          "Certains courants doctrinaux perçoivent les catastrophes climatiques comme une épreuve divine et non comme une urgence.",
+          "Le recours à des technologies de géo-ingénierie est perçu par certains comme une transgression des lois naturelles."
+        ]
+      }
+    },
+    "industrie": {
+      "democratie_liberale": {
+        "convergence": [
+          "L'innovation industrielle est encouragée dans un cadre réglementaire garantissant une concurrence équitable.",
+          "La compétitivité des filières stratégiques est renforcée par des investissements publics ciblés et transparents.",
+          "La durabilité est intégrée comme critère obligatoire dans les politiques de développement industriel.",
+          "Un plan de réindustrialisation nationale est adopté pour réduire la dépendance aux importations stratégiques.",
+          "La formation professionnelle est réformée pour répondre aux besoins des filières industrielles en transformation."
+        ],
+        "divergence": [
+          "Un débat structurant oppose les partisans d'une régulation accrue aux défenseurs d'un marché plus libre.",
+          "Le rôle de l'investissement public face à l'initiative privée dans les secteurs stratégiques reste contesté.",
+          "Les priorités technologiques entre transition numérique et transition énergétique divisent les orientations.",
+          "La politique de subvention aux secteurs industriels en difficulté divise selon les critères retenus pour l'éligibilité.",
+          "La protection des emplois industriels face à l'automatisation accélérée suscite des visions irréconciliables."
+        ]
+      },
+      "republique_federale": {
+        "convergence": [
+          "Les politiques industrielles sont coordonnées à l'échelle fédérale pour éviter les doublons et les rivalités.",
+          "Chaque région développe ses atouts propres dans un cadre stratégique commun validé collectivement.",
+          "La complémentarité des filières régionales est institutionnalisée pour renforcer la résilience nationale.",
+          "Des zones industrielles fédérales partagées sont créées pour mutualiser les infrastructures et réduire les coûts.",
+          "Un label fédéral de qualité industrielle est institué pour renforcer la compétitivité des producteurs nationaux."
+        ],
+        "divergence": [
+          "Des rivalités industrielles inter-régionales compromettent la cohérence des politiques économiques nationales.",
+          "La répartition des ressources fédérales entre filières régionales concurrentes génère des tensions récurrentes.",
+          "L'alignement des stratégies industrielles locales sur les objectifs nationaux reste partiellement non résolu.",
+          "Certaines régions refusent d'accueillir des industries lourdes imposées par le plan national sur leur territoire.",
+          "La répartition des bénéfices issus des industries extractives entre régions productrices et fédération divise."
+        ]
+      },
+      "monarchie_constitutionnelle": {
+        "convergence": [
+          "Le développement industriel est conduit dans la continuité des orientations stratégiques historiquement validées.",
+          "Des innovations graduelles sont encouragées sans remettre en cause les équilibres sectoriels établis.",
+          "La stabilité du tissu industriel est traitée comme un fondement de la prospérité et de la cohésion nationale.",
+          "Les industries liées au patrimoine national sont protégées et soutenues comme vecteurs d'identité et de prestige.",
+          "L'artisanat de qualité et les savoir-faire traditionnels sont valorisés aux côtés des industries modernes."
+        ],
+        "divergence": [
+          "Des tensions émergent entre le rythme d'innovation exigé par les marchés et la prudence des institutions.",
+          "Certains acteurs plaident pour une rupture technologique que le cadre traditionnel rend politiquement risquée.",
+          "Les priorités entre maintien de l'emploi industriel existant et reconversion vers de nouveaux secteurs divisent.",
+          "La fermeture de sites industriels historiques entraîne des tensions entre modernisation et attachement au passé.",
+          "Le financement des industries de défense au détriment d'autres secteurs crée des arbitrages politiquement difficiles."
+        ]
+      },
+      "technocratie_ia": {
+        "convergence": [
+          "Les systèmes industriels sont optimisés par une intégration systématique des outils d'automatisation validés.",
+          "L'allocation des capacités de production est pilotée par des modèles prédictifs à haute précision mesurée.",
+          "L'efficacité opérationnelle des filières est maximisée par une analyse continue des données de performance.",
+          "Les chaînes de production sont entièrement numérisées et interconnectées pour maximiser leur flexibilité.",
+          "Les décisions d'investissement industriel sont guidées par des analyses prédictives de rentabilité à long terme."
+        ],
+        "divergence": [
+          "Les risques liés à la dépendance excessive envers des systèmes automatisés font l'objet de désaccords internes.",
+          "Le niveau de supervision humaine dans les décisions industrielles critiques reste une ligne de friction.",
+          "La gestion des risques systémiques liés à l'automatisation ne fait pas l'objet d'un consensus méthodologique.",
+          "La concentration des capacités industrielles dans quelques pôles hyper-optimisés crée des vulnérabilités géographiques.",
+          "Le remplacement massif de postes humains par des automates génère des tensions sociales que les modèles sous-estiment."
+        ]
+      },
+      "junte_militaire": {
+        "convergence": [
+          "L'appareil industriel est mobilisé au service des objectifs stratégiques définis par l'état-major national.",
+          "La production prioritaire est orientée vers les secteurs jugés essentiels à la souveraineté et à la défense.",
+          "Le contrôle étatique des filières critiques est renforcé pour garantir la résilience du régime.",
+          "Les capacités de production d'armements sont prioritairement développées pour garantir l'autonomie stratégique.",
+          "Les industries duales, civiles et militaires, sont coordonnées dans un cadre de planification unifiée."
+        ],
+        "divergence": [
+          "Des tensions persistantes opposent les besoins civils et les exigences de l'effort industriel stratégique.",
+          "La répartition des ressources entre secteurs militaires et civils fait l'objet d'arbitrages conflictuels.",
+          "La soutenabilité à long terme d'une économie entièrement orientée vers la défense est questionnée en interne.",
+          "La réquisition de capacités industrielles civiles pour des besoins militaires urgents crée des résistances croissantes.",
+          "La politique d'autarcie industrielle totale est contestée par ceux qui mesurent son coût économique réel."
+        ]
+      },
+      "oligarchie": {
+        "convergence": [
+          "Les investissements industriels stratégiques sont consolidés pour renforcer les positions des acteurs dominants.",
+          "L'innovation est soutenue en priorité dans les filières à plus fort potentiel de rentabilité identifié.",
+          "Les positions concurrentielles des acteurs clés sont protégées par un cadre réglementaire adapté.",
+          "Les fusions et acquisitions dans les secteurs stratégiques sont facilitées pour créer des champions nationaux.",
+          "Les barrières réglementaires à l'entrée dans les marchés les plus rentables sont consolidées pour les acteurs établis."
+        ],
+        "divergence": [
+          "Des conflits d'intérêts émergent entre les grandes puissances industrielles aux agendas stratégiques divergents.",
+          "La concentration croissante du pouvoir économique dans quelques filières suscite des résistances internes.",
+          "L'accès des acteurs émergents aux marchés contrôlés par les opérateurs dominants reste un contentieux ouvert.",
+          "La pression des concurrents étrangers subventionnés par leur État crée des désaccords sur la réponse à adopter.",
+          "La répartition des gains de productivité issus de l'automatisation entre actionnaires et salariés reste conflictuelle."
+        ]
+      },
+      "theocratie": {
+        "convergence": [
+          "Le développement industriel est encadré par les principes éthiques et les valeurs fondamentales du régime.",
+          "Les pratiques de production sont soumises à une validation morale préalable par les autorités doctrinales.",
+          "La cohérence entre impératif de développement et fidélité aux valeurs est affirmée comme priorité absolue.",
+          "Les industries jugées contraires aux valeurs du régime sont progressivement écartées ou reconverties.",
+          "Le travail est promu comme une vocation morale et l'industrie comme un service rendu à la communauté."
+        ],
+        "divergence": [
+          "Des tensions apparaissent sur la compatibilité de certaines technologies avec les prescriptions doctrinales.",
+          "L'interprétation des limites acceptables en matière d'innovation technologique divise les autorités religieuses.",
+          "La tension entre nécessité de modernisation économique et fidélité aux préceptes traditionnels reste non résolue.",
+          "L'introduction de technologies jugées impures ou contraires aux enseignements crée des résistances doctrinales.",
+          "La place des travailleurs étrangers dans les industries nationales suscite des tensions entre pragmatisme et doctrine."
+        ]
+      }
+    }
+  },
+  "presidence": {
+    "convergence": [
+      "Une orientation claire est arrêtée dans l'intérêt collectif de la nation et de ses institutions.",
+      "La décision s'inscrit dans une vision durable et cohérente portée par les deux instances présidentielles.",
+      "Les équilibres fondamentaux sont respectés dans la mise en œuvre de la direction retenue.",
+      "La stabilité institutionnelle est assurée par la convergence des positions au sommet de l'État.",
+      "Les priorités sont alignées avec les besoins du pays tels qu'ils ont été définis collectivement.",
+      "Une trajectoire maîtrisée est adoptée, offrant au peuple une lisibilité nécessaire sur l'avenir.",
+      "Les engagements pris sont confirmés avec la solennité qu'exige la gravité des enjeux.",
+      "La cohérence de l'action publique est renforcée par l'unité de vue au niveau présidentiel.",
+      "Une ligne directrice est fixée sans ambiguïté, permettant une exécution déterminée et ordonnée.",
+      "L'exécution est engagée dans un cadre maîtrisé, sous l'autorité conjointe des deux figures.",
+      "La décision prise engage les deux figures présidentielles dans une responsabilité partagée et assumée.",
+      "Le peuple peut s'appuyer sur cette unité de direction pour traverser les défis à venir avec confiance.",
+      "L'accord entre le Phare et la Boussole offre à la nation une clarté décisionnelle rare et précieuse.",
+      "Cette convergence institutionnelle renforce la légitimité de l'action publique dans la durée.",
+      "Les fondements de la décision sont solides, portés conjointement par les deux instances de l'État.",
+      "L'harmonie au sommet crée les conditions d'une exécution déterminée et sans équivoque.",
+      "Ce moment de cohésion présidentielle constitue un signal fort envoyé à l'ensemble de la nation."
+    ],
+    "divergence": [
+      "Une tension structurante persiste entre vision stratégique à long terme et prudence opérationnelle immédiate.",
+      "Les orientations restent partagées entre les deux instances malgré la profondeur des échanges tenus.",
+      "L'absence de consensus au sommet appelle à une délibération élargie ou à une décision populaire.",
+      "Les priorités divergent entre les deux figures et nécessitent un arbitrage que seul le peuple peut rendre.",
+      "La trajectoire de la nation reste incertaine à ce stade, dans l'attente d'un accord ou d'un vote.",
+      "Des visions opposées structurent le débat présidentiel sans qu'une synthèse n'ait pu être dégagée.",
+      "Le cadre d'action commun n'est pas stabilisé, rendant toute décision exécutoire prématurée.",
+      "La décision est reportée face à des désaccords dont la résolution dépasse le seul niveau institutionnel.",
+      "Une consultation élargie des forces vives de la nation apparaît comme la voie la plus légitime.",
+      "Le choix final est soumis au jugement du peuple, seul souverain en dernier ressort.",
+      "Cette tension au sommet de l'État reflète la complexité réelle des enjeux soumis au Conseil.",
+      "Le désaccord entre les deux figures n'est pas une faiblesse — c'est l'expression d'une délibération authentique.",
+      "Le peuple est appelé à trancher là où les institutions ont atteint les limites de leur propre arbitrage.",
+      "Cette divergence présidentielle ouvre un espace démocratique que seul le suffrage peut clore dignement.",
+      "Le Phare et la Boussole, fidèles à leurs missions respectives, offrent au peuple deux voies légitimes.",
+      "L'absence de synthèse n'est pas un échec — c'est un appel à une souveraineté populaire plus directe.",
+      "Cette impasse institutionnelle appelle une réponse démocratique dont la nation seule détient la clé."
+    ]
+  }
 }

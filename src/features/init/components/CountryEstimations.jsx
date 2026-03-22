@@ -24,7 +24,7 @@ const ARIA_BASE = {
     junte_militaire: 16,
     regime_autoritaire: 20,
     monarchie_absolue: 28,
-    theocracie: 18,
+    theocratie: 18,
     communisme: 32
 };
 
@@ -44,7 +44,7 @@ const SAT_BASE = {
     oligarchie: 40,
     junte_militaire: 35,
     regime_autoritaire: 38,
-    theocracie: 50,
+    theocratie: 50,
     communisme: 45
 };
 

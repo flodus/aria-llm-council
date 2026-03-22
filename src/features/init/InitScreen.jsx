@@ -14,12 +14,14 @@
 //    - En ligne   : fictif nommé ou pays réel tapé librement (IA génère)
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useLocale, t } from '../../ariaI18n';
 import { PreLaunchScreen } from './components';
 import { DefaultLocalFlow, RealWorldFlow } from './components/flows';
 import { NameScreen, GeneratingScreen } from './components/screens';
 import InitScreenLayout from './InitScreenLayout';
+
+const GlobeBackground = lazy(() => import('./components/canvas/GlobeBackground'));
 
 
 // ── Composant interne (exporté pour usage externe, ex: ma-planete) ────
@@ -169,9 +171,12 @@ export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaun
 // ── Export principal — enveloppe dans InitScreenLayout ───────────────────
 export default function InitScreen({ background, ...props }) {
   return (
-    <InitScreenLayout background={background}>
-      <InitScreenInner {...props} />
-    </InitScreenLayout>
+    <>
+      <Suspense fallback={null}><GlobeBackground /></Suspense>
+      <InitScreenLayout background={background}>
+        <InitScreenInner {...props} />
+      </InitScreenLayout>
+    </>
   );
 }
 

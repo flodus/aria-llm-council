@@ -28,7 +28,8 @@ import {
     CountryEstimations,
     RealCountryLocalSection,
     FictionalCountrySection,
-    RealCountryAISection
+    RealCountryAISection,
+    ContextPanel
 } from './index';
 
 export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove, reelOnly = false }) {
@@ -37,6 +38,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
 
     // Accordéon
     const [isOpen, setIsOpen] = useState(true);
+    const [ctxPanelOpen, setCtxPanelOpen] = useState(false);
 
     // État local
     const [rcSearch, setRcSearch] = useState(c.nom || '');
@@ -148,7 +150,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
         {!isOpen && c.type === 'reel' && (
             <span style={{ fontSize: '0.78rem', opacity: 0.65, lineHeight: 1 }} title={`Contexte : ${ctxIcon} ${ctxTooltip}`}>{ctxIcon}</span>
         )}
-        <span style={{ fontFamily: FONT.mono, fontSize: '0.55rem', color: 'rgba(140,160,200,0.40)', lineHeight: 1 }}>
+        <span style={{ fontFamily: FONT.mono, fontSize: '0.55rem', color: 'rgba(200,164,74,0.60)', lineHeight: 1 }}>
             {isOpen ? '▲' : '▼'}
         </span>
         {canRemove && (
@@ -213,6 +215,19 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             idx={idx}
             onChange={onChange}
             setField={setField}
+            />
+        )}
+
+        {/* Contexte de délibération — pays réel uniquement */}
+        {c.type === 'reel' && (
+            <ContextPanel
+            countryName={c.nom || c.realData?.nom}
+            open={ctxPanelOpen}
+            onToggle={() => setCtxPanelOpen(o => !o)}
+            mode={c.context_mode || ''}
+            setMode={v => onChange({ ...c, context_mode: v })}
+            override={c.contextOverride || ''}
+            setOverride={v => onChange({ ...c, contextOverride: v })}
             />
         )}
 

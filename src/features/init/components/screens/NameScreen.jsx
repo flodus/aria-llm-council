@@ -1,11 +1,9 @@
 // src/features/init/components/screens/NameScreen.jsx
 
-import { useState, lazy, Suspense } from 'react';
+import { useState } from 'react';
 import { FONT, CARD_STYLE, labelStyle } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';
 import APIKeyInline from '../APIKeyInline';
-
-const GlobeBackground = lazy(() => import('../canvas/GlobeBackground'));
 
 export default function NameScreen({
     lang,
@@ -56,7 +54,6 @@ export default function NameScreen({
             justifyContent: 'space-between',
             padding: '2rem 1.5rem 14vh', boxSizing: 'border-box',
         }}>
-            <Suspense fallback={null}><GlobeBackground /></Suspense>
             <ARIAHeader showQuote={true} lang={lang} setLang={setLang} />
 
             {showKeys && <APIKeyInline onClose={handleCloseKeys} />}
@@ -81,7 +78,7 @@ export default function NameScreen({
 
                     <button style={{ ...cardBase, border: '1px solid rgba(58,191,122,0.28)' }}
                         onClick={() => onSelectWorld('custom')}>
-                        <div style={{ fontSize: '1.8rem' }}>✦</div>
+                        <div style={{ fontSize: '1.8rem', color: 'rgba(200,164,74,0.88)' }}>✦</div>
                         <div style={{ fontFamily: FONT.cinzel, fontSize: '0.54rem', letterSpacing: '0.12em', color: 'rgba(58,191,122,0.80)' }}>
                             {lang === 'en' ? 'New World' : 'Nouveau monde'}
                         </div>
