@@ -349,8 +349,8 @@
             "Un flux d’information optimisé doit remplacer l’interprétation humaine."
           ],
           "statu_quo": [
-            "Les canaux actuels sont efficaces.",
-            "Le système de diffusion est optimal.",
+            "Les canaux de communication atteignent leur cible avec le taux d'efficacité attendu. Aucune correction.",
+            "Le système de diffusion fonctionne dans ses paramètres optimaux. Toute modification serait une perturbation.",
             "Le flux d'information est optimisé. Aucune correction de message n'est nécessaire."
           ]
         },
@@ -476,8 +476,8 @@
             "Supprimons les inefficacités dans les systèmes sociaux."
           ],
           "statu_quo": [
-            "Les indicateurs sociaux sont stables.",
-            "Le système actuel atteint ses objectifs.",
+            "Les indicateurs de vulnérabilité sociale sont dans les normes calculées. Le système de protection tient.",
+            "Les algorithmes de protection sociale produisent les résultats attendus. Aucun ajustement requis.",
             "Les paramètres de protection sociale sont dans les normes calculées. Aucun ajustement nécessaire."
           ]
         },
@@ -494,8 +494,8 @@
           ],
           "statu_quo": [
             "La population civile est encadrée. Le dispositif de protection est en place et fonctionnel.",
-            "L’ordre actuel est suffisant.",
-            "Maintenons la discipline sociale."
+            "Le cadre de protection civile en place est suffisant pour maintenir la cohésion sociale.",
+            "La discipline sociale est respectée. Les citoyens restent dans le périmètre défini par le régime."
           ]
         },
         "oligarchie": {
@@ -748,11 +748,11 @@
             "Les paramètres sont validés. Lancement immédiat."
           ],
           "statu_quo": [
-            "Les modèles sont stables.",
+            "Les modèles confirment la stabilité des flux. Aucun écart statistique significatif.",
             "L'optimisation actuelle est à son plateau d'efficience. Toute intervention serait une régression.",
             "Les modèles tournent dans les paramètres nominaux. Aucune correction requise.",
-            "Le système fonctionne normalement.",
-            "Aucun ajustement requis."
+            "Tous les indicateurs systémiques sont dans les plages nominales. L'analyse ne justifie pas d'intervention.",
+            "Les données ne révèlent aucune dérive. Le protocole en cours est validé par les métriques."
           ]
         },
         "junte_militaire": {
@@ -795,9 +795,9 @@
           ],
           "statu_quo": [
             "Les rendements sont dans les marges acceptables. Ne touchons pas à ce qui rapporte.",
-            "Les indicateurs financiers sont constants.",
-            "Les projections restent inchangées.",
-            "Aucune variation significative.",
+            "Les flux de capitaux sont stables. Aucun signal d'alarme dans nos portefeuilles stratégiques.",
+            "Nos modèles de rentabilité confirment la trajectoire. Ne perturbons pas ce qui génère.",
+            "Les marchés absorbent la situation sans correction notable. Maintenons la position.",
             "La stratégie en place protège nos positions. Aucune raison de la remettre en question."
           ]
         },
@@ -913,11 +913,11 @@
             "Aucune ambiguïté. Décision enclenchée."
           ],
           "statu_quo": [
-            "Le système décisionnel est stable.",
+            "L'architecture décisionnelle algorithmique ne présente aucun dysfonctionnement détectable.",
             "La jurisprudence algorithmique est cohérente avec les paramètres légaux établis.",
             "Aucune irrégularité juridique détectée dans les flux de décisions automatisées.",
-            "Les décisions restent optimisées.",
-            "Maintien du modèle actuel."
+            "Les décisions automatisées maintiennent leur niveau d'optimisation. Aucune dérive de performance.",
+            "Le modèle juridique algorithmique est validé. Toute modification introduirait de l'incertitude."
           ]
         },
         "junte_militaire": {
@@ -940,7 +940,7 @@
             "L'ordre juridique suit l'ordre militaire. Les procédures sont respectées.",
             "Le droit en vigueur est suffisant. Toute modification affaiblirait notre cadre.",
             "La discipline juridique est intacte. Les règles servent leur fonction.",
-            "Maintien du contrôle actuel."
+            "Le dispositif juridique militaire tient. Aucune révision du cadre n'est nécessaire."
           ]
         },
         "oligarchie": {
@@ -982,11 +982,11 @@
             "L’ordre doit être rétabli ! Sans délai."
           ],
           "statu_quo": [
-            "Les principes sont respectés.",
+            "La communauté respecte le cadre doctrinal. Aucune dérogation aux principes sacrés n'a été constatée.",
             "La loi divine est appliquée. L'équilibre spirituel de la communauté est préservé.",
-            "Aucune nouvelle décision nécessaire.",
-            "Les règles restent inchangées.",
-            "Maintien de l’équilibre actuel."
+            "La jurisprudence sacrée couvre la situation. Nul besoin d'interprétation supplémentaire.",
+            "Les règles divines sont immuables. Leur application reste constante et juste.",
+            "L'équilibre entre droit et foi est préservé. La communauté est en paix avec ses lois."
           ]
         }
       }
@@ -1101,11 +1101,11 @@
             "Les preuves sont suffisantes. Exécution."
           ],
           "statu_quo": [
-            "Les renseignements sont fiables.",
-            "Aucune menace identifiée.",
-            "Les informations sont cohérentes.",
+            "Mes sources internes sont fiables et concordantes. Aucune fuite dans le dispositif de renseignement.",
+            "Le périmètre de surveillance ne remonte aucune menace active. Veille maintenue.",
+            "Les informations concordent entre elles. Aucun indice de manipulation ou de désinformation.",
             "Le renseignement intérieur ne signale rien d'anormal. La surveillance fonctionne.",
-            "Maintien du dispositif actuel."
+            "Le dispositif de surveillance fonctionne. Aucune raison de modifier le protocole en vigueur."
           ]
         },
         "oligarchie": {
@@ -1133,7 +1133,7 @@
         },
         "theocratie": {
           "prudent": [
-            "Les signes doivent être interprétés avec discernement, évitons toute conclusion hâtive.",
+            "Les indices spirituels demandent une vérification croisée, ne concluons pas trop vite.",
             "Chaque indication doit être examinée, la vérité demande patience.",
             "Les éléments doivent être compris en profondeur, poursuivons la recherche.",
             "La vérité se révèle progressivement, analysons avec sagesse.",
@@ -1388,7 +1388,7 @@
             "La trajectoire actuelle respecte l’héritage.",
             "Les orientations sont cohérentes.",
             "La stabilité stratégique est assurée.",
-            "Aucune rupture nécessaire.",
+            "L’équilibre des forces est préservé.",
             "Maintien de la ligne actuelle."
           ]
         },
@@ -1409,7 +1409,7 @@
           ],
           "statu_quo": [
             "Les modèles sont cohérents.",
-            "La trajectoire est optimisée.",
+            "Les vecteurs d'orientation sont stabilisés.",
             "Aucune divergence détectée.",
             "Les projections sont stables.",
             "Les simulations confirment : la stratégie en cours est optimale. Toute déviation coûterait plus qu'elle ne rapporterait."
@@ -1573,11 +1573,11 @@
             "Nouvelle architecture. Exécution."
           ],
           "statu_quo": [
-            "Les systèmes actuels sont optimisés.",
-            "Aucune amélioration détectée.",
+            "Les systèmes actuels tournent à leur rendement maximal mesurable. L'innovation attendrait un vrai signal.",
+            "Aucune voie d'amélioration n'est identifiée par les métriques. Le plateau d'optimisation est atteint.",
             "Le système actuel est à son optimum mesuré. Toute modification introduirait de l'incertitude.",
-            "Aucune innovation requise.",
-            "Maintien de l’architecture actuelle."
+            "Les données ne justifient aucune rupture technologique. L'itération actuelle est suffisante.",
+            "L'architecture système est validée. Toute refonte introduirait des risques non justifiés par les données."
           ]
         },
         "junte_militaire": {
@@ -1669,10 +1669,10 @@
             "La reconstruction doit commencer. Maintenant."
           ],
           "statu_quo": [
-            "Les équilibres sont rétablis.",
+            "Le corps social a retrouvé son équilibre. Les tensions se résorbent naturellement.",
             "La tension sociale est gérée. Les espaces de dialogue fonctionnent encore.",
-            "La situation est stabilisée.",
-            "Aucune action corrective nécessaire.",
+            "La situation sociale est stabilisée. Les indicateurs de bien-être collectif sont au vert.",
+            "Aucun signe de détresse collective anormale. Le tissu social se porte correctement.",
             "Le tissu social cicatrise lentement. N'intervenons pas là où les plaies se referment."
           ]
         },
@@ -1765,7 +1765,7 @@
             "La pression psychologique est dans les seuils tolérables. Le corps tient.",
             "La discipline sanitaire est respectée. Les ressources médicales sont stables.",
             "L'état de santé général ne requiert pas de mesure d'urgence. Maintien du protocole.",
-            "Maintien du dispositif actuel."
+            "Le protocole sanitaire militaire est maintenu. Aucune dégradation des capacités opérationnelles."
           ]
         },
         "oligarchie": {
@@ -1836,11 +1836,11 @@
             "La justice doit s’imposer. Maintenant."
           ],
           "statu_quo": [
-            "Le cadre juridique est respecté.",
-            "Les institutions fonctionnent normalement.",
-            "Les procédures sont appliquées.",
-            "Aucune réforme nécessaire.",
-            "Maintien du système judiciaire actuel."
+            "Le cadre juridique démocratique fonctionne normalement. Les libertés sont préservées.",
+            "Les institutions judiciaires remplissent leur mission sans dysfonctionnement notable.",
+            "Les procédures légales sont respectées. L'état de droit est préservé.",
+            "Le système judiciaire actuel répond aux besoins. Aucune réforme structurelle urgente.",
+            "Le système judiciaire démocratique est sain. Conservons ce qui garantit nos libertés."
           ]
         },
         "republique_federale": {
@@ -1859,11 +1859,11 @@
             "Le système doit être aligné. Sans délai."
           ],
           "statu_quo": [
-            "Les juridictions locales sont cohérentes.",
-            "Les cadres juridiques sont compatibles.",
-            "Le système fonctionne correctement.",
-            "Aucune réforme nécessaire.",
-            "Maintien de l’organisation actuelle."
+            "Les juridictions fédérales et régionales opèrent en cohérence. L'harmonisation tient.",
+            "Les cadres légaux des entités sont compatibles entre eux. Aucun conflit de compétence actif.",
+            "Le système judiciaire fédéral fonctionne correctement à tous les échelons.",
+            "L'architecture juridique fédérale est équilibrée. Aucune réforme structurelle n'est urgente.",
+            "L'organisation judiciaire actuelle respecte les autonomies régionales. Maintenons-la."
           ]
         },
         "monarchie_constitutionnelle": {
@@ -1882,11 +1882,11 @@
             "L’autorité juridique doit être affirmée. Immédiatement."
           ],
           "statu_quo": [
-            "Le cadre juridique est stable.",
-            "Les institutions assurent l’équilibre.",
-            "Les lois sont appliquées.",
-            "Aucune réforme nécessaire.",
-            "Maintien de l’ordre juridique actuel."
+            "Le cadre juridique royal est stable et jouit de la confiance des institutions.",
+            "Les institutions juridiques royales assurent l'équilibre entre tradition et modernité.",
+            "Les lois du Royaume sont appliquées avec la rigueur et la continuité qui leur sont dues.",
+            "Le corpus juridique royal est éprouvé. Aucune réforme n'est urgente ni nécessaire.",
+            "L'ordre juridique royal est légitime et stable. Toute modification serait prématurée."
           ]
         },
         "technocratie_ia": {
@@ -1898,18 +1898,18 @@
             "Une régulation précise garantit l’équité, poursuivons l’ajustement."
           ],
           "radical": [
-            "Incohérence détectée. Correction immédiate.",
-            "Le système juridique doit être optimisé ! Recalibrage.",
-            "Les règles sont insuffisantes ! Mise à jour.",
-            "Décision automatisée. Application.",
-            "Régulation requise. Exécution."
+            "Les protocoles juridiques présentent des incohérences systémiques. Recalibrage immédiat requis.",
+            "Le système juridique sous-performe selon les métriques. Refonte algorithmique immédiate.",
+            "Les règles actuelles ne couvrent pas les cas émergents. Mise à jour du corpus légal requise.",
+            "L'algorithme impose une révision structurelle. La décision est prise. Application sans délai.",
+            "Les données imposent une régulation accrue. Le système exécute sans appel possible."
           ],
           "statu_quo": [
-            "Les règles sont cohérentes.",
-            "Le système est stable.",
-            "Aucune anomalie détectée.",
-            "Les décisions sont optimisées.",
-            "Maintien du cadre actuel."
+            "La cohérence juridique algorithmique est confirmée par les audits de conformité.",
+            "L'architecture juridique algorithmique fonctionne dans ses paramètres validés.",
+            "Aucune irrégularité procédurale détectée dans les flux décisionnels automatisés.",
+            "Les décisions juridiques automatisées atteignent leur niveau d'optimisation nominal.",
+            "Le cadre légal en vigueur est aligné sur les paramètres du système. Aucune révision utile."
           ]
         },
         "junte_militaire": {
@@ -1928,11 +1928,11 @@
             "Discipline renforcée. Exécution."
           ],
           "statu_quo": [
-            "Le système est sous contrôle.",
-            "Les règles sont respectées.",
-            "La discipline est maintenue.",
-            "Aucune intervention nécessaire.",
-            "Maintien du dispositif actuel."
+            "Le système judiciaire militaire est sous contrôle opérationnel. Aucune brèche.",
+            "La discipline juridique militaire est intacte. Les règles sont appliquées sans dérogation.",
+            "La discipline juridique est maintenue par la force du cadre réglementaire en vigueur.",
+            "Aucun contentieux majeur ne justifie une intervention extraordinaire. Statu quo maintenu.",
+            "Le dispositif judiciaire militaire remplit sa fonction. Aucune modification requise."
           ]
         },
         "oligarchie": {
@@ -1951,11 +1951,11 @@
             "Réécriture des règles. Exécution."
           ],
           "statu_quo": [
-            "Le cadre est stable.",
-            "Les règles sont favorables.",
-            "Le système fonctionne.",
-            "Aucune modification nécessaire.",
-            "Maintien du dispositif actuel."
+            "Le cadre juridique protège efficacement les intérêts économiques dominants.",
+            "Les règles en vigueur préservent nos positions. Aucune raison de les modifier.",
+            "Le système judiciaire fonctionne dans notre intérêt. Toute réforme serait un risque.",
+            "Les dispositifs légaux actuels servent correctement nos objectifs. Maintenons-les.",
+            "Le statu quo juridique nous est favorable. Aucune initiative de réforme n'est souhaitable."
           ]
         },
         "theocratie": {
@@ -1974,11 +1974,11 @@
             "Application stricte. Exécution."
           ],
           "statu_quo": [
-            "Les règles sont respectées.",
-            "L’ordre est maintenu.",
-            "Le système est stable.",
-            "Aucune modification nécessaire.",
-            "Maintien du cadre actuel."
+            "Les règles sacrées sont observées par la communauté. Aucune transgression notable.",
+            "L'ordre juridique et spirituel est préservé dans sa cohérence doctrinale.",
+            "Le système juridique fondé sur la doctrine est stable et légitime aux yeux de la communauté.",
+            "La loi divine est complète. Aucune adjonction humaine n'est nécessaire ni souhaitable.",
+            "Le cadre légal sacré est immuable par nature. Aucune révision n'est envisageable."
           ]
         }
       }
@@ -2024,11 +2024,11 @@
             "La cohérence nationale est prioritaire. Réformons."
           ],
           "statu_quo": [
-            "Les économies régionales sont équilibrées.",
-            "Les flux sont cohérents.",
-            "Les politiques locales sont efficaces.",
-            "Aucune intervention nécessaire.",
-            "Maintien du système actuel."
+            "L'équilibre économique entre les régions est préservé. Les transferts de péréquation fonctionnent.",
+            "Les flux économiques interrégionaux sont cohérents et ne signalent aucune tension majeure.",
+            "Les politiques économiques locales produisent des résultats satisfaisants dans leurs territoires.",
+            "L'économie fédérale est stable. Aucune intervention centrale n'est justifiée actuellement.",
+            "Le système économique fédéral actuel est équilibré. Toute réforme serait prématurée."
           ]
         },
         "monarchie_constitutionnelle": {
@@ -2047,11 +2047,11 @@
             "Une nouvelle politique économique est nécessaire. Décidons."
           ],
           "statu_quo": [
-            "Les finances du Royaume sont stables.",
-            "La croissance est constante.",
-            "Les ressources sont maîtrisées.",
-            "Aucune réforme nécessaire.",
-            "Maintien de l’équilibre actuel."
+            "Les finances royales sont stables et la confiance des marchés dans la Couronne est intacte.",
+            "La croissance économique du Royaume suit une trajectoire constante et maîtrisée.",
+            "Les ressources nationales sont gérées avec la prudence qui sied à la tradition royale.",
+            "L'économie du Royaume fonctionne selon des équilibres éprouvés. Aucune réforme urgente.",
+            "L'équilibre économique actuel est le fruit de décisions sages. Préservons-le."
           ]
         },
         "technocratie_ia": {
@@ -2070,11 +2070,11 @@
             "Le système doit être optimisé ! Maintenant."
           ],
           "statu_quo": [
-            "Les flux sont optimisés.",
-            "Les paramètres sont stables.",
-            "Le rendement est conforme.",
-            "Aucune correction requise.",
-            "Maintien du système actuel."
+            "Les flux économiques sont dans les paramètres optimaux calculés. Aucun rééquilibrage requis.",
+            "Les paramètres macroéconomiques sont stables selon les modèles de prévision en vigueur.",
+            "Le rendement économique national est conforme aux projections algorithmiques validées.",
+            "Les données économiques ne révèlent aucune dérive justifiant une correction systémique.",
+            "Le système économique algorithmique fonctionne dans ses paramètres validés. Continuons."
           ]
         },
         "junte_militaire": {
@@ -2093,11 +2093,11 @@
             "Mobilisation économique immédiate. Exécution."
           ],
           "statu_quo": [
-            "L’économie est sous contrôle.",
-            "Les ressources sont sécurisées.",
-            "Les flux sont maîtrisés.",
-            "Aucune intervention nécessaire.",
-            "Maintien du dispositif actuel."
+            "L'économie nationale est sous contrôle étatique rigoureux. Aucune dérive de flux détectée.",
+            "Les ressources stratégiques nationales sont sécurisées et disponibles pour l'effort national.",
+            "Les flux économiques sont maîtrisés par les dispositifs de contrôle en vigueur.",
+            "L'économie militarisée fonctionne correctement. Aucune réquisition supplémentaire n'est nécessaire.",
+            "Le dispositif économique de contrôle est efficace. Aucune modification de structure requise."
           ]
         },
         "oligarchie": {
@@ -2109,18 +2109,18 @@
             "Une allocation efficace garantit la performance, poursuivons l’optimisation."
           ],
           "radical": [
-            "Maximisons les profits. Maintenant.",
-            "Les ressources doivent être réallouées ! Immédiatement.",
-            "Le rendement est insuffisant ! Corrigeons.",
-            "Investissements stratégiques ! Déployons.",
-            "Optimisation maximale. Exécution."
+            "Les marges actuelles sont insuffisantes face aux opportunités identifiées. Action immédiate.",
+            "La réallocation des ressources vers les secteurs à plus haute rentabilité s'impose sans délai.",
+            "Le rendement actuel est en deçà du potentiel. Restructuration immédiate des positions.",
+            "Les conditions de marché imposent un déploiement massif et immédiat des capitaux disponibles.",
+            "L'optimisation maximale de nos actifs est à portée. Exécution sans atermoiement."
           ],
           "statu_quo": [
-            "Les performances sont satisfaisantes.",
-            "Les flux sont rentables.",
-            "Les investissements sont maîtrisés.",
-            "Aucune correction nécessaire.",
-            "Maintien de la stratégie actuelle."
+            "Les performances économiques protègent les positions des acteurs dominants. Maintenons le cap.",
+            "Les flux de capitaux sont orientés vers les secteurs les plus rentables. Aucun rééquilibrage.",
+            "Les investissements stratégiques sont sous contrôle. Les risques systémiques sont couverts.",
+            "Le marché se régule favorablement. Toute intervention publique serait une perturbation.",
+            "La stratégie économique actuelle préserve nos avantages concurrentiels. Ne changeons rien."
           ]
         },
         "theocratie": {
@@ -2166,11 +2166,11 @@
             "Une réponse ferme s’impose. Maintenant."
           ],
           "statu_quo": [
-            "Le territoire est sécurisé.",
-            "Les capacités sont suffisantes.",
-            "Les menaces sont contenues.",
-            "Aucune action nécessaire.",
-            "Maintien du dispositif actuel."
+            "Le territoire national est sécurisé dans le respect des droits fondamentaux des citoyens.",
+            "Les capacités défensives actuelles sont suffisantes pour faire face aux menaces identifiées.",
+            "Les menaces identifiées sont contenues par les moyens légaux et proportionnés disponibles.",
+            "La situation sécuritaire ne justifie pas de mesures extraordinaires. La démocratie tient.",
+            "Le dispositif défensif démocratique est équilibré. Sécurité et libertés sont préservées."
           ]
         },
         "republique_federale": {
@@ -2189,11 +2189,11 @@
             "Centralisation immédiate. Exécution."
           ],
           "statu_quo": [
-            "Les dispositifs régionaux sont efficaces.",
-            "La coordination est assurée.",
-            "Les menaces sont maîtrisées.",
-            "Aucune intervention nécessaire.",
-            "Maintien du système actuel."
+            "Les dispositifs de défense régionaux sont efficaces et coordonnés au niveau fédéral.",
+            "La coordination interrégionale des forces de défense fonctionne sans friction notable.",
+            "Les menaces identifiées sont maîtrisées par la coordination des entités fédérales.",
+            "La situation sécuritaire fédérale ne requiert aucune intervention centrale extraordinaire.",
+            "L'architecture défensive fédérale est équilibrée et efficace. Aucune réforme urgente."
           ]
         },
         "monarchie_constitutionnelle": {
@@ -2212,11 +2212,11 @@
             "Protection maximale. Exécution."
           ],
           "statu_quo": [
-            "Le Royaume est protégé.",
-            "Les forces sont opérationnelles.",
-            "Les menaces sont contenues.",
-            "Aucune action nécessaire.",
-            "Maintien du dispositif actuel."
+            "Le Royaume est protégé par ses forces et ses alliances historiques. La sécurité est assurée.",
+            "Les forces royales sont opérationnelles et prêtes à toute éventualité dans le respect des traditions.",
+            "Les menaces aux frontières du Royaume sont contenues par les dispositifs en place.",
+            "La situation sécuritaire ne requiert aucune action extraordinaire de la part de la Couronne.",
+            "Le dispositif défensif royal est éprouvé et légitime. Aucune modification n'est opportune."
           ]
         },
         "technocratie_ia": {
@@ -2235,11 +2235,11 @@
             "Défense activée. Application."
           ],
           "statu_quo": [
-            "Les systèmes sont opérationnels.",
-            "La couverture est optimale.",
-            "Aucune anomalie détectée.",
-            "Les menaces sont gérées.",
-            "Maintien du dispositif actuel."
+            "Les systèmes de défense automatisés sont opérationnels dans tous leurs paramètres nominaux.",
+            "La couverture défensive algorithmique est optimale selon les modèles de menace actuels.",
+            "Aucune anomalie détectée dans les systèmes de surveillance et de réponse automatisés.",
+            "Les menaces identifiées sont traitées automatiquement par les protocoles en vigueur.",
+            "Le dispositif défensif algorithmique est calibré de façon optimale. Aucune modification requise."
           ]
         },
         "junte_militaire": {
@@ -2258,11 +2258,11 @@
             "Force maximale. Application."
           ],
           "statu_quo": [
-            "Le territoire est sous contrôle.",
-            "Les forces sont déployées.",
-            "La situation est maîtrisée.",
-            "Aucune intervention nécessaire.",
-            "Maintien du dispositif actuel."
+            "Le territoire national est sous contrôle militaire effectif. Aucune brèche dans le périmètre.",
+            "Les forces sont déployées selon le plan opérationnel en vigueur. Dispositif nominal.",
+            "La situation sécuritaire est maîtrisée. Aucun événement ne justifie un changement de posture.",
+            "Aucune menace active ne justifie une opération supplémentaire. Maintien du dispositif.",
+            "Le dispositif militaire en place remplit sa mission. Aucune modification de doctrine requise."
           ]
         },
         "oligarchie": {
@@ -2281,11 +2281,11 @@
             "Sécurisation totale. Exécution."
           ],
           "statu_quo": [
-            "Les actifs sont protégés.",
-            "Les dispositifs sont efficaces.",
-            "Les risques sont maîtrisés.",
-            "Aucune action nécessaire.",
-            "Maintien du système actuel."
+            "Les actifs stratégiques et économiques sont protégés par les dispositifs sécuritaires en place.",
+            "Les dispositifs de sécurité privés et publics protègent efficacement nos intérêts.",
+            "Les risques sécuritaires pesant sur nos actifs sont maîtrisés et couverts par les protocoles.",
+            "Aucune menace imminente ne pèse sur nos intérêts. Le statu quo sécuritaire nous convient.",
+            "Le système de protection actuel est efficace et rentable. Aucune modification justifiée."
           ]
         },
         "theocratie": {
@@ -2304,11 +2304,11 @@
             "Défense absolue. Exécution."
           ],
           "statu_quo": [
-            "L’ordre est protégé.",
-            "Les forces sont en place.",
-            "Les menaces sont contenues.",
-            "Aucune intervention nécessaire.",
-            "Maintien du dispositif actuel."
+            "L'ordre spirituel et physique de la communauté est protégé par les forces dédiées.",
+            "Les forces chargées de protéger la communauté et ses valeurs sont en place et vigilantes.",
+            "Les menaces à l'intégrité doctrinale et physique de la communauté sont contenues.",
+            "La communauté est en sécurité. Aucune intervention n'est requise au nom de la foi.",
+            "Le dispositif de protection communautaire est suffisant. La foi et les armes veillent ensemble."
           ]
         }
       }
@@ -2344,9 +2344,9 @@
             "Même soins pour tous. Sans compromis."
           ],
           "statu_quo": [
-            "Chaque territoire gère son système de santé.",
-            "Les équilibres régionaux sont maintenus.",
-            "Aucune réforme structurelle n’est engagée."
+            "L'autonomie sanitaire régionale fonctionne. Chaque territoire gère ses soins efficacement.",
+            "Les équilibres sanitaires entre régions sont maintenus. La solidarité interterritoriale opère.",
+            "Le système de santé fédéral est stable. Aucune réforme structurelle n'est urgente."
           ]
         },
         "monarchie_constitutionnelle": {
@@ -2373,14 +2373,14 @@
             "Affinons les protocoles, car l’équilibre entre efficacité et humanité reste un paramètre sensible."
           ],
           "radical": [
-            "Optimisation du système. Maintenant.",
-            "Données insuffisantes ! Recalibrage.",
-            "Décision automatisée. Application."
+            "Les inefficiences du système de santé sont documentées. Refonte algorithmique immédiate requise.",
+            "Les données sanitaires sont insuffisantes pour une décision optimale. Recalibrage des capteurs.",
+            "L'algorithme impose une restructuration du système de soins. Application sans délai."
           ],
           "statu_quo": [
-            "Les systèmes sont opérationnels.",
-            "Les paramètres sont stables.",
-            "Aucune anomalie détectée."
+            "Les systèmes de santé algorithmiques sont opérationnels dans tous leurs paramètres nominaux.",
+            "Les indicateurs de santé publique sont dans les plages nominales définies par les modèles.",
+            "Aucune anomalie sanitaire détectée par les capteurs épidémiologiques automatisés."
           ]
         },
         "junte_militaire": {
@@ -2407,14 +2407,14 @@
             "Une gestion maîtrisée garantit la continuité du système et des intérêts en place."
           ],
           "radical": [
-            "Optimisation des coûts. Maintenant.",
-            "Les ressources doivent être réallouées ! Immédiatement.",
-            "Le système doit devenir performant. Sans délai."
+            "Les coûts sanitaires sont trop élevés face aux marges. Restructuration immédiate des services.",
+            "La réallocation des ressources vers les soins rentables s'impose sans délai.",
+            "La performance économique du système de santé est insuffisante. Réforme urgente."
           ],
           "statu_quo": [
-            "Le système de santé est rentable.",
-            "Les structures sont efficaces.",
-            "Aucune modification nécessaire."
+            "Le secteur de la santé génère des retours satisfaisants. La privatisation partielle fonctionne.",
+            "Les structures de soins privées sont efficaces et compétitives sur leur segment de marché.",
+            "Le marché de la santé est équilibré. Toute intervention étatique serait une perturbation."
           ]
         },
         "theocratie": {
@@ -2429,9 +2429,9 @@
             "La santé doit suivre les principes. Sans compromis."
           ],
           "statu_quo": [
-            "Le système de santé est conforme aux principes.",
-            "Les soins sont assurés.",
-            "Aucune modification nécessaire."
+            "Le système de santé respecte les principes doctrinaux. Foi et médecine coexistent harmonieusement.",
+            "Les soins sont assurés dans le respect des valeurs spirituelles de la communauté.",
+            "Le système de soins conforme à la doctrine fonctionne. Aucune modification n'est requise."
           ]
         }
       }
@@ -2501,9 +2501,9 @@
             "Apprentissage automatisé. Application."
           ],
           "statu_quo": [
-            "Les systèmes sont opérationnels.",
-            "Les performances sont conformes.",
-            "Aucune anomalie détectée."
+            "Les systèmes éducatifs algorithmiques fonctionnent dans leurs paramètres nominaux validés.",
+            "Les performances éducatives sont conformes aux objectifs définis par les modèles prédictifs.",
+            "Aucune anomalie dans les indicateurs de performance éducative. Les algorithmes sont satisfaits."
           ]
         },
         "junte_militaire": {
@@ -2535,9 +2535,9 @@
             "L’éducation doit produire. Sans délai."
           ],
           "statu_quo": [
-            "Le système éducatif est performant.",
-            "Les formations sont adaptées.",
-            "Aucune modification nécessaire."
+            "Le système éducatif produit des diplômés compétitifs et directement employables par le marché.",
+            "Les formations sont alignées sur les besoins des secteurs économiques stratégiques dominants.",
+            "Le système éducatif orienté vers le marché fonctionne. Aucune réforme idéologique requise."
           ]
         },
         "theocratie": {
@@ -2552,9 +2552,9 @@
             "L’éducation doit suivre la foi. Sans compromis."
           ],
           "statu_quo": [
-            "Le système éducatif respecte les principes.",
-            "Les enseignements sont conformes.",
-            "Aucune modification nécessaire."
+            "Le système éducatif transmet fidèlement les valeurs doctrinales à chaque génération.",
+            "Les enseignements dispensés sont conformes aux prescriptions doctrinales et spirituelles.",
+            "L'éducation doctrinale fonctionne. La transmission des valeurs est assurée. Aucun changement."
           ]
         }
       }
@@ -2624,9 +2624,9 @@
             "Régulation environnementale. Application."
           ],
           "statu_quo": [
-            "Les systèmes sont stables.",
-            "Les paramètres sont optimisés.",
-            "Aucune anomalie détectée."
+            "Les systèmes de monitoring environnemental sont stables et dans leurs plages nominales.",
+            "Les paramètres environnementaux sont optimisés selon les modèles de régulation en vigueur.",
+            "Aucune anomalie environnementale détectée par les capteurs du réseau de surveillance."
           ]
         },
         "junte_militaire": {
@@ -2658,9 +2658,9 @@
             "Exploitation maximale. Sans délai."
           ],
           "statu_quo": [
-            "Les ressources sont exploitées efficacement.",
-            "Les investissements sont maîtrisés.",
-            "Aucune modification nécessaire."
+            "Les ressources naturelles sont exploitées avec l'efficience économique requise par le marché.",
+            "Les investissements environnementaux sont calibrés pour satisfaire les exigences réglementaires minimales.",
+            "Le cadre environnemental actuel n'entrave pas notre rentabilité. Aucune modification souhaitable."
           ]
         },
         "theocratie": {
@@ -2747,9 +2747,9 @@
             "Production automatisée. Application."
           ],
           "statu_quo": [
-            "Les systèmes sont optimisés.",
-            "Les performances sont stables.",
-            "Aucune anomalie détectée."
+            "Les systèmes industriels algorithmiques sont à leur niveau d'optimisation nominal validé.",
+            "Les performances industrielles sont stables selon les indicateurs de production mesurés.",
+            "Aucune anomalie dans les chaînes de production automatisées. Les systèmes opèrent normalement."
           ]
         },
         "junte_militaire": {
@@ -2781,9 +2781,9 @@
             "Production optimisée. Sans délai."
           ],
           "statu_quo": [
-            "Les performances industrielles sont satisfaisantes.",
-            "Les infrastructures sont rentables.",
-            "Aucune modification nécessaire."
+            "Les performances du secteur industriel sont satisfaisantes et préservent nos positions dominantes.",
+            "Les infrastructures industrielles génèrent les retours attendus sur investissement.",
+            "Le modèle industriel actuel nous est favorable. Aucune réforme structurelle n'est dans notre intérêt."
           ]
         },
         "theocratie": {
