@@ -8,8 +8,8 @@ import { callAI, getApiKeys } from '../../../Dashboard_p1';
 import { getMinistriesList } from './agentsManager';
 import { langPrefix } from './contextBuilder';
 
-/** Ministère par défaut si routing impossible */
-const DEFAULT_MINISTRY_ID = null; // null = question orpheline → FALLBACK_RESPONSES
+/** Ministère par défaut si routing impossible — désormais résolu par tirage aléatoire */
+const DEFAULT_MINISTRY_ID = null; // conservé pour compatibilité, non utilisé
 
 /** Retourne vrai si la question est orpheline (aucun keyword matche) */
 export function isOrphanQuestion(question) {
@@ -60,7 +60,7 @@ export async function routeQuestion(question, forceMinistryId = null) {
     return localKeywordRoute(q);
 }
 
-/** Score local sur keywords — retourne null si aucun match (question orpheline) */
+/** Score local sur keywords — ministère aléatoire si aucun keyword ne matche */
 function localKeywordRoute(questionLow) {
     let best = null, bestScore = 0;
     for (const m of getMinistriesList()) {
@@ -68,5 +68,10 @@ function localKeywordRoute(questionLow) {
         const score = kws.filter(kw => questionLow.includes(kw.toLowerCase())).length;
         if (score > bestScore) { bestScore = score; best = m.id; }
     }
-    return best; // null si bestScore === 0
+    // Aucun keyword ne matche → ministère aléatoire (évite le tunnel orphelin sans ministres réels)
+    if (!best) {
+        const liste = getMinistriesList();
+        return liste[Math.floor(Math.random() * liste.length)].id;
+    }
+    return best;
 }
