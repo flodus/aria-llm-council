@@ -34,9 +34,7 @@ _Dernière mise à jour : 2026-03-22 (session refactor+destin)_
   (Init PreLaunchScreen · Settings in-game · popup ConstitutionModal in-game)
 - [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
   (satisfaction détaillée, décisions clés, événements notables)
-- [ ] **U4 — Contexte pays dans la Constitution** : déplacer/dupliquer `context_mode` et `contextOverride`
-  depuis les options système (Settings) vers la ConstitutionModal par pays
-  — logique : le contexte de délibération est une propriété du pays, pas un réglage global
+- [x] **U4 — Contexte pays dans la Constitution** : `context_mode` et `contextOverride` dans ConstitutionModal par pays
 
 - [x] **U8 — Mécanique questions LLM Council** : livré
 
