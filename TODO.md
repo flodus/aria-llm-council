@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-22_
+_Dernière mise à jour : 2026-03-22 (session refactor+destin)_
 
 ---
 
@@ -123,6 +123,29 @@ _(bloqué sur refonte carte V1)_
   - Vérifier useCallback/useMemo manquants
   - Identifier les appels IA redondants
   - Ne pas implémenter sans Assess complet
+
+---
+
+## ✅ LIVRÉ cette session (2026-03-22, session refactor+destin)
+
+- [x] **Refactor source unique de vérité** — branche `refactor/simulation-json-source`
+  - Toutes les constantes hardcodées supprimées (REGIME_ARIA_BASE_IRL, REGIME_BLOC, resMinisters, TERRAIN_COLORS, MARITIME, ARCHETYPE_POSTURE, REGIME_LABEL_KEYS, ALL_MINISTRY_IDS, etc.)
+  - Chaque donnée lue depuis `governance.json` ou `simulation.json` via `getAgents()` / `getStats()`
+  - `simulation.json` enrichi : `aria_irl_base`, `sat_base`, `bloc`, `couleur` par régime · `pop_base` + `maritime` par terrain
+  - Industrie actif par défaut (remplace chance) — `useConstitution`, `DEFAULT_OPTIONS`, `ConstitutionModal`
+  - `governance.json` (FR+EN) : ministère chance supprimé · industrie ajouté · oracle + wyrd dans ministers · bloc `destin` racine
+
+- [x] **Destinée du Monde — 8 chantiers livrés**
+  - C1 : `governance.json` FR+EN — bloc destin, oracle/wyrd, keywords 65 termes, `aria_questions.json` 7 questions crise existentielle
+  - C2 : `agentsManager.getDestin()` — lecture lang-aware du bloc destin
+  - C3 : `routingEngine.detectCrisis()` — détection synchrone, n'affecte pas le routage standard
+  - C4 : `deliberationEngine` — `runDestinPhase()` (oracle+wyrd, AI+fallback local) · `runPresidencePhase(destinVoices)` · `councilEngine` câblage conditionnel `destiny_mode + crisis_mode`
+  - C5 : `Settings.jsx` — deux accordions séparés (DESTINÉE DU MONDE · GESTION DE CRISE)
+  - C6 : `ConstitutionModal.jsx` — `destiny_mode` + `crisis_mode` (remplace `crisis_ministry`)
+  - C7 : `fallbacks.js` — annotation destin + industrie · chance supprimé
+  - C7b : `aria_reponses.json` (FR+EN) — oracle + wyrd · 7 régimes × 3 postures
+  - C8 : `ariaI18n.js` — GOV_DESTIN/DESTIN_LABEL/DESTIN_HINT · GOV_CRISIS_MODE/LABEL/HINT · GOV_CHANCE/CRISIS supprimés
+  - `MIGRATION_NOTES.md` créé — 12 ministerPrompts.crise archétypes préservés pour chantier futur
 
 ---
 

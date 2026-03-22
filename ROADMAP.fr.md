@@ -38,6 +38,23 @@
  └─[✓] Routing offline ........... [keywords → ministère · garbage → random] ■ 100%
         └─> 100% du contenu éditorial en JSON · zéro phrase hardcodée dans le moteur
 
+ [ SOURCE UNIQUE DE VÉRITÉ ] ...................................... STATUT: ✅ FAIT
+ ├─[✓] simulation.json enrichi ... [aria_irl_base · sat_base · bloc · couleur · pop_base] ■ 100%
+ ├─[✓] governance.json nettoyé ... [chance supprimé · industrie · oracle · wyrd · destin] ■ 100%
+ ├─[✓] Constantes hardcodées ..... [toutes supprimées → getStats()/getAgents() lookup] ■ 100%
+ └─[✓] Industrie par défaut ...... [remplace chance dans toute l'UI et le moteur] ..... ■ 100%
+
+ [ DESTINÉE DU MONDE ] ............................................ STATUT: ✅ FAIT
+ ├─[✓] Oracle + Wyrd ............. [agents philosophiques dans ministers{}] ......... ■ 100%
+ │      └─> Pas un ministère — bloc destin séparé de ministries[]
+ ├─[✓] Détection crise ........... [detectCrisis() — keywords destin, sync, local] .. ■ 100%
+ ├─[✓] runDestinPhase() .......... [AI + fallback aria_reponses.json] ............... ■ 100%
+ ├─[✓] Injection présidence ...... [destinVoices → runPresidencePhase()] ............ ■ 100%
+ ├─[✓] Toggles UI ................ [destiny_mode + crisis_mode dans Settings + Modal] ■ 100%
+ ├─[✓] Réponses oracle/wyrd ...... [aria_reponses.json — 7 régimes × 3 postures, FR+EN] ■ 100%
+ └─[✓] Questions destin .......... [aria_questions.json — 7 crises existentielles, FR+EN] ■ 100%
+        └─> Rendu UI destin dans LLMCouncil.jsx — à faire (résultat destin dans la réponse)
+
  [ CONSTITUTION PAR PAYS ] ........................................ STATUT: ✅ FAIT
  ├─[✓] Override gouvernance ...... [Fork constitution indépendante] .. ■ 100%
  │      └─> Chaque nation peut avoir ses propres ministres, ministères, présidence
@@ -126,11 +143,13 @@
  └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░] ~18%
+ PROGRESSION : [████████░░░░░░░░░░░░░░░░░░░░░░░░░░] ~23%
  BASE : Moteur + constitution par pays complets.
         Init UX poli (filtrage mode IA, recherche FR pays, panel carte).
         Mode Board Game offline complet (pipeline 4 JSON + routing).
-        1 bug restant (B4 — jauge conseil) · Refonte carte en approche.
+        Source unique de vérité : zéro constante hardcodée dans le moteur.
+        Destinée du Monde : Oracle + Wyrd opérationnels (sans rendu UI).
+        Refonte carte en approche.
 ================================================================================
 ```
 

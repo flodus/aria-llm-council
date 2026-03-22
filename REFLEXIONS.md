@@ -144,27 +144,21 @@ _(à développer)_
 
 ## Restructuration ministères + Destinée du Monde
 
-### Changements ministères
-- Ministère "Chance et Imprévu" → remplacé par "Industrie et Infrastructures"
-  (⚙️ Capricorne–Verseau–Vierge · ministres : Stratège, Inventeur, Analyste)
-- Prompts normal/crise par ministre intégrés directement dans le JSON des ministères
-  (base dans gemini.json — à intégrer dans base_agents.json + base_agents_en.json)
-- Routage automatique par keywords : chaque ministère a sa liste de mots-clés
-  pour suggérer le bon ministère selon la question posée
+### Changements ministères ✅ LIVRÉ (2026-03-22)
+- Ministère "Chance et Imprévu" → remplacé par "Industrie et Infrastructures" dans `governance.json`
+- `ministerPrompts.crise` par archétype → préservés dans `MIGRATION_NOTES.md` pour intégration future
+- Routage par keywords opérationnel — `detectCrisis()` + `getBestMatch()`
 
-### Mode Destinée
-- Oracle (👁️) et Tisseur de Wyrd (🕸️) = deux agents philosophiques optionnels
-- Ne remplacent pas les 12 ministres — s'y ajoutent ponctuellement
-- Activés par les joueurs qui croient que le destin guide les nations
-- Pas un mode crise — un mode de jeu / posture philosophique
-- Comment l'intégrer ? À définir :
-  - Toggle "Croire au Destin" dans la Constitution ?
-  - Bouton ponctuel dans le dashboard ?
-  - Remplace le bouton "Gestion de Crise" ?
-- Questions Destinée : événements exceptionnels (pandémie, météorite, IA incontrôlée...)
+### Mode Destinée ✅ LIVRÉ (2026-03-22)
+- Oracle (👁️) et Wyrd (🕸️) dans `ministers{}`, bloc racine `destin` séparé de `ministries[]`
+- Toggle `destiny_mode` dans Constitution + Settings (distinct de `crisis_mode`)
+- `runDestinPhase()` → AI ou fallback `aria_reponses.json` · résultat injecté dans synthèse présidence
+- Questions existentielles dans `aria_questions.json` par_ministere.destin
 
-⚠️ Assess dédié requis avant implémentation
-Fichiers impactés : base_agents.json · llmCouncilEngine.js · Settings.jsx · ConstitutionModal.jsx
+### Ce qui reste (rendu UI)
+- Afficher le bloc `destin: { oracle, wyrd }` dans `LLMCouncil.jsx` quand présent
+  (le résultat existe dans le retour de `runCouncilDeliberation` — seul l'affichage manque)
+- `ministerPrompts.crise` par archétype à intégrer dans `governance.json` (voir MIGRATION_NOTES.md)
 
 ---
 
