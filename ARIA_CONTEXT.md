@@ -94,9 +94,7 @@ justice · economie · defense · sante · education · ecologie · industrie
 - TODO.md — backlog quotidien
 - ROADMAP.fr.md — vision globale
 - REFLEXIONS.md — idées de fond (Assess requis)
-- ARBORESCENCE.md — structure complète
 - SETTINGS_ARCHITECTURE.md — avant/après refonte Settings
-- ANALYSE_STRUCTURE_PAYS.md — base normalizeCountry()
 
 ---
 
