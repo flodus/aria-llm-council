@@ -93,6 +93,7 @@ export default function RealCountryAISection({ country, onChange, setField, sele
                 id: synthId,
                 nom, flag, regime: 'democratie_liberale', terrain: 'coastal',
                 population, region, _fromApi: true,
+                leader: { nom, titre: lang === 'fr' ? 'Chef d\'État' : 'Head of State', trait: '' },
             };
             onChange({ ...country, nom, realData: synth, _rcStatus: 'found' });
             setRcStatus('found');
