@@ -154,9 +154,9 @@ export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {
             <MC
             style={{ border:'1px dashed rgba(140,160,200,0.30)', background:'rgba(8,14,26,0.90)', backdropFilter:'blur(2px)', cursor:'pointer', alignItems:'center', justifyContent:'center', minHeight:'7rem' }}
             onClick={openCreating}>
-            <div style={{ fontSize:'1.4rem', color:'rgba(140,160,200,0.35)' }}>＋</div>
-            <div style={{ fontFamily:FONT.mono, fontSize:'0.44rem', color:'rgba(140,160,200,0.45)', letterSpacing:'0.12em', marginTop:'0.2rem' }}>
-                {lang === 'en' ? 'CREATE' : 'CRÉER'}
+            <div style={{ fontSize:'1.5rem' }}>🌍</div>
+            <div style={{ fontFamily:FONT.mono, fontSize:'0.44rem', color:'rgba(140,160,200,0.55)', letterSpacing:'0.12em', marginTop:'0.25rem' }}>
+                {lang === 'en' ? '+ CREATE' : '+ CRÉER'}
             </div>
             </MC>
         )}
