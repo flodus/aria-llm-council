@@ -54,10 +54,9 @@ export function useCouncilSession(country, onVoteResult) {
         const statsLine = en
             ? `Approval: ${sat}%   ·   ARIA: ${aria}%`
             : `Satisfaction : ${sat}%   ·   Adhésion ARIA : ${aria}%`;
-        const geoBlock  = [geoText, socText].filter(Boolean).join('\n\n');
-        const countryDescription = country.contextOverride?.trim()
-            || [geoBlock, statsLine].filter(Boolean).join('\n\n')
-            || '';
+        const geoBlock   = [geoText, socText].filter(Boolean).join('\n\n');
+        const baseText   = country.contextOverride?.trim() || geoBlock;
+        const countryDescription = [baseText, statsLine].filter(Boolean).join('\n\n');
 
         setSession({ question, ministryId, countryId: country.id, countryContext, countryNom: country.nom, countryDescription });
 

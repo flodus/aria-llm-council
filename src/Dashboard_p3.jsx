@@ -1486,7 +1486,8 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
               ? `Approval: ${sat}%   ·   ARIA: ${aria}%`
               : `Satisfaction : ${sat}%   ·   Adhésion ARIA : ${aria}%`;
             const geoBlock = [geoText, socText].filter(Boolean).join('\n\n');
-            return c.contextOverride?.trim() || [geoBlock, statsLine].filter(Boolean).join('\n\n');
+            const baseText = c.contextOverride?.trim() || geoBlock;
+            return [baseText, statsLine].filter(Boolean).join('\n\n');
           })()}
           countryNom={selectedCountry?.nom || ''}
           ctxMode={(() => {
