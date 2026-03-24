@@ -1,7 +1,7 @@
 // src/features/world/utils/countryHelpers.js
 
 import { loadLang } from '../../../ariaI18n';
-import { REAL_COUNTRIES_DATA_EN } from '../../../ariaData';
+import { REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
 import { getStats } from '../../../Dashboard_p1';
 
 export function getCountryEmoji(country) {

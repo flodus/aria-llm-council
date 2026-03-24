@@ -12,7 +12,7 @@
 //    Dashboard_p2.jsx  → MapSVG
 //    ConstitutionModal → modale gouvernance par pays
 // ═══════════════════════════════════════════════════════════════════════════════
-import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './ariaData';
+import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './shared/data/ariaData';
 import { loadLang, t, useLocale } from './ariaI18n';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';

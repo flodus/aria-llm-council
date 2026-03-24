@@ -16,7 +16,7 @@ import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_PRIMARY, BTN_SECONDARY
 import { getStats, getAgents, getOptions, DEFAULT_OPTIONS } from '../../../Dashboard_p1';
 import { getDestin } from '../services/agentsManager';
 import AgentGrid from '../../../shared/components/AgentGrid';
-import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../ariaData';
+import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
 import useConstitutionModal from '../hooks/useConstitutionModal';
 import {
     PresidentsList,
