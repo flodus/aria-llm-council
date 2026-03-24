@@ -552,15 +552,27 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
         {show.PRESIDENCE && presidence && (
           <PhaseBlock
             phase="PRESIDENCE"
-            label={t('COUNCIL_PHASE_PRESIDENCE', loadLang())}
-            icon="☉"
-            accentColor={C.purple}
+            label={presidence.collegial ? '✡ SYNTHÈSE CONSTITUTIONNELLE' : t('COUNCIL_PHASE_PRESIDENCE', loadLang())}
+            icon={presidence.collegial ? '✡' : '☉'}
+            accentColor={presidence.collegial ? C.goldDim : C.purple}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
-            <PresidenceBlock agent={presidence.phare}    data={presidence.phare}    accent={C.gold}   />
-            <PresidenceBlock agent={presidence.boussole} data={presidence.boussole} accent={C.purple} />
+            {!presidence.collegial && (
+              <>
+                <PresidenceBlock agent={presidence.phare}    data={presidence.phare}    accent={C.gold}   />
+                <PresidenceBlock agent={presidence.boussole} data={presidence.boussole} accent={C.purple} />
+              </>
+            )}
+            {presidence.collegial && presidence.synthese && (
+              <div style={bubble(C.goldDim, { marginBottom: '0.4rem' })}>
+                <div style={sectionTitle(C.goldDim)}>✡ DÉLIBÉRATION COLLÉGIALE</div>
+                <p style={{ fontFamily: FONT.mono, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: 0 }}>
+                  {presidence.synthese.synthese}
+                </p>
+              </div>
+            )}
             {isRunning && !presidence.synthese && (
-              <LoadingPulse label="ARBITRAGE EN COURS…" />
+              <LoadingPulse label={presidence.collegial ? 'SYNTHÈSE COLLÉGIALE EN COURS…' : 'ARBITRAGE EN COURS…'} />
             )}
             {presidence.synthese && (
               <div style={bubble(convergence ? C.green : C.gold, { marginTop: '0.6rem' })}>
@@ -602,8 +614,8 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
           accentColor={C.blue}
           style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
-          {/* Résumé des deux positions */}
-          {presidence?.synthese && (
+          {/* Résumé des deux positions (non-collégial uniquement) */}
+          {presidence?.synthese && !presidence.collegial && (
             <div style={{ marginBottom: '0.7rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
             <span style={{ color: C.gold, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☉</span>
