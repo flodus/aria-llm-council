@@ -29,7 +29,7 @@ import {
 import { MapSVG } from './Dashboard_p2';
 import ConstitutionModal from './features/council/components/ConstitutionModal';
 import CountryPanelCouncil from './features/world/components/CountryPanel/CountryPanelCouncil';
-import LLMCouncil from './LLMCouncil';
+import LLMCouncil from './features/council/components/LLMCouncil';
 import {
   buildCountryContext,
   MINISTRIES_LIST,

@@ -1,4 +1,4 @@
-// src/LLMCouncil.jsx
+// src/features/council/components/LLMCouncil.jsx
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  LLMCouncil.jsx — Vue principale du Conseil ARIA
@@ -18,10 +18,10 @@
 //   isRunning    {boolean}      — IA en cours
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { loadLang, t, useLocale } from './ariaI18n';
+import { loadLang, t, useLocale } from '../../../ariaI18n';
 import { useState, useEffect, useRef } from 'react';
-import { C } from './shared/theme';
-import { FONT } from './shared/theme';
+import { C } from '../../../shared/theme';
+import { FONT } from '../../../shared/theme';
 
 // Phase definitions
 const PHASES = {
