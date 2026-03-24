@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-22 (session refactor+destin)_
+_Dernière mise à jour : 2026-03-24_
 
 ---
 
@@ -30,7 +30,7 @@ _Dernière mise à jour : 2026-03-22 (session refactor+destin)_
   - _Assess dédié requis — impacts sur callAI() et le sélecteur de provider_
 
 - [x] **U1 — Icônes régimes** : dans les listes déroulantes Init (création pays) et in-game (settings)
-- [ ] **U2 — Harmonisation tuiles** : même style glow ministres/ministères dans les 3 contextes
+- [x] **U2 — Harmonisation tuiles** : même style glow ministres/ministères dans les 3 contextes
   (Init PreLaunchScreen · Settings in-game · popup ConstitutionModal in-game)
 - [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
   (satisfaction détaillée, décisions clés, événements notables)
