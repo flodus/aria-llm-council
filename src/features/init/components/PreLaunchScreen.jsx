@@ -205,13 +205,13 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                     {/* Boutons */}
                     <div style={{ display: 'flex', gap: '0.6rem' }}>
                         <button
-                            onClick={() => setWorldAccepted(true)}
+                            onClick={() => setConfirmLaunch(true)}
                             style={{ ...BTN_PRIMARY, fontSize: '0.46rem', flex: 1 }}
                         >
                             {lang === 'en' ? 'This world suits me →' : 'Ce monde me convient →'}
                         </button>
                         <button
-                            onClick={() => setGovModal(true)}
+                            onClick={() => { setWorldAccepted(true); setGovModal(true); }}
                             style={{ ...BTN_SECONDARY, fontSize: '0.46rem', flex: 1 }}
                         >
                             {lang === 'en' ? 'I want to modify it →' : 'Je veux le modifier →'}
@@ -220,6 +220,9 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                 </div>
             );
         })()}
+
+        {/* Tout ce qui suit n'est visible que si le joueur a choisi "Je veux le modifier" */}
+        {worldAccepted && <>
 
         {/* Header avec badges et bouton personnaliser */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', flexWrap: 'wrap', gap: '0.4rem' }}>
@@ -481,6 +484,8 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         </button>
         </div>
         </div>
+
+        </>}
 
         {/* ── Modal GovernanceForm ─────────────────────────────────────────── */}
         {govModal && (

@@ -37,7 +37,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
     const setField = (k, v) => onChange({ ...c, [k]: v });
 
     // Accordéon
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const [ctxPanelOpen, setCtxPanelOpen] = useState(false);
 
     // État local
