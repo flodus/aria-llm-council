@@ -92,6 +92,13 @@ export function useCouncilSession(country, onVoteResult) {
     const submitQuestion = useCallback(async (question, ministryId) => {
         if (!country || running) return;
 
+        // Si l'utilisateur a explicitement choisi un ministère (pool ou pill),
+        // on court-circuite les vérifications par keywords — il sait ce qu'il fait.
+        if (ministryId) {
+            await launchCouncil(question, ministryId);
+            return;
+        }
+
         const bestMatch = getBestMatch(question);
 
         // Cas 1 — question garbage (aucun keyword ne matche)
@@ -100,24 +107,8 @@ export function useCouncilSession(country, onVoteResult) {
             return;
         }
 
-        // Cas 2 — ministère forcé par l'utilisateur mais meilleur match ailleurs
-        if (ministryId && bestMatch.ministryId !== ministryId) {
-            const forceMin    = MINISTRIES_LIST.find(m => m.id === ministryId);
-            const suggestMin  = MINISTRIES_LIST.find(m => m.id === bestMatch.ministryId);
-            setMismatchModal({
-                question,
-                forceId:       ministryId,
-                forceName:     forceMin?.name  || ministryId,
-                forceEmoji:    forceMin?.emoji || '📋',
-                suggestedId:   bestMatch.ministryId,
-                suggestedName: suggestMin?.name  || bestMatch.ministryId,
-                suggestedEmoji: suggestMin?.emoji || '📋',
-            });
-            return;
-        }
-
-        // Cas 3 — OK, on lance
-        await launchCouncil(question, ministryId);
+        // Cas 2 — question libre : propose le meilleur ministère détecté
+        await launchCouncil(question, bestMatch.ministryId);
     }, [country, running, launchCouncil]);
 
     // ── Résolution mismatch ──────────────────────────────────────────────────
