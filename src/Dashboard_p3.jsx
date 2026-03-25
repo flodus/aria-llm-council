@@ -1706,7 +1706,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
                 );
                 closeCycle(cycleNumRef.current);
                 cycleNumRef.current += 1;
-                setCurrentCycleQuestion(null);
+                setCurrentCycleQuestions({});
                 setModalCycleConfirm(false);
                 setCycleHistory([]);
                 aria.advanceCycle();
