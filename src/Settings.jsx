@@ -1151,6 +1151,19 @@ function SectionConseil() {
   const save = () => {
     saveAgentOverrides(agents);
     saveOptions(govOpts);   // sauvegarde aussi la gouvernance (onglet Gouvernance)
+
+    // Traduit defaultGovernance.presidency → active_presidency dans aria_agents_override
+    // pour que le moteur (getPresidencyFor) active le bon mode de délibération.
+    const presType = govOpts.defaultGovernance?.presidency || 'duale';
+    const presMap = { solaire: ['phare'], lunaire: ['boussole'], collegiale: [], duale: null };
+    const activePres = presMap[presType] ?? null;
+    try {
+      const ov = JSON.parse(localStorage.getItem('aria_agents_override') || 'null') || {};
+      if (activePres === null) delete ov.active_presidency;
+      else ov.active_presidency = activePres;
+      localStorage.setItem('aria_agents_override', JSON.stringify(ov));
+    } catch {}
+
     setSaved(true);
   };
 
