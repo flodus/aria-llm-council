@@ -1,11 +1,15 @@
 // src/App.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, lazy, Suspense } from 'react';
 import { ExplorateurMonde } from './views/ExplorateurMonde';
 import InitScreenLayout from './components/InitScreenLayout';
 import PlanetCanvas from './components/PlanetCanvas';
-import MorphingCanvas from './components/MorphingCanvas';
+// Supprime l'import statique de MorphingCanvas
+// import MorphingCanvas from './components/MorphingCanvas';
 import { InitScreenInner } from '../../aria/src/features/init/InitScreen';
 import RadioPlayer from './components/RadioPlayer'
+
+// Import dynamique
+const MorphingCanvas = lazy(() => import('./components/MorphingCanvas'));
 
 export default function App() {
   const [worldName, setWorldName] = useState('');
@@ -58,11 +62,24 @@ export default function App() {
       hasApiKeys={false}
       onRefreshKeys={() => {}}
       generatingBackground={(progress) => (
+        <Suspense fallback={
+          <div style={{
+            position: 'fixed', inset: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: '#020208',
+            color: '#c8a44a',
+            fontFamily: 'monospace',
+            fontSize: '0.85rem'
+          }}>
+          CHARGEMENT DE LA CARTE 3D...
+          </div>
+        }>
         <MorphingCanvas
         progress={progress}
         morphPret={morphPret}
         onMorphFini={handleMorphFini}
         />
+        </Suspense>
       )}
       />
       </div>
