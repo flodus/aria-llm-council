@@ -15,7 +15,9 @@ import { useRef, useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle } from '../../../shared/theme';
 import AgentGrid from '../../../shared/components/AgentGrid';
+import GovernanceForm from '../../../shared/components/GovernanceForm';
 import { getDestin } from '../../council/services/agentsManager';
+import { getOptions, saveOptions } from '../../../Dashboard_p1';
 import {
     ARIAHeader,
     RecapAccordion,
@@ -51,6 +53,9 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
     const [plTab, setPlTab] = useState('resume');
     const [confirmLaunch, setConfirmLaunch] = useState(false);
     const [selectedDestin, setSelectedDestin] = useState(null);
+    const [govOpts, setGovOpts] = useState(() => getOptions());
+    const [govModal, setGovModal] = useState(false);
+    const [worldAccepted, setWorldAccepted] = useState(false);
 
     // Hooks
     const constitution = useConstitution(pendingDefs);
@@ -162,6 +167,57 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             boxSizing: 'border-box'
         }}>
         <ARIAHeader showQuote={false} />
+
+        {/* ── Question initiale : gouvernance du monde ─────────────────────── */}
+        {!worldAccepted && (() => {
+            const gov = govOpts.defaultGovernance || {};
+            const presLabel = { solaire: '☉ Phare', lunaire: '☽ Boussole', duale: '☉☽ Duale', collegiale: '✡ Collégiale' }[gov.presidency || 'duale'] || '☉☽ Duale';
+            const minsCount = (gov.ministries || []).length;
+            const ctxLabel = { auto: '🤖 Auto', rich: '📖 Enrichi', stats_only: '📊 Stats', off: '🚫 Off' }[govOpts.gameplay?.context_mode || 'auto'] || '🤖 Auto';
+            const destinOn = gov.destiny_mode === true;
+            return (
+                <div style={{
+                    width: '100%', padding: '0.9rem 1rem',
+                    background: 'rgba(20,28,45,0.65)', border: '1px solid rgba(200,164,74,0.18)',
+                    borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '0.65rem',
+                }}>
+                    <div style={{ fontFamily: FONT.mono, fontSize: '0.60rem', letterSpacing: '0.10em', color: 'rgba(200,164,74,0.80)' }}>
+                        {lang === 'en' ? 'How do you envision this world?' : 'Comment voyez-vous ce monde ?'}
+                    </div>
+                    {/* Résumé options actuelles */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                        {[
+                            presLabel,
+                            lang === 'en' ? `${minsCount} ministries` : `${minsCount} ministères`,
+                            ctxLabel,
+                            destinOn ? (lang === 'en' ? '👁️ Destiny' : '👁️ Destin') : (lang === 'en' ? '○ No destiny' : '○ Sans destin'),
+                        ].map((tag, i) => (
+                            <span key={i} style={{
+                                fontFamily: FONT.mono, fontSize: '0.44rem',
+                                color: 'rgba(200,215,240,0.65)', letterSpacing: '0.06em',
+                                padding: '0.2rem 0.5rem', borderRadius: '2px',
+                                background: 'rgba(90,110,160,0.12)', border: '1px solid rgba(90,110,160,0.20)',
+                            }}>{tag}</span>
+                        ))}
+                    </div>
+                    {/* Boutons */}
+                    <div style={{ display: 'flex', gap: '0.6rem' }}>
+                        <button
+                            onClick={() => setWorldAccepted(true)}
+                            style={{ ...BTN_PRIMARY, fontSize: '0.46rem', flex: 1 }}
+                        >
+                            {lang === 'en' ? 'This world suits me →' : 'Ce monde me convient →'}
+                        </button>
+                        <button
+                            onClick={() => setGovModal(true)}
+                            style={{ ...BTN_SECONDARY, fontSize: '0.46rem', flex: 1 }}
+                        >
+                            {lang === 'en' ? 'I want to modify it →' : 'Je veux le modifier →'}
+                        </button>
+                    </div>
+                </div>
+            );
+        })()}
 
         {/* Header avec badges et bouton personnaliser */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', flexWrap: 'wrap', gap: '0.4rem' }}>
@@ -423,6 +479,46 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         </button>
         </div>
         </div>
+
+        {/* ── Modal GovernanceForm ─────────────────────────────────────────── */}
+        {govModal && (
+            <div style={{
+                position: 'fixed', inset: 0, zIndex: 100,
+                background: 'rgba(4,8,18,0.85)', backdropFilter: 'blur(4px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }} onClick={() => setGovModal(false)}>
+                <div style={{
+                    width: 'min(560px, 92vw)', maxHeight: '80vh', overflowY: 'auto',
+                    background: 'rgba(10,16,30,0.98)', border: '1px solid rgba(200,164,74,0.25)',
+                    borderRadius: '4px', padding: '1.2rem 1rem 1rem',
+                    display: 'flex', flexDirection: 'column', gap: '0.8rem',
+                }} onClick={e => e.stopPropagation()}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontFamily: FONT.mono, fontSize: '0.54rem', letterSpacing: '0.12em', color: 'rgba(200,164,74,0.80)' }}>
+                            {lang === 'en' ? 'WORLD GOVERNANCE' : 'GOUVERNANCE DU MONDE'}
+                        </span>
+                        <button onClick={() => setGovModal(false)} style={{
+                            background: 'none', border: 'none', cursor: 'pointer',
+                            color: 'rgba(140,160,200,0.45)', fontSize: '1rem', lineHeight: 1,
+                        }}>✕</button>
+                    </div>
+                    <GovernanceForm
+                        context="init"
+                        opts={govOpts}
+                        onChange={newOpts => {
+                            setGovOpts(newOpts);
+                            saveOptions(newOpts);
+                        }}
+                    />
+                    <button
+                        onClick={() => { setGovModal(false); setWorldAccepted(true); }}
+                        style={{ ...BTN_PRIMARY, fontSize: '0.46rem' }}
+                    >
+                        {lang === 'en' ? 'Apply and continue →' : 'Appliquer et continuer →'}
+                    </button>
+                </div>
+            </div>
+        )}
 
         {/* Dialogue de confirmation */}
         <ConfirmLaunchDialog
