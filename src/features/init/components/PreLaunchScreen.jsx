@@ -192,68 +192,67 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             const ctxLabel = { auto: '🤖 Auto', rich: lang === 'en' ? '📖 Enriched' : '📖 Enrichi', stats_only: lang === 'en' ? '📊 Stats only' : '📊 Stats seules', off: lang === 'en' ? '🚫 Disabled' : '🚫 Désactivé' }[govOpts.gameplay?.context_mode || 'auto'] || '🤖 Auto';
             const destinOn  = gov.destiny_mode === true;
 
-            const rowLabel = (txt) => ({
-                fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.10em',
-                color: 'rgba(200,164,74,0.55)', whiteSpace: 'nowrap', paddingTop: '0.1rem',
-                textTransform: 'uppercase', minWidth: '5rem',
-            });
-            const chip = (key, content) => (
-                <span key={key} style={{
-                    fontFamily: FONT.mono, fontSize: '0.43rem',
-                    color: 'rgba(180,200,230,0.70)', background: 'rgba(90,110,160,0.10)',
-                    border: '1px solid rgba(90,110,160,0.18)', borderRadius: '2px',
-                    padding: '0.15rem 0.4rem', display: 'inline-flex', alignItems: 'center', gap: '0.2rem',
-                }}>{content}</span>
-            );
+            const labelCol = {
+                fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.12em',
+                color: 'rgba(200,164,74,0.50)', whiteSpace: 'nowrap', textTransform: 'uppercase',
+                minWidth: '5.5rem', paddingTop: '0.05rem',
+            };
+            const emojiRow = {
+                fontFamily: FONT.mono, fontSize: '0.60rem', lineHeight: 1,
+                display: 'flex', flexWrap: 'wrap', gap: '0.35rem', alignItems: 'center',
+            };
 
             return (
                 <div style={{
                     width: '100%', padding: '0.9rem 1rem',
                     background: 'rgba(20,28,45,0.65)', border: '1px solid rgba(200,164,74,0.18)',
-                    borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '0.7rem',
+                    borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '0.75rem',
                 }}>
                     {/* Titre */}
-                    <div style={{ fontFamily: FONT.mono, fontSize: '0.58rem', letterSpacing: '0.10em', color: 'rgba(200,164,74,0.80)' }}>
-                        {lang === 'en' ? 'How do you envision this world?' : 'Comment voyez-vous ce monde ?'}
+                    <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.18em', color: 'rgba(200,164,74,0.55)', textTransform: 'uppercase' }}>
+                        {lang === 'en' ? 'Default world — ARIA' : 'Monde par défaut — ARIA'}
                     </div>
 
                     {/* Tableau récap */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
 
                         {/* Présidence */}
-                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                            <span style={rowLabel()}>{lang === 'en' ? 'Presidency' : 'Présidence'}</span>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
-                                {chip('pres', <><span>{presInfo.icon}</span><span>{presInfo.label}</span></>)}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                            <span style={labelCol}>{lang === 'en' ? 'Presidency' : 'Présidence'}</span>
+                            <span style={{
+                                fontFamily: FONT.mono, fontSize: '0.50rem', letterSpacing: '0.06em',
+                                color: 'rgba(200,164,74,0.90)',
+                                background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.30)',
+                                borderRadius: '2px', padding: '0.18rem 0.55rem',
+                                display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                            }}>
+                                <span>{presInfo.icon}</span><span>{presInfo.label}</span>
+                            </span>
+                        </div>
+
+                        {/* Ministères — emojis seuls */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                            <span style={labelCol}>{lang === 'en' ? 'Ministries' : 'Ministères'}</span>
+                            <div style={emojiRow}>
+                                {activeMins.map(m => <span key={m.id} title={m.name}>{m.emoji}</span>)}
                             </div>
                         </div>
 
-                        {/* Ministères */}
-                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                            <span style={rowLabel()}>{lang === 'en' ? 'Ministries' : 'Ministères'}</span>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
-                                {activeMins.map(m => chip(m.id, <><span>{m.emoji}</span><span>{m.name}</span></>))}
-                            </div>
-                        </div>
-
-                        {/* Ministres */}
-                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                            <span style={rowLabel()}>{lang === 'en' ? 'Ministers' : 'Ministres'}</span>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
-                                {allMinisters.map(([id, m]) => chip(id, <><span>{m.emoji}</span><span>{m.name}</span></>))}
+                        {/* Ministres — emojis seuls */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                            <span style={labelCol}>{lang === 'en' ? 'Ministers' : 'Ministres'}</span>
+                            <div style={emojiRow}>
+                                {allMinisters.map(([id, m]) => <span key={id} title={m.name}>{m.emoji}</span>)}
+                                {destinOn && destinAgents.map(([id, m]) => <span key={id} title={m.name} style={{ opacity: 0.65 }}>{m.emoji}</span>)}
                             </div>
                         </div>
 
                         {/* Délibération */}
-                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                            <span style={rowLabel()}>{lang === 'en' ? 'Deliberation' : 'Délibération'}</span>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
-                                {chip('ctx', ctxLabel)}
-                                {destinOn
-                                    ? destinAgents.map(([id, m]) => chip(id, <><span>{m.emoji}</span><span>{m.name}</span></>))
-                                    : chip('destin', lang === 'en' ? '○ No destiny' : '○ Sans destin')
-                                }
-                            </div>
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                            <span style={labelCol}>{lang === 'en' ? 'Deliberation' : 'Délibération'}</span>
+                            <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(180,200,230,0.60)' }}>
+                                {ctxLabel}{destinOn ? ' · ' + destinAgents.map(([, m]) => m.emoji + ' ' + m.name).join(' · ') : ''}
+                            </span>
                         </div>
 
                     </div>
