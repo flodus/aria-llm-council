@@ -19,7 +19,7 @@ import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase }
 import { computeVoteImpact } from '../services/voteEngine';
 import { buildCountryContext } from '../services/contextBuilder';
 import { MINISTRIES_LIST } from '../services/agentsManager';
-import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../ariaData';
+import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
 import { loadLang } from '../../../ariaI18n';
 import REPONSES_FR from '../../../../templates/languages/fr/aria_reponses.json';
 

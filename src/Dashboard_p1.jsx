@@ -11,7 +11,7 @@ import AGENTS    from '../templates/languages/fr/governance.json';
 import AGENTS_EN from '../templates/languages/en/governance.json';
 import STATS     from '../templates/languages/fr/simulation.json';
 import STATS_EN  from '../templates/languages/en/simulation.json';
-import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN, LOCAL_COUNTRIES } from './ariaData';
+import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN, LOCAL_COUNTRIES } from './shared/data/ariaData';
 import { loadLang } from './ariaI18n';
 import { setIaStatus } from './shared/services/iaStatusStore';
 

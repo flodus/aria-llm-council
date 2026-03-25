@@ -231,6 +231,71 @@ export async function runDestinPhase(question, country, crisisPrompts = false) {
 }
 
 /**
+ * Phase PRÉSIDENCE en mode collégial (aucune figure présidentielle active)
+ * Produit une synthèse constitutionnelle collective sans Phare ni Boussole
+ */
+async function _runCollegialPhase(question, ministereResult, cercleAnnotations, country) {
+    const keys = getApiKeys();
+    const ctx  = buildCountryContext(country);
+
+    const cercleSummary = (cercleAnnotations || [])
+        .map(a => `${a.ministryEmoji} ${a.ministryName} : ${a.annotation}`)
+        .join('\n');
+
+    const ministereInfo = `Ministère principal : ${ministereResult.ministryEmoji} ${ministereResult.ministryName}
+    Synthèse : "${ministereResult.synthese?.synthese}"
+    Recommandation : "${ministereResult.synthese?.recommandation}"`;
+
+    let synthese = null;
+
+    if (keys.claude || keys.gemini) {
+        const prompt = `${langPrefix()}Tu es le système de synthèse constitutionnelle du gouvernement ARIA en mode collégial.
+    ${ctx}
+    Question débattue : "${question}"
+    ${ministereInfo}
+    Annotations des ministères :
+    ${cercleSummary}
+
+    En mode collégial, il n'y a ni Phare ni Boussole — le Conseil délibère collectivement.
+    Produis une synthèse constitutionnelle qui reflète la délibération collective du Conseil.
+
+    Réponds UNIQUEMENT en JSON :
+    { "convergence": true, "synthese": "2-3 phrases — synthèse collective du Conseil", "question_referendum": "Proposition claire soumise au vote du peuple", "enjeu_principal": "1 phrase — enjeu principal pour les citoyens" }`;
+
+        synthese = await callAI(prompt, 'council_collegial').catch(() => null);
+    }
+
+    if (!synthese) {
+        const questionHash = question.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+        const convergence = (questionHash + (country.satisfaction || 50)) % 3 !== 0;
+        synthese = {
+            convergence,
+            synthese: convergence
+                ? `Le Conseil délibère en session plénière. Une majorité ministérielle se dégage sur la question posée. La synthèse constitutionnelle reflète l'équilibre des positions exprimées.`
+                : `Le Conseil est divisé sur cette question. Les positions ministérielles divergent selon les priorités sectorielles. Une délibération approfondie est nécessaire avant toute décision.`,
+            question_referendum: `Approuvez-vous la position du Conseil sur : "${question.slice(0, 80)}${question.length > 80 ? '…' : ''}" ?`,
+            enjeu_principal: `La décision impactera les ${Math.round((country.population || 1e6) / 1e6 * 10) / 10} M de citoyens — le Conseil délibère sans arbitrage présidentiel.`,
+        };
+    }
+
+    return {
+        phare:    null,
+        boussole: null,
+        collegial: true,
+        synthese: {
+            ...synthese,
+            voteType: 'referendum',
+            voteOptions: {
+                oui: { label: '✓  OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
+                non: { label: '✕  NON — REJETER', color: COLORS.redHex,   icon: '✕' },
+            },
+            position_phare_resume:    null,
+            position_boussole_resume: null,
+        },
+    };
+}
+
+/**
  * Phase PRESIDENCE : Phare + Boussole + synthèse présidentielle
  * @param {string} question
  * @param {object} ministereResult  — résultat de runMinisterePhase
@@ -242,6 +307,12 @@ export async function runDestinPhase(question, country, crisisPrompts = false) {
 
 export async function runPresidencePhase(question, ministereResult, cercleAnnotations, country, destinVoices = null) {
     const _pres = getPresidencyFor(country);
+
+    // ── Mode collégial : aucune figure présidentielle active ─────────────────
+    if (Object.keys(_pres).length === 0) {
+        return _runCollegialPhase(question, ministereResult, cercleAnnotations, country);
+    }
+
     const phareData    = _pres.phare    || {};
     const boussoleData = _pres.boussole || {};
 
