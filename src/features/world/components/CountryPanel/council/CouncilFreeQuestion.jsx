@@ -107,9 +107,8 @@ cycleActuel
             }}>
             <span>{isEn ? 'FREE QUESTION' : 'QUESTION LIBRE'}</span>
 
-            {/* Bouton Suggestion - visible uniquement en mode Board Game */}
-            {isBoardGame && (
-                <button
+            {/* Bouton Suggestion */}
+            <button
                 onClick={handleSuggest}
                 style={{
                     background: 'rgba(200,164,74,0.10)',
@@ -129,7 +128,6 @@ cycleActuel
                 >
                 💡 {isEn ? 'SUGGEST' : 'SUGGESTION'}
                 </button>
-            )}
             </div>
 
             {/* Message d'information sur le routage automatique */}
