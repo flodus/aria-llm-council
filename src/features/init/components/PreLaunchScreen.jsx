@@ -170,38 +170,87 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
 
         {/* ── Question initiale : gouvernance du monde ─────────────────────── */}
         {!worldAccepted && (() => {
-            const gov = govOpts.defaultGovernance || {};
-            const presLabel = { solaire: '☉ Phare', lunaire: '☽ Boussole', duale: '☉☽ Duale', collegiale: '✡ Collégiale' }[gov.presidency || 'duale'] || '☉☽ Duale';
-            const minsCount = (gov.ministries || []).length;
-            const ctxLabel = { auto: '🤖 Auto', rich: '📖 Enrichi', stats_only: '📊 Stats', off: '🚫 Off' }[govOpts.gameplay?.context_mode || 'auto'] || '🤖 Auto';
-            const destinOn = gov.destiny_mode === true;
+            const agents  = getAgents();
+            const gov     = govOpts.defaultGovernance || {};
+            const presType = gov.presidency || 'duale';
+            const presInfo = {
+                solaire:    { icon: '☉',  label: lang === 'en' ? 'Phare — The Will'         : 'Phare — La Volonté' },
+                lunaire:    { icon: '☽',  label: lang === 'en' ? 'Boussole — The Soul'       : 'Boussole — L\'Âme' },
+                duale:      { icon: '☉☽', label: lang === 'en' ? 'Dual — ARIA mode'          : 'Duale — Mode ARIA' },
+                collegiale: { icon: '✡',  label: lang === 'en' ? 'Collegial — 12 ministers'  : 'Collégiale — 12 ministres' },
+            }[presType] || { icon: '☉☽', label: 'Duale' };
+
+            const activeMinsIds = gov.ministries || agents.ministries.map(m => m.id);
+            const activeMins = agents.ministries.filter(m => activeMinsIds.includes(m.id));
+
+            const allMinisters = Object.values(agents.ministers || {}).filter(m => m.name && m.emoji && !['oracle','wyrd'].includes(m.id));
+
+            const ctxLabel = { auto: '🤖 Auto', rich: lang === 'en' ? '📖 Enriched' : '📖 Enrichi', stats_only: lang === 'en' ? '📊 Stats only' : '📊 Stats seules', off: lang === 'en' ? '🚫 Disabled' : '🚫 Désactivé' }[govOpts.gameplay?.context_mode || 'auto'] || '🤖 Auto';
+            const destinOn  = gov.destiny_mode === true;
+
+            const rowLabel = (txt) => ({
+                fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.10em',
+                color: 'rgba(200,164,74,0.55)', whiteSpace: 'nowrap', paddingTop: '0.1rem',
+                textTransform: 'uppercase', minWidth: '5rem',
+            });
+            const chip = (key, content) => (
+                <span key={key} style={{
+                    fontFamily: FONT.mono, fontSize: '0.43rem',
+                    color: 'rgba(180,200,230,0.70)', background: 'rgba(90,110,160,0.10)',
+                    border: '1px solid rgba(90,110,160,0.18)', borderRadius: '2px',
+                    padding: '0.15rem 0.4rem', display: 'inline-flex', alignItems: 'center', gap: '0.2rem',
+                }}>{content}</span>
+            );
+
             return (
                 <div style={{
                     width: '100%', padding: '0.9rem 1rem',
                     background: 'rgba(20,28,45,0.65)', border: '1px solid rgba(200,164,74,0.18)',
-                    borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '0.65rem',
+                    borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '0.7rem',
                 }}>
-                    <div style={{ fontFamily: FONT.mono, fontSize: '0.60rem', letterSpacing: '0.10em', color: 'rgba(200,164,74,0.80)' }}>
+                    {/* Titre */}
+                    <div style={{ fontFamily: FONT.mono, fontSize: '0.58rem', letterSpacing: '0.10em', color: 'rgba(200,164,74,0.80)' }}>
                         {lang === 'en' ? 'How do you envision this world?' : 'Comment voyez-vous ce monde ?'}
                     </div>
-                    {/* Grille icônes */}
-                    <div style={{ display: 'flex', gap: '1.2rem', flexWrap: 'wrap' }}>
-                        {[
-                            ['☉☽', lang === 'en' ? 'Presidency' : 'Présidence'],
-                            ['🏛️', lang === 'en' ? 'Ministries' : 'Ministères'],
-                            ['👥', lang === 'en' ? 'Ministers'  : 'Ministres'],
-                            ['🤖', lang === 'en' ? 'Context'    : 'Contexte'],
-                        ].map(([icon, label]) => (
-                            <span key={label} style={{
-                                fontFamily: FONT.mono, fontSize: '0.44rem',
-                                color: 'rgba(140,160,200,0.55)', display: 'flex',
-                                alignItems: 'center', gap: '0.3rem',
-                            }}>
-                                <span style={{ fontSize: '0.75rem' }}>{icon}</span>
-                                {label}
-                            </span>
-                        ))}
+
+                    {/* Tableau récap */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+
+                        {/* Présidence */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+                            <span style={rowLabel()}>{lang === 'en' ? 'Presidency' : 'Présidence'}</span>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                                {chip('pres', <><span>{presInfo.icon}</span><span>{presInfo.label}</span></>)}
+                            </div>
+                        </div>
+
+                        {/* Ministères */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+                            <span style={rowLabel()}>{lang === 'en' ? 'Ministries' : 'Ministères'}</span>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                                {activeMins.map(m => chip(m.id, <><span>{m.emoji}</span><span>{m.name}</span></>))}
+                            </div>
+                        </div>
+
+                        {/* Ministres */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+                            <span style={rowLabel()}>{lang === 'en' ? 'Ministers' : 'Ministres'}</span>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                                {allMinisters.map(m => chip(m.id, <><span>{m.emoji}</span><span>{m.name}</span></>))}
+                            </div>
+                        </div>
+
+                        {/* Délibération */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+                            <span style={rowLabel()}>{lang === 'en' ? 'Deliberation' : 'Délibération'}</span>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                                {chip('ctx', ctxLabel)}
+                                {chip('destin', destinOn ? (lang === 'en' ? '👁️ Destiny on' : '👁️ Destin actif') : (lang === 'en' ? '○ No destiny' : '○ Sans destin'))}
+                            </div>
+                        </div>
+
                     </div>
+
                     {/* Boutons */}
                     <div style={{ display: 'flex', gap: '0.6rem' }}>
                         <button
