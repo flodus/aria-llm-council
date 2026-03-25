@@ -5,6 +5,17 @@ Ne pas implémenter sans Assess complet.
 
 ---
 
+## Philosophie fondatrice
+
+> "Aucun choix n'est irréversible. Le joueur voit toujours où il est,
+> sait toujours où aller pour changer d'avis. Il ne se perd jamais
+> dans des choix d'options différentes. Le codeur n'a pas à réinventer
+> la roue ou trouver une aiguille dans une botte de foin.
+> La simplicité est dans les JSON pour le codeur,
+> dans l'interface pour le joueur."
+
+---
+
 ## Pistes V2 / Backend
 
 ### Éditeur de données pays (piste V2 — nécessite backend)
@@ -267,3 +278,13 @@ Si les pools sont opposés (action vs prudence) → divergence.
 
 ⚠️ Assess dédié requis avant implémentation
 ⚠️ Ne pas toucher deliberationEngine.js sans cette session
+
+---
+
+## Conventions UI
+
+### Accordéons
+
+> "Accordéons : fermés par défaut, sans exception, partout.
+> Le joueur ouvre ce dont il a besoin.
+> On ne décide jamais pour lui ce qui est important."
