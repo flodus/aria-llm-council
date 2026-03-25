@@ -17,7 +17,7 @@ import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle }
 import AgentGrid from '../../../shared/components/AgentGrid';
 import GovernanceForm from '../../../shared/components/GovernanceForm';
 import { getDestin } from '../../council/services/agentsManager';
-import { getOptions, saveOptions } from '../../../Dashboard_p1';
+import { getOptions, saveOptions, getAgents } from '../../../Dashboard_p1';
 import {
     ARIAHeader,
     RecapAccordion,
