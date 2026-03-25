@@ -183,7 +183,11 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             const activeMinsIds = gov.ministries || agents.ministries.map(m => m.id);
             const activeMins = agents.ministries.filter(m => activeMinsIds.includes(m.id));
 
-            const allMinisters = Object.values(agents.ministers || {}).filter(m => m.name && m.emoji && !['oracle','wyrd'].includes(m.id));
+            const destinIds = new Set(getDestin()?.agents || []);
+            const allMinisters = Object.entries(agents.ministers || {})
+                .filter(([id, m]) => m.name && m.emoji && !destinIds.has(id));
+            const destinAgents = Object.entries(agents.ministers || {})
+                .filter(([id, m]) => destinIds.has(id) && m.name && m.emoji);
 
             const ctxLabel = { auto: '🤖 Auto', rich: lang === 'en' ? '📖 Enriched' : '📖 Enrichi', stats_only: lang === 'en' ? '📊 Stats only' : '📊 Stats seules', off: lang === 'en' ? '🚫 Disabled' : '🚫 Désactivé' }[govOpts.gameplay?.context_mode || 'auto'] || '🤖 Auto';
             const destinOn  = gov.destiny_mode === true;
@@ -236,7 +240,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
                             <span style={rowLabel()}>{lang === 'en' ? 'Ministers' : 'Ministres'}</span>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
-                                {allMinisters.map(m => chip(m.id, <><span>{m.emoji}</span><span>{m.name}</span></>))}
+                                {allMinisters.map(([id, m]) => chip(id, <><span>{m.emoji}</span><span>{m.name}</span></>))}
                             </div>
                         </div>
 
@@ -245,7 +249,10 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                             <span style={rowLabel()}>{lang === 'en' ? 'Deliberation' : 'Délibération'}</span>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
                                 {chip('ctx', ctxLabel)}
-                                {chip('destin', destinOn ? (lang === 'en' ? '👁️ Destiny on' : '👁️ Destin actif') : (lang === 'en' ? '○ No destiny' : '○ Sans destin'))}
+                                {destinOn
+                                    ? destinAgents.map(([id, m]) => chip(id, <><span>{m.emoji}</span><span>{m.name}</span></>))
+                                    : chip('destin', lang === 'en' ? '○ No destiny' : '○ Sans destin')
+                                }
                             </div>
                         </div>
 
