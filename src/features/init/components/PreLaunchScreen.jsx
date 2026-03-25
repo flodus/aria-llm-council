@@ -184,20 +184,22 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                     <div style={{ fontFamily: FONT.mono, fontSize: '0.60rem', letterSpacing: '0.10em', color: 'rgba(200,164,74,0.80)' }}>
                         {lang === 'en' ? 'How do you envision this world?' : 'Comment voyez-vous ce monde ?'}
                     </div>
-                    {/* Résumé options actuelles */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {/* Grille icônes */}
+                    <div style={{ display: 'flex', gap: '1.2rem', flexWrap: 'wrap' }}>
                         {[
-                            presLabel,
-                            lang === 'en' ? `${minsCount} ministries` : `${minsCount} ministères`,
-                            ctxLabel,
-                            destinOn ? (lang === 'en' ? '👁️ Destiny' : '👁️ Destin') : (lang === 'en' ? '○ No destiny' : '○ Sans destin'),
-                        ].map((tag, i) => (
-                            <span key={i} style={{
+                            ['☉☽', lang === 'en' ? 'Presidency' : 'Présidence'],
+                            ['🏛️', lang === 'en' ? 'Ministries' : 'Ministères'],
+                            ['👥', lang === 'en' ? 'Ministers'  : 'Ministres'],
+                            ['🤖', lang === 'en' ? 'Context'    : 'Contexte'],
+                        ].map(([icon, label]) => (
+                            <span key={label} style={{
                                 fontFamily: FONT.mono, fontSize: '0.44rem',
-                                color: 'rgba(200,215,240,0.65)', letterSpacing: '0.06em',
-                                padding: '0.2rem 0.5rem', borderRadius: '2px',
-                                background: 'rgba(90,110,160,0.12)', border: '1px solid rgba(90,110,160,0.20)',
-                            }}>{tag}</span>
+                                color: 'rgba(140,160,200,0.55)', display: 'flex',
+                                alignItems: 'center', gap: '0.3rem',
+                            }}>
+                                <span style={{ fontSize: '0.75rem' }}>{icon}</span>
+                                {label}
+                            </span>
                         ))}
                     </div>
                     {/* Boutons */}
