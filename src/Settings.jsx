@@ -1097,7 +1097,11 @@ function SectionConseil() {
   const [selectedMin2, setSelectedMin2] = useState('justice');
   const [tab, setTab]         = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres' | 'destinee'
   const [presOpenAcc, setPresOpenAcc] = useState(null);
-  const [activeDestinSettings, setActiveDestinSettings] = useState(null); // null = tous actifs
+  // null = tous actifs, [] = aucun actif (destiny_mode désactivé)
+  const [activeDestinSettings, setActiveDestinSettings] = useState(() => {
+    const opts = getOptions();
+    return opts.defaultGovernance?.destiny_mode === true ? null : [];
+  });
   const [saved, setSaved]  = useState(false);
 
   // Gouvernance → Destinée : intercepte les changements de destiny_mode sans passer par useEffect
