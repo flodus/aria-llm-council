@@ -5,7 +5,7 @@
 ```text
 ================================================================================
   ARIA FEUILLE DE ROUTE STRATÉGIQUE  —  v8.0
-  Dernière mise à jour : 2026-03
+  Dernière mise à jour : 2026-03-26
 ================================================================================
 
  ████████████████████████████████████████  LIVRÉ  ████████████████████████████
@@ -53,7 +53,23 @@
  ├─[✓] Toggles UI ................ [destiny_mode + crisis_mode dans Settings + Modal] ■ 100%
  ├─[✓] Réponses oracle/wyrd ...... [aria_reponses.json — 7 régimes × 3 postures, FR+EN] ■ 100%
  └─[✓] Questions destin .......... [aria_questions.json — 7 crises existentielles, FR+EN] ■ 100%
-        └─> Rendu UI destin dans LLMCouncil.jsx — à faire (résultat destin dans la réponse)
+
+ [ MODE COLLÉGIAL + CRISE ] ...................................... STATUT: ✅ FAIT
+ ├─[✓] B10 — Mode collégial ...... [?? null + active !== null dans agentsManager] ... ■ 100%
+ │      └─> [] (présidence désactivée) déclenche bien _runCollegialPhase
+ ├─[✓] B11 — Mode crise .......... [runCrisisPhase() — tous ministères || skip cercle+pres] ■ 100%
+ ├─[✓] Synthèses collégiales JSON . [aria_syntheses.json collegial — 7 régimes, FR+EN] ■ 100%
+ │      └─> getSyntheseCollegial() dans responseService · câblé dans _runCollegialPhase
+ └─[✓] UI mode collégial ......... [SYNTHÈSE CONSTITUTIONNELLE · referendum non-littéral] ■ 100%
+
+ [ INTERFACE UTILISATEUR ] ....................................... STATUT: ✅ FAIT
+ ├─[✓] Curseurs SVG or ........... [4 curseurs #c6a24c · toggle Settings > INTERFACE] . ■ 100%
+ ├─[✓] RadioPlayer topbar ........ [5 stations · localStorage · URL + fichier local] .. ■ 100%
+ └─[✓] Settings > INTERFACE ....... [section dédiée : curseurs + radio] ............. ■ 100%
+
+ [ DOCUMENTATION ] ............................................... STATUT: ✅ FAIT
+ ├─[✓] CONTRIBUTING.md + .fr.md .. [schémas JSON 10 fichiers · contraintes vérifiées] ■ 100%
+ └─[✓] doc/ réorganisé ........... [tous les .md de suivi dans doc/] ............... ■ 100%
 
  [ CONSTITUTION PAR PAYS ] ........................................ STATUT: ✅ FAIT
  ├─[✓] Override gouvernance ...... [Fork constitution indépendante] .. ■ 100%
@@ -77,12 +93,12 @@
  ├─[B7]  setCurrentCycleQuestion → setCurrentCycleQuestions ......... ⬡ patch simple
  ├─[B8]  getTerrainLabel non défini dans AddCountryModal ............. ⬡ patch simple
  ├─[B13] Bouton Actualiser (💡) disparu dans les questions ........... ⬡ patch simple
- ├─[B14] Settings > Ministères : grille ministres par ministère absente ⬡ patch simple
- ├─[B15] ConstitutionModal > Présidence : prompts Phare/Boussole inaccessibles ⬡ patch simple
  ├─[B9]  Routing ministère invalide sur question de liste ............ ⬡ Decide requis (llmCouncilEngine)
- ├─[B10] Mode collégial → synthèse présidentielle incorrecte ......... ⬡ Decide requis (deliberationEngine)
- ├─[B11] Mode crise : phases cercle + présidence non skippées ........ ⬡ Decide requis (deliberationEngine)
- └─[B12] Mode destin désactivé mais Oracle/Trame actifs .............. ⬡ vérif flag
+ ├─[B12] Mode destin désactivé mais Oracle/Trame actifs .............. ✅ corrigé
+ ├─[B14] Settings > Ministères : grille ministres par ministère ....... ✅ corrigé
+ ├─[B15] ConstitutionModal > Présidence : prompts Phare/Boussole ..... ✅ corrigé
+ ├─[B10] Mode collégial → synthèse présidentielle incorrecte ......... ✅ corrigé
+ └─[B11] Mode crise : phases cercle + présidence non skippées ........ ✅ corrigé
 
  [ PHASE U1 : POLISH UX ] ........................................ STATUT: EN COURS
  ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ✅ 100%
@@ -164,12 +180,15 @@
  └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [█████████░░░░░░░░░░░░░░░░░░░░░░░░░] ~25%
+ PROGRESSION : [██████████░░░░░░░░░░░░░░░░░░░░░░░░] ~28%
  BASE : Moteur + constitution par pays complets.
         Init UX poli. Mode Board Game offline complet (pipeline 4 JSON).
         Source unique de vérité. Destinée du Monde opérationnelle.
-        PresidencyTiles unifié (4 tuiles identiques sur tous les écrans).
-        Chantier B1 (bugs post-refactor) + G1 (cohérence gouvernance) en cours.
+        PresidencyTiles unifié. Mode collégial + crise opérationnels.
+        Interface : curseurs SVG or + RadioPlayer topbar.
+        Documentation : CONTRIBUTING complet + doc/ réorganisé.
+        Restant B1 : B7 · B8 · B13 · B9 (Decide requis).
+        Chantier G1 (cohérence gouvernance) en file.
         Refonte carte en approche.
 ================================================================================
 ```
