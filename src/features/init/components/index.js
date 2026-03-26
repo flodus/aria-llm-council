@@ -24,3 +24,4 @@ export { default as CountryEstimations } from './CountryEstimations';
 export { default as RealCountryLocalSection } from './RealCountryLocalSection';
 export { default as FictionalCountrySection } from './FictionalCountrySection';
 export { default as RealCountryAISection } from './RealCountryAISection';
+export { default as WorldRecap } from './WorldRecap';

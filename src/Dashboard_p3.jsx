@@ -13,6 +13,7 @@
 //    ConstitutionModal → modale gouvernance par pays
 // ═══════════════════════════════════════════════════════════════════════════════
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './shared/data/ariaData';
+import { getTerrainLabel } from './shared/data/worldLabels';
 import { loadLang, t, useLocale } from './ariaI18n';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -1706,7 +1707,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
                 );
                 closeCycle(cycleNumRef.current);
                 cycleNumRef.current += 1;
-                setCurrentCycleQuestion(null);
+                setCurrentCycleQuestions({});
                 setModalCycleConfirm(false);
                 setCycleHistory([]);
                 aria.advanceCycle();

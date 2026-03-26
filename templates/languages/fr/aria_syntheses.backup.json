@@ -852,10 +852,12 @@
         "democratie_liberale",
         "republique_federale",
         "monarchie_constitutionnelle",
+        "regime_autoritaire",
         "oligarchie",
         "junte_militaire",
-        "theocratie",
-        "technocratie_ia"
+        "theocracie",
+        "technocratie_ia",
+        "monarchie_absolue"
       ],
       "note": "nearest-neighbor : si régime absent, utiliser fallback_order[0]"
     },
@@ -956,7 +958,7 @@
           "Le désaccord au sein du Conseil est une vulnérabilité. Il sera résolu par la hiérarchie — pas par le vote. La décision finale appartient au commandant suprême."
         ]
       },
-      "theocratie": {
+      "theocracie": {
         "convergence": [
           "Le Conseil parle d'une seule âme. La volonté collective des ministres reflète une guidance supérieure. Cette décision est juste car elle est unanime.",
           "L'accord du Conseil est total. Quand les cœurs s'alignent sur une même direction, c'est le signe que le chemin est vrai.",
@@ -970,6 +972,38 @@
           "Le vote ne tranche pas. C'est peut-être un signe que la question mérite une méditation plus profonde avant d'être soumise à décision.",
           "Le désaccord au sein du Conseil est une invitation à l'humilité. Nous ne voyons pas encore clairement. La décision attendra que la lumière se fasse.",
           "Divergence spirituelle enregistrée. Les interprétations des principes fondateurs diffèrent. Un retour aux textes et aux traditions s'impose avant de trancher."
+        ]
+      },
+      "regime_autoritaire": {
+        "convergence": [
+          "Le Conseil s'aligne sur la décision. L'unité du commandement est assurée. L'exécution suivra sans délai.",
+          "Vote sans ambiguïté. Le Conseil confirme la direction — la stabilité du régime est préservée. La décision sera appliquée.",
+          "L'accord est complet. Dans ce régime, l'unanimité du Conseil est un signal fort. La direction est fixée.",
+          "Le Conseil parle d'une seule voix. La décision est prise, le consensus est établi. Toute résistance à l'application sera traitée comme telle.",
+          "Unanimité au Conseil. La direction est claire, la volonté est commune. L'appareil d'État est mobilisé pour l'exécution."
+        ],
+        "divergence": [
+          "Des voix discordantes s'élèvent au sein du Conseil. Cette situation est notée. Une clarification des positions sera demandée.",
+          "Le vote révèle des résistances internes. Elles seront analysées. La décision finale ne sera pas affectée par les dissensions.",
+          "Divergence enregistrée. Le Conseil ne parle pas d'une seule voix — c'est une information en soi. La décision d'autorité prévaudra.",
+          "Le désaccord au sein du Conseil est temporaire. Les positions divergentes ont été enregistrées. La décision sera imposée par la voie habituelle.",
+          "Fracture dans le Conseil. Les voix discordantes seront entendues — puis la décision sera prise selon les canaux appropriés. L'unité sera rétablie."
+        ]
+      },
+      "monarchie_absolue": {
+        "convergence": [
+          "Le Conseil Royal délibère et s'accorde dans l'honneur. L'unité des conseillers reflète la solidité du trône et la justesse de la direction.",
+          "Vote collégial unanime. La Couronne prend note de l'accord de ses ministres — c'est un signe de bonne gouvernance.",
+          "Le Conseil parle avec unité. La décision sera entérinée par la Couronne et appliquée dans les délais requis.",
+          "L'accord du Conseil est total. La Couronne reconnaît dans cette unanimité la marque d'une délibération menée avec sagesse et loyauté.",
+          "Unanimité royale. Les conseillers se sont accordés sans contrainte — c'est le signe que la décision est juste. La Couronne entérine."
+        ],
+        "divergence": [
+          "Le Conseil Royal est divisé. La Couronne prend acte du désaccord et se réserve le droit de trancher en dernier ressort.",
+          "Divergence au sein du Conseil. Les avis divergents seront examinés par la Couronne avant décision finale.",
+          "Le vote ne produit pas d'accord. Dans ce cas, la prérogative royale s'exerce pleinement.",
+          "Le Conseil ne s'accorde pas. La Couronne prend acte — et rappelle que la décision finale lui appartient, quels que soient les avis exprimés.",
+          "Divergence enregistrée au Conseil. Les positions seront transmises à la Couronne. La décision souveraine mettra fin au débat."
         ]
       }
     }

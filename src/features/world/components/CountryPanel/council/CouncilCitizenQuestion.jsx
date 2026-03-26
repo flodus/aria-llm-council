@@ -108,9 +108,8 @@ export default function CitizenQuestion({
             }}>
             <span>{isEn ? 'CITIZEN QUESTION' : 'QUESTION DU PEUPLE'}</span>
 
-            {/* Bouton Suggestion - visible uniquement en mode Board Game */}
-            {isBoardGame && (
-                <button
+            {/* Bouton Suggestion — toujours visible */}
+            <button
                 onClick={handleSuggest}
                 style={{
                     background: 'rgba(200,164,74,0.10)',
@@ -130,7 +129,6 @@ export default function CitizenQuestion({
                 >
                 💡 {isEn ? 'SUGGEST' : 'SUGGESTION'}
                 </button>
-            )}
             </div>
 
             {/* Zone de saisie avec indication visuelle si déjà posée */}

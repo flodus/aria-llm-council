@@ -1,9 +1,9 @@
 # CLAUDE.md — ARIA + ADD Framework
 
 > Langue de travail : français. Toutes les réponses et commentaires en français.
-> Contexte technique complet : lire ARIA_CONTEXT.md à la racine du projet.
+> Contexte technique complet : lire doc/ARIA_CONTEXT.md
 
-@ARIA_CONTEXT.md
+@doc/ARIA_CONTEXT.md
 
 ## Commandes
 ```bash

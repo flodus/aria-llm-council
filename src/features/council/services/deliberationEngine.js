@@ -8,7 +8,7 @@ import { callAI, getApiKeys } from '../../../Dashboard_p1';
 import { getMinistersMapFor, getMinistriesListFor, getPresidencyFor, getDestin } from './agentsManager';
 import { buildCountryContext, langPrefix } from './contextBuilder';  // direct
 import { FALLBACK_RESPONSES, localMinisterFallback, localSyntheseFallback, localAnnotationFallback } from './fallbacks';
-import { getSynthesePresidence } from '../../../shared/services/boardgame/responseService';
+import { getSynthesePresidence, getSyntheseCollegial } from '../../../shared/services/boardgame/responseService';
 import { COLORS } from '../../../shared/theme';
 
 /**
@@ -268,12 +268,16 @@ async function _runCollegialPhase(question, ministereResult, cercleAnnotations, 
     if (!synthese) {
         const questionHash = question.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
         const convergence = (questionHash + (country.satisfaction || 50)) % 3 !== 0;
+        const syntheseTexte = getSyntheseCollegial(country?.regime, convergence)
+            || (convergence
+                ? `Le Conseil délibère en session plénière. Une majorité ministérielle se dégage sur la question posée.`
+                : `Le Conseil est divisé sur cette question. Une délibération approfondie est nécessaire avant toute décision.`);
         synthese = {
             convergence,
-            synthese: convergence
-                ? `Le Conseil délibère en session plénière. Une majorité ministérielle se dégage sur la question posée. La synthèse constitutionnelle reflète l'équilibre des positions exprimées.`
-                : `Le Conseil est divisé sur cette question. Les positions ministérielles divergent selon les priorités sectorielles. Une délibération approfondie est nécessaire avant toute décision.`,
-            question_referendum: `Approuvez-vous la position du Conseil sur : "${question.slice(0, 80)}${question.length > 80 ? '…' : ''}" ?`,
+            synthese: syntheseTexte,
+            question_referendum: convergence
+                ? `Le Conseil recommande d'adopter une réponse collective à cette question. Approuvez-vous cette orientation ?`
+                : `Le Conseil est divisé. Autorisez-vous la poursuite des délibérations avant toute décision ?`,
             enjeu_principal: `La décision impactera les ${Math.round((country.population || 1e6) / 1e6 * 10) / 10} M de citoyens — le Conseil délibère sans arbitrage présidentiel.`,
         };
     }
@@ -538,6 +542,21 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         synthese,
     };
 }
+/**
+ * Phase CRISE : tous les ministères actifs délibèrent directement sur la question.
+ * Skip cercle + présidence. Déclenché si crisis_mode !== false && detectCrisis(question).
+ * @param {string} question
+ * @param {object} country
+ * @returns {Promise<{ crisis: true, ministries: Array }>}
+ */
+export async function runCrisisPhase(question, country) {
+    const ministriesList = getMinistriesListFor(country);
+    const results = await Promise.all(
+        ministriesList.map(ministry => runMinisterePhase(ministry, question, country))
+    );
+    return { crisis: true, ministries: results };
+}
+
 function buildSynthesePresidencePrompt(phare, boussole, question, country) {
     const ctx = buildCountryContext(country);
     return `${langPrefix()}Tu es le système d'arbitrage présidentiel du gouvernement ARIA.

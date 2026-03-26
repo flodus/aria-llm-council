@@ -91,10 +91,10 @@ justice · economie · defense · sante · education · ecologie · industrie
 ---
 
 ## Fichiers de suivi
-- TODO.md — backlog quotidien
-- ROADMAP.fr.md — vision globale
-- REFLEXIONS.md — idées de fond (Assess requis)
-- SETTINGS_ARCHITECTURE.md — avant/après refonte Settings
+- doc/TODO.md — backlog quotidien
+- doc/ROADMAP.fr.md — vision globale
+- doc/REFLEXIONS.md — idées de fond (Assess requis)
+- doc/MIGRATION_NOTES.md — notes de migration ministères / prompts
 
 ---
 

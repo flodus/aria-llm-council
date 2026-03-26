@@ -8,6 +8,7 @@
 
 import { getRegimeLabel, getTerrainLabel } from './shared/data/worldLabels';
 import AgentGrid from './shared/components/AgentGrid';
+import PresidencyTiles from './shared/components/PresidencyTiles';
 import { getDestin } from './features/council/services/agentsManager';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
@@ -56,6 +57,7 @@ function getSections(isEn) {
     { id: 'constitution', icon: '📜',  label: isEn ? 'CONSTITUTION' : 'CONSTITUTION' },
     { id: 'simulation',   icon: '🎲',  label: isEn ? 'SIMULATION'   : 'SIMULATION'   },
     { id: 'systeme',      icon: '⚙️',  label: isEn ? 'SYSTEM'       : 'SYSTÈME'      },
+    { id: 'interface',    icon: '🎨',  label: 'INTERFACE'                            },
     { id: 'apropos',      icon: '✦',   label: isEn ? 'ABOUT'        : 'À PROPOS'     },
   ];
 }
@@ -1097,7 +1099,11 @@ function SectionConseil() {
   const [selectedMin2, setSelectedMin2] = useState('justice');
   const [tab, setTab]         = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres' | 'destinee'
   const [presOpenAcc, setPresOpenAcc] = useState(null);
-  const [activeDestinSettings, setActiveDestinSettings] = useState(null); // null = tous actifs
+  // null = tous actifs, [] = aucun actif (destiny_mode désactivé)
+  const [activeDestinSettings, setActiveDestinSettings] = useState(() => {
+    const opts = getOptions();
+    return opts.defaultGovernance?.destiny_mode === true ? null : [];
+  });
   const [saved, setSaved]  = useState(false);
 
   // Gouvernance → Destinée : intercepte les changements de destiny_mode sans passer par useEffect
@@ -1147,6 +1153,23 @@ function SectionConseil() {
   const save = () => {
     saveAgentOverrides(agents);
     saveOptions(govOpts);   // sauvegarde aussi la gouvernance (onglet Gouvernance)
+
+    // Traduit defaultGovernance.presidency → active_presidency dans aria_agents_override
+    // pour que le moteur (getPresidencyFor) active le bon mode de délibération.
+    const presType = govOpts.defaultGovernance?.presidency || 'duale';
+    const presMap = { solaire: ['phare'], lunaire: ['boussole'], collegiale: [], duale: null };
+    const activePres = presMap[presType] ?? null;
+    try {
+      const ov = JSON.parse(localStorage.getItem('aria_agents_override') || 'null') || {};
+      if (activePres === null) delete ov.active_presidency;
+      else ov.active_presidency = activePres;
+      // Traduit defaultGovernance.active_ministers → aria_agents_override.active_ministers
+      const activeMins = govOpts.defaultGovernance?.active_ministers ?? null;
+      if (activeMins === null) delete ov.active_ministers;
+      else ov.active_ministers = activeMins;
+      localStorage.setItem('aria_agents_override', JSON.stringify(ov));
+    } catch {}
+
     setSaved(true);
   };
 
@@ -1466,10 +1489,20 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
   };
 
   const toggleMinistry = (id) => {
-    const current = new Set(gov.ministries || []);
+    const current = new Set(gov.ministries || getAllMinistryIds());
     if (current.has(id)) { if (current.size <= 2) return; current.delete(id); }
     else current.add(id);
     setGov('ministries', [...current]);
+  };
+
+  const toggleMinisterSettings = (id) => {
+    const dIds = new Set(getDestin()?.agents || []);
+    const allIds = Object.entries(getAgents().ministers || {})
+      .filter(([mid]) => !dIds.has(mid)).map(([mid]) => mid);
+    const current = new Set(gov.active_ministers || allIds);
+    if (current.has(id)) { if (current.size <= 1) return; current.delete(id); }
+    else current.add(id);
+    setGov('active_ministers', [...current]);
   };
 
   const HDR = (key, label, badge) => (
@@ -1492,64 +1525,7 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
               <div style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.7)', letterSpacing:'0.10em', marginBottom:'0.6rem', textTransform:'uppercase' }}>
                 {isEn ? 'Presidency type' : 'Type de présidence'}
               </div>
-              <div style={{ display:'flex', gap:'1rem', alignItems:'flex-start' }}>
-                {/* Grille tuiles */}
-                <div style={{ display:'flex', flexWrap:'wrap', gap:'0.5rem' }}>
-                  {[
-                    { value:'solaire',    icon:'☉',  iconColor:'rgba(200,164,74,0.90)',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
-                    { value:'lunaire',    icon:'☽',  iconColor:'rgba(150,100,220,0.90)', iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
-                    { value:'duale',      iconRender:<><span style={{color:'rgba(200,164,74,0.90)'}}>☉</span><span style={{color:'rgba(150,100,220,0.90)'}}>☽</span></>, iconSize:'1.2rem', ls:'-0.05em', label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
-                    { value:'collegiale', icon:null, iconColor:'rgba(165,55,75,0.88)',   iconSize:'1.6rem', ls:'normal',  label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
-                  ].map(({ value, icon, iconRender, iconColor, iconSize, ls, label, tooltip }) => {
-                    const isSel = (gov.presidency || 'duale') === value;
-                    return (
-                      <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
-                        style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'0.2rem',
-                          padding:'0.6rem 0.7rem', borderRadius:'6px', cursor:'pointer', minWidth:'3.5rem',
-                          background: isSel ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                          border: `1px solid ${isSel ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                          transition:'all 0.12s' }}>
-                        <span style={{ height:'2rem', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                          {iconRender
-                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{iconRender}</span>
-                            : icon
-                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls, color: iconColor || (isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)') }}>{icon}</span>
-                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: iconColor }} />
-                          }
-                        </span>
-                        <span style={{ fontSize:'0.52rem', color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
-                          letterSpacing:'0.03em', textAlign:'center', maxWidth:'4rem',
-                          overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', lineHeight:1.3 }}>
-                          {label}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* Description sélection */}
-                {(() => {
-                  const sel = gov.presidency || 'duale';
-                  const modeAccent = {
-                    solaire:    'rgba(200,164,74,0.80)',
-                    lunaire:    'rgba(140,100,220,0.80)',
-                    duale:      'rgba(170,132,147,0.80)',
-                    collegiale: 'rgba(165,55,75,0.80)',
-                  }[sel] || 'rgba(200,164,74,0.70)';
-                  const desc = {
-                    solaire:    isEn ? '☉ The Phare\npresides alone\nThe Will'                           : '☉ Le Phare\npréside seul\nLa Volonté',
-                    lunaire:    isEn ? '☽ The Boussole\npresides alone\nThe Soul'                        : '☽ La Boussole\npréside seule\nL\'Âme',
-                    duale:      isEn ? '☉☽ The Phare and the Boussole\ndeliberate equally\nARIA mode'    : '☉☽ Le Phare et La Boussole\ndélibèrent à égalité\nMode ARIA',
-                    collegiale: isEn ? '✡ Vote of 12 ministers\nConstitutional Synthesis'                : '✡ Vote des 12 ministres\nSynthèse Constitutionnelle',
-                  }[sel] || '';
-                  return (
-                    <div style={{ borderLeft:`2px solid ${modeAccent}44`, paddingLeft:'1rem',
-                      fontStyle:'italic', color:modeAccent, fontSize:'0.52rem',
-                      lineHeight:1.7, whiteSpace:'pre-line', alignSelf:'center' }}>
-                      {desc}
-                    </div>
-                  );
-                })()}
-              </div>
+                  <PresidencyTiles presType={gov.presidency || 'duale'} onSelect={v => setGov('presidency', v)} isEn={isEn} />
               <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.35)', marginTop:'0.5rem', letterSpacing:'0.06em' }}>
                 {isEn ? 'Applied to all new countries unless overridden' : 'Appliqué à tous les nouveaux pays sauf override'}
               </div>
@@ -1561,27 +1537,100 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
       {/* ▸ MINISTÈRES */}
       <div className={`aria-accordion${openAcc==='mins' ? ' open' : ''}`}>
         {HDR('mins', isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT',
-          `${(gov.ministries||[]).length}/${getAllMinistryIds().length}`)}
+          `${(gov.ministries||getAllMinistryIds()).length}/${getAllMinistryIds().length}`)}
         {openAcc==='mins' && (
           <div className="aria-accordion__body">
-            {getAllMinistryIds().map(id => {
-              const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
-              const active = (gov.ministries||[]).includes(id);
-              const isMin  = (gov.ministries||[]).length <= 2 && active;
-              return (
-                <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
-                  cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
-                  padding:'0.3rem 0.5rem', borderRadius:'2px',
-                  background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
-                  border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
-                  <input type="checkbox" checked={active} disabled={isMin} onChange={() => toggleMinistry(id)}
-                    style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
-                  <span style={{ fontSize:'0.9rem' }}>{meta.emoji}</span>
-                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
-                    color:'rgba(200,215,240,0.80)' }}>{meta.label}</span>
-                </label>
-              );
-            })}
+            {(() => {
+              const dIds = new Set(getDestin()?.agents || []);
+              const allMinisterIds = Object.entries(getAgents().ministers || {})
+                .filter(([id]) => !dIds.has(id)).map(([id]) => id);
+              const ministriesData = getAgents().ministries || [];
+              return getAllMinistryIds().map(id => {
+                const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
+                const activeMins = gov.ministries || getAllMinistryIds();
+                const active = activeMins.includes(id);
+                const isMin  = activeMins.length <= 2 && active;
+                const ministryData = ministriesData.find(m => m.id === id);
+                const ministryMinisters = ministryData?.ministers || [];
+                return (
+                  <div key={id}>
+                    <label style={{ display:'flex', alignItems:'center', gap:'0.6rem',
+                      cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
+                      padding:'0.3rem 0.5rem', borderRadius:'2px',
+                      background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
+                      border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
+                      <input type="checkbox" checked={active} disabled={isMin} onChange={() => toggleMinistry(id)}
+                        style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
+                      <span style={{ fontSize:'0.9rem' }}>{meta.emoji}</span>
+                      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
+                        color:'rgba(200,215,240,0.80)' }}>{meta.label}</span>
+                    </label>
+                    {active && ministryMinisters.length > 0 && (
+                      <div style={{ display:'flex', flexWrap:'wrap', gap:'0.3rem', paddingLeft:'2.2rem', paddingBottom:'0.3rem' }}>
+                        {ministryMinisters.map(mid => {
+                          const m = getAgents().ministers?.[mid];
+                          if (!m || !m.emoji) return null;
+                          const activeList = gov.active_ministers || allMinisterIds;
+                          const mActive = activeList.includes(mid);
+                          return (
+                            <button key={mid} title={m.name}
+                              onClick={() => toggleMinisterSettings(mid)}
+                              style={{
+                                padding:'0.18rem 0.45rem', borderRadius:'2px', cursor:'pointer',
+                                fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
+                                background: mActive ? 'rgba(200,164,74,0.08)' : 'rgba(255,255,255,0.02)',
+                                border: `1px solid ${mActive ? 'rgba(200,164,74,0.30)' : 'rgba(140,160,200,0.12)'}`,
+                                color: mActive ? 'rgba(200,215,240,0.85)' : 'rgba(140,160,200,0.35)',
+                              }}>
+                              {m.emoji} {m.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        )}
+      </div>
+
+      {/* ▸ MINISTRES */}
+      <div className={`aria-accordion${openAcc==='ministers' ? ' open' : ''}`}>
+        {HDR('ministers', isEn ? 'ACTIVE MINISTERS BY DEFAULT' : 'MINISTRES ACTIFS PAR DÉFAUT', (() => {
+          const dIds = new Set(getDestin()?.agents || []);
+          const allIds = Object.entries(getAgents().ministers || {}).filter(([id]) => !dIds.has(id)).map(([id]) => id);
+          return `${(gov.active_ministers || allIds).length}/${allIds.length}`;
+        })())}
+        {openAcc==='ministers' && (
+          <div className="aria-accordion__body">
+            {(() => {
+              const dIds = new Set(getDestin()?.agents || []);
+              const allIds = Object.entries(getAgents().ministers || {})
+                .filter(([id]) => !dIds.has(id)).map(([id]) => id);
+              return Object.entries(getAgents().ministers || {})
+                .filter(([id, m]) => !dIds.has(id) && m.name && m.emoji)
+                .map(([id, m]) => {
+                  const activeList = gov.active_ministers || allIds;
+                  const active = activeList.includes(id);
+                  const isMin = activeList.length <= 1 && active;
+                  return (
+                    <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
+                      cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
+                      padding:'0.3rem 0.5rem', borderRadius:'2px',
+                      background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
+                      border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
+                      <input type="checkbox" checked={active} disabled={isMin}
+                        onChange={() => toggleMinisterSettings(id)}
+                        style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
+                      <span style={{ fontSize:'0.9rem' }}>{m.emoji}</span>
+                      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
+                        color:'rgba(200,215,240,0.80)' }}>{m.name}</span>
+                    </label>
+                  );
+                });
+            })()}
           </div>
         )}
       </div>
@@ -2050,6 +2099,70 @@ function SectionAPropos() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  SECTION 6 — INTERFACE
+// ─────────────────────────────────────────────────────────────────────────────
+
+function SectionInterface() {
+  const { lang } = useLocale();
+  const isEn = lang === 'en';
+  const [opts, setOpts] = useState(() => getOptions());
+  const [saved, setSaved] = useState(false);
+
+  const update = (key, val) => {
+    setOpts(prev => {
+      const next = JSON.parse(JSON.stringify(prev));
+      if (!next.interface) next.interface = {};
+      next.interface[key] = val;
+      return next;
+    });
+    setSaved(false);
+  };
+
+  const save = () => { saveOptions(opts); setSaved(true); };
+
+  const curseurs = opts.interface?.custom_cursors !== false;
+  const radio    = opts.interface?.radio_visible  !== false;
+
+  return (
+    <div className="settings-section-body">
+      <SectionTitle icon="🎨" label="INTERFACE" sub={isEn?"Visual preferences — cursors, radio player":"Préférences visuelles — curseurs, lecteur radio"} />
+
+      <div className="settings-group">
+        <div className="settings-group-title">{isEn?"VISUAL":"VISUEL"}</div>
+        <Field label={isEn?"Custom cursors (gold SVG)":"Curseurs personnalisés (or SVG)"}>
+          <Toggle value={curseurs} onChange={v => update('custom_cursors', v)}
+            label={curseurs ? (isEn?'Enabled':'Activés') : (isEn?'Disabled':'Désactivés')} />
+        </Field>
+      </div>
+
+      <div className="settings-group">
+        <div className="settings-group-title">{isEn?"AUDIO":"AUDIO"}</div>
+        <Field label={isEn?"Show radio player in topbar":"Afficher le lecteur radio dans la topbar"}>
+          <Toggle value={radio} onChange={v => update('radio_visible', v)}
+            label={radio ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
+        </Field>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
+        <button className="settings-save-btn" onClick={save}>
+          {saved ? (isEn?'✓ Saved':'✓ Sauvegardé') : (isEn?'Save':'Sauvegarder')}
+        </button>
+      </div>
+
+      <div style={{
+        marginTop: '1rem', padding: '0.6rem 0.8rem',
+        background: 'rgba(198,162,76,0.05)', border: '1px solid rgba(198,162,76,0.15)',
+        borderRadius: 4, fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', fontStyle: 'italic',
+      }}>
+        {isEn
+          ? 'Changes take effect after closing Settings.'
+          : 'Les modifications prennent effet à la fermeture de Settings.'}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 //  COMPOSANT PRINCIPAL — Settings
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -2113,6 +2226,7 @@ export default function Settings({ onClose }) {
             {activeSection === 'constitution' && <SectionConstitution />}
             {activeSection === 'conseil'      && <SectionConseil />}
             {activeSection === 'simulation'   && <SectionSimulation />}
+            {activeSection === 'interface'    && <SectionInterface />}
             {activeSection === 'apropos'      && <SectionAPropos />}
           </SectionErrorBoundary>
         </main>

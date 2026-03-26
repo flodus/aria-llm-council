@@ -14,8 +14,9 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useCallback } from 'react';
+import { getOptions } from '../../../Dashboard_p1';
 import { routeQuestion, getBestMatch, detectCrisis } from '../services/routingEngine';
-import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from '../services/deliberationEngine';
+import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase, runCrisisPhase } from '../services/deliberationEngine';
 import { computeVoteImpact } from '../services/voteEngine';
 import { buildCountryContext } from '../services/contextBuilder';
 import { MINISTRIES_LIST } from '../services/agentsManager';
@@ -65,6 +66,15 @@ export function useCouncilSession(country, onVoteResult) {
         setSession(prev => ({ ...prev, ministryId: resolvedId }));
 
         try {
+            // Mode crise — tous les ministères délibèrent directement, skip cercle + présidence
+            const globalGov = getOptions().defaultGovernance || {};
+            const gov = { ...globalGov, ...(country?.governanceOverride || {}) };
+            if (gov.crisis_mode !== false && detectCrisis(question)) {
+                const crisisResult = await runCrisisPhase(question, country);
+                setSession(prev => ({ ...prev, crisis: crisisResult, voteReady: true }));
+                return;
+            }
+
             const ministereResult = await runMinisterePhase(ministry, question, country);
             setSession(prev => ({ ...prev, ministere: ministereResult }));
 
@@ -72,7 +82,6 @@ export function useCouncilSession(country, onVoteResult) {
             setSession(prev => ({ ...prev, cercle: cercleResult }));
 
             // Phase Destin — optionnelle si destiny_mode actif + crise détectée
-            const gov = country?.governanceOverride || {};
             let destinResult = null;
             if (gov.destiny_mode === true && gov.crisis_mode !== false && detectCrisis(question)) {
                 destinResult = await runDestinPhase(question, country, false);
@@ -92,6 +101,13 @@ export function useCouncilSession(country, onVoteResult) {
     const submitQuestion = useCallback(async (question, ministryId) => {
         if (!country || running) return;
 
+        // Si l'utilisateur a explicitement choisi un ministère (pool ou pill),
+        // on court-circuite les vérifications par keywords — il sait ce qu'il fait.
+        if (ministryId) {
+            await launchCouncil(question, ministryId);
+            return;
+        }
+
         const bestMatch = getBestMatch(question);
 
         // Cas 1 — question garbage (aucun keyword ne matche)
@@ -100,24 +116,8 @@ export function useCouncilSession(country, onVoteResult) {
             return;
         }
 
-        // Cas 2 — ministère forcé par l'utilisateur mais meilleur match ailleurs
-        if (ministryId && bestMatch.ministryId !== ministryId) {
-            const forceMin    = MINISTRIES_LIST.find(m => m.id === ministryId);
-            const suggestMin  = MINISTRIES_LIST.find(m => m.id === bestMatch.ministryId);
-            setMismatchModal({
-                question,
-                forceId:       ministryId,
-                forceName:     forceMin?.name  || ministryId,
-                forceEmoji:    forceMin?.emoji || '📋',
-                suggestedId:   bestMatch.ministryId,
-                suggestedName: suggestMin?.name  || bestMatch.ministryId,
-                suggestedEmoji: suggestMin?.emoji || '📋',
-            });
-            return;
-        }
-
-        // Cas 3 — OK, on lance
-        await launchCouncil(question, ministryId);
+        // Cas 2 — question libre : propose le meilleur ministère détecté
+        await launchCouncil(question, bestMatch.ministryId);
     }, [country, running, launchCouncil]);
 
     // ── Résolution mismatch ──────────────────────────────────────────────────

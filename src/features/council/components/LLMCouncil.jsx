@@ -398,6 +398,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
     CERCLE:      !!session?.cercle,
     DESTIN:      !!session?.destin,
     PRESIDENCE:  !!session?.presidence,
+    CRISIS:      !!session?.crisis,
     PEUPLE_VOTE: !!session?.voteReady && !session?.voteResult,
     RESULT:      !!session?.voteResult,
   };
@@ -435,7 +436,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
     );
   }
 
-  const { question, ministere, cercle, destin, presidence, voteReady, voteResult } = session;
+  const { question, ministere, cercle, destin, presidence, crisis, voteReady, voteResult } = session;
   const convergence = presidence?.synthese?.convergence;
 
   return (
@@ -548,6 +549,35 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
           </PhaseBlock>
         )}
 
+        {/* ── PHASE CRISE : tous les ministères en délibération d'urgence ─────── */}
+        {show.CRISIS && session.crisis && (
+          <PhaseBlock
+            phase="CRISIS"
+            label={loadLang()==='en' ? '⚡ CRISIS — ALL MINISTRIES' : '⚡ CRISE — TOUS LES MINISTÈRES'}
+            icon="⚡"
+            accentColor="#E05050"
+            style={{ animation: 'fadeSlideIn 0.5s ease both' }}
+          >
+            <div style={sectionTitle('#E05050')}>
+              {loadLang()==='en' ? 'EMERGENCY DELIBERATION' : 'DÉLIBÉRATION D\'URGENCE'}
+            </div>
+            {session.crisis.ministries?.map(min => (
+              <div key={min.ministryId} style={bubble(min.ministryColor || C.goldDim, { marginBottom: '0.5rem' })}>
+                <div style={sectionTitle(min.ministryColor || C.goldDim)}>
+                  {min.ministryEmoji} {min.ministryName}
+                </div>
+                <MinisterBlock minister={min.ministerA} />
+                <MinisterBlock minister={min.ministerB} />
+                {min.synthese?.recommandation && (
+                  <p style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: C.text, lineHeight: 1.6, margin: '0.3rem 0 0', paddingTop: '0.3rem', borderTop: `1px solid ${min.ministryColor || C.goldDim}22` }}>
+                    → {min.synthese.recommandation}
+                  </p>
+                )}
+              </div>
+            ))}
+          </PhaseBlock>
+        )}
+
         {/* ── PHASE 4 : PRESIDENCE ─────────────────────────────────────────── */}
         {show.PRESIDENCE && presidence && (
           <PhaseBlock
@@ -577,7 +607,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             {presidence.synthese && (
               <div style={bubble(convergence ? C.green : C.gold, { marginTop: '0.6rem' })}>
                 <div style={sectionTitle(convergence ? C.green : C.gold)}>
-                  ✦ SYNTHÈSE PRÉSIDENTIELLE
+                  {presidence.collegial ? '✡ SYNTHÈSE CONSTITUTIONNELLE' : '✦ SYNTHÈSE PRÉSIDENTIELLE'}
                   <span style={{ margin: '0 0.5rem', color: 'rgba(150,170,210,0.18)', fontSize:'0.44rem' }}>—</span>
                   <span style={{
                     padding: '0.15rem 0.55rem',

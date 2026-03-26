@@ -129,6 +129,11 @@ export default function MinistryQuestions({
 
     if (questions.length === 0) return null;
 
+    const handleRefresh = () => {
+        const pool = getPool(ministryId);
+        setBaseQuestions([...pool].sort(() => Math.random() - 0.5));
+    };
+
     return (
         <>
         <div style={{
@@ -137,8 +142,28 @@ export default function MinistryQuestions({
             letterSpacing: '0.12em',
             color: 'rgba(140,160,200,0.75)',
             marginBottom: '0.35rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
         }}>
         <span>{isEn ? 'QUESTIONS' : 'QUESTIONS'}</span>
+        <button
+            onClick={handleRefresh}
+            style={{
+                background: 'none',
+                border: 'none',
+                padding: '0.1rem 0.2rem',
+                cursor: 'pointer',
+                color: 'rgba(140,160,200,0.45)',
+                fontSize: '0.7rem',
+                lineHeight: 1,
+                display: 'flex',
+                alignItems: 'center',
+            }}
+            title={isEn ? 'Refresh questions' : 'Actualiser les questions'}
+        >
+            <span className="mdi mdi-refresh" />
+        </button>
         </div>
 
         {questions.map((item, i) => {

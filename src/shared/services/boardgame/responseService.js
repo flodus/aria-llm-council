@@ -175,6 +175,38 @@ export function getSynthesePresidence(convergence = true) {
 }
 
 /**
+ * Récupère une synthèse collégiale (mode offline, présidence désactivée)
+ * @param {string|null} regime      - régime politique du pays
+ * @param {boolean}     convergence - true = convergence, false = divergence
+ * @returns {string|null}
+ */
+export function getSyntheseCollegial(regime = null, convergence = true) {
+    const data = chargerSyntheses();
+    if (!data) return null;
+
+    const parRegime    = data.collegial?.par_regime;
+    if (!parRegime) return null;
+
+    const typeKey      = convergence ? 'convergence' : 'divergence';
+    const fallbackOrder = data.collegial?._meta?.fallback_order || ['democratie_liberale'];
+
+    // Résolution nearest-neighbor : régime exact → ordre fallback → democratie_liberale
+    const regimeResolu = (regime && parRegime[regime])
+        ? regime
+        : (fallbackOrder.find(r => parRegime[r]) || 'democratie_liberale');
+
+    try {
+        const pool = parRegime[regimeResolu]?.[typeKey];
+        const resultat = piocherDansPool(pool);
+        if (resultat) return resultat;
+        return piocherDansPool(parRegime['democratie_liberale']?.[typeKey]);
+    } catch (e) {
+        console.warn('getSyntheseCollegial — lookup échoué :', e);
+        return null;
+    }
+}
+
+/**
  * Récupère un texte d'annotation pour un ministère du cercle (mode offline)
  * @param {string} ministereId  - justice, economie, defense, etc.
  * @param {string|null} regime  - régime politique du pays

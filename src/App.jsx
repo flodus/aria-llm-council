@@ -19,6 +19,8 @@ import EmptyPanel from './features/world/components/CountryPanel/CountryPanelEmp
 import LegitimiteOverlay from './features/world/LegitimiteOverlay';
 import { FONT, COLOR }  from './shared/theme';
 import { loadLang, t, useLocale } from './ariaI18n';
+import { CURSEUR_DEFAUT, CURSEUR_POINTER } from './shared/utils/curseurs';
+import RadioPlayer from './shared/components/RadioPlayer';
 
 function getTabs() {
   return [
@@ -70,6 +72,23 @@ export default function App() {
   const audioStarted = useRef(false);
   // GEMINI
   const SOUND_ENABLED = false; // Passe à true pour réactiver
+
+  // ── Options interface (curseurs + radio) ──────────────────────────────
+  const lireInterface = () => {
+    try {
+      const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+      return {
+        custom_cursors: opts.interface?.custom_cursors !== false,
+        radio_visible:  opts.interface?.radio_visible  !== false,
+      };
+    } catch { return { custom_cursors: true, radio_visible: true }; }
+  };
+  const [interfaceOpts, setInterfaceOpts] = useState(lireInterface);
+
+  // Rafraîchit les options interface quand on revient du panneau Settings
+  useEffect(() => {
+    if (page === 'dashboard') setInterfaceOpts(lireInterface());
+  }, [page]);
 
   const [audioMuted, setAudioMuted] = useState(() => {
     try { return JSON.parse(localStorage.getItem('aria_audio_muted') ?? 'true'); }
@@ -253,7 +272,12 @@ export default function App() {
 
   // ── Rendu ─────────────────────────────────────────────────────────────
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={interfaceOpts.custom_cursors ? { cursor: CURSEUR_DEFAUT } : undefined}>
+      {interfaceOpts.custom_cursors && (
+        <style>{`
+          button, a, [role="button"], .btn-icon, .tab-btn, label[style*="pointer"] { cursor: ${CURSEUR_POINTER} !important; }
+        `}</style>
+      )}
 
       {/* Settings — overlay par-dessus le dashboard (ne démonte pas) */}
       {page === 'settings' && (
@@ -355,6 +379,7 @@ export default function App() {
         )}
 
         <div className="topbar-actions">
+          {interfaceOpts.radio_visible && <RadioPlayer />}
           {isCrisis && (
             <span style={{
               fontFamily:FONT.mono, fontSize:'0.48rem', letterSpacing:'0.13em',

@@ -15,7 +15,9 @@ import { useRef, useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle } from '../../../shared/theme';
 import AgentGrid from '../../../shared/components/AgentGrid';
-import { getDestin } from '../../council/services/agentsManager';
+import GovernanceForm from '../../../shared/components/GovernanceForm';
+import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
+import { getOptions, saveOptions } from '../../../Dashboard_p1';
 import {
     ARIAHeader,
     RecapAccordion,
@@ -31,7 +33,8 @@ import {
     MinistriesDetail,
     MinistersDetail,
     ContextPanel,
-    ConfirmLaunchDialog
+    ConfirmLaunchDialog,
+    WorldRecap
 } from './index';
 
 // Hooks personnalisés
@@ -51,6 +54,9 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
     const [plTab, setPlTab] = useState('resume');
     const [confirmLaunch, setConfirmLaunch] = useState(false);
     const [selectedDestin, setSelectedDestin] = useState(null);
+    const [govOpts, setGovOpts] = useState(() => getOptions());
+    const [govModal, setGovModal] = useState(false);
+    const [worldAccepted, setWorldAccepted] = useState(false);
 
     // Hooks
     const constitution = useConstitution(pendingDefs);
@@ -163,6 +169,28 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         }}>
         <ARIAHeader showQuote={false} />
 
+        {/* ── Question initiale : gouvernance du monde ─────────────────────── */}
+        {!worldAccepted && (
+            <WorldRecap
+                govOpts={govOpts}
+                iaConfig={iaConfig}
+                lang={lang}
+                onAccept={() => setConfirmLaunch(true)}
+                onModify={() => { setWorldAccepted(true); setGovModal(true); }}
+            />
+        )}
+
+        {/* Tout ce qui suit n'est visible que si le joueur a choisi "Je veux le modifier" */}
+        {worldAccepted && <>
+
+        {/* Bouton retour vers le récap monde */}
+        <button
+            onClick={() => setWorldAccepted(false)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, alignSelf: 'flex-start', fontFamily: FONT.mono, fontSize: '0.42rem', color: 'rgba(140,160,200,0.45)', letterSpacing: '0.06em' }}
+        >
+            ← {lang === 'en' ? 'Back to world overview' : 'Retour au récap monde'}
+        </button>
+
         {/* Header avec badges et bouton personnaliser */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', flexWrap: 'wrap', gap: '0.4rem' }}>
         <div style={labelStyle()}>CONSTITUTION — {worldName}</div>
@@ -233,12 +261,10 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                 setCfgOpen={iaConfig.setCfgOpen}
                 />
 
-                <ActivePresidencySection
-                presidency={countryOverride.plAgents.presidency}
-                activePres={countryOverride.activePres}
-                onTogglePresidency={(key) => countryOverride.setActivePres(prev =>
-                    prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
-                )}
+                <PresidencyTiles
+                    presType={activePresToType(countryOverride.activePres)}
+                    onSelect={v => countryOverride.setActivePres(typeToActivePres(v))}
+                    isEn={lang === 'en'}
                 />
 
                 {/* Toggle Destinée du monde — entre présidence et ministères */}
@@ -423,6 +449,52 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         </button>
         </div>
         </div>
+
+        </>}
+
+        {/* ── Modal GovernanceForm ─────────────────────────────────────────── */}
+        {govModal && (
+            <div style={{
+                position: 'fixed', inset: 0, zIndex: 100,
+                background: 'rgba(4,8,18,0.85)', backdropFilter: 'blur(4px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }} onClick={() => setGovModal(false)}>
+                <div style={{
+                    width: 'min(560px, 92vw)', maxHeight: '80vh', overflowY: 'auto',
+                    background: 'rgba(10,16,30,0.98)', border: '1px solid rgba(200,164,74,0.25)',
+                    borderRadius: '4px', padding: '1.2rem 1rem 1rem',
+                    display: 'flex', flexDirection: 'column', gap: '0.8rem',
+                }} onClick={e => e.stopPropagation()}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontFamily: FONT.mono, fontSize: '0.54rem', letterSpacing: '0.12em', color: 'rgba(200,164,74,0.80)' }}>
+                            {lang === 'en' ? 'WORLD GOVERNANCE' : 'GOUVERNANCE DU MONDE'}
+                        </span>
+                        <button onClick={() => setGovModal(false)} style={{
+                            background: 'none', border: 'none', cursor: 'pointer',
+                            color: 'rgba(140,160,200,0.45)', fontSize: '1rem', lineHeight: 1,
+                        }}>✕</button>
+                    </div>
+                    <GovernanceForm
+                        context="init"
+                        opts={govOpts}
+                        onChange={newOpts => {
+                            setGovOpts(newOpts);
+                            saveOptions(newOpts);
+                            // Sync présidence dans les onglets constitution
+                            const pType = newOpts.defaultGovernance?.presidency || 'duale';
+                            const pMap = { solaire: ['phare'], lunaire: ['boussole'], collegiale: [], duale: ['phare', 'boussole'] };
+                            countryOverride.setActivePres(pMap[pType] ?? ['phare', 'boussole']);
+                        }}
+                    />
+                    <button
+                        onClick={() => { setGovModal(false); setWorldAccepted(true); }}
+                        style={{ ...BTN_PRIMARY, fontSize: '0.46rem' }}
+                    >
+                        {lang === 'en' ? 'Apply and continue →' : 'Appliquer et continuer →'}
+                    </button>
+                </div>
+            </div>
+        )}
 
         {/* Dialogue de confirmation */}
         <ConfirmLaunchDialog

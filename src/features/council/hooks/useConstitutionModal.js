@@ -101,6 +101,10 @@ export default function useConstitutionModal(props) {
         }));
     }, []);
 
+    const setActivePres = useCallback((newPres) => {
+        setConstitution(prev => ({ ...prev, activePres: newPres }));
+    }, []);
+
     /**
      * Active ou désactive un ministre
      * @param {string} ministerId - ID du ministre
@@ -365,6 +369,7 @@ export default function useConstitutionModal(props) {
         // Actions présidence
         updatePresidency,
         togglePresident,
+        setActivePres,
 
         // Actions ministres
         toggleMinister,
