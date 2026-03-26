@@ -14,6 +14,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useCallback } from 'react';
+import { getOptions } from '../../../Dashboard_p1';
 import { routeQuestion, getBestMatch, detectCrisis } from '../services/routingEngine';
 import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from '../services/deliberationEngine';
 import { computeVoteImpact } from '../services/voteEngine';
@@ -72,7 +73,8 @@ export function useCouncilSession(country, onVoteResult) {
             setSession(prev => ({ ...prev, cercle: cercleResult }));
 
             // Phase Destin — optionnelle si destiny_mode actif + crise détectée
-            const gov = country?.governanceOverride || {};
+            const globalGov = getOptions().defaultGovernance || {};
+            const gov = { ...globalGov, ...(country?.governanceOverride || {}) };
             let destinResult = null;
             if (gov.destiny_mode === true && gov.crisis_mode !== false && detectCrisis(question)) {
                 destinResult = await runDestinPhase(question, country, false);

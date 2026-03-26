@@ -14,7 +14,7 @@
 //  NE RESTE ICI QUE LA FONCTION PRINCIPALE D'ORCHESTRATION
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { callAI, getApiKeys, getStats } from '../../../Dashboard_p1';
+import { callAI, getApiKeys, getStats, getOptions } from '../../../Dashboard_p1';
 import { loadLang } from '../../../ariaI18n';
 import { getAgentsFor, getMinistriesList, getMinistriesListFor, getMinistersMapFor, getPresidencyFor, MINISTRIES_LIST, MINISTERS_MAP, PRESIDENCY } from './agentsManager';
 import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from './deliberationEngine';
@@ -65,7 +65,9 @@ export async function runCouncilDeliberation(question, country, options = {}) {
     if (onPhaseComplete) onPhaseComplete('cercle', cercleResult);
 
     // Phase 2b : Destin (optionnel — si destiny_mode actif + crise détectée)
-    const gov = country?.governanceOverride || {};
+    // Fusion : global aria_options.defaultGovernance < override pays
+    const globalGov = getOptions().defaultGovernance || {};
+    const gov = { ...globalGov, ...(country?.governanceOverride || {}) };
     const destinyActif = gov.destiny_mode === true;
     const crisisActif  = gov.crisis_mode !== false;
     const criseDetectee = crisisActif && detectCrisis(question);
