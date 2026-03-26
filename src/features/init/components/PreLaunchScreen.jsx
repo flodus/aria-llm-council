@@ -192,6 +192,28 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             const ctxLabel = { auto: '🤖 Auto', rich: lang === 'en' ? '📖 Enriched' : '📖 Enrichi', stats_only: lang === 'en' ? '📊 Stats only' : '📊 Stats seules', off: lang === 'en' ? '🚫 Disabled' : '🚫 Désactivé' }[govOpts.gameplay?.context_mode || 'auto'] || '🤖 Auto';
             const destinOn  = gov.destiny_mode === true;
 
+            // Mode IA
+            const provLabel = { claude: 'Claude', gemini: 'Gemini', openai: 'GPT', grok: 'Grok', openrouter: 'OpenRouter' };
+            const iaMode = iaConfig.ariaMode;
+            const iaOnline = iaMode !== 'none';
+            let iaLabel = lang === 'en' ? 'Board Game' : 'Board Game';
+            let iaTooltip = lang === 'en' ? 'No AI — hardcoded responses' : 'Sans IA — réponses prédéfinies';
+            if (iaMode === 'solo') {
+                const prov = iaConfig.roles.ministre_provider || iaConfig.availProviders[0] || '';
+                iaLabel = `Solo — ${provLabel[prov] || prov}`;
+                iaTooltip = lang === 'en' ? `All roles: ${provLabel[prov] || prov}` : `Tous les rôles : ${provLabel[prov] || prov}`;
+            } else if (iaMode === 'aria' || iaMode === 'custom') {
+                const r = iaConfig.roles;
+                const provs = [...new Set([r.ministre_provider, r.phare_provider, r.boussole_provider, r.synthese_pres_prov].filter(Boolean))];
+                iaLabel = provs.map(p => provLabel[p] || p).join(' · ') || 'ARIA';
+                const roleNames = [
+                    r.ministre_provider && `${lang === 'en' ? 'Ministers' : 'Ministres'}: ${provLabel[r.ministre_provider] || r.ministre_provider}`,
+                    r.phare_provider   && `☉ Phare: ${provLabel[r.phare_provider] || r.phare_provider}`,
+                    r.boussole_provider && `☽ Boussole: ${provLabel[r.boussole_provider] || r.boussole_provider}`,
+                ].filter(Boolean);
+                iaTooltip = roleNames.join(' · ');
+            }
+
             const labelCol = {
                 fontFamily: FONT.mono, fontSize: '0.38rem', letterSpacing: '0.12em',
                 color: 'rgba(200,164,74,0.50)', whiteSpace: 'nowrap', textTransform: 'uppercase',
@@ -243,7 +265,26 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                             <span style={labelCol}>{lang === 'en' ? 'Ministers' : 'Ministres'}</span>
                             <div style={emojiRow}>
                                 {allMinisters.map(([id, m]) => <span key={id} title={m.name}>{m.emoji}</span>)}
-                                {destinOn && destinAgents.map(([id, m]) => <span key={id} title={m.name} style={{ opacity: 0.65 }}>{m.emoji}</span>)}
+                            </div>
+                        </div>
+
+                        {/* Destin — ligne dédiée */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                            <span style={labelCol}>{lang === 'en' ? 'Destiny' : 'Destin'}</span>
+                            <div style={emojiRow}>
+                                <span title={lang === 'en' ? 'Destiny: introduces external forces into deliberations' : 'Destin : introduit des forces extérieures dans les délibérations'}>
+                                    🎲 {destinOn ? '✓' : '✗'}
+                                </span>
+                                {destinAgents.map(([id, m]) => {
+                                    const tip = id === 'oracle'
+                                        ? (lang === 'en' ? 'Oracle: takes a position in deliberations' : 'Oracle : prend position dans les délibérations')
+                                        : (lang === 'en' ? 'Trame: shapes the global narrative over cycles' : 'Trame : oriente le récit global sur la durée des cycles');
+                                    return (
+                                        <span key={id} title={tip} style={{ opacity: destinOn ? 1 : 0.35 }}>
+                                            {m.emoji} {destinOn ? '✓' : '✗'}
+                                        </span>
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -251,7 +292,21 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
                             <span style={labelCol}>{lang === 'en' ? 'Deliberation' : 'Délibération'}</span>
                             <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(180,200,230,0.60)' }}>
-                                {ctxLabel}{destinOn ? ' · ' + destinAgents.map(([, m]) => m.emoji + ' ' + m.name).join(' · ') : ''}
+                                {ctxLabel}
+                            </span>
+                        </div>
+
+                        {/* Mode IA */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                            <span style={labelCol}>{lang === 'en' ? 'AI mode' : 'Mode IA'}</span>
+                            <span
+                                title={iaTooltip}
+                                style={{
+                                    fontFamily: FONT.mono, fontSize: '0.43rem',
+                                    color: iaOnline ? 'rgba(180,200,230,0.75)' : 'rgba(140,160,180,0.45)',
+                                }}
+                            >
+                                🧠 {iaLabel}
                             </span>
                         </div>
 
