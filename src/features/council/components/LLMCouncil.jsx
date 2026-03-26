@@ -607,7 +607,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             {presidence.synthese && (
               <div style={bubble(convergence ? C.green : C.gold, { marginTop: '0.6rem' })}>
                 <div style={sectionTitle(convergence ? C.green : C.gold)}>
-                  ✦ SYNTHÈSE PRÉSIDENTIELLE
+                  {presidence.collegial ? '✡ SYNTHÈSE CONSTITUTIONNELLE' : '✦ SYNTHÈSE PRÉSIDENTIELLE'}
                   <span style={{ margin: '0 0.5rem', color: 'rgba(150,170,210,0.18)', fontSize:'0.44rem' }}>—</span>
                   <span style={{
                     padding: '0.15rem 0.55rem',

@@ -275,7 +275,9 @@ async function _runCollegialPhase(question, ministereResult, cercleAnnotations, 
         synthese = {
             convergence,
             synthese: syntheseTexte,
-            question_referendum: `Approuvez-vous la position du Conseil sur : "${question.slice(0, 80)}${question.length > 80 ? '…' : ''}" ?`,
+            question_referendum: convergence
+                ? `Le Conseil recommande d'adopter une réponse collective à cette question. Approuvez-vous cette orientation ?`
+                : `Le Conseil est divisé. Autorisez-vous la poursuite des délibérations avant toute décision ?`,
             enjeu_principal: `La décision impactera les ${Math.round((country.population || 1e6) / 1e6 * 10) / 10} M de citoyens — le Conseil délibère sans arbitrage présidentiel.`,
         };
     }
