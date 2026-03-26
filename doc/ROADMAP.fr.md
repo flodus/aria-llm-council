@@ -106,13 +106,14 @@
  │      └─> Settings · GovernanceForm · ConstitutionModal · PreLaunchScreen
  └─[U3] Chronolog enrichi ........ [Détail 5 derniers cycles] ........ ⬡ 0%
 
- [ PHASE G1 : COHÉRENCE GOUVERNANCE ] ........................... STATUT: EN FILE
+ [ PHASE G1 : COHÉRENCE GOUVERNANCE ] ........................... STATUT: EN COURS
  │  Spec validée (2026-03-26) — GovernanceForm existe, wiring à compléter
  │
- ├─[G0] clearSession() : conserver aria_options + préférences ........ ⬡ vérif
- ├─[G1] PreLaunchScreen : bloc contextuel ancré sous badge pays ...... ⬡ 0%
- │      └─> Lambda ⚙️ / Custom ✦ · résumé + [Personnaliser →] → ConstitutionModal
- ├─[G2] ConstitutionModal : bandeau lambda/custom + retour modèle .... ⬡ 0%
+ ├─[G0] clearSession() : conserver aria_options + préférences ........ ✅ vérifié (aucun bug)
+ ├─[G1] PreLaunchScreen : bloc contextuel ancré sous badge pays ...... ✅ 100%
+ │      └─> Lambda ⚙️ + résumé présidence + [Personnaliser →] · Custom ✦ + résumé override
+ ├─[G2] ConstitutionModal : bandeau lambda/custom + retour modèle .... ✅ 100%
+ │      └─> Bandeau statut entre header/tabs · [↺ Revenir au modèle monde] + confirm
  ├─[G3] AddCountryModal + SecessionModal : choix hériter/personnaliser ⬡ 0%
  └─[G4] Settings : brancher GovernanceForm context='settings' ........ ⬡ 0%
 

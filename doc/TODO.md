@@ -16,18 +16,7 @@ _(aucun bug actif connu — phase B1 terminée)_
 
 ## 🟡 UX COURT TERME
 
-- [ ] **G0 — clearSession() : vérifier qu'elle conserve `aria_options`, clés API, langue, modèles**
-  - `aria_options` · `aria_api_keys` · `aria_lang` · `aria_preferred_models` ne doivent PAS être effacées
-  - Seules les clés session (pays, alliances, cycles, chronolog) doivent être effacées
-
-- [ ] **G1 — PreLaunchScreen : bloc contextuel ancré sous badge pays actif**
-  - Lambda : `⚙️ SUIT LE MODÈLE MONDE` + résumé aria_options + `[Personnaliser ce pays →]`
-  - Custom : `✦ CONSTITUTION PROPRE` (ambre) + résumé governanceOverride + `[Personnaliser ce pays →]`
-  - `[Personnaliser →]` ouvre ConstitutionModal du pays sélectionné
-
-- [ ] **G2 — ConstitutionModal : bandeau lambda/custom + bouton retour modèle monde**
-  - En tête : `✦ CONSTITUTION PROPRE` (ambre) si override, `⚙️ SUIT LE MODÈLE MONDE` (gris) sinon
-  - En pied (custom uniquement) : `[Revenir au modèle monde]` → confirmation + `governanceOverride = null`
+- [ ] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création** _(session dédiée)_
 
 - [ ] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création**
   - Nouveau pays : résumé aria_options + `[Hériter →]` / `[Personnaliser →]`
@@ -107,6 +96,14 @@ _(bloqué sur refonte carte V1)_
 ---
 
 ## ✅ LIVRÉ cette session (2026-03-26)
+
+- [x] **G0 — clearSession()** : vérifié — conserve déjà `aria_options`, `aria_api_keys`, `aria_lang`, `aria_preferred_models`
+- [x] **G1 — PreLaunchScreen : bloc contextuel sous badge pays actif**
+  — `⚙️ SUIT LE MODÈLE MONDE` + résumé présidence + `[Personnaliser →]` (lambda)
+  — `✦ CONSTITUTION PROPRE` + résumé override (custom) — dans `PreLaunchScreen.jsx`
+- [x] **G2 — ConstitutionModal : bandeau statut + bouton retour modèle monde**
+  — Bandeau entre header et tabs · `[↺ Revenir au modèle monde]` + confirm dans footer (custom only)
+  — dans `ConstitutionModal.jsx`
 
 - [x] **B10 — Mode collégial** : `|| null` → `?? null` dans agentsManager.js + `active !== null` dans les 3 filtres
   — le mode collégial se déclenche correctement quand `active_presidency = []`

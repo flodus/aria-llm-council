@@ -92,6 +92,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
     // État local pour l'onglet actif
     const [activeTab, setActiveTab] = useState('regime');
+    const [confirmReset, setConfirmReset] = useState(false);
 
     // États pour l'onglet régime
     const [regime, setRegime] = useState(country?.regime || 'democratie_liberale');
@@ -286,6 +287,13 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         >
         ✕
         </button>
+        </div>
+
+        {/* Bandeau lambda/custom — G2 */}
+        <div style={{ padding: '0.28rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: country?.governanceOverride ? 'rgba(200,164,74,0.04)' : 'rgba(140,160,200,0.02)', borderBottom: '1px solid rgba(200,164,74,0.08)' }}>
+            <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', letterSpacing: '0.06em', color: country?.governanceOverride ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)' }}>
+                {country?.governanceOverride ? '✦ CONSTITUTION PROPRE' : '⚙️ SUIT LE MODÈLE MONDE'}
+            </span>
         </div>
 
         {/* Tabs */}
@@ -732,18 +740,44 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         {/* Footer */}
         <div style={{
             display: 'flex',
-            justifyContent: 'flex-end',
+            alignItems: 'center',
             gap: '0.6rem',
             padding: '0.68rem 1rem',
             borderTop: '1px solid rgba(200,164,74,0.12)',
             background: 'rgba(0,0,0,0.22)'
         }}>
+        {/* Bouton retour modèle monde — custom uniquement */}
+        {country?.governanceOverride && (
+            confirmReset
+            ? <>
+                <span style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(200,80,80,0.60)' }}>
+                    {isEn ? 'Confirm reset?' : 'Confirmer ?'}
+                </span>
+                <button style={{ ...BTN_SECONDARY, fontSize: '0.42rem' }} onClick={() => setConfirmReset(false)}>
+                    {isEn ? 'No' : 'Non'}
+                </button>
+                <button
+                    style={{ ...BTN_SECONDARY, fontSize: '0.42rem', color: 'rgba(200,80,80,0.55)', border: '1px solid rgba(200,80,80,0.30)' }}
+                    onClick={() => { onSave({ ...country, governanceOverride: null }); onClose(); }}
+                >
+                    {isEn ? '↺ Yes' : '↺ Oui'}
+                </button>
+              </>
+            : <button
+                style={{ ...BTN_SECONDARY, fontSize: '0.42rem', color: 'rgba(200,80,80,0.50)', border: '1px solid rgba(200,80,80,0.20)' }}
+                onClick={() => setConfirmReset(true)}
+              >
+                {isEn ? '↺ Revert to world model' : '↺ Revenir au modèle monde'}
+              </button>
+        )}
+        <div style={{ display: 'flex', gap: '0.6rem', marginLeft: 'auto' }}>
         <button style={BTN_SECONDARY} onClick={handleClose}>
         {tr.cancel}
         </button>
         <button style={BTN_PRIMARY} onClick={handleSave}>
         {tr.apply}
         </button>
+        </div>
         </div>
         </div>
         </div>
