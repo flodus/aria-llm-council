@@ -1539,26 +1539,58 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
           `${(gov.ministries||getAllMinistryIds()).length}/${getAllMinistryIds().length}`)}
         {openAcc==='mins' && (
           <div className="aria-accordion__body">
-            {getAllMinistryIds().map(id => {
-              const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
-              const activeMins = gov.ministries || getAllMinistryIds();
-              const active = activeMins.includes(id);
-              const isMin  = activeMins.length <= 2 && active;
-              return (
-                <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
-                  cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
-                  padding:'0.3rem 0.5rem', borderRadius:'2px',
-                  background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
-                  border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
-                  <input type="checkbox" checked={active} disabled={isMin} onChange={() => toggleMinistry(id)}
-                    style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
-                  <span style={{ fontSize:'0.9rem' }}>{meta.emoji}</span>
-                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
-                    color:'rgba(200,215,240,0.80)' }}>{meta.label}</span>
-                </label>
-              );
-            })}
-
+            {(() => {
+              const dIds = new Set(getDestin()?.agents || []);
+              const allMinisterIds = Object.entries(getAgents().ministers || {})
+                .filter(([id]) => !dIds.has(id)).map(([id]) => id);
+              const ministriesData = getAgents().ministries || [];
+              return getAllMinistryIds().map(id => {
+                const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
+                const activeMins = gov.ministries || getAllMinistryIds();
+                const active = activeMins.includes(id);
+                const isMin  = activeMins.length <= 2 && active;
+                const ministryData = ministriesData.find(m => m.id === id);
+                const ministryMinisters = ministryData?.ministers || [];
+                return (
+                  <div key={id}>
+                    <label style={{ display:'flex', alignItems:'center', gap:'0.6rem',
+                      cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
+                      padding:'0.3rem 0.5rem', borderRadius:'2px',
+                      background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
+                      border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
+                      <input type="checkbox" checked={active} disabled={isMin} onChange={() => toggleMinistry(id)}
+                        style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
+                      <span style={{ fontSize:'0.9rem' }}>{meta.emoji}</span>
+                      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
+                        color:'rgba(200,215,240,0.80)' }}>{meta.label}</span>
+                    </label>
+                    {active && ministryMinisters.length > 0 && (
+                      <div style={{ display:'flex', flexWrap:'wrap', gap:'0.3rem', paddingLeft:'2.2rem', paddingBottom:'0.3rem' }}>
+                        {ministryMinisters.map(mid => {
+                          const m = getAgents().ministers?.[mid];
+                          if (!m || !m.emoji) return null;
+                          const activeList = gov.active_ministers || allMinisterIds;
+                          const mActive = activeList.includes(mid);
+                          return (
+                            <button key={mid} title={m.name}
+                              onClick={() => toggleMinisterSettings(mid)}
+                              style={{
+                                padding:'0.18rem 0.45rem', borderRadius:'2px', cursor:'pointer',
+                                fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
+                                background: mActive ? 'rgba(200,164,74,0.08)' : 'rgba(255,255,255,0.02)',
+                                border: `1px solid ${mActive ? 'rgba(200,164,74,0.30)' : 'rgba(140,160,200,0.12)'}`,
+                                color: mActive ? 'rgba(200,215,240,0.85)' : 'rgba(140,160,200,0.35)',
+                              }}>
+                              {m.emoji} {m.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              });
+            })()}
           </div>
         )}
       </div>
