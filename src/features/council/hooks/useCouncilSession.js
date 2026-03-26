@@ -16,7 +16,7 @@
 import { useState, useCallback } from 'react';
 import { getOptions } from '../../../Dashboard_p1';
 import { routeQuestion, getBestMatch, detectCrisis } from '../services/routingEngine';
-import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from '../services/deliberationEngine';
+import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase, runCrisisPhase } from '../services/deliberationEngine';
 import { computeVoteImpact } from '../services/voteEngine';
 import { buildCountryContext } from '../services/contextBuilder';
 import { MINISTRIES_LIST } from '../services/agentsManager';
@@ -66,6 +66,15 @@ export function useCouncilSession(country, onVoteResult) {
         setSession(prev => ({ ...prev, ministryId: resolvedId }));
 
         try {
+            // Mode crise — tous les ministères délibèrent directement, skip cercle + présidence
+            const globalGov = getOptions().defaultGovernance || {};
+            const gov = { ...globalGov, ...(country?.governanceOverride || {}) };
+            if (gov.crisis_mode !== false && detectCrisis(question)) {
+                const crisisResult = await runCrisisPhase(question, country);
+                setSession(prev => ({ ...prev, crisis: crisisResult, voteReady: true }));
+                return;
+            }
+
             const ministereResult = await runMinisterePhase(ministry, question, country);
             setSession(prev => ({ ...prev, ministere: ministereResult }));
 
@@ -73,8 +82,6 @@ export function useCouncilSession(country, onVoteResult) {
             setSession(prev => ({ ...prev, cercle: cercleResult }));
 
             // Phase Destin — optionnelle si destiny_mode actif + crise détectée
-            const globalGov = getOptions().defaultGovernance || {};
-            const gov = { ...globalGov, ...(country?.governanceOverride || {}) };
             let destinResult = null;
             if (gov.destiny_mode === true && gov.crisis_mode !== false && detectCrisis(question)) {
                 destinResult = await runDestinPhase(question, country, false);

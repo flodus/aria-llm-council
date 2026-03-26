@@ -17,7 +17,7 @@
 import { callAI, getApiKeys, getStats, getOptions } from '../../../Dashboard_p1';
 import { loadLang } from '../../../ariaI18n';
 import { getAgentsFor, getMinistriesList, getMinistriesListFor, getMinistersMapFor, getPresidencyFor, MINISTRIES_LIST, MINISTERS_MAP, PRESIDENCY } from './agentsManager';
-import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase } from './deliberationEngine';
+import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase, runCrisisPhase } from './deliberationEngine';
 import { routeQuestion, isOrphanQuestion, detectCrisis } from './routingEngine';
 import { computeVoteImpact } from './voteEngine';
 import { buildCountryContext } from './contextBuilder';
@@ -43,6 +43,16 @@ export async function runCouncilDeliberation(question, country, options = {}) {
   } = options;
 
   try {
+    // Mode crise — tous les ministères délibèrent directement, skip cercle + présidence
+    const _govGlobal = getOptions().defaultGovernance || {};
+    const _gov = { ..._govGlobal, ...(country?.governanceOverride || {}) };
+    if (_gov.crisis_mode !== false && detectCrisis(question)) {
+        if (onPhaseStart) onPhaseStart('crisis');
+        const crisisResult = await runCrisisPhase(question, country);
+        if (onPhaseComplete) onPhaseComplete('crisis', crisisResult);
+        return { question, country, crisis: crisisResult, timestamp: Date.now() };
+    }
+
     // Phase 0 : Routage
     if (onPhaseStart) onPhaseStart('routing');
     const ministryId = await routeQuestion(question, forceMinistryId);

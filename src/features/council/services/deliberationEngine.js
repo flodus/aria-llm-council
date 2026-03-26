@@ -538,6 +538,21 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         synthese,
     };
 }
+/**
+ * Phase CRISE : tous les ministères actifs délibèrent directement sur la question.
+ * Skip cercle + présidence. Déclenché si crisis_mode !== false && detectCrisis(question).
+ * @param {string} question
+ * @param {object} country
+ * @returns {Promise<{ crisis: true, ministries: Array }>}
+ */
+export async function runCrisisPhase(question, country) {
+    const ministriesList = getMinistriesListFor(country);
+    const results = await Promise.all(
+        ministriesList.map(ministry => runMinisterePhase(ministry, question, country))
+    );
+    return { crisis: true, ministries: results };
+}
+
 function buildSynthesePresidencePrompt(phare, boussole, question, country) {
     const ctx = buildCountryContext(country);
     return `${langPrefix()}Tu es le système d'arbitrage présidentiel du gouvernement ARIA.
