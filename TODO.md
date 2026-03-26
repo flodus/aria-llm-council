@@ -6,6 +6,10 @@ _Dernière mise à jour : 2026-03-24_
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
+- [ ] **B14 — Settings gouvernance > Ministères** : grille des ministres actifs dans ce ministère absente — lors du refactor tuiles présidence, les ministres par ministère n'ont pas été ajoutés dans l'accordéon Ministères de Settings (contrairement à ConstitutionModal qui les affiche bien dans MinistryDetail)
+
+- [ ] **B15 — ConstitutionModal > Présidence** : les prompts des présidents (Phare/Boussole) ne sont plus éditables depuis le remplacement de PresidentsList+PresidentDetail par PresidencyTiles — PresidentDetail doit être ré-exposé (ex: bouton "configurer" par type sélectionné)
+
 - [x] **B1 — Ajout pays in-game** : corrigé — `addFictionalCountry` dans `Dashboard_p1.jsx`
 
 - [x] **B5 — Mode IA offline** : `navigator.onLine` + listeners `online`/`offline` dans `NameScreen.jsx` · badge "⚠ HORS LIGNE", toggle masqué, `computedMode` sécurisé dans `InitScreen.jsx`
