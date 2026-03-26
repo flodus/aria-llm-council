@@ -2,6 +2,34 @@
 import { useState, useRef, useEffect } from 'react'
 import defaultStationsData from '../data/defaultStations.json'
 
+function parserM3U(texte) {
+    const lignes = texte.split('\n').map(l => l.trim()).filter(Boolean)
+    const result = []
+    let nom = null
+    for (const ligne of lignes) {
+        if (ligne.startsWith('#EXTINF')) {
+            const m = ligne.match(/,(.+)$/)
+            nom = m ? m[1].trim() : null
+        } else if (!ligne.startsWith('#')) {
+            result.push({ name: nom || ligne, src: ligne })
+            nom = null
+        }
+    }
+    return result
+}
+
+function parserPLS(texte) {
+    const lignes = texte.split('\n').map(l => l.trim())
+    const fichiers = {}, titres = {}
+    for (const ligne of lignes) {
+        const mF = ligne.match(/^File(\d+)=(.+)$/i)
+        if (mF) fichiers[mF[1]] = mF[2].trim()
+        const mT = ligne.match(/^Title(\d+)=(.+)$/i)
+        if (mT) titres[mT[1]] = mT[2].trim()
+    }
+    return Object.entries(fichiers).map(([i, src]) => ({ name: titres[i] || src, src }))
+}
+
 const STORAGE_KEY = 'radio_stations'
 const CURRENT_KEY = 'current_station_id'
 const VOLUME_KEY = 'radio_volume'
@@ -76,42 +104,40 @@ function RadioPlayer() {
     }
 
     const changeStation = (station) => {
-        const wasPlaying = isPlaying
         setCurrentStation(station)
         setIsOpen(false)
-
         if (audioRef.current) {
-            if (wasPlaying) {
-                audioRef.current.pause()
-                audioRef.current.src = station.src
-                audioRef.current.load()
-                audioRef.current.play().catch(e => console.log('Auto-play bloqué:', e))
-            } else {
-                audioRef.current.pause()
-                audioRef.current.src = station.src
-                audioRef.current.load()
-            }
+            audioRef.current.pause()
+            audioRef.current.src = station.src
+            audioRef.current.load()
+            setIsPlaying(false)
         }
     }
 
-    // Upload de fichiers MP3 locaux
-    const handleFileUpload = (e) => {
+    // Upload de fichiers audio et playlists
+    const handleFileUpload = async (e) => {
         const files = Array.from(e.target.files)
         const maxId = Math.max(...stations.map(s => s.id), 0)
-        const newStations = files.map((file, index) => ({
-            id: maxId + index + 1,
-            name: file.name.replace('.mp3', '').replace('.m4a', '').replace('.ogg', ''),
-                                                        src: URL.createObjectURL(file),
-                                                        type: 'local',
-                                                        file: file
-        }))
+        let idCounter = maxId + 1
+        const newStations = []
+
+        for (const file of files) {
+            const ext = file.name.split('.').pop().toLowerCase()
+            if (ext === 'm3u' || ext === 'm3u8') {
+                const texte = await file.text()
+                parserM3U(texte).forEach(e => newStations.push({ id: idCounter++, name: e.name, src: e.src, type: 'custom' }))
+            } else if (ext === 'pls') {
+                const texte = await file.text()
+                parserPLS(texte).forEach(e => newStations.push({ id: idCounter++, name: e.name, src: e.src, type: 'custom' }))
+            } else {
+                const name = file.name.replace(/\.(mp3|m4a|ogg|wav|flac|aac)$/i, '')
+                newStations.push({ id: idCounter++, name, src: URL.createObjectURL(file), type: 'local', file })
+            }
+        }
 
         setStations([...stations, ...newStations])
         setShowLocalPopup(false)
-
-        if (newStations.length === 1) {
-            changeStation(newStations[0])
-        }
+        if (newStations.length === 1) changeStation(newStations[0])
     }
 
     const addCustomStation = () => {
@@ -256,18 +282,20 @@ function RadioPlayer() {
 
             <div style={{ borderTop: '0.5px solid rgba(198,162,76,0.3)' }} />
 
-            <div onClick={() => { setIsOpen(false); setShowLocalPopup(true); }} style={{
+            <div onClick={() => { setIsOpen(false); setShowAddPopup(true); }} style={{
                 padding: '6px 10px', cursor: 'pointer', fontSize: '9px', color: '#c6a24c',
                 background: 'rgba(198,162,76,0.05)'
             }}>
-            📁 + AJOUTER FICHIER MP3
+            🔗 + AJOUTER FLUX URL
             </div>
 
-            <div onClick={() => { setIsOpen(false); setShowAddPopup(true); }} style={{
+            <div onClick={() => { setIsOpen(false); setShowLocalPopup(true); }}
+            title="mp3 · ogg · m4a · wav · flac · aac · m3u · pls"
+            style={{
                 padding: '6px 10px', cursor: 'pointer', fontSize: '9px', color: '#c6a24c',
                 background: 'rgba(198,162,76,0.05)', borderTop: '0.5px solid rgba(198,162,76,0.2)'
             }}>
-            🔗 + AJOUTER FLUX URL
+            📁 + AJOUTER FICHIER AUDIO
             </div>
             </div>
         )}
@@ -305,12 +333,15 @@ function RadioPlayer() {
                             background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(12px)', borderRadius: '12px',
                             padding: '20px', border: '1px solid rgba(198,162,76,0.5)', zIndex: 1001, minWidth: '280px'
             }}>
-            <div style={{ color: '#c6a24c', fontSize: '12px', marginBottom: '16px', fontWeight: 'bold' }}>
-            📁 Ajouter un fichier audio
+            <div style={{ color: '#c6a24c', fontSize: '12px', marginBottom: '4px', fontWeight: 'bold' }}>
+            📁 Ajouter un fichier audio ou une playlist
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '9px', marginBottom: '14px' }}>
+            mp3 · ogg · m4a · wav · flac · aac · m3u · pls — sélection multiple possible
             </div>
             <input
             type="file"
-            accept="audio/mp3,audio/mpeg,audio/m4a,audio/ogg"
+            accept="audio/*,.m3u,.m3u8,.pls"
             multiple
             ref={fileInputRef}
             onChange={handleFileUpload}

@@ -48,24 +48,7 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(mix(sphere, plane, uTransition), 1.0);
 }`;
 
-const fragMonde       = `void main() { gl_FragColor = vec4(0.03, 0.55, 0.80, 0.40); }`;
-const fragRemplissage = `void main() { gl_FragColor = vec4(0.04, 0.22, 0.42, 0.55); }`;
-
-// Fill qui morphe sphère→plan (même logique que lineVertexShader, r légèrement plus petit)
-const fillVertexShader = `
-uniform float uTransition;
-uniform float uRadius;
-void main() {
-  float lon = position.x * (3.14159265 / 180.0);
-  float lat = position.y * (3.14159265 / 180.0);
-  float r = uRadius + 0.01;
-  vec3 sphere = vec3(r*cos(lat)*sin(lon), r*sin(lat), r*cos(lat)*cos(lon));
-  vec3 plane  = vec3(
-    position.x / 180.0 * (uRadius * 3.14159265),
-    position.y / 90.0  * (uRadius * 3.14159265 / 2.0),
-    0.03);
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(mix(sphere, plane, uTransition), 1.0);
-}`;
+const fragMonde = `void main() { gl_FragColor = vec4(0.03, 0.55, 0.80, 0.40); }`;
 
 // Fond — sphère → plan selon uTransition
 const fondVertexShader = `
@@ -123,29 +106,6 @@ function creerTexture() {
 }
 
 // ─── Extraction géométries ────────────────────────────────────────────────────
-
-// Remplissage monde triangulé — positions en lon/lat (le shader fait sphère↔plan)
-function extraireRemplissage(features) {
-  const pos = [];
-  features.forEach(feat=>{
-    const g=feat.geometry; if(!g) return;
-    const polys = g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];
-    polys.forEach(poly=>{
-      if(!poly.length||poly[0].length<4) return;
-      try{
-        const contour = poly[0].map(p=>new THREE.Vector2(p[0],p[1]));
-        const holes   = poly.slice(1).map(h=>h.map(p=>new THREE.Vector2(p[0],p[1])));
-        THREE.ShapeUtils.triangulateShape(contour,holes).forEach(tri=>
-          tri.forEach(idx=>pos.push(contour[idx].x, contour[idx].y, 0))
-        );
-      }catch(_){}
-    });
-  });
-  if(!pos.length) return null;
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3));
-  return geo;
-}
 
 // Frontières monde en lon/lat (pour le morph shader)
 function extraireSegmentsLonLat(features) {
@@ -223,8 +183,7 @@ function SceneGlobeMorph({ geoData, morphPretRef, onMorphFiniRef, fonduDivRef })
     if (!geoData) return {};
     const features = geoData.features;
     return {
-      monde:     extraireSegmentsLonLat(features),
-      mondeFill: extraireRemplissage(features),
+      monde: extraireSegmentsLonLat(features),
       ...Object.fromEntries(Object.entries(PAYS_NEON).map(([id,cfg])=>[
         id, extraireSegmentsNeon(features.filter(f=>f.properties?.NAME===cfg.NAME), cfg.mainland)
       ])),
@@ -286,13 +245,6 @@ function SceneGlobeMorph({ geoData, morphPretRef, onMorphFiniRef, fonduDivRef })
         <shaderMaterial vertexShader={fondVertexShader} fragmentShader={fondFrag}
           uniforms={uFond} side={THREE.DoubleSide}/>
       </mesh>
-      {geos.mondeFill&&(
-        <mesh renderOrder={1}>
-          <primitive object={geos.mondeFill} attach="geometry"/>
-          <shaderMaterial vertexShader={fillVertexShader} fragmentShader={fragRemplissage}
-            uniforms={uMonde} transparent depthWrite={false} side={THREE.DoubleSide}/>
-        </mesh>
-      )}
       {geos.monde&&(
         <lineSegments geometry={geos.monde} renderOrder={2}>
           <shaderMaterial vertexShader={lineVertexShader} fragmentShader={fragMonde}
