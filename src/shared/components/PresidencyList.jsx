@@ -19,7 +19,7 @@ const accent  = (id) => id === 'phare' ? GOLD   : PURPLE;
 const accentBg= (id) => id === 'phare' ? 'rgba(200,164,74,0.10)' : 'rgba(140,100,220,0.12)';
 const accentBd= (id) => id === 'phare' ? 'rgba(200,164,74,0.45)' : 'rgba(140,100,220,0.45)';
 
-export default function PresidencyList({ presidency, activePres, onPresidentClick, lang }) {
+export default function PresidencyList({ presidency, activePres, onPresidentClick, onCollegiale, lang }) {
     const entries = [
         { id: 'phare',    data: presidency?.phare    },
         { id: 'boussole', data: presidency?.boussole },
@@ -78,21 +78,31 @@ export default function PresidencyList({ presidency, activePres, onPresidentClic
                 })}
             </div>
 
-            {noActive && (
-                <div style={{
-                    fontFamily: FONT.mono,
-                    fontSize: '0.47rem',
-                    color: 'rgba(200,100,60,0.62)',
-                    padding: '0.38rem 0.5rem',
-                    border: '1px solid rgba(200,100,60,0.20)',
-                    borderRadius: '2px',
-                    background: 'rgba(200,100,60,0.05)',
-                    marginTop: '0.5rem',
-                }}>
-                    ⚠ {lang === 'en'
-                        ? 'Collegial mode — deliberation without presidential arbitration'
-                        : 'Mode collégial — délibération sans arbitrage présidentiel'}
-                </div>
+            {/* Tuile Collégiale */}
+            {onCollegiale && (
+                <button
+                    onClick={onCollegiale}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '0.55rem',
+                        padding: '0.52rem 0.68rem',
+                        background: noActive ? 'rgba(165,55,75,0.10)' : 'rgba(20,28,45,0.55)',
+                        border: `1px solid ${noActive ? 'rgba(165,55,75,0.45)' : 'rgba(140,160,200,0.10)'}`,
+                        borderRadius: '2px', cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'all 0.15s',
+                    }}
+                >
+                    <span style={{ fontSize: '1.15rem', minWidth: '1.4rem', color: 'rgba(165,55,75,0.88)' }}>✡</span>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.56rem', letterSpacing: '0.10em', color: noActive ? 'rgba(165,55,75,0.88)' : 'rgba(200,215,240,0.50)' }}>
+                            {lang === 'en' ? 'Collegial' : 'Collégiale'}
+                        </div>
+                        <div style={{ fontSize: '0.44rem', color: DIM, marginTop: '0.08rem' }}>
+                            {lang === 'en' ? 'Vote of 12 ministers' : 'Vote des 12 ministres'}
+                        </div>
+                    </div>
+                    <span style={{ fontFamily: FONT.mono, fontSize: '0.48rem', color: noActive ? 'rgba(165,55,75,0.88)' : 'rgba(140,160,200,0.22)' }}>
+                        {noActive ? '● ACTIF' : '○ INACTIF'}
+                    </span>
+                </button>
             )}
         </div>
     );

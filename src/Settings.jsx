@@ -1161,6 +1161,10 @@ function SectionConseil() {
       const ov = JSON.parse(localStorage.getItem('aria_agents_override') || 'null') || {};
       if (activePres === null) delete ov.active_presidency;
       else ov.active_presidency = activePres;
+      // Traduit defaultGovernance.active_ministers → aria_agents_override.active_ministers
+      const activeMins = govOpts.defaultGovernance?.active_ministers ?? null;
+      if (activeMins === null) delete ov.active_ministers;
+      else ov.active_ministers = activeMins;
       localStorage.setItem('aria_agents_override', JSON.stringify(ov));
     } catch {}
 
@@ -1483,10 +1487,20 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
   };
 
   const toggleMinistry = (id) => {
-    const current = new Set(gov.ministries || []);
+    const current = new Set(gov.ministries || getAllMinistryIds());
     if (current.has(id)) { if (current.size <= 2) return; current.delete(id); }
     else current.add(id);
     setGov('ministries', [...current]);
+  };
+
+  const toggleMinisterSettings = (id) => {
+    const dIds = new Set(getDestin()?.agents || []);
+    const allIds = Object.entries(getAgents().ministers || {})
+      .filter(([mid]) => !dIds.has(mid)).map(([mid]) => mid);
+    const current = new Set(gov.active_ministers || allIds);
+    if (current.has(id)) { if (current.size <= 1) return; current.delete(id); }
+    else current.add(id);
+    setGov('active_ministers', [...current]);
   };
 
   const HDR = (key, label, badge) => (
@@ -1578,13 +1592,14 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
       {/* ▸ MINISTÈRES */}
       <div className={`aria-accordion${openAcc==='mins' ? ' open' : ''}`}>
         {HDR('mins', isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT',
-          `${(gov.ministries||[]).length}/${getAllMinistryIds().length}`)}
+          `${(gov.ministries||getAllMinistryIds()).length}/${getAllMinistryIds().length}`)}
         {openAcc==='mins' && (
           <div className="aria-accordion__body">
             {getAllMinistryIds().map(id => {
               const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
-              const active = (gov.ministries||[]).includes(id);
-              const isMin  = (gov.ministries||[]).length <= 2 && active;
+              const activeMins = gov.ministries || getAllMinistryIds();
+              const active = activeMins.includes(id);
+              const isMin  = activeMins.length <= 2 && active;
               return (
                 <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
                   cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
@@ -1599,6 +1614,49 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                 </label>
               );
             })}
+          </div>
+        )}
+      </div>
+
+      {/* ▸ MINISTRES */}
+      <div className={`aria-accordion${openAcc==='ministers' ? ' open' : ''}`}>
+        {(() => {
+          const dIds = new Set(getDestin()?.agents || []);
+          const allIds = Object.entries(getAgents().ministers || {})
+            .filter(([id]) => !dIds.has(id)).map(([id]) => id);
+          const activeList = gov.active_ministers || allIds;
+          return HDR('ministers',
+            isEn ? 'ACTIVE MINISTERS BY DEFAULT' : 'MINISTRES ACTIFS PAR DÉFAUT',
+            `${activeList.length}/${allIds.length}`);
+        })()}
+        {openAcc==='ministers' && (
+          <div className="aria-accordion__body">
+            {(() => {
+              const dIds = new Set(getDestin()?.agents || []);
+              return Object.entries(getAgents().ministers || {})
+                .filter(([id, m]) => !dIds.has(id) && m.name && m.emoji)
+                .map(([id, m]) => {
+                  const allIds = Object.entries(getAgents().ministers || {})
+                    .filter(([mid]) => !dIds.has(mid)).map(([mid]) => mid);
+                  const activeList = gov.active_ministers || allIds;
+                  const active = activeList.includes(id);
+                  const isMin = activeList.length <= 1 && active;
+                  return (
+                    <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
+                      cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
+                      padding:'0.3rem 0.5rem', borderRadius:'2px',
+                      background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
+                      border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
+                      <input type="checkbox" checked={active} disabled={isMin}
+                        onChange={() => toggleMinisterSettings(id)}
+                        style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
+                      <span style={{ fontSize:'0.9rem' }}>{m.emoji}</span>
+                      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
+                        color:'rgba(200,215,240,0.80)' }}>{m.name}</span>
+                    </label>
+                  );
+                });
+            })()}
           </div>
         )}
       </div>

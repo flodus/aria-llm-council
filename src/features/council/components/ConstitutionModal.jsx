@@ -498,6 +498,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             presidents={constitution.presidency}
             activePres={constitution.activePres}
             onPresidentClick={handlePresidentClick}
+            onCollegiale={() => constitution.activePres.forEach(id => togglePresident(id))}
+            lang={lang}
             />
 
             {selectedPresident && constitution.presidency[selectedPresident] && (
