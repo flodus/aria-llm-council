@@ -6,18 +6,6 @@ _Dernière mise à jour : 2026-03-26_
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
-- [ ] **B7 — `setCurrentCycleQuestion` non défini** (Dashboard_p3.jsx ~1709)
-  - Dans `CycleConfirmModal.onConfirm` : `setCurrentCycleQuestion(null)` → doit être `setCurrentCycleQuestions({})`
-  - Fix chirurgical, 1 ligne
-
-- [ ] **B8 — `getTerrainLabel` non défini** (Dashboard_p3.jsx ~657, AddCountryModal)
-  - Grep dans src/ → importer depuis ariaData.js/Dashboard_p1 ou définir inline
-  - Fix chirurgical
-
-- [ ] **B13 — Bouton Actualiser (💡) disparu dans les questions**
-  - Fichiers : `CouncilCitizenQuestion.jsx` · `CouncilFreeQuestion.jsx`
-  - Chercher `handleSuggest` — régression de rendu conditionnel ou composant remplacé
-
 - [ ] **B9 — Routing ministère invalide sur question de liste** _(Decide requis avant Do)_
   - `CouncilCitizenQuestion` : le `ministryId` doit voyager jusqu'au pipeline, bypasser le routing sémantique
   - Touche `llmCouncilEngine.js` — spec validée avant toute modif
@@ -124,6 +112,9 @@ _(bloqué sur refonte carte V1)_
   — `detectCrisis()` + `crisis_mode !== false` → détournement du pipeline normal dans councilEngine + useCouncilSession
 - [x] **Mode collégial — UI** : label `✦ SYNTHÈSE PRÉSIDENTIELLE` → `✡ SYNTHÈSE CONSTITUTIONNELLE` en mode collégial
 - [x] **Mode collégial — fallback referendum** : `question_referendum` ne recopie plus la question posée
+- [x] **B7 — `setCurrentCycleQuestion`** : déjà corrigé en `setCurrentCycleQuestions({})` (Dashboard_p3.jsx)
+- [x] **B8 — `getTerrainLabel`** : déjà exporté depuis `src/shared/data/worldLabels.js` + importé dans Dashboard_p3
+- [x] **B13 — Bouton Actualiser (💡)** : corrigé (CouncilCitizenQuestion + CouncilFreeQuestion)
 - [x] **Synthèses collégiales JSON** : `aria_syntheses.json` (FR+EN) — section `collegial` corrigée
   (typo `theocracie→theocratie`, régimes fallbacks retirés, `_meta.fallback_order` corrigé)
   + `getSyntheseCollegial()` dans responseService.js + câblage dans `_runCollegialPhase`

@@ -90,9 +90,9 @@
  [ PHASE B1 : STABILISATION II ] ................................ STATUT: EN COURS
  │  Bugs post-refactor + moteur délibération
  │
- ├─[B7]  setCurrentCycleQuestion → setCurrentCycleQuestions ......... ⬡ patch simple
- ├─[B8]  getTerrainLabel non défini dans AddCountryModal ............. ⬡ patch simple
- ├─[B13] Bouton Actualiser (💡) disparu dans les questions ........... ⬡ patch simple
+ ├─[B7]  setCurrentCycleQuestion → setCurrentCycleQuestions ......... ✅ corrigé
+ ├─[B8]  getTerrainLabel non défini dans AddCountryModal ............. ✅ corrigé
+ ├─[B13] Bouton Actualiser (💡) disparu dans les questions ........... ✅ corrigé
  ├─[B9]  Routing ministère invalide sur question de liste ............ ⬡ Decide requis (llmCouncilEngine)
  ├─[B12] Mode destin désactivé mais Oracle/Trame actifs .............. ✅ corrigé
  ├─[B14] Settings > Ministères : grille ministres par ministère ....... ✅ corrigé
@@ -187,7 +187,7 @@
         PresidencyTiles unifié. Mode collégial + crise opérationnels.
         Interface : curseurs SVG or + RadioPlayer topbar.
         Documentation : CONTRIBUTING complet + doc/ réorganisé.
-        Restant B1 : B7 · B8 · B13 · B9 (Decide requis).
+        Restant B1 : B9 uniquement (Decide requis — llmCouncilEngine).
         Chantier G1 (cohérence gouvernance) en file.
         Refonte carte en approche.
 ================================================================================
