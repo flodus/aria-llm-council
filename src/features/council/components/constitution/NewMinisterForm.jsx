@@ -14,7 +14,7 @@ export default function NewMinisterForm({ formData, setFormData, onCancel, onSub
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr auto', gap: '0.38rem', marginBottom: '0.32rem', alignItems: 'center' }}>
         <input
-        style={{ ...INPUT_STYLE, width: '1.9rem', textAlign: 'center', fontSize: '1rem' }}
+        style={{ ...INPUT_STYLE, width: '2.8rem', padding: '0.38rem 0.1rem', textAlign: 'center', fontSize: '1rem' }}
         value={formData.emoji}
         onChange={e => setFormData({ ...formData, emoji: e.target.value })}
         placeholder="🌟"

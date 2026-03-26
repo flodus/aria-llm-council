@@ -19,7 +19,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import { loadLang, t, useLocale } from '../../../ariaI18n';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { C, FONT } from '../../../shared/theme';
 import { sectionTitle, bubble } from './councilStyles';
 import {
@@ -95,12 +95,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
     : session?.question ? 'PEUPLE_IN'
     : 'IDLE';
 
-  // Auto-scroll quand nouvelle phase apparaît
-  useEffect(() => {
-    if (scrollRef.current) {
-      setTimeout(() => scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' }), 150);
-    }
-  }, [currentPhase]);
+  // Pas d'auto-scroll — le joueur lit à son rythme
 
   // ── IDLE ──────────────────────────────────────────────────────────────────
   if (!session || currentPhase === 'IDLE') {

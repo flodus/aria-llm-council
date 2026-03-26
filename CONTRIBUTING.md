@@ -488,7 +488,7 @@ Regime coefficients, terrain modifiers, resource weights, and cycle calculation 
 - **React only** — functional components, hooks with `useCallback`/`useMemo` on props
 - **Inline styles only** — no CSS modules, no `.css` files, no Tailwind
 - **No TypeScript** — plain JavaScript
-- **French** — variable names, comments, and JSON content in French (UI strings in both langs via `ariaI18n.js`)
+- **French codebase** — variable names, comments, JSON keys. Codebase is in French — this is an intentional choice, not technical debt. English contributors are welcome; the architecture docs and issue tracker are fully bilingual. All content JSON files have an EN mirror — contributions in either language are welcome.
 - **Components** under ~300 lines, engines under ~500–700 lines — extract before adding
 
 Do not modify these files without prior discussion:
