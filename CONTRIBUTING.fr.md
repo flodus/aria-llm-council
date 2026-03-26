@@ -158,7 +158,7 @@ Définition des agents : ministres, ministères, figures présidentielles, modul
 - Le tableau `ministers` d'un ministère contient 1 ou plusieurs IDs de ministres existants
 - `posture_defaut` doit être : `prudent` · `radical` · `statu_quo`
 - `keywords` sont utilisés pour le routage — plus de keywords = priorité plus haute pour ce ministère
-- `base: true` marque un ministère actif par défaut
+- `base: true` est une convention documentaire — le moteur ne lit pas ce champ (les ministères actifs sont contrôlés via `_active_ministries` dans le localStorage / `governanceOverride`)
 
 **IDs de ministres valides :** `initiateur` · `gardien` · `communicant` · `protecteur` · `ambassadeur` · `analyste` · `arbitre` · `enqueteur` · `guide` · `stratege` · `inventeur` · `guerisseur` · `oracle` · `wyrd`
 
@@ -233,7 +233,14 @@ Réponses de secours hors-ligne pour chaque ministre, par régime et posture. C'
 }
 ```
 
-**Régimes valides :** `democratie_liberale` · `republique_federale` · `monarchie_constitutionnelle` · `technocratie_ia` · `junte_militaire` · `oligarchie` · `theocratie` · `monarchie_absolue` · `communisme` · `nationalisme_autoritaire` · `democratie_directe`
+**Régimes primaires** (doivent exister dans ce fichier) : `democratie_liberale` · `republique_federale` · `monarchie_constitutionnelle` · `technocratie_ia` · `junte_militaire` · `oligarchie` · `theocratie`
+
+**Régimes fallback** (définis dans `simulation.json`, résolus à l'exécution via `resoudreRegime()`) :
+- `monarchie_absolue` → `monarchie_constitutionnelle`
+- `communisme` → `republique_federale`
+- `nationalisme_autoritaire` → `junte_militaire`
+- `regime_autoritaire` → `junte_militaire`
+- `democratie_directe` → `democratie_liberale`
 
 **Postures valides :** `prudent` · `radical` · `statu_quo`
 

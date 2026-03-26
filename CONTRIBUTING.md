@@ -158,7 +158,7 @@ Agent definitions: ministers, ministries, presidential figures, and the Destiny 
 - `ministers` array in a ministry contains 1 or more existing minister IDs
 - `posture_defaut` must be one of: `prudent` · `radical` · `statu_quo`
 - `keywords` are used for routing — more keywords = higher priority for this ministry
-- `base: true` flags a ministry as active by default
+- `base: true` is a documentation convention — the engine does not read this field (active ministries are controlled via `_active_ministries` in localStorage / `governanceOverride`)
 
 **Valid minister IDs:** `initiateur` · `gardien` · `communicant` · `protecteur` · `ambassadeur` · `analyste` · `arbitre` · `enqueteur` · `guide` · `stratege` · `inventeur` · `guerisseur` · `oracle` · `wyrd`
 
@@ -233,7 +233,14 @@ Offline fallback responses for every minister, by regime and posture. This is th
 }
 ```
 
-**Valid regimes:** `democratie_liberale` · `republique_federale` · `monarchie_constitutionnelle` · `technocratie_ia` · `junte_militaire` · `oligarchie` · `theocratie` · `monarchie_absolue` · `communisme` · `nationalisme_autoritaire` · `democratie_directe`
+**Primary regimes** (must exist in this file): `democratie_liberale` · `republique_federale` · `monarchie_constitutionnelle` · `technocratie_ia` · `junte_militaire` · `oligarchie` · `theocratie`
+
+**Fallback regimes** (defined in `simulation.json`, resolved at runtime via `resoudreRegime()`):
+- `monarchie_absolue` → `monarchie_constitutionnelle`
+- `communisme` → `republique_federale`
+- `nationalisme_autoritaire` → `junte_militaire`
+- `regime_autoritaire` → `junte_militaire`
+- `democratie_directe` → `democratie_liberale`
 
 **Valid postures:** `prudent` · `radical` · `statu_quo`
 
