@@ -8,7 +8,7 @@ import { callAI, getApiKeys } from '../../../Dashboard_p1';
 import { getMinistersMapFor, getMinistriesListFor, getPresidencyFor, getDestin } from './agentsManager';
 import { buildCountryContext, langPrefix } from './contextBuilder';  // direct
 import { FALLBACK_RESPONSES, localMinisterFallback, localSyntheseFallback, localAnnotationFallback } from './fallbacks';
-import { getSynthesePresidence } from '../../../shared/services/boardgame/responseService';
+import { getSynthesePresidence, getSyntheseCollegial } from '../../../shared/services/boardgame/responseService';
 import { COLORS } from '../../../shared/theme';
 
 /**
@@ -268,11 +268,13 @@ async function _runCollegialPhase(question, ministereResult, cercleAnnotations, 
     if (!synthese) {
         const questionHash = question.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
         const convergence = (questionHash + (country.satisfaction || 50)) % 3 !== 0;
+        const syntheseTexte = getSyntheseCollegial(country?.regime, convergence)
+            || (convergence
+                ? `Le Conseil délibère en session plénière. Une majorité ministérielle se dégage sur la question posée.`
+                : `Le Conseil est divisé sur cette question. Une délibération approfondie est nécessaire avant toute décision.`);
         synthese = {
             convergence,
-            synthese: convergence
-                ? `Le Conseil délibère en session plénière. Une majorité ministérielle se dégage sur la question posée. La synthèse constitutionnelle reflète l'équilibre des positions exprimées.`
-                : `Le Conseil est divisé sur cette question. Les positions ministérielles divergent selon les priorités sectorielles. Une délibération approfondie est nécessaire avant toute décision.`,
+            synthese: syntheseTexte,
             question_referendum: `Approuvez-vous la position du Conseil sur : "${question.slice(0, 80)}${question.length > 80 ? '…' : ''}" ?`,
             enjeu_principal: `La décision impactera les ${Math.round((country.population || 1e6) / 1e6 * 10) / 10} M de citoyens — le Conseil délibère sans arbitrage présidentiel.`,
         };

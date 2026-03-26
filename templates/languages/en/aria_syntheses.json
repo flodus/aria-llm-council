@@ -852,12 +852,10 @@
         "democratie_liberale",
         "republique_federale",
         "monarchie_constitutionnelle",
-        "regime_autoritaire",
         "oligarchie",
         "junte_militaire",
-        "theocracie",
-        "technocratie_ia",
-        "monarchie_absolue"
+        "theocratie",
+        "technocratie_ia"
       ],
       "note": "nearest-neighbor: if regime absent, use fallback_order[0]"
     },
@@ -958,7 +956,7 @@
           "Disagreement within the Council is a vulnerability. It will be resolved by hierarchy — not by vote. Final decision belongs to the supreme commander."
         ]
       },
-      "theocracie": {
+      "theocratie": {
         "convergence": [
           "The Council speaks with one soul. The collective will of ministers reflects superior guidance. This decision is right because it is unanimous.",
           "Full Council agreement. When hearts align on the same direction, it is the sign that the path is true.",
@@ -972,38 +970,6 @@
           "The vote does not decide. Perhaps a sign that the question merits deeper meditation before being submitted to decision.",
           "Disagreement within the Council is an invitation to humility. We do not yet see clearly. The decision will wait until light comes.",
           "Spiritual divergence recorded. Interpretations of founding principles differ. A return to texts and traditions is needed before deciding."
-        ]
-      },
-      "regime_autoritaire": {
-        "convergence": [
-          "The Council aligns on the decision. Unity of command is assured. Execution will follow without delay.",
-          "Unambiguous vote. The Council confirms the direction — regime stability is preserved. The decision will be applied.",
-          "Agreement is complete. In this regime, Council unanimity is a strong signal. Direction is set.",
-          "The Council speaks with one voice. The decision is made, consensus is established. Any resistance to application will be treated as such.",
-          "Unanimity in the Council. Direction is clear, will is common. The state apparatus is mobilized for execution."
-        ],
-        "divergence": [
-          "Discordant voices rise within the Council. This situation is noted. A clarification of positions will be requested.",
-          "The vote reveals internal resistance. It will be analyzed. The final decision will not be affected by dissent.",
-          "Divergence recorded. The Council does not speak with one voice — that is information in itself. The authority decision will prevail.",
-          "Disagreement within the Council is temporary. Dissenting positions have been recorded. The decision will be imposed through the usual channels.",
-          "Fracture in the Council. Discordant voices will be heard — then the decision will be made through appropriate channels. Unity will be restored."
-        ]
-      },
-      "monarchie_absolue": {
-        "convergence": [
-          "The Royal Council deliberates and agrees with honor. The unity of advisors reflects the solidity of the throne and the rightness of direction.",
-          "Unanimous collegial vote. The Crown notes the agreement of its ministers — a sign of good governance.",
-          "The Council speaks in unity. The decision will be endorsed by the Crown and applied within required timeframes.",
-          "Full Council agreement. The Crown recognizes in this unanimity the mark of a deliberation conducted with wisdom and loyalty.",
-          "Royal unanimity. Advisors agreed without constraint — the sign that the decision is just. The Crown endorses."
-        ],
-        "divergence": [
-          "The Royal Council is divided. The Crown takes note of the disagreement and reserves the right to decide in final recourse.",
-          "Divergence within the Council. Differing views will be examined by the Crown before final decision.",
-          "The vote produces no agreement. In this case, royal prerogative is exercised fully.",
-          "The Council does not agree. The Crown takes note — and reminds that the final decision belongs to it, whatever views were expressed.",
-          "Divergence recorded in the Council. Positions will be transmitted to the Crown. The sovereign decision will end the debate."
         ]
       }
     }
