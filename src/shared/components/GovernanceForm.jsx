@@ -216,7 +216,7 @@ export default function GovernanceForm({ context, opts, onChange }) {
                 open={openAcc === 'pres'}
                 onToggle={() => toggle('pres')}
                 label={isEn ? 'DEFAULT PRESIDENCY' : 'PRÉSIDENCE PAR DÉFAUT'}
-                badge={presDesc}
+                badge={presType}
             >
                 <PresidencyTiles presType={presType} onSelect={v => setGov('presidency', v)} isEn={isEn} />
                 <div style={{
