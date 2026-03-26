@@ -494,11 +494,47 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
         {/* ---------- ONGLET PRÉSIDENCE ---------- */}
         {activeTab === 'presidency' && (
+            <>
             <PresidencyTiles
                 presType={activePresToType(constitution.activePres)}
-                onSelect={v => setActivePres(typeToActivePres(v))}
+                onSelect={v => { setActivePres(typeToActivePres(v)); setSelectedPresident(null); }}
                 isEn={isEn}
             />
+            {/* Boutons configurer pour les présidents actifs */}
+            {constitution.activePres.length > 0 && (
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    {constitution.activePres.map(pid => {
+                        const p = constitution.presidency[pid];
+                        if (!p) return null;
+                        const isSel = selectedPresident === pid;
+                        return (
+                            <button key={pid}
+                                onClick={() => setSelectedPresident(isSel ? null : pid)}
+                                style={{
+                                    fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.42rem',
+                                    padding: '0.25rem 0.65rem', borderRadius: '2px', cursor: 'pointer',
+                                    background: isSel ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
+                                    border: `1px solid ${isSel ? 'rgba(200,164,74,0.45)' : 'rgba(140,160,200,0.15)'}`,
+                                    color: isSel ? 'rgba(200,164,74,0.90)' : 'rgba(140,160,200,0.55)',
+                                }}>
+                                {pid === 'phare' ? '☉' : '☽'} {isEn ? `Configure ${p.name}` : `Configurer ${p.name}`}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+            {selectedPresident && constitution.presidency[selectedPresident] && (
+                <PresidentDetail
+                    president={constitution.presidency[selectedPresident]}
+                    presidentId={selectedPresident}
+                    isActive={constitution.activePres.includes(selectedPresident)}
+                    isSelected={true}
+                    onToggleActive={() => togglePresident(selectedPresident)}
+                    onUpdateField={(field, value) => updatePresidency(selectedPresident, field, value)}
+                    onClose={() => setSelectedPresident(null)}
+                />
+            )}
+            </>
         )}
 
         {/* ---------- ONGLET MINISTÈRES ---------- */}
