@@ -14,6 +14,7 @@
 import { useState } from 'react';
 import { useLocale } from '../../ariaI18n';
 import { getAgents } from '../../Dashboard_p1';
+import { getDestin } from '../../features/council/services/agentsManager';
 import { FONT } from '../theme';
 
 // ── Helpers locaux ────────────────────────────────────────────────────────────
@@ -25,6 +26,19 @@ function getMinistryMeta() {
     const result = {};
     mList.forEach(m => { result[m.id] = { emoji: m.emoji || '', label: m.name || m.id }; });
     return result;
+}
+
+function getDestinIds() { return new Set(getDestin()?.agents || []); }
+
+function getAllMinisters() {
+    const dIds = getDestinIds();
+    return Object.entries(getAgents().ministers || {})
+        .filter(([id, m]) => m.name && m.emoji && !dIds.has(id));
+}
+
+function getDestinAgents() {
+    const { ministers = {} } = getAgents();
+    return (getDestin()?.agents || []).map(id => ({ id, ...ministers[id] })).filter(a => a.name);
 }
 
 function getDefaultGov() {
@@ -128,10 +142,26 @@ export default function GovernanceForm({ context, opts, onChange }) {
     };
 
     const toggleMinistry = (id) => {
-        const current = new Set(gov.ministries || []);
+        const current = new Set(gov.ministries || getAllMinistryIds());
         if (current.has(id)) { if (current.size <= 2) return; current.delete(id); }
         else current.add(id);
         setGov('ministries', [...current]);
+    };
+
+    const toggleMinister = (id) => {
+        const allIds = getAllMinisters().map(([mid]) => mid);
+        const current = new Set(gov.active_ministers || allIds);
+        if (current.has(id)) { if (current.size <= 1) return; current.delete(id); }
+        else current.add(id);
+        setGov('active_ministers', [...current]);
+    };
+
+    const toggleDestinAgent = (id) => {
+        const allIds = getDestinAgents().map(a => a.id);
+        const current = new Set(gov.active_destin_agents || allIds);
+        if (current.has(id)) { if (current.size <= 1) return; current.delete(id); }
+        else current.add(id);
+        setGov('active_destin_agents', [...current]);
     };
 
     // ── Compteur pays (context=settings uniquement) ───────────────────────────
@@ -257,12 +287,13 @@ export default function GovernanceForm({ context, opts, onChange }) {
                 open={openAcc === 'mins'}
                 onToggle={() => toggle('mins')}
                 label={isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT'}
-                badge={`${(gov.ministries || []).length}/${getAllMinistryIds().length}`}
+                badge={`${(gov.ministries || getAllMinistryIds()).length}/${getAllMinistryIds().length}`}
             >
                 {getAllMinistryIds().map(id => {
                     const meta = getMinistryMeta()[id] || { emoji: '', label: id };
-                    const active = (gov.ministries || []).includes(id);
-                    const isMin = (gov.ministries || []).length <= 2 && active;
+                    const activeMins = gov.ministries || getAllMinistryIds();
+                    const active = activeMins.includes(id);
+                    const isMin = activeMins.length <= 2 && active;
                     return (
                         <label key={id} style={{
                             display: 'flex', alignItems: 'center', gap: '0.6rem',
@@ -279,6 +310,40 @@ export default function GovernanceForm({ context, opts, onChange }) {
                                 fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.52rem',
                                 color: 'rgba(200,215,240,0.80)',
                             }}>{meta.label}</span>
+                        </label>
+                    );
+                })}
+            </Acc>
+
+            {/* ── MINISTRES ────────────────────────────────────────────────── */}
+            <Acc
+                open={openAcc === 'ministers'}
+                onToggle={() => toggle('ministers')}
+                label={isEn ? 'ACTIVE MINISTERS BY DEFAULT' : 'MINISTRES ACTIFS PAR DÉFAUT'}
+                badge={(() => {
+                    const allIds = getAllMinisters().map(([id]) => id);
+                    const active = gov.active_ministers || allIds;
+                    return `${active.length}/${allIds.length}`;
+                })()}
+            >
+                {getAllMinisters().map(([id, m]) => {
+                    const allIds = getAllMinisters().map(([mid]) => mid);
+                    const activeList = gov.active_ministers || allIds;
+                    const active = activeList.includes(id);
+                    const isMin = activeList.length <= 1 && active;
+                    return (
+                        <label key={id} style={{
+                            display: 'flex', alignItems: 'center', gap: '0.6rem',
+                            cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
+                            padding: '0.3rem 0.5rem', borderRadius: '2px',
+                            background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
+                            border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent',
+                        }}>
+                            <input type="checkbox" checked={active} disabled={isMin}
+                                onChange={() => toggleMinister(id)}
+                                style={{ accentColor: '#C8A44A', width: '13px', height: '13px' }} />
+                            <span style={{ fontSize: '0.9rem' }}>{m.emoji}</span>
+                            <span style={{ fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.52rem', color: 'rgba(200,215,240,0.80)' }}>{m.name}</span>
                         </label>
                     );
                 })}
@@ -334,14 +399,35 @@ export default function GovernanceForm({ context, opts, onChange }) {
                         color: 'rgba(140,100,220,0.55)', lineHeight: 1.55,
                     }}>
                         {isEn
-                            ? "Activates Oracle and La Trame for existential crises (pandemics, nuclear threats, civilizational ruptures…)"
-                            : "Active L'Oracle et La Trame pour les crises existentielles (pandémies, menaces nucléaires, ruptures civilisationnelles…)"}
+                            ? "Introduces external forces into deliberations (existential crises, civilizational ruptures…)"
+                            : "Introduit des forces extérieures dans les délibérations (crises existentielles, ruptures civilisationnelles…)"}
                     </div>
                     <Toggle
                         value={gov.destiny_mode === true}
                         onChange={v => setGov('destiny_mode', v)}
                         label={gov.destiny_mode === true ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')}
                     />
+                    {gov.destiny_mode === true && (
+                        <div style={{ paddingLeft: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.3rem', borderLeft: '1px solid rgba(140,100,220,0.25)', marginTop: '0.15rem' }}>
+                            {getDestinAgents().map(a => {
+                                const icon = a.id === 'oracle' ? '☯' : '📜';
+                                const allIds = getDestinAgents().map(d => d.id);
+                                const activeList = gov.active_destin_agents || allIds;
+                                const active = activeList.includes(a.id);
+                                const tip = a.id === 'oracle'
+                                    ? (isEn ? 'Takes a position in deliberations' : 'Prend position dans les délibérations')
+                                    : (isEn ? 'Shapes the global narrative over cycles' : 'Oriente le récit global sur la durée des cycles');
+                                return (
+                                    <Toggle
+                                        key={a.id}
+                                        value={active}
+                                        onChange={() => toggleDestinAgent(a.id)}
+                                        label={<span title={tip}>{icon} {a.name}</span>}
+                                    />
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
             </Acc>
 

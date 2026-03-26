@@ -268,23 +268,30 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                             </div>
                         </div>
 
-                        {/* Destin — ligne dédiée */}
-                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                        {/* Destin — parent + enfants */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
                             <span style={labelCol}>{lang === 'en' ? 'Destiny' : 'Destin'}</span>
-                            <div style={emojiRow}>
-                                <span title={lang === 'en' ? 'Destiny: introduces external forces into deliberations' : 'Destin : introduit des forces extérieures dans les délibérations'}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                                <span
+                                    style={{ fontFamily: FONT.mono, fontSize: '0.60rem', lineHeight: 1 }}
+                                    title={lang === 'en' ? 'Introduces external forces into deliberations' : 'Introduit des forces extérieures dans les délibérations'}
+                                >
                                     🎲 {destinOn ? '✓' : '✗'}
                                 </span>
-                                {destinAgents.map(([id, m]) => {
-                                    const tip = id === 'oracle'
-                                        ? (lang === 'en' ? 'Oracle: takes a position in deliberations' : 'Oracle : prend position dans les délibérations')
-                                        : (lang === 'en' ? 'Trame: shapes the global narrative over cycles' : 'Trame : oriente le récit global sur la durée des cycles');
-                                    return (
-                                        <span key={id} title={tip} style={{ opacity: destinOn ? 1 : 0.35 }}>
-                                            {m.emoji} {destinOn ? '✓' : '✗'}
-                                        </span>
-                                    );
-                                })}
+                                <div style={{ display: 'flex', gap: '0.8rem', paddingLeft: '0.5rem', fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(180,200,230,0.65)' }}>
+                                    <span style={{ opacity: 0.45 }}>↳</span>
+                                    {destinAgents.map(([id, m]) => {
+                                        const icon = id === 'oracle' ? '☯' : '📜';
+                                        const tip = id === 'oracle'
+                                            ? (lang === 'en' ? 'Oracle: takes a position in deliberations' : 'Oracle : prend position dans les délibérations')
+                                            : (lang === 'en' ? 'Trame: shapes the global narrative over cycles' : 'Trame : oriente le récit global sur la durée des cycles');
+                                        return (
+                                            <span key={id} title={tip} style={{ opacity: destinOn ? 1 : 0.35 }}>
+                                                {icon} {m.name} {destinOn ? '✓' : '✗'}
+                                            </span>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
 
@@ -333,6 +340,14 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
 
         {/* Tout ce qui suit n'est visible que si le joueur a choisi "Je veux le modifier" */}
         {worldAccepted && <>
+
+        {/* Bouton retour vers le récap monde */}
+        <button
+            onClick={() => setWorldAccepted(false)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, alignSelf: 'flex-start', fontFamily: FONT.mono, fontSize: '0.42rem', color: 'rgba(140,160,200,0.45)', letterSpacing: '0.06em' }}
+        >
+            ← {lang === 'en' ? 'Back to world overview' : 'Retour au récap monde'}
+        </button>
 
         {/* Header avec badges et bouton personnaliser */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', flexWrap: 'wrap', gap: '0.4rem' }}>
