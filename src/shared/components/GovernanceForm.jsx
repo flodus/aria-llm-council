@@ -16,6 +16,7 @@ import { useLocale } from '../../ariaI18n';
 import { getAgents } from '../../Dashboard_p1';
 import { getDestin } from '../../features/council/services/agentsManager';
 import { FONT } from '../theme';
+import PresidencyTiles from './PresidencyTiles';
 
 // ── Helpers locaux ────────────────────────────────────────────────────────────
 
@@ -176,16 +177,6 @@ export default function GovernanceForm({ context, opts, onChange }) {
 
     // ── Résumé présidence ─────────────────────────────────────────────────────
     const presType = gov.presidency || 'duale';
-    const presAccent = {
-        solaire: 'rgba(200,164,74,0.80)', lunaire: 'rgba(140,100,220,0.80)',
-        duale: 'rgba(170,132,147,0.80)', collegiale: 'rgba(165,55,75,0.80)',
-    }[presType] || 'rgba(200,164,74,0.70)';
-    const presDesc = {
-        solaire:    isEn ? '☉ The Phare — The Will'                     : '☉ Le Phare — La Volonté',
-        lunaire:    isEn ? '☽ The Boussole — The Soul'                  : '☽ La Boussole — L\'Âme',
-        duale:      isEn ? '☉☽ Phare + Boussole — ARIA mode'            : '☉☽ Phare + Boussole — Mode ARIA',
-        collegiale: isEn ? '✡ Vote of 12 ministers'                     : '✡ Vote des 12 ministres',
-    }[presType] || '';
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -227,53 +218,7 @@ export default function GovernanceForm({ context, opts, onChange }) {
                 label={isEn ? 'DEFAULT PRESIDENCY' : 'PRÉSIDENCE PAR DÉFAUT'}
                 badge={presDesc}
             >
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                    {/* Tuiles */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        {[
-                            { value: 'solaire',    icon: '☉',  iconColor: 'rgba(200,164,74,0.90)',  label: isEn ? 'Phare'      : 'Phare',       tooltip: isEn ? 'The Phare — The Will'               : 'Le Phare — La Volonté' },
-                            { value: 'lunaire',    icon: '☽',  iconColor: 'rgba(150,100,220,0.90)', label: isEn ? 'Boussole'   : 'Boussole',    tooltip: isEn ? 'The Boussole — The Soul'            : 'La Boussole — L\'Âme' },
-                            { value: 'duale',      icon: '☉☽', iconColor: 'rgba(170,132,147,0.90)', label: isEn ? 'Dual'       : 'Duale',       tooltip: isEn ? 'Phare + Boussole — ARIA mode'       : 'Phare + Boussole — Mode ARIA' },
-                            { value: 'collegiale', icon: '✡',  iconColor: 'rgba(165,55,75,0.88)',   label: isEn ? 'Collegial'  : 'Collégiale',  tooltip: isEn ? 'Constitutional Synthesis'           : 'Synthèse Constitutionnelle' },
-                        ].map(({ value, icon, iconColor, label, tooltip }) => {
-                            const isSel = presType === value;
-                            return (
-                                <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
-                                    style={{
-                                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
-                                        padding: '0.6rem 0.7rem', borderRadius: '6px', cursor: 'pointer', minWidth: '3.5rem',
-                                        background: isSel ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                                        border: `1px solid ${isSel ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                                        transition: 'all 0.12s',
-                                    }}>
-                                    <span style={{ fontSize: '1.4rem', lineHeight: 1, color: isSel ? iconColor : 'rgba(170,185,215,0.40)' }}>
-                                        {icon}
-                                    </span>
-                                    <span style={{
-                                        fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.46rem',
-                                        color: isSel ? 'rgba(200,164,74,0.9)' : 'rgba(170,185,215,0.45)',
-                                        letterSpacing: '0.03em', textAlign: 'center',
-                                    }}>
-                                        {label}
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                    {/* Description */}
-                    <div style={{
-                        borderLeft: `2px solid ${presAccent}44`, paddingLeft: '0.75rem',
-                        fontStyle: 'italic', color: presAccent, fontSize: '0.50rem',
-                        lineHeight: 1.7, whiteSpace: 'pre-line', alignSelf: 'center',
-                    }}>
-                        {{
-                            solaire:    isEn ? '☉ The Phare\npresides alone\nThe Will'                        : '☉ Le Phare\npréside seul\nLa Volonté',
-                            lunaire:    isEn ? '☽ The Boussole\npresides alone\nThe Soul'                     : '☽ La Boussole\npréside seule\nL\'Âme',
-                            duale:      isEn ? '☉☽ Phare and Boussole\ndeliberate equally\nARIA mode'         : '☉☽ Phare et Boussole\ndélibèrent à égalité\nMode ARIA',
-                            collegiale: isEn ? '✡ Vote of 12 ministers\nConstitutional Synthesis'             : '✡ Vote des 12 ministres\nSynthèse Constitutionnelle',
-                        }[presType] || ''}
-                    </div>
-                </div>
+                <PresidencyTiles presType={presType} onSelect={v => setGov('presidency', v)} isEn={isEn} />
                 <div style={{
                     fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.40rem',
                     color: 'rgba(140,160,200,0.30)', marginTop: '0.2rem', letterSpacing: '0.06em',

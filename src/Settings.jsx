@@ -8,6 +8,7 @@
 
 import { getRegimeLabel, getTerrainLabel } from './shared/data/worldLabels';
 import AgentGrid from './shared/components/AgentGrid';
+import PresidencyTiles from './shared/components/PresidencyTiles';
 import { getDestin } from './features/council/services/agentsManager';
 import { useState, useCallback, useEffect, useRef, Component } from 'react';
 import { useLocale, t, loadLang } from './ariaI18n';
@@ -1523,64 +1524,7 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
               <div style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.7)', letterSpacing:'0.10em', marginBottom:'0.6rem', textTransform:'uppercase' }}>
                 {isEn ? 'Presidency type' : 'Type de présidence'}
               </div>
-              <div style={{ display:'flex', gap:'1rem', alignItems:'flex-start' }}>
-                {/* Grille tuiles */}
-                <div style={{ display:'flex', flexWrap:'wrap', gap:'0.5rem' }}>
-                  {[
-                    { value:'solaire',    icon:'☉',  iconColor:'rgba(200,164,74,0.90)',  iconSize:'1.6rem', ls:'normal',   label: isEn?'Phare':'Phare',       tooltip: isEn?'The Phare — The Will':'Le Phare — La Volonté' },
-                    { value:'lunaire',    icon:'☽',  iconColor:'rgba(150,100,220,0.90)', iconSize:'1.6rem', ls:'normal',   label: isEn?'Boussole':'Boussole', tooltip: isEn?'The Boussole — The Soul':'La Boussole — L\'Âme' },
-                    { value:'duale',      iconRender:<><span style={{color:'rgba(200,164,74,0.90)'}}>☉</span><span style={{color:'rgba(150,100,220,0.90)'}}>☽</span></>, iconSize:'1.2rem', ls:'-0.05em', label: isEn?'Dual':'Duale',        tooltip: isEn?'Phare + Boussole — ARIA mode':'Phare + Boussole — Mode ARIA' },
-                    { value:'collegiale', icon:null, iconColor:'rgba(165,55,75,0.88)',   iconSize:'1.6rem', ls:'normal',  label: isEn?'Collegial':'Collégiale', tooltip: isEn?'Constitutional Synthesis':'Synthèse Constitutionnelle' },
-                  ].map(({ value, icon, iconRender, iconColor, iconSize, ls, label, tooltip }) => {
-                    const isSel = (gov.presidency || 'duale') === value;
-                    return (
-                      <button key={value} title={tooltip} onClick={() => setGov('presidency', value)}
-                        style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'0.2rem',
-                          padding:'0.6rem 0.7rem', borderRadius:'6px', cursor:'pointer', minWidth:'3.5rem',
-                          background: isSel ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                          border: `1px solid ${isSel ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                          transition:'all 0.12s' }}>
-                        <span style={{ height:'2rem', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                          {iconRender
-                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls }}>{iconRender}</span>
-                            : icon
-                            ? <span style={{ fontSize:iconSize, lineHeight:1, letterSpacing:ls, color: iconColor || (isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)') }}>{icon}</span>
-                            : <span className="mdi mdi-hexagram-outline" style={{ fontSize:iconSize, lineHeight:1, color: iconColor }} />
-                          }
-                        </span>
-                        <span style={{ fontSize:'0.52rem', color: isSel?'rgba(200,164,74,0.9)':'rgba(170,185,215,0.55)',
-                          letterSpacing:'0.03em', textAlign:'center', maxWidth:'4rem',
-                          overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', lineHeight:1.3 }}>
-                          {label}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* Description sélection */}
-                {(() => {
-                  const sel = gov.presidency || 'duale';
-                  const modeAccent = {
-                    solaire:    'rgba(200,164,74,0.80)',
-                    lunaire:    'rgba(140,100,220,0.80)',
-                    duale:      'rgba(170,132,147,0.80)',
-                    collegiale: 'rgba(165,55,75,0.80)',
-                  }[sel] || 'rgba(200,164,74,0.70)';
-                  const desc = {
-                    solaire:    isEn ? '☉ The Phare\npresides alone\nThe Will'                           : '☉ Le Phare\npréside seul\nLa Volonté',
-                    lunaire:    isEn ? '☽ The Boussole\npresides alone\nThe Soul'                        : '☽ La Boussole\npréside seule\nL\'Âme',
-                    duale:      isEn ? '☉☽ The Phare and the Boussole\ndeliberate equally\nARIA mode'    : '☉☽ Le Phare et La Boussole\ndélibèrent à égalité\nMode ARIA',
-                    collegiale: isEn ? '✡ Vote of 12 ministers\nConstitutional Synthesis'                : '✡ Vote des 12 ministres\nSynthèse Constitutionnelle',
-                  }[sel] || '';
-                  return (
-                    <div style={{ borderLeft:`2px solid ${modeAccent}44`, paddingLeft:'1rem',
-                      fontStyle:'italic', color:modeAccent, fontSize:'0.52rem',
-                      lineHeight:1.7, whiteSpace:'pre-line', alignSelf:'center' }}>
-                      {desc}
-                    </div>
-                  );
-                })()}
-              </div>
+                  <PresidencyTiles presType={gov.presidency || 'duale'} onSelect={v => setGov('presidency', v)} isEn={isEn} />
               <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.35)', marginTop:'0.5rem', letterSpacing:'0.06em' }}>
                 {isEn ? 'Applied to all new countries unless overridden' : 'Appliqué à tous les nouveaux pays sauf override'}
               </div>
@@ -1615,40 +1559,45 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
               );
             })}
 
-            {/* ── Ministres inline ──────────────────────────────────────────── */}
-            <div style={{ marginTop:'0.5rem', borderTop:'1px solid rgba(140,160,200,0.10)', paddingTop:'0.45rem' }}>
-              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
-                letterSpacing:'0.12em', color:'rgba(200,164,74,0.45)', textTransform:'uppercase',
-                marginBottom:'0.3rem' }}>
-                {isEn ? 'Ministers' : 'Ministres'}
-              </div>
-              {(() => {
-                const dIds = new Set(getDestin()?.agents || []);
-                const allIds = Object.entries(getAgents().ministers || {})
-                  .filter(([id]) => !dIds.has(id)).map(([id]) => id);
-                return Object.entries(getAgents().ministers || {})
-                  .filter(([id, m]) => !dIds.has(id) && m.name && m.emoji)
-                  .map(([id, m]) => {
-                    const activeList = gov.active_ministers || allIds;
-                    const active = activeList.includes(id);
-                    const isMin = activeList.length <= 1 && active;
-                    return (
-                      <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
-                        cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
-                        padding:'0.25rem 0.5rem', borderRadius:'2px',
-                        background: active ? 'rgba(200,164,74,0.05)' : 'transparent',
-                        border: active ? '1px solid rgba(200,164,74,0.15)' : '1px solid transparent' }}>
-                        <input type="checkbox" checked={active} disabled={isMin}
-                          onChange={() => toggleMinisterSettings(id)}
-                          style={{ accentColor:'#C8A44A', width:'12px', height:'12px' }} />
-                        <span style={{ fontSize:'0.85rem' }}>{m.emoji}</span>
-                        <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.48rem',
-                          color:'rgba(200,215,240,0.75)' }}>{m.name}</span>
-                      </label>
-                    );
-                  });
-              })()}
-            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ▸ MINISTRES */}
+      <div className={`aria-accordion${openAcc==='ministers' ? ' open' : ''}`}>
+        {HDR('ministers', isEn ? 'ACTIVE MINISTERS BY DEFAULT' : 'MINISTRES ACTIFS PAR DÉFAUT', (() => {
+          const dIds = new Set(getDestin()?.agents || []);
+          const allIds = Object.entries(getAgents().ministers || {}).filter(([id]) => !dIds.has(id)).map(([id]) => id);
+          return `${(gov.active_ministers || allIds).length}/${allIds.length}`;
+        })())}
+        {openAcc==='ministers' && (
+          <div className="aria-accordion__body">
+            {(() => {
+              const dIds = new Set(getDestin()?.agents || []);
+              const allIds = Object.entries(getAgents().ministers || {})
+                .filter(([id]) => !dIds.has(id)).map(([id]) => id);
+              return Object.entries(getAgents().ministers || {})
+                .filter(([id, m]) => !dIds.has(id) && m.name && m.emoji)
+                .map(([id, m]) => {
+                  const activeList = gov.active_ministers || allIds;
+                  const active = activeList.includes(id);
+                  const isMin = activeList.length <= 1 && active;
+                  return (
+                    <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
+                      cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
+                      padding:'0.3rem 0.5rem', borderRadius:'2px',
+                      background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
+                      border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
+                      <input type="checkbox" checked={active} disabled={isMin}
+                        onChange={() => toggleMinisterSettings(id)}
+                        style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
+                      <span style={{ fontSize:'0.9rem' }}>{m.emoji}</span>
+                      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
+                        color:'rgba(200,215,240,0.80)' }}>{m.name}</span>
+                    </label>
+                  );
+                });
+            })()}
           </div>
         )}
       </div>

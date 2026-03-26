@@ -19,7 +19,6 @@ import AgentGrid from '../../../shared/components/AgentGrid';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
 import useConstitutionModal from '../hooks/useConstitutionModal';
 import {
-    PresidentsList,
     PresidentDetail,
     MinistersList,
     MinisterDetail,
@@ -29,6 +28,7 @@ import {
     NewMinistryForm,
     PromptEditor
 } from './constitution';
+import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
 
 // Helpers localStorage pour les overrides (copié de l'ancien)
 function readOv()   { try { return JSON.parse(localStorage.getItem('aria_agents_override')||'null'); } catch { return null; } }
@@ -121,6 +121,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         selectedMinister,
         setSelectedMinister,
         togglePresident,
+        setActivePres,
         updatePresidency,
         toggleMinistry,
         isMinistryActive,
@@ -493,27 +494,11 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
         {/* ---------- ONGLET PRÉSIDENCE ---------- */}
         {activeTab === 'presidency' && (
-            <>
-            <PresidentsList
-            presidents={constitution.presidency}
-            activePres={constitution.activePres}
-            onPresidentClick={handlePresidentClick}
-            onCollegiale={() => constitution.activePres.forEach(id => togglePresident(id))}
-            lang={lang}
+            <PresidencyTiles
+                presType={activePresToType(constitution.activePres)}
+                onSelect={v => setActivePres(typeToActivePres(v))}
+                isEn={isEn}
             />
-
-            {selectedPresident && constitution.presidency[selectedPresident] && (
-                <PresidentDetail
-                president={constitution.presidency[selectedPresident]}
-                presidentId={selectedPresident}
-                isActive={constitution.activePres.includes(selectedPresident)}
-                isSelected={true}
-                onToggleActive={() => togglePresident(selectedPresident)}
-                onUpdateField={(field, value) => updatePresidency(selectedPresident, field, value)}
-                onClose={() => setSelectedPresident(null)}
-                />
-            )}
-            </>
         )}
 
         {/* ---------- ONGLET MINISTÈRES ---------- */}
@@ -559,7 +544,9 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 isSelected={true}
                 onToggleActive={() => toggleMinistry(selectedMinistry)}
                 onUpdateMission={(newMission) => updateMinistryMission(selectedMinistry, newMission)}
-                ministers={constitution.ministers}
+                ministers={Object.fromEntries(
+                    Object.entries(constitution.ministers).filter(([id]) => !(getDestin()?.agents || []).includes(id))
+                )}
                 onAssignMinister={(ministerId, isIn) => assignMinisterToMinistry(selectedMinistry, ministerId, isIn)}
                 onUpdatePrompt={(ministerId, newPrompt) => updateMinisterPrompt(selectedMinistry, ministerId, newPrompt)}
                 onClose={() => setSelectedMinistry(null)}

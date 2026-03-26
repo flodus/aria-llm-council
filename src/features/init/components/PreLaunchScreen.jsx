@@ -16,6 +16,7 @@ import { useLocale, t } from '../../../ariaI18n';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle } from '../../../shared/theme';
 import AgentGrid from '../../../shared/components/AgentGrid';
 import GovernanceForm from '../../../shared/components/GovernanceForm';
+import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
 import { getOptions, saveOptions } from '../../../Dashboard_p1';
 import {
     ARIAHeader,
@@ -260,13 +261,10 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                 setCfgOpen={iaConfig.setCfgOpen}
                 />
 
-                <ActivePresidencySection
-                presidency={countryOverride.plAgents.presidency}
-                activePres={countryOverride.activePres}
-                onTogglePresidency={(key) => countryOverride.setActivePres(prev =>
-                    prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
-                )}
-                onCollegiale={() => countryOverride.setActivePres([])}
+                <PresidencyTiles
+                    presType={activePresToType(countryOverride.activePres)}
+                    onSelect={v => countryOverride.setActivePres(typeToActivePres(v))}
+                    isEn={lang === 'en'}
                 />
 
                 {/* Toggle Destinée du monde — entre présidence et ministères */}
