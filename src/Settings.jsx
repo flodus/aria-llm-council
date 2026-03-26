@@ -1614,49 +1614,41 @@ function SectionGouvernanceDefaut({ opts, setOpts }) {
                 </label>
               );
             })}
-          </div>
-        )}
-      </div>
 
-      {/* ▸ MINISTRES */}
-      <div className={`aria-accordion${openAcc==='ministers' ? ' open' : ''}`}>
-        {(() => {
-          const dIds = new Set(getDestin()?.agents || []);
-          const allIds = Object.entries(getAgents().ministers || {})
-            .filter(([id]) => !dIds.has(id)).map(([id]) => id);
-          const activeList = gov.active_ministers || allIds;
-          return HDR('ministers',
-            isEn ? 'ACTIVE MINISTERS BY DEFAULT' : 'MINISTRES ACTIFS PAR DÉFAUT',
-            `${activeList.length}/${allIds.length}`);
-        })()}
-        {openAcc==='ministers' && (
-          <div className="aria-accordion__body">
-            {(() => {
-              const dIds = new Set(getDestin()?.agents || []);
-              return Object.entries(getAgents().ministers || {})
-                .filter(([id, m]) => !dIds.has(id) && m.name && m.emoji)
-                .map(([id, m]) => {
-                  const allIds = Object.entries(getAgents().ministers || {})
-                    .filter(([mid]) => !dIds.has(mid)).map(([mid]) => mid);
-                  const activeList = gov.active_ministers || allIds;
-                  const active = activeList.includes(id);
-                  const isMin = activeList.length <= 1 && active;
-                  return (
-                    <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
-                      cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
-                      padding:'0.3rem 0.5rem', borderRadius:'2px',
-                      background: active ? 'rgba(200,164,74,0.07)' : 'transparent',
-                      border: active ? '1px solid rgba(200,164,74,0.20)' : '1px solid transparent' }}>
-                      <input type="checkbox" checked={active} disabled={isMin}
-                        onChange={() => toggleMinisterSettings(id)}
-                        style={{ accentColor:'#C8A44A', width:'13px', height:'13px' }} />
-                      <span style={{ fontSize:'0.9rem' }}>{m.emoji}</span>
-                      <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
-                        color:'rgba(200,215,240,0.80)' }}>{m.name}</span>
-                    </label>
-                  );
-                });
-            })()}
+            {/* ── Ministres inline ──────────────────────────────────────────── */}
+            <div style={{ marginTop:'0.5rem', borderTop:'1px solid rgba(140,160,200,0.10)', paddingTop:'0.45rem' }}>
+              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
+                letterSpacing:'0.12em', color:'rgba(200,164,74,0.45)', textTransform:'uppercase',
+                marginBottom:'0.3rem' }}>
+                {isEn ? 'Ministers' : 'Ministres'}
+              </div>
+              {(() => {
+                const dIds = new Set(getDestin()?.agents || []);
+                const allIds = Object.entries(getAgents().ministers || {})
+                  .filter(([id]) => !dIds.has(id)).map(([id]) => id);
+                return Object.entries(getAgents().ministers || {})
+                  .filter(([id, m]) => !dIds.has(id) && m.name && m.emoji)
+                  .map(([id, m]) => {
+                    const activeList = gov.active_ministers || allIds;
+                    const active = activeList.includes(id);
+                    const isMin = activeList.length <= 1 && active;
+                    return (
+                      <label key={id} style={{ display:'flex', alignItems:'center', gap:'0.6rem',
+                        cursor: isMin ? 'not-allowed' : 'pointer', opacity: isMin ? 0.5 : 1,
+                        padding:'0.25rem 0.5rem', borderRadius:'2px',
+                        background: active ? 'rgba(200,164,74,0.05)' : 'transparent',
+                        border: active ? '1px solid rgba(200,164,74,0.15)' : '1px solid transparent' }}>
+                        <input type="checkbox" checked={active} disabled={isMin}
+                          onChange={() => toggleMinisterSettings(id)}
+                          style={{ accentColor:'#C8A44A', width:'12px', height:'12px' }} />
+                        <span style={{ fontSize:'0.85rem' }}>{m.emoji}</span>
+                        <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.48rem',
+                          color:'rgba(200,215,240,0.75)' }}>{m.name}</span>
+                      </label>
+                    );
+                  });
+              })()}
+            </div>
           </div>
         )}
       </div>
