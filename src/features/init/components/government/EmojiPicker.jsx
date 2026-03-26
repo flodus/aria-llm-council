@@ -7,7 +7,8 @@ export default function EmojiPicker({ emoji, onChange, disabled = false, size = 
         <input
         style={{
             ...INPUT_STYLE,
-            width: '2.2rem',
+            width: '2.8rem',
+            padding: '0.38rem 0.1rem',
             textAlign: 'center',
             fontSize: size,
             ...(disabled ? { opacity: 0.35, cursor: 'not-allowed' } : {})
