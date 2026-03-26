@@ -6,7 +6,9 @@ _Dernière mise à jour : 2026-03-26_
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
-- [ ] **B9 — Routing ministère invalide sur question de liste** _(Decide requis avant Do)_
+_(aucun bug actif connu — phase B1 terminée)_
+
+
   - `CouncilCitizenQuestion` : le `ministryId` doit voyager jusqu'au pipeline, bypasser le routing sémantique
   - Touche `llmCouncilEngine.js` — spec validée avant toute modif
 
@@ -115,6 +117,8 @@ _(bloqué sur refonte carte V1)_
 - [x] **B7 — `setCurrentCycleQuestion`** : déjà corrigé en `setCurrentCycleQuestions({})` (Dashboard_p3.jsx)
 - [x] **B8 — `getTerrainLabel`** : déjà exporté depuis `src/shared/data/worldLabels.js` + importé dans Dashboard_p3
 - [x] **B13 — Bouton Actualiser (💡)** : corrigé (CouncilCitizenQuestion + CouncilFreeQuestion)
+- [x] **B9 — Routing ministère invalide** : déjà corrigé lors du refactor useCouncilSession
+  — `submitQuestion` court-circuite le routing si `ministryId` fourni (ligne 106) · `routeQuestion` retourne immédiatement si `forceMinistryId` truthy · `CouncilFreeQuestion` passe `null` pour déclencher le routing sémantique normal
 - [x] **Synthèses collégiales JSON** : `aria_syntheses.json` (FR+EN) — section `collegial` corrigée
   (typo `theocracie→theocratie`, régimes fallbacks retirés, `_meta.fallback_order` corrigé)
   + `getSyntheseCollegial()` dans responseService.js + câblage dans `_runCollegialPhase`

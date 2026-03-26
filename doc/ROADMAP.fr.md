@@ -87,13 +87,13 @@
  ├─[B1] Bug ajout pays in-game .. [addFictionalCountry — Dashboard_p1] ✅ 100%
  └─[B2] Pipeline Country Context  [Init → délibérations in-game] ..... ✅ 100%
 
- [ PHASE B1 : STABILISATION II ] ................................ STATUT: EN COURS
+ [ PHASE B1 : STABILISATION II ] ................................ STATUT: ✅ TERMINÉ
  │  Bugs post-refactor + moteur délibération
  │
  ├─[B7]  setCurrentCycleQuestion → setCurrentCycleQuestions ......... ✅ corrigé
  ├─[B8]  getTerrainLabel non défini dans AddCountryModal ............. ✅ corrigé
  ├─[B13] Bouton Actualiser (💡) disparu dans les questions ........... ✅ corrigé
- ├─[B9]  Routing ministère invalide sur question de liste ............ ⬡ Decide requis (llmCouncilEngine)
+ └─[B9]  Routing ministère invalide sur question de liste ............ ✅ corrigé (refactor useCouncilSession)
  ├─[B12] Mode destin désactivé mais Oracle/Trame actifs .............. ✅ corrigé
  ├─[B14] Settings > Ministères : grille ministres par ministère ....... ✅ corrigé
  ├─[B15] ConstitutionModal > Présidence : prompts Phare/Boussole ..... ✅ corrigé
@@ -187,7 +187,7 @@
         PresidencyTiles unifié. Mode collégial + crise opérationnels.
         Interface : curseurs SVG or + RadioPlayer topbar.
         Documentation : CONTRIBUTING complet + doc/ réorganisé.
-        Restant B1 : B9 uniquement (Decide requis — llmCouncilEngine).
+        Phase B1 terminée — tous les bugs B1→B15 corrigés.
         Chantier G1 (cohérence gouvernance) en file.
         Refonte carte en approche.
 ================================================================================
