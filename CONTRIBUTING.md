@@ -155,10 +155,10 @@ Agent definitions: ministers, ministries, presidential figures, and the Destiny 
 ```
 
 **Constraints:**
-- `ministers` array in a ministry must contain exactly 2 existing minister IDs
+- `ministers` array in a ministry contains 1 or more existing minister IDs
 - `posture_defaut` must be one of: `prudent` · `radical` · `statu_quo`
 - `keywords` are used for routing — more keywords = higher priority for this ministry
-- `base: true` marks always-active ministries (cannot be disabled)
+- `base: true` flags a ministry as active by default
 
 **Valid minister IDs:** `initiateur` · `gardien` · `communicant` · `protecteur` · `ambassadeur` · `analyste` · `arbitre` · `enqueteur` · `guide` · `stratege` · `inventeur` · `guerisseur` · `oracle` · `wyrd`
 

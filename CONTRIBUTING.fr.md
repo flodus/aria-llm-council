@@ -155,10 +155,10 @@ Définition des agents : ministres, ministères, figures présidentielles, modul
 ```
 
 **Contraintes :**
-- Le tableau `ministers` d'un ministère doit contenir exactement 2 IDs de ministres existants
+- Le tableau `ministers` d'un ministère contient 1 ou plusieurs IDs de ministres existants
 - `posture_defaut` doit être : `prudent` · `radical` · `statu_quo`
 - `keywords` sont utilisés pour le routage — plus de keywords = priorité plus haute pour ce ministère
-- `base: true` marque les ministères toujours actifs (ne peuvent pas être désactivés)
+- `base: true` marque un ministère actif par défaut
 
 **IDs de ministres valides :** `initiateur` · `gardien` · `communicant` · `protecteur` · `ambassadeur` · `analyste` · `arbitre` · `enqueteur` · `guide` · `stratege` · `inventeur` · `guerisseur` · `oracle` · `wyrd`
 
