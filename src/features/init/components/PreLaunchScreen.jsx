@@ -213,6 +213,38 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         </div>
         </div>
 
+        {/* Bloc contextuel pays actif — G1 */}
+        {(() => {
+            const perGov = constitution.perGov[countryOverride.plCountry];
+            const presType = govOpts?.defaultGovernance?.presidency || 'duale';
+            const presLabels = { solaire: 'Solaire ☉', lunaire: 'Lunaire ☽', duale: 'Duale ☉☽', collegiale: 'Collégiale ✡' };
+            const resume = perGov
+                ? (() => {
+                    const pres = perGov.activePres || [];
+                    const pl = pres.length === 0 ? '✡' : pres.length === 1 ? (pres[0] === 'phare' ? '☉' : '☽') : '☉☽';
+                    return `${pl} — ${perGov.activeMins ? perGov.activeMins.length + (lang === 'en' ? ' ministries' : ' ministères') : (lang === 'en' ? 'default ministries' : 'ministères par défaut')}`;
+                })()
+                : presLabels[presType] || presType;
+            return (
+                <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.55rem', padding: '0.38rem 0.65rem', borderRadius: '2px', background: perGov ? 'rgba(200,164,74,0.05)' : 'rgba(140,160,200,0.03)', border: `1px solid ${perGov ? 'rgba(200,164,74,0.18)' : 'rgba(140,160,200,0.08)'}` }}>
+                    <span style={{ fontFamily: FONT.mono, fontSize: '0.48rem', color: perGov ? 'rgba(200,164,74,0.80)' : 'rgba(140,160,200,0.45)', letterSpacing: '0.06em', flexShrink: 0 }}>
+                        {perGov ? '✦ CONSTITUTION PROPRE' : '⚙️ SUIT LE MODÈLE MONDE'}
+                    </span>
+                    <span style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.40)', flex: 1 }}>
+                        {resume}
+                    </span>
+                    {!perGov && (
+                        <button
+                            onClick={countryOverride.forkCountry}
+                            style={{ fontFamily: FONT.mono, fontSize: '0.40rem', padding: '0.18rem 0.50rem', borderRadius: '2px', background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.22)', color: 'rgba(200,164,74,0.70)', cursor: 'pointer', flexShrink: 0 }}
+                        >
+                            {lang === 'en' ? 'Customize →' : 'Personnaliser →'}
+                        </button>
+                    )}
+                </div>
+            );
+        })()}
+
         {/* Tabs */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 0, borderBottom: '1px solid rgba(200,164,74,0.10)', width: '100%', backdropFilter: 'blur(6px)', background: 'rgba(8,14,26,0.45)', borderRadius: '2px 2px 0 0' }}>
         <ConstitutionTabs
