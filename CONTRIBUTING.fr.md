@@ -488,7 +488,7 @@ Coefficients de régimes, modificateurs de terrains, poids des ressources, et co
 - **React uniquement** — composants fonctionnels, hooks avec `useCallback`/`useMemo` sur les props
 - **Styles inline uniquement** — pas de CSS modules, pas de fichiers `.css`, pas de Tailwind
 - **Pas de TypeScript** — JavaScript pur
-- **Français** — noms de variables, commentaires et contenu JSON en français (strings UI dans les deux langues via `ariaI18n.js`)
+- **Codebase en français** — noms de variables, commentaires, clés JSON. C'est un choix assumé, pas une dette technique. Les contributeurs anglophones sont les bienvenus ; les docs d'architecture et le suivi des issues sont entièrement bilingues. Tous les fichiers JSON de contenu ont un miroir EN — les contributions dans les deux langues sont les bienvenues.
 - **Composants** < ~300 lignes, moteurs < ~500–700 lignes — extraire avant d'ajouter
 
 Ne pas modifier ces fichiers sans discussion préalable :

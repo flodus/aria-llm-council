@@ -225,7 +225,7 @@ See [ROADMAP.md](ROADMAP.md) for the full roadmap.
 ---
 
 ## 🌍 Localization Status
-ARIA is currently developed with a French codebase. **The roadmap includes a full transition to English (LN18)** to welcome global contributors. If you are interested in the project but prefer English, feel free to open an issue—I will prioritize the localization of the core components.
+Codebase is in French — variable names, comments, JSON keys. All content files (`aria_questions`, `aria_reponses`, `aria_syntheses`…) have a full EN mirror under `templates/languages/en/`. French codebase, bilingual content. English contributors are welcome; the architecture docs and issue tracker are fully bilingual.
 
 ---
 

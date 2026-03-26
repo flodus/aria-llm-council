@@ -226,7 +226,7 @@ Voir [ROADMAP.md](ROADMAP.md) pour la feuille de route complète.
 ---
 
 ## 🌍 État de la localisation
-Le projet est actuellement développé en français. **La transition vers l'anglais (LN18) est prévue dans la roadmap** afin d'accueillir des contributeurs internationaux. Si vous êtes intéressé par le projet mais préférez travailler en anglais, n'hésitez pas à ouvrir une issue, je prioriserai la traduction des composants critiques.
+Codebase en français — noms de variables, commentaires, clés JSON. Tous les fichiers de contenu (`aria_questions`, `aria_reponses`, `aria_syntheses`…) ont un miroir EN complet dans `templates/languages/en/`. Codebase française, contenu bilingue. Les contributeurs anglophones sont les bienvenus ; les docs d'architecture et le suivi des issues sont entièrement bilingues.
 
 ---
 
