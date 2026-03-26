@@ -68,16 +68,37 @@
 
  [ PHASE B0 : STABILISATION ] .................................... STATUT: ✅ TERMINÉ
  │
- │  Les deux bugs connus sont résolus.
- │
  ├─[B1] Bug ajout pays in-game .. [addFictionalCountry — Dashboard_p1] ✅ 100%
  └─[B2] Pipeline Country Context  [Init → délibérations in-game] ..... ✅ 100%
 
- [ PHASE U1 : POLISH UX ] ........................................ STATUT: EN FILE
- ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ⬡ 0%
- ├─[U2] Harmonisation tuiles .... [Init ↔ Settings ↔ popup in-game] . ⬡ 0%
- │      └─> Même style tuiles ministres/ministères dans les 3 contextes
+ [ PHASE B1 : STABILISATION II ] ................................ STATUT: EN COURS
+ │  Bugs post-refactor + moteur délibération
+ │
+ ├─[B7]  setCurrentCycleQuestion → setCurrentCycleQuestions ......... ⬡ patch simple
+ ├─[B8]  getTerrainLabel non défini dans AddCountryModal ............. ⬡ patch simple
+ ├─[B13] Bouton Actualiser (💡) disparu dans les questions ........... ⬡ patch simple
+ ├─[B14] Settings > Ministères : grille ministres par ministère absente ⬡ patch simple
+ ├─[B15] ConstitutionModal > Présidence : prompts Phare/Boussole inaccessibles ⬡ patch simple
+ ├─[B9]  Routing ministère invalide sur question de liste ............ ⬡ Decide requis (llmCouncilEngine)
+ ├─[B10] Mode collégial → synthèse présidentielle incorrecte ......... ⬡ Decide requis (deliberationEngine)
+ ├─[B11] Mode crise : phases cercle + présidence non skippées ........ ⬡ Decide requis (deliberationEngine)
+ └─[B12] Mode destin désactivé mais Oracle/Trame actifs .............. ⬡ vérif flag
+
+ [ PHASE U1 : POLISH UX ] ........................................ STATUT: EN COURS
+ ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ✅ 100%
+ ├─[U2] Harmonisation tuiles .... [PresidencyTiles partagé — 4 écrans] ✅ 100%
+ │      └─> Settings · GovernanceForm · ConstitutionModal · PreLaunchScreen
  └─[U3] Chronolog enrichi ........ [Détail 5 derniers cycles] ........ ⬡ 0%
+
+ [ PHASE G1 : COHÉRENCE GOUVERNANCE ] ........................... STATUT: EN FILE
+ │  Spec validée (2026-03-26) — GovernanceForm existe, wiring à compléter
+ │
+ ├─[G0] clearSession() : conserver aria_options + préférences ........ ⬡ vérif
+ ├─[G1] PreLaunchScreen : bloc contextuel ancré sous badge pays ...... ⬡ 0%
+ │      └─> Lambda ⚙️ / Custom ✦ · résumé + [Personnaliser →] → ConstitutionModal
+ ├─[G2] ConstitutionModal : bandeau lambda/custom + retour modèle .... ⬡ 0%
+ ├─[G3] AddCountryModal + SecessionModal : choix hériter/personnaliser ⬡ 0%
+ └─[G4] Settings : brancher GovernanceForm context='settings' ........ ⬡ 0%
 
  [ PHASE V1 : CARTE DU MONDE — REFONTE COMPLÈTE ] ................ STATUT: PLANIFIÉ
  │
@@ -143,12 +164,12 @@
  └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [████████░░░░░░░░░░░░░░░░░░░░░░░░░░] ~23%
+ PROGRESSION : [█████████░░░░░░░░░░░░░░░░░░░░░░░░░] ~25%
  BASE : Moteur + constitution par pays complets.
-        Init UX poli (filtrage mode IA, recherche FR pays, panel carte).
-        Mode Board Game offline complet (pipeline 4 JSON + routing).
-        Source unique de vérité : zéro constante hardcodée dans le moteur.
-        Destinée du Monde : Oracle + Wyrd opérationnels (sans rendu UI).
+        Init UX poli. Mode Board Game offline complet (pipeline 4 JSON).
+        Source unique de vérité. Destinée du Monde opérationnelle.
+        PresidencyTiles unifié (4 tuiles identiques sur tous les écrans).
+        Chantier B1 (bugs post-refactor) + G1 (cohérence gouvernance) en cours.
         Refonte carte en approche.
 ================================================================================
 ```

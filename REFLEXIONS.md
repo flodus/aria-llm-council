@@ -281,6 +281,44 @@ Si les pools sont opposés (action vs prudence) → divergence.
 
 ---
 
+## Nouvelle partie vs Hard reset — table de vérité (décidé 2026-03-26)
+
+| Donnée | Nouvelle partie | Hard reset |
+|---|---|---|
+| Cycles + historique | ✓ effacé | ✓ effacé |
+| Pays + alliances + constitutions pays | ✓ effacé | ✓ effacé |
+| `aria_options` (vision du monde) | ✗ conservé | ✓ effacé |
+| Clés API | ✗ conservé | ✓ effacé |
+| Seed / monde | ✗ conservé | ✓ effacé |
+| Préférences modèles IA | ✗ conservé | ✓ effacé |
+| Langue | ✗ conservé | ✓ effacé |
+
+`clearSession()` efface uniquement la première colonne.
+Au lancement d'une nouvelle partie, Init affiche `aria_options` actuel pré-rempli — le joueur peut modifier ou continuer.
+
+---
+
+## Mode collégial + Mode crise — spec moteur (Decide requis — 2026-03-26)
+
+### B10 — Mode collégial
+
+`runPresidencePhase()` s'exécute inconditionnellement dans `deliberationEngine.js`.
+Quand `activePres = []` (mode collégial ✡), cette phase doit être court-circuitée.
+La synthèse finale = issue du vote des 12 ministres directement, pas d'arbitrage présidentiel.
+
+**Question ouverte** : faut-il un pool JSON de synthèses collégiales pour le board game,
+ou un prompt IA suffisant ? À décider en session dédiée avant de toucher `deliberationEngine.js`.
+
+### B11 — Mode crise
+
+En mode crise, tous les ministres répondent directement.
+`runCerclePhase` (annotations inter-ministérielles) et `runPresidencePhase` doivent être skippées.
+Résultat : synthèse ministérielle de crise tous-ministres.
+
+⚠️ Les deux touchent `deliberationEngine.js` — ne pas implémenter sans spec validée.
+
+---
+
 ## Conventions UI
 
 ### Accordéons

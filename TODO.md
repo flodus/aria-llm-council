@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-24_
+_Dernière mise à jour : 2026-03-26_
 
 ---
 
@@ -9,6 +9,34 @@ _Dernière mise à jour : 2026-03-24_
 - [ ] **B14 — Settings gouvernance > Ministères** : grille des ministres actifs dans ce ministère absente — lors du refactor tuiles présidence, les ministres par ministère n'ont pas été ajoutés dans l'accordéon Ministères de Settings (contrairement à ConstitutionModal qui les affiche bien dans MinistryDetail)
 
 - [ ] **B15 — ConstitutionModal > Présidence** : les prompts des présidents (Phare/Boussole) ne sont plus éditables depuis le remplacement de PresidentsList+PresidentDetail par PresidencyTiles — PresidentDetail doit être ré-exposé (ex: bouton "configurer" par type sélectionné)
+
+- [ ] **B7 — `setCurrentCycleQuestion` non défini** (Dashboard_p3.jsx ~1709)
+  - Dans `CycleConfirmModal.onConfirm` : `setCurrentCycleQuestion(null)` → doit être `setCurrentCycleQuestions({})`
+  - Fix chirurgical, 1 ligne
+
+- [ ] **B8 — `getTerrainLabel` non défini** (Dashboard_p3.jsx ~657, AddCountryModal)
+  - Grep dans src/ → importer depuis ariaData.js/Dashboard_p1 ou définir inline
+  - Fix chirurgical
+
+- [ ] **B13 — Bouton Actualiser (💡) disparu dans les questions**
+  - Fichiers : `CouncilCitizenQuestion.jsx` · `CouncilFreeQuestion.jsx`
+  - Chercher `handleSuggest` — régression de rendu conditionnel ou composant remplacé
+
+- [ ] **B9 — Routing ministère invalide sur question de liste** _(Decide requis avant Do)_
+  - `CouncilCitizenQuestion` : le `ministryId` doit voyager jusqu'au pipeline, bypasser le routing sémantique
+  - Touche `llmCouncilEngine.js` — spec validée avant toute modif
+
+- [ ] **B10 — Mode collégial → toujours une synthèse présidentielle** _(Decide requis avant Do)_
+  - `deliberationEngine.js` : `runPresidencePhase()` s'exécute même si présidence désactivée
+  - Mode collégial doit court-circuiter la phase présidence → synthèse issue du vote des 12 ministres
+  - Question ouverte : pool JSON de synthèses collégiales (board game) ou prompt IA suffisant ?
+
+- [ ] **B11 — Mode crise : phase cercle + synthèse présidence inutiles** _(Decide requis avant Do)_
+  - En mode crise, tous les ministres répondent directement → skip `runCerclePhase` + skip `runPresidencePhase`
+  - Touche `deliberationEngine.js`
+
+- [ ] **B12 — Mode destin désactivé mais Oracle/Trame actifs**
+  - Vérifier que les composants Oracle/Trame consultent `aria_options.gameplay.destin_enabled` avant de s'activer
 
 - [x] **B1 — Ajout pays in-game** : corrigé — `addFictionalCountry` dans `Dashboard_p1.jsx`
 
@@ -27,6 +55,27 @@ _Dernière mise à jour : 2026-03-24_
 ## 🟡 UX COURT TERME
 
 - [x] **U5 — Confirmation nouvelle partie** : modale légère avant ↺ — livré 2026-03-12
+
+- [ ] **G0 — clearSession() : vérifier qu'elle conserve `aria_options`, clés API, langue, modèles**
+  - `aria_options` · `aria_api_keys` · `aria_lang` · `aria_preferred_models` ne doivent PAS être effacées
+  - Seules les clés session (pays, alliances, cycles, chronolog) doivent être effacées
+
+- [ ] **G1 — PreLaunchScreen : bloc contextuel ancré sous badge pays actif**
+  - Lambda : `⚙️ SUIT LE MODÈLE MONDE` + résumé aria_options + `[Personnaliser ce pays →]`
+  - Custom : `✦ CONSTITUTION PROPRE` (ambre) + résumé governanceOverride + `[Personnaliser ce pays →]`
+  - `[Personnaliser →]` ouvre ConstitutionModal du pays sélectionné
+
+- [ ] **G2 — ConstitutionModal : bandeau lambda/custom + bouton retour modèle monde**
+  - En tête : `✦ CONSTITUTION PROPRE` (ambre) si override, `⚙️ SUIT LE MODÈLE MONDE` (gris) sinon
+  - En pied (custom uniquement) : `[Revenir au modèle monde]` → confirmation + `governanceOverride = null`
+
+- [ ] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création**
+  - Nouveau pays : résumé aria_options + `[Hériter →]` / `[Personnaliser →]`
+  - Sécession : résumé constitution parent + `[Hériter du parent →]` / `[S'en affranchir →]`
+  - `[Personnaliser/S'en affranchir →]` : ferme modale → ouvre ConstitutionModal du nouveau pays
+
+- [ ] **G4 — Settings : brancher GovernanceForm (context='settings') sur sections Gouvernement+Constitution**
+  - GovernanceForm existe déjà — remplacer les sections inline dans Settings.jsx
 
 - [ ] **T1 — Ajout de provider + modèle custom** : permettre d'ajouter des providers non listés (ex: DeepSeek, Mistral, Ollama local…)
   - UI : bouton "+ Ajouter un provider" dans Init + Settings · champs : nom, endpoint, clé API, modèle par défaut
