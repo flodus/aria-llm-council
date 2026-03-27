@@ -29,7 +29,7 @@ html, body, #root {
  *  2. DESIGN TOKENS
  *  ═══════════════════════════════════════════════════════════════════════════ */
 :root {
-  font-size: 18px;
+  font-size: 22px;
 
   /* ── Couleurs injectées dynamiquement depuis colors.js via applyTheme.js ── */
   /* Ne pas déclarer de variables couleur ici — source unique : src/shared/theme/colors.js */
@@ -985,6 +985,7 @@ html, body, #root {
   justify-content: flex-start !important;
   align-items: center !important;
   overflow-y: auto;
+  overflow-x: hidden;
   background: radial-gradient(circle at center, rgba(10, 18, 24, 0.98) 0%, rgba(3, 6, 8, 1) 100%);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
