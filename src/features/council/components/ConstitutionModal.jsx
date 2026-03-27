@@ -29,6 +29,7 @@ import {
     PromptEditor
 } from './constitution';
 import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
+import EmojiPicker from '../../../shared/components/EmojiPicker';
 
 // Helpers localStorage pour les overrides (copié de l'ancien)
 function readOv()   { try { return JSON.parse(localStorage.getItem('aria_agents_override')||'null'); } catch { return null; } }
@@ -95,6 +96,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     const [confirmReset, setConfirmReset] = useState(false);
 
     // États pour l'onglet régime
+    const [emoji, setEmoji]   = useState(country?.emoji || '🌍');
     const [regime, setRegime] = useState(country?.regime || 'democratie_liberale');
     const rawReal = (isEn ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === country?.id);
     const ctxGeo  = rawReal?.triple_combo        || country?.geoContext  || '';
@@ -195,6 +197,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
 
         const updatedCountry = {
             ...country,
+            emoji,
             regime,
             regimeName: regimeData.name || regime,
             regimeEmoji: regimeData.emoji || '🏛️',
@@ -323,6 +326,20 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         {/* ---------- ONGLET RÉGIME ---------- */}
         {activeTab === 'regime' && (
             <>
+            {/* Emoji pays */}
+            <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
+            <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
+            {isEn ? 'COUNTRY EMOJI' : 'EMOJI DU PAYS'}
+            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.3rem' }}>
+                <span style={{ fontSize: '2rem', lineHeight: 1 }}>{emoji}</span>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.44rem', color: 'rgba(140,160,200,0.55)' }}>
+                    {country?.nom}
+                </span>
+            </div>
+            <EmojiPicker value={emoji} onChange={setEmoji} />
+            </section>
+
             {/* Régime */}
             <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
             <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
