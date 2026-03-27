@@ -1017,7 +1017,7 @@ html, body, #root {
 }
 .worldgen-title { font-family:var(--f-serif); font-size:0.78rem; letter-spacing:0.22em; color:var(--gold); }
 .worldgen-sub   { font-family:var(--f-mono); font-size:0.55rem; color:var(--muted); letter-spacing:0.10em; }
-.worldgen-bar   { width:220px; height:3px; background:rgba(20,30,44,0.9); border:1px solid var(--border); overflow:hidden; }
+.worldgen-bar   { width:220px; height:2px; background:rgba(20,30,44,0.9); overflow:hidden; }
 .worldgen-fill  { height:100%; background:var(--gold); transition:width 0.4s var(--ease-out); }
 
 /* ═══════════════════════════════════════════════════════════════════════════
