@@ -104,10 +104,9 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
         {renderCtxAccordion()}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: C.textFaint, fontFamily: FONT.mono }}>
           <div style={{ fontSize: '2.5rem', opacity: 0.12 }}>⚖️</div>
-          <div style={{ fontSize: '0.52rem', letterSpacing: '0.18em', opacity: 0.4 }}>CONSEIL EN ATTENTE</div>
+          <div style={{ fontSize: '0.52rem', letterSpacing: '0.18em', opacity: 0.4 }}>{t('COUNCIL_IDLE_TITLE', loadLang())}</div>
           <p style={{ fontSize: '0.44rem', color: C.textFaint, textAlign: 'center', maxWidth: '320px', lineHeight: 1.6 }}>
-            Sélectionnez un pays, choisissez un ministère dans le panneau latéral
-            et soumettez une question pour lancer la délibération.
+            {t('COUNCIL_IDLE_DESC', loadLang())}
           </p>
         </div>
       </div>
@@ -139,14 +138,14 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
         {show.PEUPLE_IN && (
           <PhaseBlock
             phase="PEUPLE_IN"
-            label="PEUPLE"
+            label={t('COUNCIL_PHASE_PEUPLE_IN', loadLang())}
             icon="🌐"
             accentColor={C.blue}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
             <div style={bubble(C.blue)}>
               <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: C.blueDim, letterSpacing: '0.14em', marginBottom: '0.4rem' }}>
-                QUESTION SOUMISE AU CONSEIL
+                {t('COUNCIL_QUESTION_LABEL', loadLang())}
               </div>
               <p style={{ fontFamily: FONT.cinzel, fontSize: '0.62rem', color: C.text, lineHeight: 1.6, margin: 0, letterSpacing: '0.04em' }}>
                 « {question} »
@@ -161,7 +160,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             phase="MINISTERE"
             label={ministere.isOrphan
               ? t('COUNCIL_INSTANCE', loadLang())
-              : `${loadLang() === 'en' ? 'MINISTRY' : 'MINISTÈRE'} — ${ministere.ministryName}`}
+              : `${t('COUNCIL_MINISTRY_LABEL', loadLang())} — ${ministere.ministryName}`}
             icon={ministere.ministryEmoji}
             accentColor={ministere.isOrphan ? 'rgba(90,106,138,0.7)' : (ministere.ministryColor || C.gold)}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
@@ -175,7 +174,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
                 border: '1px solid rgba(90,110,160,0.15)',
                 borderRadius: '2px',
               }}>
-                {loadLang() === 'en' ? '⚠ UNROUTED QUESTION — BUREAUCRATIC MODE ACTIVE' : '⚠ QUESTION NON ROUTÉE — MODE BUREAUCRATIQUE ACTIVÉ'}
+                {t('COUNCIL_UNROUTED', loadLang())}
               </div>
             )}
             <div style={sectionTitle(ministere.ministryColor || C.gold)}>
@@ -202,7 +201,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
             <div style={sectionTitle(C.goldDim)}>
-              {loadLang() === 'en' ? 'MINISTRY ANNOTATIONS' : 'ANNOTATIONS DES MINISTÈRES'}
+              {t('COUNCIL_ANNOTATIONS', loadLang())}
             </div>
             {cercle.map((a, i) => (
               <CercleAnnotation key={a.ministryId} annotation={a} index={i} />
@@ -214,13 +213,13 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
         {show.DESTIN && destin && (
           <PhaseBlock
             phase="DESTIN"
-            label={loadLang() === 'en' ? 'DESTINY OF THE WORLD' : 'DESTINÉE DU MONDE'}
+            label={t('COUNCIL_DESTINY_LABEL', loadLang())}
             icon="👁️"
             accentColor="#B87A00"
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
             <div style={sectionTitle('#B87A00')}>
-              {loadLang() === 'en' ? 'ORACLE & WYRD — EXISTENTIAL VOICES' : 'ORACLE & WYRD — VOIX DE L\'EXISTENCE'}
+              {t('COUNCIL_ORACLE_LABEL', loadLang())}
             </div>
             <DestinVoiceBlock agent={destin.oracle} />
             <DestinVoiceBlock agent={destin.wyrd} />
@@ -231,13 +230,13 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
         {show.CRISIS && crisis && (
           <PhaseBlock
             phase="CRISIS"
-            label={loadLang() === 'en' ? '⚡ CRISIS — ALL MINISTRIES' : '⚡ CRISE — TOUS LES MINISTÈRES'}
+            label={t('COUNCIL_CRISIS_LABEL', loadLang())}
             icon="⚡"
             accentColor="#E05050"
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
             <div style={sectionTitle('#E05050')}>
-              {loadLang() === 'en' ? 'EMERGENCY DELIBERATION' : 'DÉLIBÉRATION D\'URGENCE'}
+              {t('COUNCIL_CRISIS_DELIB', loadLang())}
             </div>
             {crisis.ministries?.map(min => (
               <div key={min.ministryId} style={bubble(min.ministryColor || C.goldDim, { marginBottom: '0.5rem' })}>
@@ -260,7 +259,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
         {show.PRESIDENCE && presidence && (
           <PhaseBlock
             phase="PRESIDENCE"
-            label={presidence.collegial ? '✡ SYNTHÈSE CONSTITUTIONNELLE' : t('COUNCIL_PHASE_PRESIDENCE', loadLang())}
+            label={presidence.collegial ? t('COUNCIL_COLLEGIAL_SYNTH', loadLang()) : t('COUNCIL_PHASE_PRESIDENCE', loadLang())}
             icon={presidence.collegial ? '✡' : '☉'}
             accentColor={presidence.collegial ? C.goldDim : C.purple}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
@@ -273,19 +272,19 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             )}
             {presidence.collegial && presidence.synthese && (
               <div style={bubble(C.goldDim, { marginBottom: '0.4rem' })}>
-                <div style={sectionTitle(C.goldDim)}>✡ DÉLIBÉRATION COLLÉGIALE</div>
+                <div style={sectionTitle(C.goldDim)}>{t('COUNCIL_COLLEGIAL_DELIB', loadLang())}</div>
                 <p style={{ fontFamily: FONT.mono, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: 0 }}>
                   {presidence.synthese.synthese}
                 </p>
               </div>
             )}
             {isRunning && !presidence.synthese && (
-              <LoadingPulse label={presidence.collegial ? 'SYNTHÈSE COLLÉGIALE EN COURS…' : 'ARBITRAGE EN COURS…'} />
+              <LoadingPulse label={presidence.collegial ? t('COUNCIL_LOADING_COLLEGIAL', loadLang()) : t('COUNCIL_LOADING_ARBITRAGE', loadLang())} />
             )}
             {presidence.synthese && (
               <div style={bubble(convergence ? C.green : C.gold, { marginTop: '0.6rem' })}>
                 <div style={sectionTitle(convergence ? C.green : C.gold)}>
-                  {presidence.collegial ? '✡ SYNTHÈSE CONSTITUTIONNELLE' : '✦ SYNTHÈSE PRÉSIDENTIELLE'}
+                  {presidence.collegial ? t('COUNCIL_COLLEGIAL_SYNTH', loadLang()) : t('COUNCIL_SYNTH_PRES', loadLang())}
                   <span style={{ margin: '0 0.5rem', color: 'rgba(150,170,210,0.18)', fontSize: '0.44rem' }}>—</span>
                   <span style={{
                     padding: '0.15rem 0.55rem',
@@ -296,7 +295,7 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
                     textDecoration: 'underline', textUnderlineOffset: '3px',
                     color: convergence ? C.green : C.gold,
                   }}>
-                    {convergence ? 'CONSENSUS' : 'DIVERGENCE'}
+                    {convergence ? t('COUNCIL_CONSENSUS', loadLang()) : t('COUNCIL_DIVERGENCE', loadLang())}
                   </span>
                 </div>
                 <p style={{ fontFamily: FONT.mono, fontSize: '0.47rem', color: C.text, lineHeight: 1.65, margin: '0 0 0.4rem' }}>

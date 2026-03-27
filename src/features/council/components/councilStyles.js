@@ -8,12 +8,12 @@ import { loadLang, t } from '../../../ariaI18n';
 
 export const PHASES = {
   IDLE:        { order: 0 },
-  PEUPLE_IN:   { order: 1, label: 'PEUPLE',           icon: '🌐', color: C.blue    },
-  MINISTERE:   { order: 2, get label() { return t('COUNCIL_PHASE_MINISTRE',  loadLang()); }, icon: '🏛️', color: C.gold    },
-  CERCLE:      { order: 3, get label() { return t('COUNCIL_PHASE_CERCLE',    loadLang()); }, icon: '◎',  color: C.goldDim },
-  PRESIDENCE:  { order: 4, get label() { return t('COUNCIL_PHASE_PRESIDENCE',loadLang()); }, icon: '☉',  color: C.purple  },
-  PEUPLE_VOTE: { order: 5, label: 'VOTE DU PEUPLE',   icon: '🗳️', color: C.blue    },
-  RESULT:      { order: 6, get label() { return t('COUNCIL_PHASE_RESULT',    loadLang()); }, icon: '✦',  color: C.green   },
+  PEUPLE_IN:   { order: 1, get label() { return t('COUNCIL_PHASE_PEUPLE_IN',   loadLang()); }, icon: '🌐', color: C.blue    },
+  MINISTERE:   { order: 2, get label() { return t('COUNCIL_PHASE_MINISTRE',   loadLang()); }, icon: '🏛️', color: C.gold    },
+  CERCLE:      { order: 3, get label() { return t('COUNCIL_PHASE_CERCLE',     loadLang()); }, icon: '◎',  color: C.goldDim },
+  PRESIDENCE:  { order: 4, get label() { return t('COUNCIL_PHASE_PRESIDENCE', loadLang()); }, icon: '☉',  color: C.purple  },
+  PEUPLE_VOTE: { order: 5, get label() { return t('COUNCIL_PHASE_PEUPLE_VOTE',loadLang()); }, icon: '🗳️', color: C.blue    },
+  RESULT:      { order: 6, get label() { return t('COUNCIL_PHASE_RESULT',     loadLang()); }, icon: '✦',  color: C.green   },
 };
 
 export const PHASE_ORDER = ['PEUPLE_IN', 'MINISTERE', 'CERCLE', 'PRESIDENCE', 'PEUPLE_VOTE', 'RESULT'];

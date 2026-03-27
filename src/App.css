@@ -29,38 +29,10 @@ html, body, #root {
  *  2. DESIGN TOKENS
  *  ═══════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* ── Palette ─────────────────────────────────────────────────────────── */
-  --gold:           #C8A44A;
-  --gold-bright:    #E8D07A;
-  --gold-dim:       rgba(200,164,74,0.16);
-  --gold-glow:      rgba(200,164,74,0.35);
-  --blue:           #4A7EC8;
-  --blue-deep:      #0E2040;
-  --green-laser:    #00FF88;
-  --green-dim:      rgba(0,255,136,0.18);
-  --red-laser:      #FF3A3A;
-  --red-dim:        rgba(255,58,58,0.18);
-  --purple:         #8A6EC8;
-  --cyan:           #3ABFCF;
+  font-size: 22px;
 
-  /* ── Surfaces ────────────────────────────────────────────────────────── */
-  --bg:             #030608;
-  --bg-ocean:       #050D18;
-  --bg-panel:       rgba(6,10,18,0.92);
-  --bg-card:        rgba(10,16,28,0.88);
-  --bg-input:       rgba(8,13,22,0.95);
-  --bg-hover:       rgba(200,164,74,0.04);
-
-  /* ── Borders ─────────────────────────────────────────────────────────── */
-  --border:         rgba(200,164,74,0.10);
-  --border-mid:     rgba(200,164,74,0.20);
-  --border-bright:  rgba(200,164,74,0.32);
-  --border-blue:    rgba(74,126,200,0.14);
-
-  /* ── Text ────────────────────────────────────────────────────────────── */
-  --text:           #C8D4E8;
-  --text-dim:       #8898B8;
-  --muted:          #4A5A72;
+  /* ── Couleurs injectées dynamiquement depuis colors.js via applyTheme.js ── */
+  /* Ne pas déclarer de variables couleur ici — source unique : src/shared/theme/colors.js */
 
   /* ── Fonts ───────────────────────────────────────────────────────────── */
   --f-serif: 'Cinzel', serif;
@@ -1013,6 +985,7 @@ html, body, #root {
   justify-content: flex-start !important;
   align-items: center !important;
   overflow-y: auto;
+  overflow-x: hidden;
   background: radial-gradient(circle at center, rgba(10, 18, 24, 0.98) 0%, rgba(3, 6, 8, 1) 100%);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);

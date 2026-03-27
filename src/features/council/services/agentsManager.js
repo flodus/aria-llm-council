@@ -118,21 +118,21 @@ export function getMinistriesListFor(country) {
     const a = getAgentsFor(country);
     const all = a.ministries || [];
     const active = a._active_ministries;
-    return active !== null ? all.filter(m => active.includes(m.id)) : all;
+    return active != null ? all.filter(m => active.includes(m.id)) : all;
 }
 
 export function getMinistersMapFor(country) {
     const a = getAgentsFor(country);
     const all = a.ministers || {};
     const active = a._active_ministers;
-    return active !== null ? Object.fromEntries(Object.entries(all).filter(([k]) => active.includes(k))) : all;
+    return active != null ? Object.fromEntries(Object.entries(all).filter(([k]) => active.includes(k))) : all;
 }
 
 export function getPresidencyFor(country) {
     const a = getAgentsFor(country);
     const full = a.presidency || {};
     const active = a._active_presidency;
-    return active !== null ? Object.fromEntries(Object.entries(full).filter(([k]) => active.includes(k))) : full;
+    return active != null ? Object.fromEntries(Object.entries(full).filter(([k]) => active.includes(k))) : full;
 }
 
 /** Retourne la liste des ministères actifs (filtrée si constitution le précise) */

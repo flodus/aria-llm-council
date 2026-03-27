@@ -31,7 +31,7 @@ export default function RealCountryLocalSection({ country, onChange, setField, s
             if (rc) onChange({ ...country, nom: rc.nom, regime: rc.regime, terrain: rc.terrain, realData: rc });
         }}
         >
-        <option value="">— Choisir —</option>
+        <option value="">{t('SELECT_OPTION', lang)}</option>
         {[...getRealCountries()]
             .sort((a, b) => {
                 const aPris = selectedRealIds.includes(a.id);

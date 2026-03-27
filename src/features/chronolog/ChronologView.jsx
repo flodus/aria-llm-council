@@ -492,7 +492,7 @@ export default function ChronologView({
             value={filterCountry || ''}
             onChange={e => setFilterCountry(e.target.value || null)}
           >
-            <option value="">— choisir un pays —</option>
+            <option value="">{t('SELECT_COUNTRY', lang)}</option>
             {countries.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.nom}</option>)}
           </select>
         )}

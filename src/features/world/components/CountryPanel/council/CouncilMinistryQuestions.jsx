@@ -15,6 +15,7 @@
 import { FONT, COLORS } from '../../../../../shared/theme';
 import { getQuestionState } from '../../../../../shared/services/boardgame/questionService';
 import QUESTIONS_FR from '../../../../../../templates/languages/fr/aria_questions.json';
+import QUESTIONS_EN from '../../../../../../templates/languages/en/aria_questions.json';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
 // Dérive le numéro de cycle courant depuis localStorage quand la prop est absente
@@ -27,8 +28,9 @@ function getCycleEffectif(cycleActuel) {
     } catch { return 1; }
 }
 
-function getPool(ministryId) {
-    return QUESTIONS_FR?.par_ministere?.[ministryId]?.questions || [];
+function getPool(ministryId, lang) {
+    const src = lang === 'en' ? QUESTIONS_EN : QUESTIONS_FR;
+    return src?.par_ministere?.[ministryId]?.questions || [];
 }
 
 const LS_KEY = 'aria_chronolog_cycles';
@@ -66,10 +68,10 @@ export default function MinistryQuestions({
     const [baseQuestions, setBaseQuestions] = useState([]);
 
     useEffect(() => {
-        const pool = getPool(ministryId);
+        const pool = getPool(ministryId, lang);
         const shuffled = [...pool].sort(() => Math.random() - 0.5);
         setBaseQuestions(shuffled);
-    }, [ministryId, countryId, effectifCycle]);
+    }, [ministryId, countryId, effectifCycle, lang]);
 
     // ── Compteur incrémenté par le custom event 'aria:vote-stored' ──
     const [voteCounter, setVoteCounter] = useState(0);
@@ -130,7 +132,7 @@ export default function MinistryQuestions({
     if (questions.length === 0) return null;
 
     const handleRefresh = () => {
-        const pool = getPool(ministryId);
+        const pool = getPool(ministryId, lang);
         setBaseQuestions([...pool].sort(() => Math.random() - 0.5));
     };
 
