@@ -83,6 +83,7 @@ _(bloqué sur refonte carte V1)_
   - Nécessite un Assess complet avant implémentation
 
 - [ ] **V9 — i18n couverture complète** : audit + centralisation des chaînes inline `isEn ? '...' : '...'`
+  ⚠️ **Settings.jsx (182 ternaires) → à traiter lors du refactor Settings (G4 / session dédiée)**
   vers `ariaI18n.js`, traduction FR/EN de toute l'UI, sync `base_agents_en.json`
   — concerne Settings.jsx, Dashboard_p3.jsx, InitScreen.jsx, ConstitutionModal.jsx, LLMCouncil.jsx, CountryPanel.jsx
   — `ariaQA_en.json` quand ariaQA sera créé · Voir `i18n_todolist.md` pour le détail (~300 strings + prompts IA)

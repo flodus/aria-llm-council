@@ -267,6 +267,31 @@ export const TRANSLATIONS = {
   INIT_MODE_REAL:      { fr: '🗺 Pays réel',               en: '🗺 Real country'        },
   INIT_NATION_PREDEFINED: { fr: 'NATION PRÉDÉFINIE',      en: 'PRESET NATION'         },
 
+  // ── LLMCouncil — phases + labels manquants ───────────────────────────
+  COUNCIL_PHASE_PEUPLE_IN:   { fr: 'PEUPLE',              en: 'PEOPLE'                        },
+  COUNCIL_PHASE_PEUPLE_VOTE: { fr: 'VOTE DU PEUPLE',      en: 'PEOPLE\'S VOTE'                },
+  COUNCIL_IDLE_TITLE:        { fr: 'CONSEIL EN ATTENTE',  en: 'COUNCIL AWAITING'              },
+  COUNCIL_IDLE_DESC:         { fr: 'Sélectionnez un pays, choisissez un ministère dans le panneau latéral et soumettez une question pour lancer la délibération.', en: 'Select a country, choose a ministry in the side panel and submit a question to start the deliberation.' },
+  COUNCIL_QUESTION_LABEL:    { fr: 'QUESTION SOUMISE AU CONSEIL', en: 'QUESTION SUBMITTED TO COUNCIL' },
+  COUNCIL_ANNOTATIONS:       { fr: 'ANNOTATIONS DES MINISTÈRES', en: 'MINISTRY ANNOTATIONS'   },
+  COUNCIL_DESTINY_LABEL:     { fr: 'DESTINÉE DU MONDE',   en: 'DESTINY OF THE WORLD'          },
+  COUNCIL_ORACLE_LABEL:      { fr: 'ORACLE & WYRD — VOIX DE L\'EXISTENCE', en: 'ORACLE & WYRD — EXISTENTIAL VOICES' },
+  COUNCIL_CRISIS_LABEL:      { fr: '⚡ CRISE — TOUS LES MINISTÈRES', en: '⚡ CRISIS — ALL MINISTRIES' },
+  COUNCIL_CRISIS_DELIB:      { fr: 'DÉLIBÉRATION D\'URGENCE', en: 'EMERGENCY DELIBERATION'    },
+  COUNCIL_COLLEGIAL_DELIB:   { fr: '✡ DÉLIBÉRATION COLLÉGIALE', en: '✡ COLLEGIAL DELIBERATION' },
+  COUNCIL_COLLEGIAL_SYNTH:   { fr: '✡ SYNTHÈSE CONSTITUTIONNELLE', en: '✡ CONSTITUTIONAL SYNTHESIS' },
+  COUNCIL_SYNTH_PRES:        { fr: '✦ SYNTHÈSE PRÉSIDENTIELLE', en: '✦ PRESIDENTIAL SYNTHESIS' },
+  COUNCIL_LOADING_COLLEGIAL: { fr: 'SYNTHÈSE COLLÉGIALE EN COURS…', en: 'COLLEGIAL SYNTHESIS IN PROGRESS…' },
+  COUNCIL_LOADING_ARBITRAGE: { fr: 'ARBITRAGE EN COURS…',  en: 'ARBITRATION IN PROGRESS…'    },
+  COUNCIL_CONSENSUS:         { fr: 'CONSENSUS',             en: 'CONSENSUS'                   },
+  COUNCIL_DIVERGENCE:        { fr: 'DIVERGENCE',            en: 'DIVERGENCE'                  },
+  COUNCIL_UNROUTED:          { fr: '⚠ QUESTION NON ROUTÉE — MODE BUREAUCRATIQUE ACTIVÉ', en: '⚠ UNROUTED QUESTION — BUREAUCRATIC MODE ACTIVE' },
+  COUNCIL_MINISTRY_LABEL:    { fr: 'MINISTÈRE',             en: 'MINISTRY'                    },
+
+  // ── Sélecteurs pays ───────────────────────────────────────────────────
+  SELECT_COUNTRY:      { fr: '— choisir un pays —',    en: '— choose a country —'  },
+  SELECT_OPTION:       { fr: '— Choisir —',             en: '— Choose —'            },
+
   // ── Settings ─────────────────────────────────────────────────────────
   SETTINGS:            { fr: 'CONFIGURATION ARIA',     en: 'ARIA SETTINGS'      },
   CLOSE:               { fr: 'FERMER',                 en: 'CLOSE'              },
