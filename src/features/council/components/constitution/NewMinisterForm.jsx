@@ -2,6 +2,7 @@
 
 import { useLocale } from '../../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY } from '../../../../shared/theme';
+import EmojiPicker from '../../../../shared/components/EmojiPicker';
 
 export default function NewMinisterForm({ formData, setFormData, onCancel, onSubmit }) {
     const { lang } = useLocale();
@@ -13,12 +14,14 @@ export default function NewMinisterForm({ formData, setFormData, onCancel, onSub
         + {isEn ? 'NEW MINISTER' : 'NOUVEAU MINISTRE'}
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr auto', gap: '0.38rem', marginBottom: '0.32rem', alignItems: 'center' }}>
-        <input
-        style={{ ...INPUT_STYLE, width: '2.8rem', padding: '0.38rem 0.1rem', textAlign: 'center', fontSize: '1rem' }}
-        value={formData.emoji}
-        onChange={e => setFormData({ ...formData, emoji: e.target.value })}
-        placeholder="🌟"
-        />
+        <details style={{ position: 'relative' }}>
+        <summary style={{ listStyle: 'none', cursor: 'pointer', fontSize: '1.2rem', width: '2.8rem', textAlign: 'center', padding: '0.2rem', border: '1px solid rgba(200,164,74,0.18)', borderRadius: '2px' }}>
+            {formData.emoji || '🌟'}
+        </summary>
+        <div style={{ position: 'absolute', zIndex: 100, top: '2.4rem', left: 0, background: 'rgba(8,13,22,0.98)', border: '1px solid rgba(200,164,74,0.22)', borderRadius: '3px', padding: '0.5rem', width: '340px' }}>
+            <EmojiPicker value={formData.emoji} onChange={e => setFormData({ ...formData, emoji: e })} />
+        </div>
+        </details>
         <input
         style={INPUT_STYLE}
         value={formData.name}
