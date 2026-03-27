@@ -14,6 +14,7 @@ import STATS_EN  from '../templates/languages/en/simulation.json';
 import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN, LOCAL_COUNTRIES } from './shared/data/ariaData';
 import { loadLang } from './ariaI18n';
 import { setIaStatus } from './shared/services/iaStatusStore';
+import { normalizeCountry } from './shared/utils/normalizeCountry';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  1. CONSTANTES DÉRIVÉES DES JSON
@@ -386,7 +387,7 @@ export function buildCountryFromLocal(template, worldData) {
   const size   = 55 + (template.population / 1_000_000) * 2.5;
   const coastal = ['coastal', 'island', 'archipelago'].includes(template.terrain);
 
-  return {
+  const brut = {
     id:           template.id,
     nom:          template.nom,
     emoji:        template.emoji,
@@ -417,10 +418,10 @@ export function buildCountryFromLocal(template, worldData) {
     chronolog: [],   // historique des événements
     economie:     100,
     isLocal:      true,
-    // Légitimité ARIA — calculée après, on a besoin de l'objet complet
     aria_irl:     null,
     aria_current: null,
   };
+  return normalizeCountry(brut);
 }
 
 /**
@@ -441,11 +442,11 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
     ? Object.fromEntries(RESOURCE_KEYS.map(k => [k, !!(aiData.ressources[k])]))
     : calcRessources(terrain, seed);
 
-  return {
+  const brut = {
     id:           aiData.nom.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-'),
     nom:          aiData.nom,
     emoji:        aiData.emoji || '🌍',
-    couleur:      aiData.couleur || '#4A7EC8',
+    couleur:      aiData.couleur || `hsl(${Math.abs(seed) % 360}, 55%, 34%)`,
     regime:       aiData.regime || 'republique_federale',
     regimeName:   regime.name,
     regimeEmoji:  regime.emoji,
@@ -453,11 +454,7 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
     terrainName:  getStats().terrains[terrain]?.name || terrain,
     coastal,
     description:  aiData.description || '',
-    leader:       aiData.leader
-                    ? (typeof aiData.leader === 'string'
-                        ? aiData.leader
-                        : [aiData.leader.titre, aiData.leader.nom].filter(Boolean).join(' '))
-                    : null,
+    leader:       aiData.leader || null,
     annee:        STATS.global_start.annee,
     population:   aiData.population || 5_000_000,
     tauxNatalite: aiData.tauxNatalite || regime.taux_natalite * 1000,
@@ -475,9 +472,10 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
     chronolog: [],
     economie:     100,
     isLocal:      false,
-    aria_irl:     null,   // fourni par l'IA ou calculé en fallback
+    aria_irl:     null,
     aria_current: null,
   };
+  return normalizeCountry(brut);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
