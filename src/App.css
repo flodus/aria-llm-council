@@ -960,22 +960,6 @@ html, body, #root {
 .loading-sub  { font-size:0.80rem; color:var(--muted); font-style:italic; letter-spacing:0.05em; }
 .loading::before { content:''; position:absolute; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(200,164,74,0.18),transparent); animation:scanLine 2.4s linear infinite; }
 
-/* .init-overlay {
- * position: absolute;
- * top: 0;
- * left: 0;
- * width: 100vw;
- * height: 100vh;
- * z-index: 100;
- * display: flex;
- * justify-content: center;
- * align-items: center;
- * background: rgba(3, 6, 8, 0.88);
- * backdrop-filter: blur(8px);
- * -webkit-backdrop-filter: blur(8px);
- * animation: fadeIn 0.30s var(--ease-out);
- } * */
-
 .init-overlay {
   position: fixed;
   inset: 0;
