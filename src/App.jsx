@@ -18,6 +18,8 @@ import CountryPanel from './features/world/components/CountryPanel/CountryPanel'
 import EmptyPanel from './features/world/components/CountryPanel/CountryPanelEmpty';
 import LegitimiteOverlay from './features/world/LegitimiteOverlay';
 import { FONT, COLOR }  from './shared/theme';
+import { applyThemeVars } from './shared/theme/applyTheme';
+applyThemeVars();
 import { loadLang, t, useLocale } from './ariaI18n';
 import { CURSEUR_DEFAUT, CURSEUR_POINTER } from './shared/utils/curseurs';
 import RadioPlayer from './shared/components/RadioPlayer';
