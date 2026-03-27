@@ -1,150 +1,91 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-26_
+_Dernière mise à jour : 2026-03-27_
 
 ---
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
-_(aucun bug actif connu — phase B1 terminée)_
-
-
-  - `CouncilCitizenQuestion` : le `ministryId` doit voyager jusqu'au pipeline, bypasser le routing sémantique
-  - Touche `llmCouncilEngine.js` — spec validée avant toute modif
+_(aucun bug actif connu)_
 
 ---
 
 ## 🟡 UX COURT TERME
-
-- [ ] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création** _(session dédiée)_
 
 - [ ] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création**
   - Nouveau pays : résumé aria_options + `[Hériter →]` / `[Personnaliser →]`
   - Sécession : résumé constitution parent + `[Hériter du parent →]` / `[S'en affranchir →]`
   - `[Personnaliser/S'en affranchir →]` : ferme modale → ouvre ConstitutionModal du nouveau pays
 
-- [ ] **G4 — Settings : brancher GovernanceForm (context='settings') sur sections Gouvernement+Constitution**
-  - GovernanceForm existe déjà — remplacer les sections inline dans Settings.jsx
+- [ ] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
+  - GovernanceForm existe déjà · à faire lors du refactor Settings (session dédiée)
 
-- [ ] **T1 — Ajout de provider + modèle custom** : permettre d'ajouter des providers non listés (ex: DeepSeek, Mistral, Ollama local…)
-  - UI : bouton "+ Ajouter un provider" dans Init + Settings · champs : nom, endpoint, clé API, modèle par défaut
-  - Impacte : `aria_api_keys` localStorage · `callAI()` dans Dashboard_p1.jsx · InitScreen.jsx · Settings.jsx
-  - _Assess dédié requis — impacts sur callAI() et le sélecteur de provider_
+- [ ] **T1 — Ajout de provider + modèle custom** : DeepSeek, Mistral, Ollama local…
+  - UI : bouton "+ Ajouter un provider" dans Init + Settings · nom, endpoint, clé API, modèle
+  - Impacte `callAI()` · `aria_api_keys` · InitScreen · Settings — session dédiée
 
 - [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
   (satisfaction détaillée, décisions clés, événements notables)
 
-- [ ] **U7 — Emoji picker pays** : permettre au joueur de choisir l'emoji de son pays
-  - À la création (InitScreen) : après génération IA, proposer de changer l'emoji suggéré
-  - In-game (ConstitutionModal) : champ emoji modifiable dans l'onglet Gouvernance ou Résumé
-  - UI : grille d'emojis thématiques (drapeaux, animaux, symboles) ou champ libre
+- [ ] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
 
 ---
 
 ## 🟠 FONCTIONNEL MOYEN TERME
 _(bloqué sur refonte carte V1)_
 
-- [ ] **N1 — normalizeCountry()** : harmoniser les structures d'objet pays
-  - Base : ANALYSE_STRUCTURE_PAYS.md (généré 2026-03-12)
-  - Interface cible définie dans le MD section 4
-  - Fichiers : ariaData.js · Dashboard_p1.jsx · InitScreen.jsx
-  - Session dédiée — risque élevé, Assess complet requis
+- [ ] **N1 — normalizeCountry()** : harmoniser les structures d'objet pays — risque élevé, session dédiée
+  - Base : ANALYSE_STRUCTURE_PAYS.md · fichiers : ariaData.js · Dashboard_p1.jsx · InitScreen.jsx
 
 - [ ] **F1 — Minimum 2 pays en mode custom** : actuellement limité à 1 seul pays custom
 - [ ] **F2 — Bloquer doublons pays réels** : griser un pays réel déjà sélectionné dans un autre slot
-- [ ] **F3 — Settings gouvernement multi-pays** : repenser l'écran Settings in-game
-  avec gestion constitution commune vs par pays
+- [ ] **F3 — Settings gouvernement multi-pays** : constitution commune vs par pays
 
 ---
 
 ## 🔵 VISION / LONG TERME
 
 - [ ] **R1 — Refactor : conserver `dispatchEvent` vote** ⚠️
-  - Quand Dashboard_p3 est supprimé, le nouveau gestionnaire de vote doit dispatcher :
+  - Quand Dashboard_p3 est supprimé, dispatcher :
     `window.dispatchEvent(new CustomEvent('aria:vote-stored', { detail: { cycleNum } }))`
   - Nécessaire pour que `CouncilMinistryQuestions` se re-rende avec la couleur de résultat
 
 - [ ] **V1 — Refonte génération procédurale** : toute la carte est à reconstruire
-  (architecture nouvelle définie par l'architecte — moteur conseil agnostique, pas impacté)
-- [ ] **V2 — Crises aléatoires** : protocole 6.2 du document ARIA
-  (3 ministres validateurs · 3 ministres de sortie · critères systémiques)
+- [ ] **V2 — Crises aléatoires** : protocole 6.2 (3 ministres validateurs · 3 ministres de sortie)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
 - [ ] **V4 — Présidence 1 à 3 présidents** : config Init/Settings, mode collégial
-- [ ] **V5 — Refactor arborescence** : réorganiser src/ en 3 dossiers
-  - `src/components/` → UI (Dashboard_p3, CountryPanel, ConstitutionModal, Settings...)
-  - `src/engine/`     → moteur (Dashboard_p1, llmCouncilEngine, ariaData, ariaTheme...)
-  - `src/lib/`        → utilitaires (ariaI18n, helpers, types...)
-  - Session dédiée — beaucoup d'imports à mettre à jour, aucun risque fonctionnel
-- [ ] **V6 — Enrichir les prompts de délibération avec la philosophie ADD** :
-  - Phare → posture Assess/Decide (vision, exploration des possibilités)
-  - Boussole → posture Do/mémoire (ancrage, ce qui a été décidé)
-  - Synthèse présidentielle → transition Decide→Do (transformer le débat en décision)
-  - Concerne : Settings.jsx (prompts éditables) + llmCouncilEngine.js (synthèses)
-  - Nécessite un Assess complet avant implémentation
-
-- [ ] **V9 — i18n couverture complète** : audit + centralisation des chaînes inline `isEn ? '...' : '...'`
-  ⚠️ **Settings.jsx (182 ternaires) → à traiter lors du refactor Settings (G4 / session dédiée)**
-  vers `ariaI18n.js`, traduction FR/EN de toute l'UI, sync `base_agents_en.json`
-  — concerne Settings.jsx, Dashboard_p3.jsx, InitScreen.jsx, ConstitutionModal.jsx, LLMCouncil.jsx, CountryPanel.jsx
-  — `ariaQA_en.json` quand ariaQA sera créé · Voir `i18n_todolist.md` pour le détail (~300 strings + prompts IA)
-
-- [ ] **V8 — Optimisation moteur** : session Assess dédiée
-  - Profiler les re-renders React
-  - Vérifier useCallback/useMemo manquants
-  - Identifier les appels IA redondants
-  - Ne pas implémenter sans Assess complet
+- [ ] **V5 — Refactor arborescence** : réorganiser src/ en components/ · engine/ · lib/ — session dédiée
+- [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
+  - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
+- [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants
+- [ ] **V9 — i18n couverture complète** : ~300 strings inline restants
+  - Settings.jsx (182 ternaires) → lors du refactor Settings (G4)
+  - Voir `i18n_todolist.md` pour le détail
 
 ---
 
-## ✅ LIVRÉ cette session (2026-03-26)
+## ✅ LIVRÉ cette session (2026-03-27)
 
-- [x] **G0 — clearSession()** : vérifié — conserve déjà `aria_options`, `aria_api_keys`, `aria_lang`, `aria_preferred_models`
-- [x] **G1 — PreLaunchScreen : bloc contextuel sous badge pays actif**
-  — `⚙️ SUIT LE MODÈLE MONDE` + résumé présidence + `[Personnaliser →]` (lambda)
-  — `✦ CONSTITUTION PROPRE` + résumé override (custom) — dans `PreLaunchScreen.jsx`
-- [x] **G2 — ConstitutionModal : bandeau statut + bouton retour modèle monde**
-  — Bandeau entre header et tabs · `[↺ Revenir au modèle monde]` + confirm dans footer (custom only)
-  — dans `ConstitutionModal.jsx`
-
-- [x] **B10 — Mode collégial** : `|| null` → `?? null` dans agentsManager.js + `active !== null` dans les 3 filtres
-  — le mode collégial se déclenche correctement quand `active_presidency = []`
-- [x] **B11 — Mode crise** : `runCrisisPhase()` — tous les ministères délibèrent en parallèle, skip cercle + présidence
-  — `detectCrisis()` + `crisis_mode !== false` → détournement du pipeline normal dans councilEngine + useCouncilSession
-- [x] **Mode collégial — UI** : label `✦ SYNTHÈSE PRÉSIDENTIELLE` → `✡ SYNTHÈSE CONSTITUTIONNELLE` en mode collégial
-- [x] **Mode collégial — fallback referendum** : `question_referendum` ne recopie plus la question posée
-- [x] **B7 — `setCurrentCycleQuestion`** : déjà corrigé en `setCurrentCycleQuestions({})` (Dashboard_p3.jsx)
-- [x] **B8 — `getTerrainLabel`** : déjà exporté depuis `src/shared/data/worldLabels.js` + importé dans Dashboard_p3
-- [x] **B13 — Bouton Actualiser (💡)** : corrigé (CouncilCitizenQuestion + CouncilFreeQuestion)
-- [x] **B9 — Routing ministère invalide** : déjà corrigé lors du refactor useCouncilSession
-  — `submitQuestion` court-circuite le routing si `ministryId` fourni (ligne 106) · `routeQuestion` retourne immédiatement si `forceMinistryId` truthy · `CouncilFreeQuestion` passe `null` pour déclencher le routing sémantique normal
-- [x] **Synthèses collégiales JSON** : `aria_syntheses.json` (FR+EN) — section `collegial` corrigée
-  (typo `theocracie→theocratie`, régimes fallbacks retirés, `_meta.fallback_order` corrigé)
-  + `getSyntheseCollegial()` dans responseService.js + câblage dans `_runCollegialPhase`
-- [x] **CONTRIBUTING.md + CONTRIBUTING.fr.md** : schémas JSON complets des 10 fichiers templates
-  (corrections : `ministers` = 1..n, `base: true` = convention doc non enforced, 7 régimes primaires + 5 fallbacks)
-- [x] **doc/ réorganisé** : tous les .md de suivi déplacés en `doc/` · CLAUDE.md mis à jour
-- [x] **Curseurs SVG or** : `src/shared/utils/curseurs.js` (4 curseurs #c6a24c) intégrés dans App.jsx
-  — toggle dans Settings > INTERFACE (`aria_options.interface.custom_cursors`)
-- [x] **RadioPlayer** : `src/shared/components/RadioPlayer.jsx` dans la topbar (entre cycle et icônes)
-  — 5 stations par défaut · localStorage · ajout URL + fichier local · toggle dans Settings > INTERFACE
+- [x] **UX — Lisibilité** : `font-size: 22px` sur `:root` · textes plus grands sans tout retoucher
+- [x] **Couleurs — source unique** : `colors.js` étendu (47 tokens) + `applyTheme.js` injecte tout en CSS vars
+  — App.css `:root` ne déclare plus de couleurs · un seul endroit à modifier
+- [x] **i18n council** : 22 clés ajoutées dans ariaI18n.js · LLMCouncil.jsx + councilStyles.js traduits
+- [x] **i18n selectors** : "choisir" → "choose" (RealCountryLocalSection, ChronologView)
+- [x] **i18n questions conseil** : CouncilMinistryQuestions charge aria_questions EN selon la langue
+- [x] **Bug crash collègue** : `!== null` → `!= null` dans agentsManager.js (3 filtres)
+- [x] **Bug getRegimeLabel** : import manquant dans Dashboard_p3.jsx ajouté
+- [x] **Double barre dorée** : bordure gold `worldgen-bar` supprimée (cause : `--border` passé bleu→or)
+- [x] **App.css** : bloc init-overlay commenté mort supprimé
 
 ---
 
-## ✅ LIVRÉ session (2026-03-22, suite)
+## ✅ LIVRÉ session (2026-03-26)
 
-- [x] **B12 — Mode destin désactivé** : `destiny_mode` hérite de `defaultGovernance` pour les pays lambda
-- [x] **B14 — Settings > Ministères** : grille ministres par ministère dans l'accordéon Settings
-- [x] **B15 — ConstitutionModal > Présidence** : boutons "Configurer" ré-exposent PresidentDetail par type
-- [x] **B5b — Badge statut IA mid-session** : `iaStatusStore.js` singleton + event `aria:ia-status`
-  `callAI` détecte erreurs réseau/quota → badge 🔴/⚠ centré bas de page
-  Toast ✅ au retour IA · bouton Tester désactivé si offline seulement
-
----
-
-## ✅ LIVRÉ session (2026-03-22, refactor+destin)
-
-- [x] **Refactor source unique de vérité** — branche `refactor/simulation-json-source`
-- [x] **Destinée du Monde — 8 chantiers livrés** (Oracle + Wyrd + détection crise + runDestinPhase + UI)
+- [x] **G0 — clearSession()** : conserve déjà `aria_options`, `aria_api_keys`, `aria_lang`, `aria_preferred_models`
+- [x] **G1 — PreLaunchScreen** : bloc contextuel sous badge pays actif
+- [x] **G2 — ConstitutionModal** : bandeau statut + bouton retour modèle monde
+- [x] **B10 — Mode collégial** · **B11 — Mode crise** · **B13 — Bouton Actualiser**
+- [x] **Curseurs SVG or** · **RadioPlayer** dans la topbar
 
 ---
 
