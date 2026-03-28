@@ -270,7 +270,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         )}
 
         {!constitution.plLoading && countryOverride.plAgents && (
-            <div ref={scrollRef} style={{ width: '100%', overflowY: 'auto', maxHeight: '64vh', display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+            <div ref={scrollRef} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
             {/* Onglet RÉSUMÉ */}
             {plTab === 'resume' && (
                 <>
