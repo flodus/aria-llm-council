@@ -311,22 +311,35 @@ async function _runCollegialPhase(question, ministereResult, cercleAnnotations, 
 
 export async function runPresidencePhase(question, ministereResult, cercleAnnotations, country, destinVoices = null) {
     const _pres = getPresidencyFor(country);
+    const presEntries = Object.entries(_pres); // [[id, data], ...]
+    const N = presEntries.length;
 
     // ── Mode collégial : aucune figure présidentielle active ─────────────────
-    if (Object.keys(_pres).length === 0) {
+    if (N === 0) {
         return _runCollegialPhase(question, ministereResult, cercleAnnotations, country);
     }
-
-    const phareData    = _pres.phare    || {};
-    const boussoleData = _pres.boussole || {};
 
     // ── Question orpheline : présidence bureaucratique ────────────────────────
     if (ministereResult?.isOrphan) {
         const fb = FALLBACK_RESPONSES.presidence;
+        const presidents = {};
+        presEntries.forEach(([id, data], i) => {
+            const fbBase = i === 0 ? fb.phare : (fb.boussole || fb.phare);
+            presidents[id] = { ...data, ...fbBase };
+        });
         return {
-            phare:    { ...phareData,    ...fb.phare    },
-            boussole: { ...boussoleData, ...fb.boussole },
-            synthese: fb.synthese,
+            ...presidents,
+            presidents,
+            synthese: {
+                ...fb.synthese,
+                // Remap compat : premier président = majorité
+                position_majority_resume: fb.synthese.position_phare_resume,
+                position_minority_resume: fb.synthese.position_boussole_resume,
+                positions_presidentielles: presEntries.map(([id, data], i) => ({
+                    id, name: data.name, symbol: data.symbol || data.emoji || '★',
+                    resume: i === 0 ? fb.synthese.position_phare_resume : fb.synthese.position_boussole_resume,
+                })),
+            },
         };
     }
 
@@ -350,195 +363,101 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
     Annotations des autres ministères :
     ${cercleSummary}${destinSummary}`;
 
-    // ── Phare ────────────────────────────────────────────────────────────────
-    const pPhare = `${langPrefix()}Tu es ${phareData.name} (${phareData.symbol}) du gouvernement ARIA.
-    ${phareData.essence}
+    // ── Angles rhétoriques selon position (0 = vision, 1 = mémoire, 2+ = singulier)
+    const ANGLES = [
+        '2-3 phrases — vision long terme, tranchant et clair',
+        '2-3 phrases — mémoire et protection, nuancé',
+        '2-3 phrases — angle singulier et complémentaire',
+    ];
+
+    // ── Prompts N présidents dynamiques ──────────────────────────────────────
+    const prompts = presEntries.map(([id, data], i) =>
+        `${langPrefix()}Tu es ${data.name} (${data.symbol || data.emoji || '★'}) du gouvernement ARIA.
+    ${data.essence}
     ${context}
-    Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — vision long terme, tranchant et clair", "decision": "1 phrase — quelle décision tu recommandes" }`;
+    Réponds UNIQUEMENT en JSON : { "position": "${ANGLES[i] || ANGLES[ANGLES.length - 1]}", "decision": "1 phrase — quelle décision tu recommandes" }`
+    );
 
-    // ── Boussole ─────────────────────────────────────────────────────────────
-    const pBoussole = `${langPrefix()}Tu es ${boussoleData.name} (${boussoleData.symbol}) du gouvernement ARIA.
-    ${boussoleData.essence}
-    ${context}
-    Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — mémoire et protection, nuancé", "decision": "1 phrase — quelle décision tu recommandes" }`;
-
-    let phare = null, boussole = null;
+    let aiResults = presEntries.map(() => null);
     if (keys.claude || keys.gemini) {
-        [phare, boussole] = await Promise.all([
-            callAI(pPhare, 'council_phare').catch(() => null),
-                                              callAI(pBoussole, 'council_boussole').catch(() => null),
-        ]);
+        const appels = prompts.map((p, i) =>
+            callAI(p, `council_pres_${presEntries[i][0]}`).catch(() => null)
+        );
+        aiResults = await Promise.all(appels);
     }
 
-    if (!phare || !boussole) {
-        // Fallback contextuel — varie selon la question et l'état du pays
-        // On utilise le hash de la question pour avoir une variation déterministe
-        const questionHash = question.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        const random = (questionHash + country.satisfaction) % 100 / 100; // valeur entre 0 et 1
+    // ── Fallback contextuel pour tout résultat null ───────────────────────────
+    const questionHash = question.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const random = (questionHash + country.satisfaction) % 100 / 100;
 
-        const tension = country.satisfaction < 40
-        ? 'La tension sociale actuelle exige une réponse rapide et visible.'
-        : country.satisfaction > 70
-        ? 'La stabilité présente offre une fenêtre favorable à l\'action.'
-        : 'Le contexte est équilibré — une décision mesurée s\'impose.';
+    const tension = country.satisfaction < 40
+    ? 'La tension sociale actuelle exige une réponse rapide et visible.'
+    : country.satisfaction > 70
+    ? 'La stabilité présente offre une fenêtre favorable à l\'action.'
+    : 'Le contexte est équilibré — une décision mesurée s\'impose.';
 
-        const angle = ['économique', 'social', 'structurel', 'institutionnel'][
-            Math.floor((question.length + country.satisfaction) % 4)
-        ];
+    const angle = ['économique', 'social', 'structurel', 'institutionnel'][
+        Math.floor((question.length + country.satisfaction) % 4)
+    ];
 
-        const memoire = country.aria_current > 50
-        ? 'L\'adhésion ARIA reste solide — ne pas la fragiliser par une décision précipitée.'
-        : country.aria_current < 30
-        ? 'L\'adhésion ARIA est fragile — toute décision doit être prudemment expliquée.'
-        : 'L\'adhésion ARIA est en transition — le moment requiert une écoute attentive.';
+    const memoire = country.aria_current > 50
+    ? 'L\'adhésion ARIA reste solide — ne pas la fragiliser par une décision précipitée.'
+    : country.aria_current < 30
+    ? 'L\'adhésion ARIA est fragile — toute décision doit être prudemment expliquée.'
+    : 'L\'adhésion ARIA est en transition — le moment requiert une écoute attentive.';
 
-        const pop = country.population > 50_000_000 ? 'Dans un pays de cette taille' : 'Dans ce territoire';
+    const pop = country.population > 50_000_000 ? 'Dans un pays de cette taille' : 'Dans ce territoire';
 
-        // CAS 1: Consensus ACTION (les deux veulent agir)
-        if (random < 0.25) {
-            phare = {
-                position: `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », le Phare identifie un enjeu ${angle} de premier ordre. ${tension} Une action immédiate est nécessaire.`,
-                decision: `Lancer une initiative nationale sur cet enjeu dans les plus brefs délais.`,
-            };
-            boussole = {
-                position: `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » nécessite une réponse. ${memoire} La Boussole soutient une action mesurée mais déterminée.`,
-                decision: `Soutenir l'action du Phare tout en veillant à protéger les équilibres existants.`,
-            };
-        }
-        // CAS 2: Consensus PRUDENCE (les deux veulent attendre)
-        else if (random < 0.5) {
-            phare = {
-                position: `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », le Phare discerne un enjeu ${angle} qui mérite réflexion. ${tension} Une décision précipitée serait contre-productive.`,
-                decision: `Prendre le temps d'étudier toutes les implications avant d'agir.`,
-            };
-            boussole = {
-                position: `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » appelle à la prudence. ${memoire} Une consultation approfondie est nécessaire.`,
-                decision: `Organiser une consultation citoyenne et reporter toute décision irréversible.`,
-            };
-        }
-        // CAS 3: Divergence (Phare action / Boussole prudence)
-        else if (random < 0.75) {
-            phare = {
-                position: `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », le Phare identifie un enjeu ${angle} de premier ordre. ${tension} Une vision à long terme impose de tracer une direction claire plutôt que de temporiser.`,
-                decision: `Adopter une position ferme sur cet enjeu pour maintenir la cohérence de la trajectoire ARIA.`,
-            };
-            boussole = {
-                position: `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » touche à des équilibres établis. ${memoire} La mémoire des cycles précédents invite à la nuance avant tout engagement irréversible.`,
-                decision: `Consulter les parties prenantes et prévoir un mécanisme de révision à court terme.`,
-            };
-        }
-        // CAS 4: Divergence (Phare prudence / Boussole action) - plus rare
-        else {
-            phare = {
-                position: `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », le Phare perçoit des risques à long terme. Une action trop rapide pourrait compromettre des équilibres fragiles.`,
-                decision: `Temporiser et observer l'évolution de la situation.`,
-            };
-            boussole = {
-                position: `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » ne peut attendre. ${memoire} La protection du peuple exige parfois des décisions rapides.`,
-                decision: `Agir sans délai pour prévenir une dégradation.`,
-            };
-        }
-    }
-
-    // ── Synthèse présidentielle ───────────────────────────────────────────────
-    let synthese = null;
-    if (keys.claude || keys.gemini) {
-        const pSynth = buildSynthesePresidencePrompt(phare, boussole, question, country);
-        synthese = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
-    }
-    // src/features/council/services/deliberationEngine.js
-    // Vers la fin, autour de la ligne 380-410
-
-    if (!synthese) {
-        // Évaluation contextuelle de la convergence
-        const phrA = phare.decision?.toLowerCase() || '';
-        const phrB = boussole.decision?.toLowerCase() || '';
-
-        // Mots-clés pour l'action (Phare)
-        const actionWords = [
-            'adopter', 'action', 'immédiat', 'ferme', 'décision',
-            'appliquer', 'intervenir', 'agir', 'lancer', 'engager',
-            'procéder', 'mettre en œuvre', 'exécuter', 'réaliser'
-        ];
-
-        // Mots-clés pour la prudence (Boussole)
-        const cautionWords = [
-            'consulter', 'révision', 'prudence', 'attente', 'nuance',
-            'réfléchir', 'étudier', 'analyser', 'patienter', 'temporiser',
-            'reporter', 'différer', 'suspendre', 'examiner', 'évaluer'
-        ];
-
-        const phareIsAction = actionWords.some(w => phrA.includes(w));
-        const phareIsCaution = cautionWords.some(w => phrA.includes(w));
-        const boussoleIsAction = actionWords.some(w => phrB.includes(w));
-        const boussoleIsCaution = cautionWords.some(w => phrB.includes(w));
-
-        // Convergence si les deux veulent agir OU les deux veulent attendre
-        let convergence = (phareIsAction && boussoleIsAction) || (phareIsCaution && boussoleIsCaution);
-
-        // Si on n'arrive pas à déterminer clairement
-        if (!phareIsAction && !phareIsCaution && !boussoleIsAction && !boussoleIsCaution) {
-            // Fallback: comparer la similarité des décisions
-            const wordsA = new Set(phrA.split(' '));
-            const wordsB = new Set(phrB.split(' '));
-            const commonWords = [...wordsA].filter(word => wordsB.has(word) && word.length > 3);
-
-            // Convergence si elles partagent au moins 2 mots significatifs
-            convergence = commonWords.length >= 2;
-        }
-
-        // DÉTERMINATION DU TYPE DE VOTE
-        let voteType = 'referendum';
-        let voteQuestion;
-        let voteOptions = {};
-
-        if (convergence) {
-            voteType = 'referendum';
-            voteQuestion = `Approuvez-vous la proposition suivante : "${phare.decision}" ?`;
-            voteOptions = {
-                oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
-                non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' }
+    presEntries.forEach(([id, data], i) => {
+        if (aiResults[i]) return;
+        // Décalage déterministe par index pour varier les fallbacks
+        const r = (random + i * 0.33) % 1;
+        if (r < 0.5) {
+            // Action
+            aiResults[i] = {
+                position: i === 0
+                    ? `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », ${data.name} identifie un enjeu ${angle} de premier ordre. ${tension} Une action immédiate est nécessaire.`
+                    : `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » nécessite une réponse. ${memoire} ${data.name} soutient une action mesurée mais déterminée.`,
+                decision: i === 0
+                    ? `Lancer une initiative nationale sur cet enjeu dans les plus brefs délais.`
+                    : `Soutenir l'action tout en veillant à protéger les équilibres existants.`,
             };
         } else {
-            voteType = 'binary';
-            voteQuestion = `Quelle orientation le gouvernement doit-il suivre ?`;
-            voteOptions = {
-                phare: {
-                    label: `☉ PHARE — ${phare.decision}`,
-                    color: COLORS.goldHex,
-                    icon: '☉',
-                    decision: phare.decision
-                },
-                boussole: {
-                    label: `☽ BOUSSOLE — ${boussole.decision}`,
-                    color: COLORS.purpleHex,
-                    icon: '☽',
-                    decision: boussole.decision
-                }
+            // Prudence
+            aiResults[i] = {
+                position: i === 0
+                    ? `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », ${data.name} discerne un enjeu ${angle} qui mérite réflexion. ${tension} Une décision précipitée serait contre-productive.`
+                    : `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » appelle à la prudence. ${memoire} Une consultation approfondie est nécessaire.`,
+                decision: i === 0
+                    ? `Prendre le temps d'étudier toutes les implications avant d'agir.`
+                    : `Organiser une consultation citoyenne et reporter toute décision irréversible.`,
             };
         }
+    });
 
-        // Construire l'enjeu
-        const enjeu = country.satisfaction < 40
-        ? `Cette décision intervient dans un contexte de tension sociale élevée (satisfaction : ${country.satisfaction}%). Son impact sera immédiatement ressenti par les ${Math.round(country.population/1e6*10)/10} M de citoyens.`
-        : `La décision impactera directement les ${Math.round(country.population/1e6*10)/10} M de citoyens. L'adhésion ARIA actuelle (${country.aria_current ?? '?'}%) conditionnera l'acceptation populaire.`;
+    // ── Map finale des présidents ─────────────────────────────────────────────
+    const presidentsResult = Object.fromEntries(
+        presEntries.map(([id, data], i) => [id, { ...data, ...aiResults[i] }])
+    );
 
-        synthese = {
-            convergence,
-            synthese: getSynthesePresidence(convergence),
-            voteType,
-            voteQuestion,
-            voteOptions,
-            question_referendum: voteQuestion,
-            position_phare_resume: phare.decision || 'Action prioritaire.',
-            position_boussole_resume: boussole.decision || 'Consultation et révision.',
-            enjeu_principal: enjeu,
-        };
+    // ── Synthèse présidentielle — toujours referendum OUI/NON ─────────────────
+    let synthese = null;
+    if (keys.claude || keys.gemini) {
+        const pSynth = buildSynthesePresidencePrompt(presidentsResult, question, country);
+        synthese = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
+        // Normaliser la réponse AI : ajouter les champs dynamiques manquants
+        if (synthese) {
+            synthese = normaliseSyntheseAI(synthese, presidentsResult, presEntries, aiResults);
+        }
+    }
+
+    if (!synthese) {
+        synthese = buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, country, question);
     }
 
     return {
-        phare:    { ...phareData,    ...phare },
-        boussole: { ...boussoleData, ...boussole },
+        ...presidentsResult, // compat backward : presidence.phare / presidence.boussole accessibles
+        presidents: presidentsResult,
         synthese,
     };
 }
@@ -557,23 +476,24 @@ export async function runCrisisPhase(question, country) {
     return { crisis: true, ministries: results };
 }
 
-function buildSynthesePresidencePrompt(phare, boussole, question, country) {
+// ── Prompt de synthèse N présidents dynamiques ───────────────────────────
+function buildSynthesePresidencePrompt(presidentsResult, question, country) {
     const ctx = buildCountryContext(country);
+    const blocs = Object.entries(presidentsResult)
+        .map(([id, p]) =>
+            `${p.name} (${p.symbol || p.emoji || id}) :\n    "${p.position}"\n    Décision : "${p.decision}"`
+        )
+        .join('\n\n    ');
+
     return `${langPrefix()}Tu es le système d'arbitrage présidentiel du gouvernement ARIA.
     ${ctx}
     Question débattue : "${question}"
 
-    Position du PHARE (☉) :
-    "${phare.position}"
-    Décision recommandée : "${phare.decision}"
-
-    Position de la BOUSSOLE (☽) :
-    "${boussole.position}"
-    Décision recommandée : "${boussole.decision}"
+    ${blocs}
 
     RÈGLE DE CONVERGENCE (importante) :
-    - CONVERGENCE = les deux décisions recommandent globalement la même action (ex: défense + diplomatie simultanée). Même si les angles diffèrent, si l'action centrale est la même → convergence.
-    - DIVERGENCE = les deux décisions s'excluent mutuellement (ex: agir maintenant VS attendre).
+    - CONVERGENCE = la majorité des présidents recommandent la même direction. Même si les angles diffèrent, si l'action centrale est la même → convergence.
+    - DIVERGENCE = les décisions s'excluent mutuellement.
 
     RÈGLE POUR question_referendum :
     - Formule une PROPOSITION CLAIRE ET ADOPTABLE à soumettre au peuple.
@@ -584,9 +504,91 @@ function buildSynthesePresidencePrompt(phare, boussole, question, country) {
     Réponds UNIQUEMENT en JSON valide, sans texte avant ou après :
     {
         "convergence": true,
-        "position_phare_resume": "1 phrase courte — l'angle du Phare",
-        "position_boussole_resume": "1 phrase courte — l'angle de la Boussole",
+        "position_majority_resume": "1 phrase courte — la position majoritaire",
+        "position_minority_resume": "1 phrase courte — la position minoritaire (null si convergence totale)",
         "question_referendum": "Le gouvernement doit [action concrète issue de la délibération].",
         "enjeu_principal": "1 phrase — ce qui est vraiment en jeu pour les citoyens"
     }`;
+}
+
+// ── Normalise la réponse AI : ajoute les champs dynamiques + compat backward ─
+function normaliseSyntheseAI(synthese, presidentsResult, presEntries, aiResults) {
+    // Compat backward : phare = premier président, boussole = deuxième
+    const majorite  = aiResults[0]?.decision || '';
+    const minorite  = aiResults[1]?.decision || null;
+    const positions = presEntries.map(([id, data], i) => ({
+        id, name: data.name, symbol: data.symbol || data.emoji || '★',
+        resume: aiResults[i]?.decision || '',
+    }));
+    return {
+        ...synthese,
+        voteType: 'referendum',
+        voteOptions: {
+            oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
+            non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' },
+        },
+        voteQuestion: synthese.question_referendum || synthese.voteQuestion || '',
+        // Compat backward : LLMCouncil.jsx utilise encore ces clés
+        position_phare_resume:    synthese.position_majority_resume || majorite,
+        position_boussole_resume: synthese.position_minority_resume || minorite,
+        // Champs dynamiques nouveaux
+        position_majority_resume: synthese.position_majority_resume || majorite,
+        position_minority_resume: synthese.position_minority_resume || minorite,
+        positions_presidentielles: positions,
+    };
+}
+
+// ── Fallback synthèse N présidents — sans appel AI ────────────────────────
+function buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, country, question) {
+    const N = presEntries.length;
+
+    // Détecter convergence par mots-clés
+    const actionWords  = ['adopter','action','immédiat','ferme','lancer','engager','agir','exécuter','réaliser'];
+    const cautionWords = ['consulter','prudence','attente','étudier','analyser','temporiser','reporter','suspendre'];
+
+    const votes = aiResults.map(r => {
+        const d = (r?.decision || '').toLowerCase();
+        if (actionWords.some(w => d.includes(w)))  return 'action';
+        if (cautionWords.some(w => d.includes(w))) return 'prudence';
+        return 'neutre';
+    });
+
+    const nbAction  = votes.filter(v => v === 'action').length;
+    const nbPrudence = votes.filter(v => v === 'prudence').length;
+    const majorite  = Math.ceil(N / 2);
+    const convergence = nbAction >= majorite || nbPrudence >= majorite;
+
+    const decisionMajoritaire = aiResults[0]?.decision || 'Action prioritaire.';
+    const decisionMinoritaire = N > 1 ? (aiResults[1]?.decision || null) : null;
+
+    const voteQuestion = convergence
+        ? `Approuvez-vous la proposition suivante : "${decisionMajoritaire}" ?`
+        : `Le gouvernement doit-il adopter la position de ${presEntries[0][1].name} ?`;
+
+    const enjeu = country.satisfaction < 40
+        ? `Cette décision intervient dans un contexte de tension sociale élevée (satisfaction : ${country.satisfaction}%). Son impact sera immédiatement ressenti par les ${Math.round(country.population/1e6*10)/10} M de citoyens.`
+        : `La décision impactera directement les ${Math.round(country.population/1e6*10)/10} M de citoyens. L'adhésion ARIA actuelle (${country.aria_current ?? '?'}%) conditionnera l'acceptation populaire.`;
+
+    return {
+        convergence,
+        synthese: getSynthesePresidence(convergence),
+        voteType: 'referendum',
+        voteQuestion,
+        question_referendum: voteQuestion,
+        voteOptions: {
+            oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
+            non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' },
+        },
+        // Compat backward
+        position_phare_resume:    decisionMajoritaire,
+        position_boussole_resume: decisionMinoritaire,
+        // Nouveaux champs
+        position_majority_resume: decisionMajoritaire,
+        position_minority_resume: decisionMinoritaire,
+        positions_presidentielles: presEntries.map(([id, data], i) => ({
+            id, name: data.name, symbol: data.symbol || data.emoji || '★',
+            resume: aiResults[i]?.decision || '',
+        })),
+        enjeu_principal: enjeu,
+    };
 }
