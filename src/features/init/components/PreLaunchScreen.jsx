@@ -302,6 +302,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                     isEn={lang === 'en'}
                     presSymbols={presSymbols}
                     onEditEmoji={(presId, emoji) => { sauvegarderEmojiAgent('presidency', presId, emoji); setEmojiVersion(v => v + 1); }}
+                    showTrinaire={Object.keys(countryOverride.plAgents?.presidency || {}).some(k => !['phare','boussole'].includes(k))}
                 />
 
                 {/* Toggle Destinée du monde — entre présidence et ministères */}

@@ -348,7 +348,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                     {country?.nom}
                 </span>
             </div>
-            <EmojiPicker value={emoji} onChange={setEmoji} />
+            <EmojiPicker value={emoji} onChange={setEmoji} compact />
             </section>
 
             {/* Régime */}
@@ -546,6 +546,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 isEn={isEn}
                 presSymbols={presSymbols}
                 onEditEmoji={(presId, emoji) => { sauvegarderEmojiAgent('presidency', presId, emoji); setEmojiVersion(v => v + 1); }}
+                showTrinaire={Object.keys(constitution.presidency || {}).some(k => !['phare','boussole'].includes(k))}
             />
             {/* Description 0-3 présidents */}
             <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: '0.3rem 0 0.5rem', lineHeight: 1.5 }}>

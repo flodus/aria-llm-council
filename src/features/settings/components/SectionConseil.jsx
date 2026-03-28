@@ -13,14 +13,14 @@ import { getAgentOverrides, saveAgentOverrides } from '../utils/settingsStorage'
 import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 
 function getMinisterLabels() {
-    const ag = getAgents();
+    const ag = getAgentsEffectifs();
     return Object.fromEntries(
         Object.entries(ag.ministers || {}).map(([k, m]) => [k, `${m.name} (${m.sign})`])
     );
 }
 
 function getMinistryLabels() {
-    const ag = getAgents();
+    const ag = getAgentsEffectifs();
     const mins = Array.isArray(ag.ministries) ? ag.ministries : Object.values(ag.ministries || {});
     return Object.fromEntries(mins.map(m => [m.id, `${m.emoji||''} ${m.name}`]));
 }
