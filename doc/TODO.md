@@ -19,7 +19,6 @@ _(aucun bug actif connu)_
 
 - [ ] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
   - GovernanceForm existe déjà · à faire lors du refactor Settings (session dédiée)
-  - Reste aussi : useAccordion non branché dans SectionConstitution, SectionGouvernanceDefaut, SectionSimulation (importé mais vieux pattern encore en place)
 
 - [ ] **T1 — Ajout de provider + modèle custom** : DeepSeek, Mistral, Ollama local…
   - UI : bouton "+ Ajouter un provider" dans Init + Settings · nom, endpoint, clé API, modèle
