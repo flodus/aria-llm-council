@@ -59,7 +59,8 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
       value: 'solaire',
       iconRender: onEditEmoji ? (
         <span onClick={e => e.stopPropagation()}>
-          <EmojiPicker compact value={symPhare} onChange={e => onEditEmoji('phare', e)} />
+          <EmojiPicker compact value={symPhare} onChange={e => onEditEmoji('phare', e)}
+            emojiStyle={{ color: 'rgba(200,164,74,0.90)', fontSize: '1.6rem' }} />
         </span>
       ) : <SymSolaire sym={symPhare} />,
       label: isEn ? 'Phare' : 'Phare',
@@ -69,7 +70,8 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
       value: 'lunaire',
       iconRender: onEditEmoji ? (
         <span onClick={e => e.stopPropagation()}>
-          <EmojiPicker compact value={symBoussole} onChange={e => onEditEmoji('boussole', e)} />
+          <EmojiPicker compact value={symBoussole} onChange={e => onEditEmoji('boussole', e)}
+            emojiStyle={{ color: 'rgba(150,100,220,0.90)', fontSize: '1.6rem' }} />
         </span>
       ) : <SymLunaire sym={symBoussole} />,
       label: isEn ? 'Boussole' : 'Boussole',
@@ -90,9 +92,9 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
       value: 'trinaire',
       iconRender: onEditEmoji ? (
         <span onClick={e => e.stopPropagation()} style={{ display: 'flex', gap: '0.05rem' }}>
-          <EmojiPicker compact value={symPhare}    onChange={e => onEditEmoji('phare', e)} />
-          <EmojiPicker compact value={symBoussole} onChange={e => onEditEmoji('boussole', e)} />
-          <EmojiPicker compact value={symTrinaire} onChange={e => onEditEmoji('trinaire', e)} />
+          <EmojiPicker compact value={symPhare}    onChange={e => onEditEmoji('phare', e)}    emojiStyle={{ color: 'rgba(200,164,74,0.90)', fontSize: '0.9rem' }} />
+          <EmojiPicker compact value={symBoussole} onChange={e => onEditEmoji('boussole', e)} emojiStyle={{ color: 'rgba(150,100,220,0.90)', fontSize: '0.9rem' }} />
+          <EmojiPicker compact value={symTrinaire} onChange={e => onEditEmoji('trinaire', e)} emojiStyle={{ color: 'rgba(60,200,140,0.90)',  fontSize: '0.9rem' }} />
         </span>
       ) : (
         <span style={{ fontSize: '0.9rem', lineHeight: 1, letterSpacing: '-0.05em' }}>
