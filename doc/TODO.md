@@ -53,7 +53,9 @@ _(bloqué sur refonte carte V1)_
 - [ ] **V1 — Refonte génération procédurale** : toute la carte est à reconstruire
 - [ ] **V2 — Crises aléatoires** : protocole 6.2 (3 ministres validateurs · 3 ministres de sortie)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
-- [ ] **V4 — Présidence 1 à 3 présidents** : config Init/Settings, mode collégial
+- [~] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal ✓ — reste :
+  - Settings.jsx : section présidence ne gère pas encore le 3e président custom
+  - Icône tripartite : `PresidencyTiles` n'a pas de tuile "Trinaire" (☉☽★) pour 3 présidents actifs
 - [ ] **V5 — Refactor arborescence** : réorganiser src/ en components/ · engine/ · lib/ — session dédiée
 - [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
   - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
