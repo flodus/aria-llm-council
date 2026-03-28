@@ -12,6 +12,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from 'react';
+import { useAccordion } from '../hooks/useAccordion';
 import { useLocale } from '../../ariaI18n';
 import { getAgents } from '../../Dashboard_p1';
 import { getDestin } from '../../features/council/services/agentsManager';
@@ -124,12 +125,10 @@ function Toggle({ value, onChange, label }) {
 export default function GovernanceForm({ context, opts, onChange }) {
     const { lang } = useLocale();
     const isEn = lang === 'en';
-    const [openAcc, setOpenAcc] = useState(null);
+    const { ouvert: openAcc, basculer: toggle } = useAccordion();
 
     const gov = opts?.defaultGovernance || getDefaultGov();
     const ctxMode = opts?.gameplay?.context_mode || 'auto';
-
-    const toggle = (key) => setOpenAcc(p => p === key ? null : key);
 
     const setGov = (key, val) => {
         onChange({

@@ -11,7 +11,7 @@ import {
     getAgents, isValidKeyFormat, isFakeKey,
 } from '../../../Dashboard_p1';
 import { SectionTitle, Field, TextInput, Toggle, NumberInput, Select, DangerButton, SaveBadge } from '../ui/SettingsUI';
-import { useAccordion } from '../hooks/useAccordion';
+import { useAccordion } from '../../../shared/hooks/useAccordion';
 import { getPrompts, savePrompts, getAgentOverrides, saveAgentOverrides, getSimOverrides, saveSimOverrides } from '../utils/settingsStorage';
 
 // ─────────────────────────────────────────────────────────────────────────────

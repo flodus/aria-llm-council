@@ -7,7 +7,7 @@ import { getAgents, getOptions } from '../../../Dashboard_p1';
 import { getDestin } from '../../council/services/agentsManager';
 import PresidencyTiles from '../../../shared/components/PresidencyTiles';
 import { Field, Toggle } from '../ui/SettingsUI';
-import { useAccordion } from '../hooks/useAccordion';
+import { useAccordion } from '../../../shared/hooks/useAccordion';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  UTILITAIRES LOCAUX

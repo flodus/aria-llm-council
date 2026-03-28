@@ -70,6 +70,9 @@ _(bloqué sur refonte carte V1)_
 
 - [x] **Refactor Settings** : Settings.jsx + Settings.css → `src/features/settings/` · composants dans `components/` · hook `useAccordion.js` · utils `settingsStorage.js` · `index.js` point d'entrée · App.jsx mis à jour
 - [x] **Git cleanup** : branches `chore/todo-update` + `refactor/llmcouncil-split` mergées dans main et supprimées local + distant
+- [x] **shared/hooks/useAccordion.js** : déplacé de `features/settings/hooks/` → `shared/hooks/` · branché sur Settings (4 sections) + GovernanceForm
+- [x] **shared/utils/storage.js** : primitives `lireStorage` / `ecrireStorage` / `supprimerStorage` · settingsStorage.js migré dessus
+- [ ] **Dashboard_p1 — refactor futur** : extraire `getOptions/saveOptions` → `src/shared/utils/optionsStorage.js` · extraire les constantes (MINISTERS, MINISTRIES, REGIMES...) → `src/shared/data/` · Dashboard_p1 ne devrait plus être un fichier fourre-tout importé partout
 
 ---
 

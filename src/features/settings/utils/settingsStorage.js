@@ -1,6 +1,8 @@
 // src/features/settings/utils/settingsStorage.js
 // Utilitaires de persistance pour les paramètres ARIA
-// Centralise les accès localStorage pour les prompts, agents et simulation
+// Utilise les primitives partagées de src/shared/utils/storage.js
+
+import { lireStorage, ecrireStorage } from '../../../shared/utils/storage';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  PROMPTS PAR DÉFAUT (version complète)
@@ -20,17 +22,11 @@ export const DEFAULT_PROMPTS = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getPrompts() {
-  try {
-    return { ...DEFAULT_PROMPTS, ...JSON.parse(localStorage.getItem('aria_prompts') || '{}') };
-  } catch {
-    return { ...DEFAULT_PROMPTS };
-  }
+  return { ...DEFAULT_PROMPTS, ...lireStorage('aria_prompts', {}) };
 }
 
 export function savePrompts(prompts) {
-  try {
-    localStorage.setItem('aria_prompts', JSON.stringify(prompts));
-  } catch {}
+  ecrireStorage('aria_prompts', prompts);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,17 +34,11 @@ export function savePrompts(prompts) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getAgentOverrides() {
-  try {
-    return JSON.parse(localStorage.getItem('aria_agents') || '{}');
-  } catch {
-    return {};
-  }
+  return lireStorage('aria_agents', {});
 }
 
 export function saveAgentOverrides(overrides) {
-  try {
-    localStorage.setItem('aria_agents', JSON.stringify(overrides));
-  } catch {}
+  ecrireStorage('aria_agents', overrides);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -56,15 +46,9 @@ export function saveAgentOverrides(overrides) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getSimOverrides() {
-  try {
-    return JSON.parse(localStorage.getItem('aria_sim') || '{}');
-  } catch {
-    return {};
-  }
+  return lireStorage('aria_sim', {});
 }
 
 export function saveSimOverrides(overrides) {
-  try {
-    localStorage.setItem('aria_sim', JSON.stringify(overrides));
-  } catch {}
+  ecrireStorage('aria_sim', overrides);
 }

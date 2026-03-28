@@ -9,7 +9,7 @@ import {
     REGIMES, TERRAINS, CYCLES_CFG,
 } from '../../../Dashboard_p1';
 import { SectionTitle, Field, NumberInput, Toggle, SaveBadge } from '../ui/SettingsUI';
-import { useAccordion } from '../hooks/useAccordion';
+import { useAccordion } from '../../../shared/hooks/useAccordion';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  UTILITAIRES LOCAUX

@@ -7,7 +7,7 @@ import {
     getOptions, saveOptions,
 } from '../../../Dashboard_p1';
 import { SectionTitle, Field, TextArea, Select, Toggle, SaveBadge } from '../ui/SettingsUI';
-import { useAccordion } from '../hooks/useAccordion';
+import { useAccordion } from '../../../shared/hooks/useAccordion';
 import { DEFAULT_PROMPTS, getPrompts, savePrompts } from '../utils/settingsStorage';
 
 // ─────────────────────────────────────────────────────────────────────────────
