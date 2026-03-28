@@ -14,7 +14,7 @@
 //
 //  Props :
 //   session      {object|null}  — état courant de la délibération
-//   onVote       {function}     — appelé avec ('oui'|'non'|'phare'|'boussole')
+//   onVote       {function}     — appelé avec ('oui'|'non') — toujours referendum
 //   isRunning    {boolean}      — IA en cours
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -264,12 +264,18 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             accentColor={presidence.collegial ? C.goldDim : C.purple}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
-            {!presidence.collegial && (
-              <>
-                <PresidenceBlock agent={presidence.phare}    data={presidence.phare}    accent={C.gold}   />
-                <PresidenceBlock agent={presidence.boussole} data={presidence.boussole} accent={C.purple} />
-              </>
-            )}
+            {!presidence.collegial && (() => {
+              const ACCENTS_LLM = [C.gold, C.purple, 'rgba(60,200,140,0.88)'];
+              const ORDRE = ['phare','boussole'];
+              const presMap = presidence.presidents || presidence;
+              const presListe = [
+                ...ORDRE.map(id => [id, presMap[id]]).filter(([, d]) => d && d.name),
+                ...Object.entries(presMap).filter(([k, d]) => d && d.name && !ORDRE.includes(k)),
+              ];
+              return presListe.map(([id, data], i) => (
+                <PresidenceBlock key={id} agent={data} data={data} accent={ACCENTS_LLM[i] || ACCENTS_LLM[ACCENTS_LLM.length-1]} />
+              ));
+            })()}
             {presidence.collegial && presidence.synthese && (
               <div style={bubble(C.goldDim, { marginBottom: '0.4rem' })}>
                 <div style={sectionTitle(C.goldDim)}>{t('COUNCIL_COLLEGIAL_DELIB', loadLang())}</div>
@@ -322,23 +328,43 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             accentColor={C.blue}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
-            {/* Résumé des deux positions (non-collégial uniquement) */}
-            {presidence?.synthese && !presidence.collegial && (
-              <div style={{ marginBottom: '0.7rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                  <span style={{ color: C.gold, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☉</span>
-                  <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(200,180,100,0.70)', lineHeight: 1.5 }}>
-                    {presidence.synthese.position_phare_resume}
-                  </span>
+            {/* Résumé des positions présidentielles (dynamique) */}
+            {presidence?.synthese && !presidence.collegial && (() => {
+              const ACCENTS_V = ['rgba(200,180,100,0.70)', 'rgba(160,130,220,0.70)', 'rgba(60,200,140,0.70)'];
+              const positions = presidence.synthese.positions_presidentielles;
+              if (positions?.length) {
+                return (
+                  <div style={{ marginBottom: '0.7rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    {positions.map((p, i) => (
+                      <div key={p.id} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                        <span style={{ color: ACCENTS_V[i] || ACCENTS_V[ACCENTS_V.length-1], fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>
+                          {p.symbol}
+                        </span>
+                        <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: ACCENTS_V[i] || ACCENTS_V[ACCENTS_V.length-1], lineHeight: 1.5 }}>
+                          {p.resume}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }
+              // Compat backward si positions_presidentielles absent
+              const posM = presidence.synthese.position_majority_resume || presidence.synthese.position_phare_resume;
+              const posN = presidence.synthese.position_minority_resume || presidence.synthese.position_boussole_resume;
+              if (!posM) return null;
+              return (
+                <div style={{ marginBottom: '0.7rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  {posM && <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                    <span style={{ color: C.gold, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☉</span>
+                    <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(200,180,100,0.70)', lineHeight: 1.5 }}>{posM}</span>
+                  </div>}
+                  {posN && <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                    <span style={{ color: C.purple, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☽</span>
+                    <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(160,130,220,0.70)', lineHeight: 1.5 }}>{posN}</span>
+                  </div>}
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                  <span style={{ color: C.purple, fontSize: '0.8rem', flexShrink: 0, lineHeight: 1.4 }}>☽</span>
-                  <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(160,130,220,0.70)', lineHeight: 1.5 }}>
-                    {presidence.synthese.position_boussole_resume}
-                  </span>
-                </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Proposition soumise au vote */}
             <div style={bubble(C.blue, { marginBottom: '0.8rem' })}>
@@ -350,34 +376,19 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
               </p>
             </div>
 
-            {/* Boutons de vote conditionnels selon le type */}
-            {presidence?.synthese?.voteType === 'referendum' ? (
-              <div style={{ display: 'flex', gap: '0.7rem' }}>
-                <VoteButton
-                  label={presidence.synthese.voteOptions?.oui?.label || "✓  OUI — ADOPTER"}
-                  color={presidence.synthese.voteOptions?.oui?.color || C.green}
-                  onClick={() => onVote?.('oui')}
-                />
-                <VoteButton
-                  label={presidence.synthese.voteOptions?.non?.label || "✕  NON — REJETER"}
-                  color={presidence.synthese.voteOptions?.non?.color || C.red}
-                  onClick={() => onVote?.('non')}
-                />
-              </div>
-            ) : (
-              <div style={{ display: 'flex', gap: '0.7rem' }}>
-                <VoteButton
-                  label={presidence.synthese.voteOptions?.phare?.label || "☉ PHARE"}
-                  color={presidence.synthese.voteOptions?.phare?.color || C.goldHex}
-                  onClick={() => onVote?.('phare')}
-                />
-                <VoteButton
-                  label={presidence.synthese.voteOptions?.boussole?.label || "☽ BOUSSOLE"}
-                  color={presidence.synthese.voteOptions?.boussole?.color || C.purpleHex}
-                  onClick={() => onVote?.('boussole')}
-                />
-              </div>
-            )}
+            {/* Boutons de vote — toujours OUI/NON (0 à 3 présidents) */}
+            <div style={{ display: 'flex', gap: '0.7rem' }}>
+              <VoteButton
+                label={presidence?.synthese?.voteOptions?.oui?.label || "✓  OUI — ADOPTER"}
+                color={presidence?.synthese?.voteOptions?.oui?.color || C.green}
+                onClick={() => onVote?.('oui')}
+              />
+              <VoteButton
+                label={presidence?.synthese?.voteOptions?.non?.label || "✕  NON — REJETER"}
+                color={presidence?.synthese?.voteOptions?.non?.color || C.red}
+                onClick={() => onVote?.('non')}
+              />
+            </div>
           </PhaseBlock>
         )}
 
@@ -387,29 +398,19 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             phase="RESULT"
             label={t('COUNCIL_PHASE_RESULT', loadLang())}
             icon="✦"
-            accentColor={voteResult.vote === 'phare' ? C.gold :
-              voteResult.vote === 'boussole' ? C.purple :
-              voteResult.vote === 'oui' ? C.green : C.red}
+            accentColor={voteResult.vote === 'oui' ? C.green : C.red}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
             <div style={bubble(
-              voteResult.vote === 'phare' ? C.gold :
-              voteResult.vote === 'boussole' ? C.purple :
               voteResult.vote === 'oui' ? C.green : C.red,
               { marginBottom: '0.7rem' }
             )}>
               <div style={{
                 fontFamily: FONT.mono, fontSize: '0.40rem',
-                color: voteResult.vote === 'phare' ? C.gold :
-                  voteResult.vote === 'boussole' ? C.purple :
-                  voteResult.vote === 'oui' ? C.green : C.red,
+                color: voteResult.vote === 'oui' ? C.green : C.red,
                 letterSpacing: '0.14em', marginBottom: '0.5rem',
               }}>
-                DÉCISION DU PEUPLE — {
-                  voteResult.vote === 'phare' ? '☉ PHARE' :
-                  voteResult.vote === 'boussole' ? '☽ BOUSSOLE' :
-                  voteResult.vote === 'oui' ? '✓ OUI' : '✕ NON'
-                }
+                DÉCISION DU PEUPLE — {voteResult.vote === 'oui' ? '✓ OUI' : '✕ NON'}
               </div>
               <p style={{ fontFamily: FONT.mono, fontSize: '0.50rem', color: C.text, lineHeight: 1.6, margin: 0 }}>
                 {voteResult.label}
@@ -417,11 +418,9 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             </div>
 
             <VoteJauge
-              type={voteResult.voteType || 'referendum'}
+              type="referendum"
               oui={voteResult.oui}
               non={voteResult.non}
-              phare={voteResult.phare}
-              boussole={voteResult.boussole}
             />
 
             {isRunning && (

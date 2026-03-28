@@ -332,6 +332,24 @@ export default function useConstitutionModal(props) {
             if (onSuccess) setTimeout(() => onSuccess(newMinister.id), 0);
         }, []);
 
+    // Ajouter un président custom (3e)
+    const addPresident = useCallback((nouveau) => {
+        const id = nouveau.id;
+        setConstitution(prev => ({
+            ...prev,
+            presidency: { ...prev.presidency, [id]: nouveau },
+            activePres: [...prev.activePres, id],
+        }));
+    }, []);
+
+    // Supprimer un président custom (non-phare, non-boussole)
+    const deletePresident = useCallback((id) => {
+        setConstitution(prev => {
+            const { [id]: _, ...reste } = prev.presidency;
+            return { ...prev, presidency: reste, activePres: prev.activePres.filter(k => k !== id) };
+        });
+    }, []);
+
     // Supprimer ministère custom
     const deleteMinister = useCallback((ministerId) => {
         setConstitution(prev => {
@@ -370,6 +388,8 @@ export default function useConstitutionModal(props) {
         updatePresidency,
         togglePresident,
         setActivePres,
+        addPresident,
+        deletePresident,
 
         // Actions ministres
         toggleMinister,

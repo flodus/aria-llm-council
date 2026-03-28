@@ -29,6 +29,7 @@ import {
     PromptEditor
 } from './constitution';
 import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
+import EmojiPicker from '../../../shared/components/EmojiPicker';
 
 // Helpers localStorage pour les overrides (copié de l'ancien)
 function readOv()   { try { return JSON.parse(localStorage.getItem('aria_agents_override')||'null'); } catch { return null; } }
@@ -95,6 +96,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     const [confirmReset, setConfirmReset] = useState(false);
 
     // États pour l'onglet régime
+    const [emoji, setEmoji]   = useState(country?.emoji || '🌍');
     const [regime, setRegime] = useState(country?.regime || 'democratie_liberale');
     const rawReal = (isEn ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === country?.id);
     const ctxGeo  = rawReal?.triple_combo        || country?.geoContext  || '';
@@ -139,12 +141,16 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         deleteMinister,
         deleteMinistry,
         setAllMinistersActive,
-        setAllMinistriesActive
+        setAllMinistriesActive,
+        addPresident,
+        deletePresident,
     } = useConstitutionModal(country?.governance);
 
-    // États pour l'UI des nouveaux ministres/ministères
+    // États pour l'UI des nouveaux ministres/ministères/président
     const [showNewMin, setShowNewMin] = useState(false);
     const [showNewMinistry, setShowNewMinistry] = useState(false);
+    const [showNewPresident, setShowNewPresident] = useState(false);
+    const [nPresD, setNPresD] = useState({ id: '', name: '', emoji: '★', subtitle: '', essence: '' });
     const [nMinD, setNMinD] = useState({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
     const [nMinistryD, setNMinistryD] = useState({ id:'', name:'', emoji:'🏛️', color:'#8090C0', mission:'', ministers:[] });
 
@@ -188,13 +194,16 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         // Construction de l'objet pays modifié
         const presStr = constitution.activePres.length === 0 ? 'collegiale'
         : constitution.activePres.length === 1
-        ? (constitution.activePres[0] === 'phare' ? 'solaire' : 'lunaire')
-        : 'duale';
+        ? (constitution.activePres[0] === 'phare' ? 'solaire' : constitution.activePres[0] === 'boussole' ? 'lunaire' : 'solaire')
+        : constitution.activePres.length === 2
+        ? 'duale'
+        : 'trinaire';
 
         const regimeData = getStats().regimes?.[regime] || {};
 
         const updatedCountry = {
             ...country,
+            emoji,
             regime,
             regimeName: regimeData.name || regime,
             regimeEmoji: regimeData.emoji || '🏛️',
@@ -323,6 +332,20 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         {/* ---------- ONGLET RÉGIME ---------- */}
         {activeTab === 'regime' && (
             <>
+            {/* Emoji pays */}
+            <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
+            <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
+            {isEn ? 'COUNTRY EMOJI' : 'EMOJI DU PAYS'}
+            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.3rem' }}>
+                <span style={{ fontSize: '2rem', lineHeight: 1 }}>{emoji}</span>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.44rem', color: 'rgba(140,160,200,0.55)' }}>
+                    {country?.nom}
+                </span>
+            </div>
+            <EmojiPicker value={emoji} onChange={setEmoji} />
+            </section>
+
             {/* Régime */}
             <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
             <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
@@ -501,36 +524,115 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         )}
 
         {/* ---------- ONGLET PRÉSIDENCE ---------- */}
-        {activeTab === 'presidency' && (
+        {activeTab === 'presidency' && (() => {
+            // Ordre canonique : phare, boussole, puis custom
+            const ORDRE = ['phare', 'boussole'];
+            const presEntries = [
+                ...ORDRE.map(id => [id, constitution.presidency?.[id]]).filter(([, d]) => d),
+                ...Object.entries(constitution.presidency || {}).filter(([k, d]) => d && !ORDRE.includes(k)),
+            ];
+            const ACCENTS_PRES = ['rgba(200,164,74,0.88)', 'rgba(140,100,220,0.85)', 'rgba(60,200,140,0.85)'];
+            return (
             <>
+            {/* Tuiles preset (0-2 présidents prédéfinis) */}
             <PresidencyTiles
                 presType={activePresToType(constitution.activePres)}
                 onSelect={v => { setActivePres(typeToActivePres(v)); setSelectedPresident(null); }}
                 isEn={isEn}
             />
-            {/* Boutons configurer pour les présidents actifs */}
-            {constitution.activePres.length > 0 && (
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-                    {constitution.activePres.map(pid => {
-                        const p = constitution.presidency[pid];
+            {/* Description 0-3 présidents */}
+            <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: '0.3rem 0 0.5rem', lineHeight: 1.5 }}>
+                {isEn
+                    ? `${presEntries.length}/3 figures — 0 to 3 presidents active. No presidency → collegial mode.`
+                    : `${presEntries.length}/3 figures — 0 à 3 présidents actifs. Sans présidence → mode collégial.`}
+            </p>
+
+            {/* Boutons configurer pour tous les présidents */}
+            {presEntries.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.4rem' }}>
+                    {presEntries.map(([pid, p], i) => {
                         if (!p) return null;
                         const isSel = selectedPresident === pid;
+                        const acc   = ACCENTS_PRES[i] || ACCENTS_PRES[ACCENTS_PRES.length - 1];
+                        const isActif = constitution.activePres.includes(pid);
                         return (
                             <button key={pid}
                                 onClick={() => setSelectedPresident(isSel ? null : pid)}
                                 style={{
                                     fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.42rem',
                                     padding: '0.25rem 0.65rem', borderRadius: '2px', cursor: 'pointer',
-                                    background: isSel ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.03)',
-                                    border: `1px solid ${isSel ? 'rgba(200,164,74,0.45)' : 'rgba(140,160,200,0.15)'}`,
-                                    color: isSel ? 'rgba(200,164,74,0.90)' : 'rgba(140,160,200,0.55)',
+                                    background: isSel ? acc.replace('0.88','0.12').replace('0.85','0.12') : 'rgba(255,255,255,0.03)',
+                                    border: `1px solid ${isSel ? acc.replace('0.88','0.45').replace('0.85','0.45') : 'rgba(140,160,200,0.15)'}`,
+                                    color: isActif ? acc : 'rgba(140,160,200,0.35)',
+                                    opacity: isActif ? 1 : 0.5,
                                 }}>
-                                {pid === 'phare' ? '☉' : '☽'} {isEn ? `Configure ${p.name}` : `Configurer ${p.name}`}
+                                {p.symbol || p.emoji || '★'} {isEn ? `Configure ${p.name}` : `Configurer ${p.name}`}
                             </button>
                         );
                     })}
+                    {/* Bouton ajouter un 3e président */}
+                    {presEntries.length < 3 && (
+                        <button
+                            onClick={() => setShowNewPresident(v => !v)}
+                            style={{
+                                fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.42rem',
+                                padding: '0.25rem 0.65rem', borderRadius: '2px', cursor: 'pointer',
+                                background: 'transparent',
+                                border: '1px dashed rgba(60,200,140,0.30)',
+                                color: 'rgba(60,200,140,0.60)',
+                            }}>
+                            + {isEn ? 'Add president' : 'Ajouter'}
+                        </button>
+                    )}
                 </div>
             )}
+
+            {/* Formulaire nouveau président */}
+            {showNewPresident && (
+                <section style={{ ...CARD_STYLE, border: '1px solid rgba(60,200,140,0.22)', padding: '0.7rem', marginBottom: '0.5rem' }}>
+                    <h3 style={{ fontSize: '0.50rem', color: 'rgba(60,200,140,0.65)', marginBottom: '0.5rem' }}>
+                        + {isEn ? 'NEW PRESIDENT' : 'NOUVEAU PRÉSIDENT'}
+                    </h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr', gap: '0.38rem', marginBottom: '0.28rem' }}>
+                        <details style={{ position: 'relative' }}>
+                            <summary style={{ listStyle: 'none', cursor: 'pointer', fontSize: '1.2rem', width: '2.8rem', textAlign: 'center', padding: '0.2rem', border: '1px solid rgba(60,200,140,0.25)', borderRadius: '2px' }}>
+                                {nPresD.emoji || '★'}
+                            </summary>
+                            <div style={{ position: 'absolute', zIndex: 200, top: '2.4rem', left: 0, background: 'rgba(8,13,22,0.98)', border: '1px solid rgba(60,200,140,0.22)', borderRadius: '3px', padding: '0.5rem', width: '340px' }}>
+                                <EmojiPicker value={nPresD.emoji} onChange={e => setNPresD(d => ({ ...d, emoji: e }))} />
+                            </div>
+                        </details>
+                        <input style={INPUT_STYLE} value={nPresD.name} placeholder={isEn ? 'Name' : 'Nom'}
+                            onChange={e => setNPresD(d => ({ ...d, name: e.target.value }))} />
+                        <input style={INPUT_STYLE} value={nPresD.id} placeholder="id_unique"
+                            onChange={e => setNPresD(d => ({ ...d, id: e.target.value }))} />
+                    </div>
+                    <input style={{ ...INPUT_STYLE, marginBottom: '0.28rem' }} value={nPresD.subtitle}
+                        placeholder={isEn ? 'Subtitle (optional)' : 'Sous-titre (optionnel)'}
+                        onChange={e => setNPresD(d => ({ ...d, subtitle: e.target.value }))} />
+                    <textarea style={{ ...INPUT_STYLE, minHeight: '38px', resize: 'vertical', fontFamily: FONT, lineHeight: 1.5, marginBottom: '0.38rem' }}
+                        value={nPresD.essence} placeholder={isEn ? 'Essence…' : 'Essence…'}
+                        onChange={e => setNPresD(d => ({ ...d, essence: e.target.value }))} />
+                    <div style={{ display: 'flex', gap: '0.38rem', justifyContent: 'flex-end' }}>
+                        <button style={BTN_SECONDARY} onClick={() => { setShowNewPresident(false); setNPresD({ id:'', name:'', emoji:'★', subtitle:'', essence:'' }); }}>
+                            {isEn ? 'Cancel' : 'Annuler'}
+                        </button>
+                        <button
+                            style={{ ...BTN_PRIMARY, opacity: nPresD.name && nPresD.id ? 1 : 0.35 }}
+                            disabled={!nPresD.name || !nPresD.id}
+                            onClick={() => {
+                                const id = nPresD.id.trim().toLowerCase().replace(/\s+/g,'_');
+                                addPresident({ id, name: nPresD.name.trim(), symbol: nPresD.emoji, emoji: nPresD.emoji, subtitle: nPresD.subtitle.trim() || (isEn ? 'Custom president' : 'Président personnalisé'), essence: nPresD.essence.trim(), custom: true });
+                                setShowNewPresident(false);
+                                setNPresD({ id:'', name:'', emoji:'★', subtitle:'', essence:'' });
+                                setSelectedPresident(id);
+                            }}>
+                            {isEn ? 'Create' : 'Créer'}
+                        </button>
+                    </div>
+                </section>
+            )}
+
             {selectedPresident && constitution.presidency[selectedPresident] && (
                 <PresidentDetail
                     president={constitution.presidency[selectedPresident]}
@@ -539,11 +641,13 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                     isSelected={true}
                     onToggleActive={() => togglePresident(selectedPresident)}
                     onUpdateField={(field, value) => updatePresidency(selectedPresident, field, value)}
+                    onDelete={constitution.presidency[selectedPresident]?.custom ? () => { deletePresident(selectedPresident); setSelectedPresident(null); } : undefined}
                     onClose={() => setSelectedPresident(null)}
                 />
             )}
             </>
-        )}
+            );
+        })()}
 
         {/* ---------- ONGLET MINISTÈRES ---------- */}
         {activeTab === 'ministries' && (
