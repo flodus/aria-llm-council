@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-27_
+_Dernière mise à jour : 2026-03-28_
 
 ---
 
@@ -66,6 +66,16 @@ _(bloqué sur refonte carte V1)_
 
 ---
 
+## ✅ LIVRÉ cette session (2026-03-28)
+
+- [x] **Refactor Settings** : Settings.jsx + Settings.css → `src/features/settings/` · composants dans `components/` · hook `useAccordion.js` · utils `settingsStorage.js` · `index.js` point d'entrée · App.jsx mis à jour
+- [x] **Git cleanup** : branches `chore/todo-update` + `refactor/llmcouncil-split` mergées dans main et supprimées local + distant
+- [x] **shared/hooks/useAccordion.js** : déplacé de `features/settings/hooks/` → `shared/hooks/` · branché sur Settings (4 sections) + GovernanceForm
+- [x] **shared/utils/storage.js** : primitives `lireStorage` / `ecrireStorage` / `supprimerStorage` · settingsStorage.js migré dessus
+- [ ] **Dashboard_p1 — refactor futur** : extraire `getOptions/saveOptions` → `src/shared/utils/optionsStorage.js` · extraire les constantes (MINISTERS, MINISTRIES, REGIMES...) → `src/shared/data/` · Dashboard_p1 ne devrait plus être un fichier fourre-tout importé partout
+
+---
+
 ## ✅ LIVRÉ cette session (2026-03-27)
 
 - [x] **UX — Lisibilité** : `font-size: 22px` sur `:root` · textes plus grands sans tout retoucher
@@ -92,4 +102,4 @@ _(bloqué sur refonte carte V1)_
 ---
 
 ## 📁 Fichiers actifs
-`InitScreen.jsx` · `Dashboard_p1.jsx` · `App.jsx` · `Settings.jsx`
+`src/features/settings/` · `Dashboard_p1.jsx` · `App.jsx`

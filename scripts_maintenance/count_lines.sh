@@ -105,14 +105,14 @@ compter_et_ecrire() {
 if [ -d "$SOURCE_DIR" ]; then
     while IFS= read -r fichier; do
         compter_et_ecrire "$fichier"
-    done < <(find "$SOURCE_DIR" -maxdepth 1 -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.ts" -o -name "*.tsx" -o -name "*.py" -o -name "*.java" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.rb" -o -name "*.php" -o -name "*.go" -o -name "*.rs" -o -name "*.sh" \) 2>/dev/null)
+    done < <(find "$SOURCE_DIR" -maxdepth 1 -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.css" -o -name "*.ts" -o -name "*.tsx" -o -name "*.py" -o -name "*.java" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.rb" -o -name "*.php" -o -name "*.go" -o -name "*.rs" -o -name "*.sh" \) 2>/dev/null)
 fi
 
 # 2. Traiter src/features/ (uniquement les fichiers directement dans features/)
 if [ -d "$SOURCE_DIR/features" ]; then
     while IFS= read -r fichier; do
         compter_et_ecrire "$fichier"
-    done < <(find "$SOURCE_DIR/features" -maxdepth 1 -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.ts" -o -name "*.tsx" -o -name "*.py" -o -name "*.java" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.rb" -o -name "*.php" -o -name "*.go" -o -name "*.rs" -o -name "*.sh" \) 2>/dev/null)
+    done < <(find "$SOURCE_DIR/features" -maxdepth 1 -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.css"  -o -name "*.ts" -o -name "*.tsx" -o -name "*.py" -o -name "*.java" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.rb" -o -name "*.php" -o -name "*.go" -o -name "*.rs" -o -name "*.sh" \) 2>/dev/null)
 fi
 
 # 3. Traiter chaque sous-dossier de src/features/ RÉCURSIVEMENT
@@ -120,7 +120,7 @@ if [ -d "$SOURCE_DIR/features" ]; then
     while IFS= read -r sous_dossier; do
         while IFS= read -r fichier; do
             compter_et_ecrire "$fichier"
-        done < <(find "$sous_dossier" -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.ts" -o -name "*.tsx" -o -name "*.py" -o -name "*.java" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.rb" -o -name "*.php" -o -name "*.go" -o -name "*.rs" -o -name "*.sh" \) 2>/dev/null)
+        done < <(find "$sous_dossier" -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.css" -o -name "*.ts" -o -name "*.tsx" -o -name "*.py" -o -name "*.java" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.rb" -o -name "*.php" -o -name "*.go" -o -name "*.rs" -o -name "*.sh" \) 2>/dev/null)
     done < <(find "$SOURCE_DIR/features" -mindepth 1 -maxdepth 1 -type d)
 fi
 
@@ -128,7 +128,7 @@ fi
 while IFS= read -r dossier; do
     while IFS= read -r fichier; do
         compter_et_ecrire "$fichier"
-    done < <(find "$dossier" -maxdepth 2 -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.ts" -o -name "*.tsx" -o -name "*.py" -o -name "*.java" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.rb" -o -name "*.php" -o -name "*.go" -o -name "*.rs" -o -name "*.sh" \) 2>/dev/null)
+    done < <(find "$dossier" -maxdepth 2 -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.ts" -o -name "*.css"  -o -name "*.tsx" -o -name "*.py" -o -name "*.java" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.rb" -o -name "*.php" -o -name "*.go" -o -name "*.rs" -o -name "*.sh" \) 2>/dev/null)
 done < <(find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d ! -name "features")
 
 # Construire le rapport unique alertes + warnings
