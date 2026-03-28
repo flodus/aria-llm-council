@@ -55,12 +55,12 @@ export default function AgentGrid({ agents, selectedId, activeIds, onAgentClick,
               {onEditEmoji ? (
                 <span
                   onClick={e => e.stopPropagation()}
-                  style={{ opacity: on ? 1 : 0.28, filter: on ? 'none' : 'grayscale(1)', transition: 'all 0.13s' }}
+                  style={{ opacity: on ? 1 : 0.45, filter: on ? 'none' : 'grayscale(1)', transition: 'all 0.13s' }}
                 >
                   <EmojiPicker compact value={a.emoji} onChange={emoji => onEditEmoji(a.id, emoji)} />
                 </span>
               ) : (
-                <span style={{ fontSize: '0.85rem', opacity: on ? 1 : 0.28, filter: on ? 'none' : 'grayscale(1)', transition: 'all 0.13s' }}>
+                <span style={{ fontSize: '0.85rem', opacity: on ? 1 : 0.45, filter: on ? 'none' : 'grayscale(1)', transition: 'all 0.13s' }}>
                   {a.emoji}
                 </span>
               )}

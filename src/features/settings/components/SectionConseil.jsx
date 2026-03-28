@@ -252,7 +252,8 @@ export default function SectionConseil() {
                 activeIds={ministresAssignes}
                 onAgentClick={toggleMinistre}
                 onResetAll={() => updateAgent(`ministries.${selectedMin2}.ministers`, ministryData.ministers || [])}
-                countLabel={isEn ? `${ministresAssignes.length} ASSIGNED MINISTERS` : `${ministresAssignes.length} MINISTRES ASSIGNÉS`}
+                onEditEmoji={(id, emoji) => handleEditEmoji('ministers', id, emoji)}
+                countLabel={isEn ? `${ministresAssignes.length} MINISTRES ASSIGNÉS — clic pour toggle` : `${ministresAssignes.length} ASSIGNED MINISTERS — click to toggle`}
                 lang={lang}
                 />
             )}
