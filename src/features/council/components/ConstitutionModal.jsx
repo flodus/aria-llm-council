@@ -13,7 +13,8 @@
 import { useState, useEffect } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
-import { getStats, getAgents, getOptions, DEFAULT_OPTIONS } from '../../../Dashboard_p1';
+import { getStats, getOptions, DEFAULT_OPTIONS } from '../../../Dashboard_p1';
+import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 import { getDestin } from '../services/agentsManager';
 import AgentGrid from '../../../shared/components/AgentGrid';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
@@ -85,11 +86,15 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     const savedGov  = getOptions().defaultGovernance || {};
     const globalGov = {
         presidency:  savedGov.presidency  || 'duale',
-        ministries:  savedGov.ministries  || getAgents().ministries.filter(m => m.base).map(m => m.id),
+        ministries:  savedGov.ministries  || getAgentsEffectifs().ministries.filter(m => m.base).map(m => m.id),
     };
     const current = { ...globalGov, ...(country?.governanceOverride || {}) };
-    const BASE_IDS = getAgents().ministries.filter(m => m.base).map(m => m.id);
+    const BASE_IDS = getAgentsEffectifs().ministries.filter(m => m.base).map(m => m.id);
 
+
+    // Version emoji — force le recalcul après sauvegarde
+    const [emojiVersion, setEmojiVersion] = useState(0);
+    const presSymbols = (() => { const ov = getEmojiOverrides(); return ov.presidency || {}; })();
 
     // État local pour l'onglet actif
     const [activeTab, setActiveTab] = useState('regime');
@@ -539,6 +544,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 presType={activePresToType(constitution.activePres)}
                 onSelect={v => { setActivePres(typeToActivePres(v)); setSelectedPresident(null); }}
                 isEn={isEn}
+                presSymbols={presSymbols}
+                onEditEmoji={(presId, emoji) => { sauvegarderEmojiAgent('presidency', presId, emoji); setEmojiVersion(v => v + 1); }}
             />
             {/* Description 0-3 présidents */}
             <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: '0.3rem 0 0.5rem', lineHeight: 1.5 }}>
@@ -772,7 +779,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             const destin = getDestin();
             const destingIds = destin?.agents || [];
             const destAgents = destingIds
-                .map(id => ({ id, ...(constitution.ministers?.[id] || getAgents().ministers?.[id] || {}) }))
+                .map(id => ({ id, ...(constitution.ministers?.[id] || getAgentsEffectifs().ministers?.[id] || {}) }))
                 .filter(a => a.name);
 
             const toggleDestinAgent = (id) => {
@@ -805,6 +812,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                     }
                 }}
                 onResetAll={() => setActiveDestinAgents(destin?.agents || [])}
+                onEditEmoji={(id, emoji) => { sauvegarderEmojiAgent('ministers', id, emoji); setEmojiVersion(v => v + 1); }}
                 countLabel={`${destAgents.length} ${isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}`}
                 lang={lang}
                 />

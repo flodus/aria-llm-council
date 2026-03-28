@@ -13,7 +13,8 @@
 
 import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
-import { getAgents } from '../../../Dashboard_p1';
+import { getAgentsEffectifs } from '../../../shared/utils/agentsOverrides';
+import { sauvegarderEmojiAgent } from '../../../shared/utils/agentsOverrides';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { Hint, ActiveToggle, ColorPicker, EmojiPicker, DeleteButton } from './government';
 import AgentGrid from '../../../shared/components/AgentGrid';
@@ -32,7 +33,7 @@ export default function MinistriesDetail({
     setPlAgents
 }) {
     const { lang } = useLocale();
-    const BASE_IDS = getAgents().ministries.filter(m => m.base).map(m => m.id);
+    const BASE_IDS = getAgentsEffectifs().ministries.filter(m => m.base).map(m => m.id);
 
     // ── Helpers grille ────────────────────────────────────────────────────
 
@@ -87,6 +88,10 @@ export default function MinistriesDetail({
             activeIds={activeMins}
             onAgentClick={handleGridClickMin}
             onResetAll={() => { setActiveMins(null); setSelectedMinistry(null); }}
+            onEditEmoji={(id, emoji) => {
+                sauvegarderEmojiAgent('ministries', id, emoji);
+                setPlAgents(p => ({ ...p, ministries: p.ministries.map(m => m.id === id ? { ...m, emoji } : m) }));
+            }}
             countLabel={`${plAgents.ministries.length} ${lang === 'en' ? 'MINISTRIES' : 'MINISTÈRES'}`}
             lang={lang}
         />
