@@ -20,7 +20,7 @@ export default function RecapAccordion({ pendingDefs, perGov, commonAgents, comm
     const [openIdx, setOpenIdx] = useState(null); // index du pays ouvert
 
     return (
-        <div style={{ display:'flex', flexDirection:'column', gap:'0.45rem', maxHeight:'55vh', overflowY:'auto' }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:'0.45rem' }}>
         {(pendingDefs||[]).map((d, i) => {
             const nom     = d.nom?.trim() || d.realData?.nom || `Nation ${i+1}`;
             const flag    = d.realData?.flag || d.realData?.emoji || d.emoji || '🌐';

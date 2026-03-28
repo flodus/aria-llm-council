@@ -16,6 +16,7 @@ import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle }
 import { Hint, ActiveToggle, ColorPicker, EmojiPicker, DeleteButton } from './government';
 import AgentGrid from '../../../shared/components/AgentGrid';
 import { getDestin } from '../../council/services/agentsManager';
+import { sauvegarderEmojiAgent } from '../../../shared/utils/agentsOverrides';
 
 export default function MinistersDetail({
     plAgents,
@@ -81,6 +82,10 @@ export default function MinistersDetail({
             activeIds={activeMinsters}
             onAgentClick={handleGridClickMinster}
             onResetAll={() => { setActiveMinsters(null); setSelectedMinister(null); }}
+            onEditEmoji={(id, emoji) => {
+                sauvegarderEmojiAgent('ministers', id, emoji);
+                setPlAgents(p => ({ ...p, ministers: { ...p.ministers, [id]: { ...p.ministers[id], emoji } } }));
+            }}
             countLabel={`${allEntries.length} ${lang === 'en' ? 'MINISTERS' : 'MINISTRES'}`}
             lang={lang}
         />

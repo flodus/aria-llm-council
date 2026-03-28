@@ -1,36 +1,26 @@
 // src/features/settings/components/SectionConseil.jsx
 // SECTION CONSEIL — Gouvernement, ministres, présidence, destinée
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useLocale } from '../../../ariaI18n';
-import { getAgents, getStats, getOptions, saveOptions } from '../../../Dashboard_p1';
+import { getStats, getOptions, saveOptions } from '../../../Dashboard_p1';
 import { getDestin } from '../../council/services/agentsManager';
 import AgentGrid from '../../../shared/components/AgentGrid';
 import PresidencyTiles from '../../../shared/components/PresidencyTiles';
 import { SectionTitle, Field, TextArea, SaveBadge } from '../ui/SettingsUI';
 import SectionGouvernanceDefaut from './SectionGouvernanceDefaut';
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  UTILITAIRES LOCAUX
-// ─────────────────────────────────────────────────────────────────────────────
-
-function getAgentOverrides() {
-    try { return JSON.parse(localStorage.getItem('aria_agents') || '{}'); } catch { return {}; }
-}
-
-function saveAgentOverrides(a) {
-    try { localStorage.setItem('aria_agents', JSON.stringify(a)); } catch {}
-}
+import { getAgentOverrides, saveAgentOverrides } from '../utils/settingsStorage';
+import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 
 function getMinisterLabels() {
-    const ag = getAgents();
+    const ag = getAgentsEffectifs();
     return Object.fromEntries(
         Object.entries(ag.ministers || {}).map(([k, m]) => [k, `${m.name} (${m.sign})`])
     );
 }
 
 function getMinistryLabels() {
-    const ag = getAgents();
+    const ag = getAgentsEffectifs();
     const mins = Array.isArray(ag.ministries) ? ag.ministries : Object.values(ag.ministries || {});
     return Object.fromEntries(mins.map(m => [m.id, `${m.emoji||''} ${m.name}`]));
 }
@@ -49,6 +39,7 @@ export default function SectionConseil() {
         return opts.defaultGovernance?.destiny_mode === true ? null : [];
     });
     const [saved, setSaved] = useState(false);
+    const [emojiVersion, setEmojiVersion] = useState(0);
 
     // Gouvernance → Destinée : intercepte les changements de destiny_mode sans passer par useEffect
     const handleSetGovOpts = (newOpts) => {
@@ -122,12 +113,27 @@ export default function SectionConseil() {
         return obj ?? fallback;
     };
 
-    // Données dynamiques localisées
-    const liveAgents    = getAgents();
+    // Données dynamiques localisées — recalculées à chaque changement d'emoji
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const liveAgents    = useMemo(() => getAgentsEffectifs(), [emojiVersion]);
     const liveMinsters  = liveAgents.ministers  || {};
     const liveMinstries = Array.isArray(liveAgents.ministries)
     ? Object.fromEntries(liveAgents.ministries.map(m=>[m.id,m]))
     : (liveAgents.ministries || {});
+
+    // Callback émoji — sauvegarde + re-render
+    const handleEditEmoji = (categorie, id, emoji) => {
+        sauvegarderEmojiAgent(categorie, id, emoji);
+        setEmojiVersion(v => v + 1);
+    };
+
+    // Symboles présidence surchargés
+    const emojiOv = getEmojiOverrides();
+    const presSymbols = {
+        phare:    emojiOv.presidency?.phare    || '☉',
+        boussole: emojiOv.presidency?.boussole || '☽',
+        trinaire: emojiOv.presidency?.trinaire || '★',
+    };
 
     const minData = liveMinsters[selectedMin] || {};
     const minFallback = (key) => minData[key] || '';
@@ -183,11 +189,12 @@ export default function SectionConseil() {
         {tab === 'ministres' && (
             <div>
             <AgentGrid
-            agents={Object.entries(getAgents().ministers || {}).filter(([id]) => !new Set(getDestin()?.agents || []).has(id)).map(([id, m]) => ({ id, name: (ministerLabels[id]?.split(' (')[0] || id).replace(/^(Le |La |L')/, ''), emoji: m.emoji, color: m.color }))}
+            agents={Object.entries(liveAgents.ministers || {}).filter(([id]) => !new Set(getDestin()?.agents || []).has(id)).map(([id, m]) => ({ id, name: (ministerLabels[id]?.split(' (')[0] || id).replace(/^(Le |La |L')/, ''), emoji: m.emoji, color: m.color }))}
             selectedId={selectedMin}
             activeIds={null}
             onAgentClick={setSelectedMin}
             onResetAll={null}
+            onEditEmoji={(id, emoji) => handleEditEmoji('ministers', id, emoji)}
             countLabel={isEn ? 'SELECT A MINISTER' : 'SÉLECTIONNER UN MINISTRE'}
             lang={lang}
             />
@@ -212,17 +219,43 @@ export default function SectionConseil() {
             </div>
         )}
 
-        {tab === 'ministeres' && (
+        {tab === 'ministeres' && (() => {
+            const destIds = new Set(getDestin()?.agents || []);
+            const tousMinistres = Object.entries(liveAgents.ministers || {})
+                .filter(([id]) => !destIds.has(id))
+                .map(([id, m]) => ({ id, name: (ministerLabels[id]?.split(' (')[0] || id).replace(/^(Le |La |L')/, ''), emoji: m.emoji, color: m.color }));
+            // Liste assignée : priorité override local, sinon données de base
+            const ministresAssignes = getVal(`ministries.${selectedMin2}.ministers`, ministryData.ministers || []);
+            const toggleMinistre = (mId) => {
+                const next = ministresAssignes.includes(mId)
+                    ? ministresAssignes.filter(id => id !== mId)
+                    : [...ministresAssignes, mId];
+                updateAgent(`ministries.${selectedMin2}.ministers`, next);
+            };
+            return (
             <div>
             <AgentGrid
-            agents={getAgents().ministries.map(m => ({ id: m.id, name: (ministryLabels[m.id] || m.id).split(' ').slice(1).join(' ') || m.id, emoji: m.emoji, color: m.color }))}
+            agents={(Array.isArray(liveAgents.ministries) ? liveAgents.ministries : Object.values(liveAgents.ministries || {})).map(m => ({ id: m.id, name: (ministryLabels[m.id] || m.id).split(' ').slice(1).join(' ') || m.id, emoji: m.emoji, color: m.color }))}
             selectedId={selectedMin2}
             activeIds={null}
             onAgentClick={setSelectedMin2}
             onResetAll={null}
+            onEditEmoji={(id, emoji) => handleEditEmoji('ministries', id, emoji)}
             countLabel={isEn ? 'SELECT A MINISTRY' : 'SÉLECTIONNER UN MINISTÈRE'}
             lang={lang}
             />
+
+            {selectedMin2 && (
+                <AgentGrid
+                agents={tousMinistres}
+                selectedId={null}
+                activeIds={ministresAssignes}
+                onAgentClick={toggleMinistre}
+                onResetAll={() => updateAgent(`ministries.${selectedMin2}.ministers`, ministryData.ministers || [])}
+                countLabel={isEn ? `${ministresAssignes.length} ASSIGNED MINISTERS` : `${ministresAssignes.length} MINISTRES ASSIGNÉS`}
+                lang={lang}
+                />
+            )}
 
             <Field label={trC.missionLabel} hint={trC.missionHint}>
             <TextArea value={getVal(`ministries.${selectedMin2}.mission`, ministryFallback('mission'))}
@@ -230,17 +263,17 @@ export default function SectionConseil() {
             />
             </Field>
 
-            {(ministryData.ministers || []).map(mKey => (
+            {ministresAssignes.map(mKey => (
                 <Field key={mKey} label={`${trC.rolePrefix} — ${(ministerLabels[mKey]?.split(' (')[0] || mKey).replace(/^(Le |La |L')/, '')}`}
                 hint={trC.roleHint}>
-                <TextArea value={getVal(`ministries.${selectedMin2}.${mKey}`,
-                                        ministryData.ministerPrompts?.[mKey] || '')}
-                                        onChange={v => updateAgent(`ministries.${selectedMin2}.${mKey}`, v)}
-                                        />
-                                        </Field>
+                <TextArea value={getVal(`ministries.${selectedMin2}.${mKey}`, ministryData.ministerPrompts?.[mKey] || '')}
+                onChange={v => updateAgent(`ministries.${selectedMin2}.${mKey}`, v)}
+                />
+                </Field>
             ))}
             </div>
-        )}
+            );
+        })()}
 
         {tab === 'presidence' && (() => {
             return (
@@ -266,7 +299,7 @@ export default function SectionConseil() {
                             transition: 'all 0.15s', fontFamily: 'inherit',
                         }}
                         >
-                        <span style={{ fontSize: '1.15rem', minWidth: '1.4rem', color: clr }}>{agent.symbol}</span>
+                        <span style={{ fontSize: '1.15rem', minWidth: '1.4rem', color: clr }}>{presSymbols[key] || agent.symbol}</span>
                         <div style={{ flex: 1 }}>
                         <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.56rem', letterSpacing: '0.10em', color: isOpen ? clr : 'rgba(200,215,240,0.50)' }}>{agent.name}</div>
                         {agent.subtitle && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.44rem', color: 'rgba(140,160,200,0.48)', marginTop: '0.08rem' }}>{agent.subtitle}</div>}

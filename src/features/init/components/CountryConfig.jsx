@@ -5,7 +5,7 @@
 //
 //  Gère les deux types de pays : fictif (imaginaire) et réel.
 //  En mode IA + réel : validation temps réel via RestCountries (debounce 700ms).
-//  Inclut un ContextPanel pour le mode de contexte de délibération par pays.
+//  Le contexte de délibération est configuré dans PreLaunchScreen, pas ici.
 //
 //  Dépendances : features/init/services, shared/services/country
 // ═══════════════════════════════════════════════════════════════════════════
@@ -29,7 +29,6 @@ import {
     RealCountryLocalSection,
     FictionalCountrySection,
     RealCountryAISection,
-    ContextPanel
 } from './index';
 
 export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRemove, reelOnly = false, selectedRealIds = [] }) {
@@ -38,7 +37,6 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
 
     // Accordéon — premier pays ouvert par défaut
     const [isOpen, setIsOpen] = useState(idx === 0);
-    const [ctxPanelOpen, setCtxPanelOpen] = useState(false);
 
     // État local
     const [rcSearch, setRcSearch] = useState(c.nom || '');
@@ -120,11 +118,6 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
 
     const nomAffiche = c.nom || c.realData?.nom || null;
     const flagAffiche = c.realData?.flag || null;
-    // Icône + tooltip du mode contexte délibération (header replié)
-    const ctxIcons    = { '': '⚙️', auto: '🤖', rich: '📖', stats_only: '📊', off: '🚫' };
-    const ctxLabels   = { '': 'Hérité du global', auto: 'Auto — stats + description', rich: 'Enrichi — contexte complet', stats_only: 'Stats seules', off: 'Désactivé — aucun contexte' };
-    const ctxIcon     = c.contextOverride ? '✎' : (ctxIcons[c.context_mode || ''] ?? '⚙️');
-    const ctxTooltip  = c.contextOverride ? 'Contexte personnalisé' : (ctxLabels[c.context_mode || ''] ?? 'Hérité du global');
 
     return (
         <div style={{ ...CARD_STYLE, padding: isOpen ? '0.9rem 1rem' : '0.55rem 1rem' }}>
@@ -146,9 +139,6 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             <span style={{ ...tag, color: 'rgba(100,180,255,0.60)', border: '1px solid rgba(100,180,255,0.22)', background: 'rgba(100,180,255,0.05)' }}>
             {c.realData?.emoji || '🌐'} FICTIF
             </span>
-        )}
-        {!isOpen && c.type === 'reel' && (
-            <span style={{ fontSize: '0.78rem', opacity: 0.65, lineHeight: 1 }} title={`Contexte : ${ctxIcon} ${ctxTooltip}`}>{ctxIcon}</span>
         )}
         <span style={{ fontFamily: FONT.mono, fontSize: '0.55rem', color: 'rgba(200,164,74,0.60)', lineHeight: 1 }}>
             {isOpen ? '▲' : '▼'}
@@ -220,18 +210,7 @@ export default function CountryConfig({ c, idx, mode, onChange, onRemove, canRem
             />
         )}
 
-        {/* Contexte de délibération — pays réel uniquement */}
-        {c.type === 'reel' && (
-            <ContextPanel
-            countryName={c.nom || c.realData?.nom}
-            open={ctxPanelOpen}
-            onToggle={() => setCtxPanelOpen(o => !o)}
-            mode={c.context_mode || ''}
-            setMode={v => onChange({ ...c, context_mode: v })}
-            override={c.contextOverride || ''}
-            setOverride={v => onChange({ ...c, contextOverride: v })}
-            />
-        )}
+        {/* Contexte de délibération — configuré dans PreLaunchScreen, pas ici */}
 
         </>}
         </div>

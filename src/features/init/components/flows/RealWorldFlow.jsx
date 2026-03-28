@@ -55,10 +55,7 @@ export default function RealWorldFlow({ worldName, mode, onBack, onPreLaunch, ba
         )}
         </div>
 
-        <div style={{
-            width: '100%', display: 'flex', flexDirection: 'column', gap: '0.6rem',
-            maxHeight: '52vh', overflowY: 'auto'
-        }}>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
         {countries.map((c, idx) => {
             const tousIds = countries.map(x => x.realData?.id).filter(Boolean);
             const autresIds = tousIds.filter(id => id !== c.realData?.id);

@@ -55,10 +55,7 @@ export default function CustomFlow({ worldName, mode, onBack, onPreLaunch }) {
         )}
         </div>
 
-        <div style={{
-            width:'100%', display:'flex', flexDirection:'column', gap:'0.6rem',
-            maxHeight:'52vh', overflowY:'auto'
-        }}>
+        <div style={{ width:'100%', display:'flex', flexDirection:'column', gap:'0.6rem' }}>
         {countries.map((c, idx) => (
             <CountryConfig
             key={c.key}

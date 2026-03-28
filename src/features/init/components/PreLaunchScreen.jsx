@@ -11,13 +11,14 @@
 //  Dépendances : hooks/ (useConstitution, useCountryOverride, useIAConfig…)
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle } from '../../../shared/theme';
 import AgentGrid from '../../../shared/components/AgentGrid';
 import GovernanceForm from '../../../shared/components/GovernanceForm';
 import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
 import { getOptions, saveOptions } from '../../../Dashboard_p1';
+import { getEmojiOverrides, sauvegarderEmojiAgent } from '../../../shared/utils/agentsOverrides';
 import {
     ARIAHeader,
     RecapAccordion,
@@ -54,6 +55,8 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
     const [plTab, setPlTab] = useState('resume');
     const [confirmLaunch, setConfirmLaunch] = useState(false);
     const [selectedDestin, setSelectedDestin] = useState(null);
+    const [emojiVersion, setEmojiVersion] = useState(0);
+    const presSymbols = useMemo(() => getEmojiOverrides().presidency || {}, [emojiVersion]);
     const [govOpts, setGovOpts] = useState(() => getOptions());
     const [govModal, setGovModal] = useState(false);
     const [worldAccepted, setWorldAccepted] = useState(false);
@@ -267,7 +270,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
         )}
 
         {!constitution.plLoading && countryOverride.plAgents && (
-            <div ref={scrollRef} style={{ width: '100%', overflowY: 'auto', maxHeight: '64vh', display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+            <div ref={scrollRef} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
             {/* Onglet RÉSUMÉ */}
             {plTab === 'resume' && (
                 <>
@@ -297,6 +300,9 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                     presType={activePresToType(countryOverride.activePres)}
                     onSelect={v => countryOverride.setActivePres(typeToActivePres(v))}
                     isEn={lang === 'en'}
+                    presSymbols={presSymbols}
+                    onEditEmoji={(presId, emoji) => { sauvegarderEmojiAgent('presidency', presId, emoji); setEmojiVersion(v => v + 1); }}
+                    showTrinaire={Object.keys(countryOverride.plAgents?.presidency || {}).some(k => !['phare','boussole'].includes(k))}
                 />
 
                 {/* Toggle Destinée du monde — entre présidence et ministères */}
@@ -416,6 +422,10 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                         }
                     }}
                     onResetAll={() => countryOverride.setActiveDestinAgents(null)}
+                    onEditEmoji={(id, emoji) => {
+                        sauvegarderEmojiAgent('ministers', id, emoji);
+                        countryOverride.setPlAgents(p => ({ ...p, ministers: { ...p.ministers, [id]: { ...p.ministers[id], emoji } } }));
+                    }}
                     countLabel={`${destAgents.length} ${lang === 'en' ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}`}
                     lang={lang}
                     />
