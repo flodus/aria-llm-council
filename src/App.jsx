@@ -12,7 +12,7 @@ import BASE_AGENTS_EN from '../templates/languages/en/governance.json';
 import './App.css';
 
 import Dashboard        from './Dashboard_p3';
-import Settings         from './Settings';
+import Settings         from './features/settings';
 import InitScreen       from './features/init/InitScreen';
 import CountryPanel from './features/world/components/CountryPanel/CountryPanel';
 import EmptyPanel from './features/world/components/CountryPanel/CountryPanelEmpty';
