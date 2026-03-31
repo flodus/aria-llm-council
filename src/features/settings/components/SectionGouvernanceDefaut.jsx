@@ -1,9 +1,10 @@
 // src/features/settings/components/SectionGouvernanceDefaut.jsx
 // Sous-composant : Gouvernance par défaut (ministères actifs, présidence, destinée)
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useLocale } from '../../../ariaI18n';
-import { getAgents, getOptions } from '../../../Dashboard_p1';
+import { getOptions } from '../../../Dashboard_p1';
+import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 import { getDestin } from '../../council/services/agentsManager';
 import PresidencyTiles from '../../../shared/components/PresidencyTiles';
 import { Field, Toggle } from '../ui/SettingsUI';
@@ -14,11 +15,11 @@ import { useAccordion } from '../../../shared/hooks/useAccordion';
 // ─────────────────────────────────────────────────────────────────────────────
 
 function getAllMinistryIds() {
-    return getAgents().ministries.map(m => m.id);
+    return getAgentsEffectifs().ministries.map(m => m.id);
 }
 
 function getMinistryMeta() {
-    const agents = getAgents();
+    const agents = getAgentsEffectifs();
     const mList = Array.isArray(agents.ministries) ? agents.ministries : [];
     const result = {};
     mList.forEach(m => {
@@ -44,7 +45,7 @@ function getPresidencyOpts(isEn) {
 function getDefaultGovernance() {
     return {
         presidency: 'duale',
-        ministries: getAgents().ministries.filter(m => m.base).map(m => m.id),
+        ministries: getAgentsEffectifs().ministries.filter(m => m.base).map(m => m.id),
     };
 }
 
@@ -53,6 +54,20 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
     const isEn = lang === 'en';
     const gov = opts.defaultGovernance || getDefaultGovernance();
     const { ouvert: openAcc, basculer: toggleAcc } = useAccordion();
+    const [emojiVersion, setEmojiVersion] = useState(0);
+
+    const emojiOv = getEmojiOverrides();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const presSymbols = useMemo(() => ({
+        phare:    emojiOv.presidency?.phare    || '☉',
+        boussole: emojiOv.presidency?.boussole || '☽',
+        trinaire: emojiOv.presidency?.trinaire || '★',
+    }), [emojiVersion]);
+
+    const handleEditEmojiPres = (presId, emoji) => {
+        sauvegarderEmojiAgent('presidency', presId, emoji);
+        setEmojiVersion(v => v + 1);
+    };
 
     const setGov = (key, val) => {
         setOpts({ ...opts, defaultGovernance: { ...(opts.defaultGovernance || getDefaultGovernance()), [key]: val } });
@@ -71,7 +86,7 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
 
     const toggleMinisterSettings = (id) => {
         const dIds = new Set(getDestin()?.agents || []);
-        const allIds = Object.entries(getAgents().ministers || {})
+        const allIds = Object.entries(getAgentsEffectifs().ministers || {})
         .filter(([mid]) => !dIds.has(mid)).map(([mid]) => mid);
         const current = new Set(gov.active_ministers || allIds);
         if (current.has(id)) { if (current.size <= 1) return; current.delete(id); }
@@ -99,7 +114,8 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
             <div style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.7)', letterSpacing:'0.10em', marginBottom:'0.6rem', textTransform:'uppercase' }}>
             {isEn ? 'Presidency type' : 'Type de présidence'}
             </div>
-            <PresidencyTiles presType={gov.presidency || 'duale'} onSelect={v => setGov('presidency', v)} isEn={isEn} />
+            <PresidencyTiles presType={gov.presidency || 'duale'} onSelect={v => setGov('presidency', v)} isEn={isEn}
+                presSymbols={presSymbols} onEditEmoji={handleEditEmojiPres} />
             <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.35)', marginTop:'0.5rem', letterSpacing:'0.06em' }}>
             {isEn ? 'Applied to all new countries unless overridden' : 'Appliqué à tous les nouveaux pays sauf override'}
             </div>
@@ -116,9 +132,9 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
                 <div className="aria-accordion__body">
                 {(() => {
                     const dIds = new Set(getDestin()?.agents || []);
-                    const allMinisterIds = Object.entries(getAgents().ministers || {})
+                    const allMinisterIds = Object.entries(getAgentsEffectifs().ministers || {})
                     .filter(([id]) => !dIds.has(id)).map(([id]) => id);
-                    const ministriesData = getAgents().ministries || [];
+                    const ministriesData = getAgentsEffectifs().ministries || [];
                     return getAllMinistryIds().map(id => {
                         const meta   = getMinistryMeta()[id] || { emoji:'', label:id };
                         const activeMins = gov.ministries || getAllMinistryIds();
@@ -142,7 +158,7 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
                                     {active && ministryMinisters.length > 0 && (
                                         <div style={{ display:'flex', flexWrap:'wrap', gap:'0.3rem', paddingLeft:'2.2rem', paddingBottom:'0.3rem' }}>
                                         {ministryMinisters.map(mid => {
-                                            const m = getAgents().ministers?.[mid];
+                                            const m = getAgentsEffectifs().ministers?.[mid];
                                             if (!m || !m.emoji) return null;
                                             const activeList = gov.active_ministers || allMinisterIds;
                                             const mActive = activeList.includes(mid);
@@ -174,16 +190,16 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
             <div className={`aria-accordion${openAcc==='ministers' ? ' open' : ''}`}>
             {HDR('ministers', isEn ? 'ACTIVE MINISTERS BY DEFAULT' : 'MINISTRES ACTIFS PAR DÉFAUT', (() => {
                 const dIds = new Set(getDestin()?.agents || []);
-                const allIds = Object.entries(getAgents().ministers || {}).filter(([id]) => !dIds.has(id)).map(([id]) => id);
+                const allIds = Object.entries(getAgentsEffectifs().ministers || {}).filter(([id]) => !dIds.has(id)).map(([id]) => id);
                 return `${(gov.active_ministers || allIds).length}/${allIds.length}`;
             })())}
             {openAcc==='ministers' && (
                 <div className="aria-accordion__body">
                 {(() => {
                     const dIds = new Set(getDestin()?.agents || []);
-                    const allIds = Object.entries(getAgents().ministers || {})
+                    const allIds = Object.entries(getAgentsEffectifs().ministers || {})
                     .filter(([id]) => !dIds.has(id)).map(([id]) => id);
-                    return Object.entries(getAgents().ministers || {})
+                    return Object.entries(getAgentsEffectifs().ministers || {})
                     .filter(([id, m]) => !dIds.has(id) && m.name && m.emoji)
                     .map(([id, m]) => {
                         const activeList = gov.active_ministers || allIds;

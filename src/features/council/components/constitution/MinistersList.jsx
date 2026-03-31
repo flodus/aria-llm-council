@@ -5,7 +5,7 @@ import { useLocale } from '../../../../ariaI18n';
 import AgentGrid from '../../../../shared/components/AgentGrid';
 import { getDestin } from '../../services/agentsManager';
 
-export default function MinistersList({ ministers, activeMinsters, onMinisterClick, onSetAllActive }) {
+export default function MinistersList({ ministers, activeMinsters, onMinisterClick, onSetAllActive, onEditEmoji }) {
     const { lang } = useLocale();
 
     // Exclure oracle/wyrd (agents destin — ont leur propre onglet)
@@ -28,6 +28,7 @@ export default function MinistersList({ ministers, activeMinsters, onMinisterCli
             activeIds={activeMinsters}
             onAgentClick={onMinisterClick}
             onResetAll={onSetAllActive}
+            onEditEmoji={onEditEmoji}
             countLabel={`${sorted.length} ${lang === 'en' ? 'MINISTERS' : 'MINISTRES'}`}
             lang={lang}
         />

@@ -27,15 +27,24 @@ function rodrigues(vx, vy, vz, kx, ky, kz, angle) {
     ];
 }
 
+const AXES_BASE = [
+    [ 1, 1, 1], [-1, 1, 1], [ 1,-1, 1], [-1,-1, 1],
+    [ 1, 1,-1], [-1, 1,-1], [ 1,-1,-1], [-1,-1,-1],
+];
+
 // 8 transformations indépendantes (une par octant), issues du seed
 function genererTransforms(seed) {
     const rng = mulberry32(seed);
-    return Array.from({ length: 8 }, () => {
-        const theta = rng() * 2 * PI;
-        const phi   = Math.acos(2 * rng() - 1);
-        const ax    = Math.sin(phi) * Math.cos(theta);
-        const ay    = Math.sin(phi) * Math.sin(theta);
-        const az    = Math.cos(phi);
+    return AXES_BASE.map(([bx, by, bz]) => {
+        // Normaliser l'axe de base
+        const len0 = Math.sqrt(bx*bx + by*by + bz*bz);
+        // Ajouter perturbation seedée
+        let ax = bx/len0 + (rng() - 0.5) * 0.6;
+        let ay = by/len0 + (rng() - 0.5) * 0.6;
+        let az = bz/len0 + (rng() - 0.5) * 0.6;
+        // Re-normaliser
+        const len = Math.sqrt(ax*ax + ay*ay + az*az);
+        ax /= len; ay /= len; az /= len;
         const angle = rng() * 2 * PI;
         return { ax, ay, az, angle };
     });
@@ -60,6 +69,21 @@ export function tectoniqueTransformer(features, seed) {
         if (lon >  180) lon -= 360;
         if (lon < -180) lon += 360;
         return [lon, lat];
+    };
+
+    const normaliserRingContinument = ring => {
+        if (ring.length < 2) return ring;
+        let prevLon = ring[0][0];
+        for (let i = 1; i < ring.length; i++) {
+            let lon = ring[i][0];
+            while (lon - prevLon >  180) lon -= 360;
+            while (prevLon - lon >  180) lon += 360;
+            ring[i] = ring[i].length > 2
+                ? [lon, ring[i][1], ring[i][2]]
+                : [lon, ring[i][1]];
+            prevLon = lon;
+        }
+        return ring;
     };
 
     // Segmente un ring par octant, applique la rotation propre à chaque groupe
@@ -88,12 +112,13 @@ export function tectoniqueTransformer(features, seed) {
             .filter(g => g.pts.length >= 2)
             .map(g => {
                 const { ax, ay, az, angle } = transforms[g.oct];
-                return g.pts.map(pt => {
+                const transformé = g.pts.map(pt => {
                     const [x, y, z]     = toXYZ(pt[0], pt[1]);
                     const [rx, ry, rz]  = rodrigues(x, y, z, ax, ay, az, angle);
                     const [lon, lat]    = toLonLat(rx, ry, rz);
                     return pt.length > 2 ? [lon, lat, pt[2]] : [lon, lat];
                 });
+                return normaliserRingContinument(transformé);
             });
     };
 

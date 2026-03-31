@@ -14,17 +14,17 @@
 import { useState } from 'react';
 import { useAccordion } from '../hooks/useAccordion';
 import { useLocale } from '../../ariaI18n';
-import { getAgents } from '../../Dashboard_p1';
+import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../utils/agentsOverrides';
 import { getDestin } from '../../features/council/services/agentsManager';
 import { FONT } from '../theme';
 import PresidencyTiles from './PresidencyTiles';
 
 // ── Helpers locaux ────────────────────────────────────────────────────────────
 
-function getAllMinistryIds() { return getAgents().ministries.map(m => m.id); }
+function getAllMinistryIds() { return getAgentsEffectifs().ministries.map(m => m.id); }
 
 function getMinistryMeta() {
-    const mList = getAgents().ministries || [];
+    const mList = getAgentsEffectifs().ministries || [];
     const result = {};
     mList.forEach(m => { result[m.id] = { emoji: m.emoji || '', label: m.name || m.id }; });
     return result;
@@ -34,12 +34,12 @@ function getDestinIds() { return new Set(getDestin()?.agents || []); }
 
 function getAllMinisters() {
     const dIds = getDestinIds();
-    return Object.entries(getAgents().ministers || {})
+    return Object.entries(getAgentsEffectifs().ministers || {})
         .filter(([id, m]) => m.name && m.emoji && !dIds.has(id));
 }
 
 function getDestinAgents() {
-    const { ministers = {} } = getAgents();
+    const { ministers = {} } = getAgentsEffectifs();
     return (getDestin()?.agents || []).map(id => ({ id, ...ministers[id] })).filter(a => a.name);
 }
 
@@ -126,9 +126,19 @@ export default function GovernanceForm({ context, opts, onChange }) {
     const { lang } = useLocale();
     const isEn = lang === 'en';
     const { ouvert: openAcc, basculer: toggle } = useAccordion();
+    const [emojiVersion, setEmojiVersion] = useState(0);
 
     const gov = opts?.defaultGovernance || getDefaultGov();
     const ctxMode = opts?.gameplay?.context_mode || 'auto';
+
+    const handleEditEmojiPres = (presId, emoji) => {
+        sauvegarderEmojiAgent('presidency', presId, emoji);
+        setEmojiVersion(v => v + 1);
+    };
+
+    const emojiOv = getEmojiOverrides();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const presSymbols = { phare: emojiOv.presidency?.phare || '☉', boussole: emojiOv.presidency?.boussole || '☽', trinaire: emojiOv.presidency?.trinaire || '★' };
 
     const setGov = (key, val) => {
         onChange({
@@ -217,7 +227,8 @@ export default function GovernanceForm({ context, opts, onChange }) {
                 label={isEn ? 'DEFAULT PRESIDENCY' : 'PRÉSIDENCE PAR DÉFAUT'}
                 badge={presType}
             >
-                <PresidencyTiles presType={presType} onSelect={v => setGov('presidency', v)} isEn={isEn} />
+                <PresidencyTiles presType={presType} onSelect={v => setGov('presidency', v)} isEn={isEn}
+                    presSymbols={presSymbols} onEditEmoji={handleEditEmojiPres} />
                 <div style={{
                     fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.40rem',
                     color: 'rgba(140,160,200,0.30)', marginTop: '0.2rem', letterSpacing: '0.06em',

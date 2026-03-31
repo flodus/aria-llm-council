@@ -4,14 +4,11 @@ import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
 import * as THREE from 'three';
-
+import { CURSEUR_DEFAUT, CURSEUR_POINTER, CURSEUR_GRAB, CURSEUR_GRABBING } from '../utils/curseurs.js';
 
 
 const RAYON = 2;
 const PI    = Math.PI;
-
-import { CURSEUR_DEFAUT, CURSEUR_POINTER, CURSEUR_GRAB, CURSEUR_GRABBING } from '../utils/curseurs.js';
-import { tectoniqueTransformer, mulberry32 } from '../utils/tectonique.js';
 
 // ─── Shaders ─────────────────────────────────────────────────────────────────
 
@@ -30,14 +27,6 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(mix(sphere, plane, uTransition), 1.0);
 }`;
 
-const neonVertexShader = `
-uniform float uTransition;
-attribute vec3 aPlane;
-varying float vScan;
-void main() {
-  vScan = atan(position.x, position.z);
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(mix(position, aPlane, uTransition), 1.0);
-}`;
 
 const fragMonde = `void main() { gl_FragColor = vec4(0.03, 0.55, 0.80, 0.40); }`;
 
@@ -76,7 +65,6 @@ function extraireSegmentsNeon(features, mainland, r=RAYON+0.08) {
       if(sx<mainland[0]||sx>mainland[2]||sy<mainland[1]||sy>mainland[3]) return;
     }
     for(let i=0;i<ring.length-1;i++){
-      if(Math.abs(ring[i+1][0]-ring[i][0])>180) continue;
       const la0=ring[i][1]*PI/180,   lo0=ring[i][0]*PI/180;
       const la1=ring[i+1][1]*PI/180, lo1=ring[i+1][0]*PI/180;
       sphere.push(r*Math.cos(la0)*Math.sin(lo0), r*Math.sin(la0), r*Math.cos(la0)*Math.cos(lo0),
@@ -107,7 +95,6 @@ function extraireSegmentsWarRoom(features, mainland) {
       if(sx<mainland[0]||sx>mainland[2]||sy<mainland[1]||sy>mainland[3]) return;
     }
     for(let i=0;i<ring.length-1;i++){
-      if(Math.abs(ring[i+1][0]-ring[i][0])>180) continue;
       const [lon0,lat0]=ring[i], [lon1,lat1]=ring[i+1];
       pts.push(lon0/180*RAYON*PI, lat0/90*RAYON*PI/2, lon0*PI/180,
                lon1/180*RAYON*PI, lat1/90*RAYON*PI/2, lon1*PI/180);
@@ -136,7 +123,6 @@ function extraireSegments(features, mainland) {
       if(sx<mainland[0]||sx>mainland[2]||sy<mainland[1]||sy>mainland[3]) return;
     }
     for(let i=0;i<ring.length-1;i++){
-      if(Math.abs(ring[i+1][0]-ring[i][0])>180) continue;
       pts.push(ring[i][0],ring[i][1],0, ring[i+1][0],ring[i+1][1],0);
     }
   };
@@ -311,21 +297,6 @@ function LigneScan({ couleur }) {
     boxShadow:`0 0 3px ${couleur}`,pointerEvents:'none',zIndex:50}}/>;
 }
 
-// ─── Noms fictifs ─────────────────────────────────────────────────────────────
-const SYLLABES = ['ar','vel','kor','nth','osa','mir','tan','dra',
-  'sul','fen','bra','zor','ith','cal','ver','mor','san','tep',
-  'gal','ros','ael','nur','dom','rix','val','cen','pha','wyn'];
-
-function nomFictif(seed, index) {
-  const rng = mulberry32((seed * 31 + index * 7919) | 0);
-  const n = 2 + Math.floor(rng() * 2); // 2 ou 3 syllabes
-  let nom = '';
-  for (let i = 0; i < n; i++) {
-    const s = SYLLABES[Math.floor(rng() * SYLLABES.length)];
-    nom += i === 0 ? s[0].toUpperCase() + s.slice(1) : s;
-  }
-  return nom;
-}
 
 // ─── Scène Globe / Mercator ────────────────────────────────────────────────────
 function SceneGlobeMercator({
@@ -521,22 +492,11 @@ export function ExplorateurMonde({ initialVue = 'globe', sansTransition = false 
   const [geo110, setGeo110] = useState(null);
   const [geo50, setGeo50] = useState(null);
   const [geo10, setGeo10] = useState(null);
-  const [seed, setSeed] = useState(42);
-  const [mondeTransformé, setMondeTransformé] = useState(false);
-  const [geo110T, setGeo110T] = useState(null);
-  const [geo50T, setGeo50T] = useState(null);
-
   useEffect(()=>{
     fetch('/geojson/ne_110m_admin_0_countries.geojson').then(r=>r.json()).then(setGeo110).catch(console.error);
     fetch('/geojson/ne_50m_admin_0_countries.geojson').then(r=>r.json()).then(setGeo50).catch(console.error);
     fetch('/geojson/ne_10m_admin_0_countries.geojson').then(r=>r.json()).then(setGeo10).catch(console.error);
   },[]);
-
-  useEffect(()=>{
-    if (!geo110 || !geo50) return;
-    setGeo110T({ ...geo110, features: tectoniqueTransformer(geo110.features, seed) });
-    setGeo50T({  ...geo50,  features: tectoniqueTransformer(geo50.features,  seed) });
-  },[geo110, geo50, seed]);
 
   const changerVue = useCallback((v) => {
     if (v === vue) return;
@@ -548,21 +508,8 @@ export function ExplorateurMonde({ initialVue = 'globe', sansTransition = false 
   const estMercator = vue === 'mercator';
   const estWarRoom  = vue === 'warroom';
 
-  const geoActuel = mondeTransformé
-    ? (estMercator ? (geo50T || geo50) : (geo110T || geo110))
-    : (estMercator ? geo50 : geo110);
-
-  // cfg : juste le NAME pour le WarRoom (geo10 reste réel, pas transformé)
+  const geoActuel = estMercator ? geo50 : geo110;
   const cfg = paysFocus ? { NAME: paysFocus, mainland: null } : null;
-
-  // Résout le nom affiché selon le mode (fictif si monde transformé)
-  const nomAffiché = (name) => {
-    if (!mondeTransformé || !geoActuel) return name;
-    const idx = geoActuel.features.findIndex(
-      f => f.properties?.NAME === name || f.properties?.ADMIN === name
-    );
-    return idx >= 0 ? nomFictif(seed, idx) : name;
-  };
 
   return (
     <div style={{position:'fixed', inset:0, overflow:'hidden', backgroundColor:'#000'}}>
@@ -610,31 +557,18 @@ export function ExplorateurMonde({ initialVue = 'globe', sansTransition = false 
         const hex = `#${c.getHexString()}`;
         const rgba = `rgba(${Math.round(c.r*255)},${Math.round(c.g*255)},${Math.round(c.b*255)},0.3)`;
         return <div style={{...ui.badge, color:hex, borderColor:rgba}}>
-          {nomAffiché(paysSurvolé)}
+          {paysSurvolé}
         </div>;
       })()}
       <div style={ui.ind}>double-clic → planisphère · clic sur un pays pour le voir</div>
-      <div style={{position:'absolute',bottom:'60px',left:'20px',display:'flex',alignItems:'center',gap:'12px',pointerEvents:'all'}}>
-        <button style={{padding:'8px 16px',background:'rgba(0,15,35,0.75)',border:'1px solid rgba(0,200,255,0.3)',borderRadius:'4px',color:'rgba(0,210,255,0.85)',cursor:CURSEUR_POINTER,fontSize:'0.78rem',fontFamily:'monospace',letterSpacing:'0.06em'}}
-          onClick={()=>{ setSeed(Math.floor(Math.random()*99999)); setMondeTransformé(true); }}>
-          ⟳ NOUVEAU MONDE
-        </button>
-        {mondeTransformé && <>
-          <span style={{color:'rgba(0,210,255,0.35)',fontFamily:'monospace',fontSize:'0.72rem'}}>#{seed}</span>
-          <button style={{padding:'8px 16px',background:'rgba(0,15,35,0.75)',border:'1px solid rgba(0,200,255,0.3)',borderRadius:'4px',color:'rgba(0,210,255,0.55)',cursor:CURSEUR_POINTER,fontSize:'0.78rem',fontFamily:'monospace',letterSpacing:'0.06em'}}
-            onClick={()=>setMondeTransformé(false)}>
-            ← MONDE RÉEL
-          </button>
-        </>}
-      </div>
-      </>
+</>
     )}
     {estMercator && (
       <>
       <button style={ui.btn} onClick={() => changerVue('globe')}>← Globe</button>
       <div style={ui.ind}>
       {paysSurvolé
-        ? <><span style={{color:'#00e5ff'}}>{nomAffiché(paysSurvolé)}</span>{' — double-clic pour entrer'}</>
+        ? <><span style={{color:'#00e5ff'}}>{paysSurvolé}</span>{' — double-clic pour entrer'}</>
         : 'clic → pays · double-clic → entrer'
       }
       </div>
@@ -644,7 +578,7 @@ export function ExplorateurMonde({ initialVue = 'globe', sansTransition = false 
       <>
       <button style={ui.btn} onClick={() => changerVue('mercator')}>← Planisphère</button>
       <div style={{...ui.badge, color:'rgba(0,210,255,0.85)', borderColor:'rgba(0,200,255,0.3)'}}>
-      ▶ {mondeTransformé ? nomAffiché(cfg.NAME) : cfg.NAME} — WAR ROOM
+      ▶ {cfg.NAME} — WAR ROOM
       </div>
       <div style={ui.ind}>drag + molette</div>
       </>

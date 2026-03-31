@@ -666,6 +666,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             onToggleMinistry={toggleMinistry}
             onMinistryClick={handleMinistryClick}
             onSetAllActive={setAllMinistriesActive}
+            onEditEmoji={(id, emoji) => { sauvegarderEmojiAgent('ministries', id, emoji); setEmojiVersion(v => v + 1); }}
             />
 
             {/* Bouton pour ajouter un nouveau ministère */}
@@ -726,6 +727,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             activeMinsters={constitution.activeMinsters}
             onMinisterClick={handleMinisterClick}
             onSetAllActive={setAllMinistersActive}
+            onEditEmoji={(id, emoji) => { sauvegarderEmojiAgent('ministers', id, emoji); setEmojiVersion(v => v + 1); }}
             />
             {/* Bouton pour ajouter un nouveau ministre */}
             {showNewMin ? (

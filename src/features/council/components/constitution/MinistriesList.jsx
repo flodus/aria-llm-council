@@ -4,7 +4,7 @@
 import { useLocale } from '../../../../ariaI18n';
 import AgentGrid from '../../../../shared/components/AgentGrid';
 
-export default function MinistriesList({ ministries, activeMins, onMinistryClick, onSetAllActive }) {
+export default function MinistriesList({ ministries, activeMins, onMinistryClick, onSetAllActive, onEditEmoji }) {
     const { lang } = useLocale();
     const safeActiveMins = activeMins === undefined ? null : activeMins;
 
@@ -22,6 +22,7 @@ export default function MinistriesList({ ministries, activeMins, onMinistryClick
             activeIds={safeActiveMins}
             onAgentClick={onMinistryClick}
             onResetAll={onSetAllActive}
+            onEditEmoji={onEditEmoji}
             countLabel={`${ministries.length} ${lang === 'en' ? 'MINISTRIES' : 'MINISTÈRES'}`}
             lang={lang}
         />
