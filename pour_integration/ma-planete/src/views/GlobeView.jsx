@@ -1,9 +1,11 @@
 // src/views/GlobeView.jsx
 // Globe GeoJSON — vraie sphereGeometry + frontières + néons pays
+// + Mode monde fictif avec hexagones en relief
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Stars, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
+import MondeFictif from './MondeFictif.jsx'; // Import du composant hexagones
 
 const RAYON = 5;
 const PI    = Math.PI;
@@ -76,7 +78,7 @@ function extraireRemplissage(features, mainland) {
         const contour = poly[0].map(p=>new THREE.Vector2(p[0],p[1]));
         const holes   = poly.slice(1).map(h=>h.map(p=>new THREE.Vector2(p[0],p[1])));
         THREE.ShapeUtils.triangulateShape(contour,holes).forEach(tri=>
-          tri.forEach(idx=>pos.push(contour[idx].x, contour[idx].y, 0))
+        tri.forEach(idx=>pos.push(contour[idx].x, contour[idx].y, 0))
         );
       }catch(_){}
     });
@@ -104,14 +106,13 @@ function extraireSegments(features, mainland) {
     else if(g.type==='Polygon')         g.coordinates.forEach(ajouterRing);
     else if(g.type==='MultiPolygon')    g.coordinates.forEach(p=>p.forEach(ajouterRing));
   });
-  return pts.length ? new THREE.BufferGeometry().setFromPoints(pts) : null;
+    return pts.length ? new THREE.BufferGeometry().setFromPoints(pts) : null;
 }
 
 function SceneGlobe({ geoData, onClickPays, inversé }) {
   const texture = useMemo(()=>creerTexture(),[]);
   const uMonde  = useMemo(()=>({uRadius:{value:RAYON}}),[]);
 
-  // Uniforms par pays — stables entre les renders
   const uPays = useRef(null);
   if(!uPays.current) {
     uPays.current = {};
@@ -124,10 +125,10 @@ function SceneGlobe({ geoData, onClickPays, inversé }) {
     const features = geoData.features;
     return {
       monde:     extraireSegments(features, null),
-      mondeFill: extraireRemplissage(features, null),
-      ...Object.fromEntries(Object.entries(PAYS).map(([id,cfg])=>[
-        id, extraireSegments(features.filter(f=>f.properties?.NAME===cfg.NAME), cfg.mainland)
-      ])),
+                       mondeFill: extraireRemplissage(features, null),
+                       ...Object.fromEntries(Object.entries(PAYS).map(([id,cfg])=>[
+                         id, extraireSegments(features.filter(f=>f.properties?.NAME===cfg.NAME), cfg.mainland)
+                       ])),
     };
   },[geoData]);
 
@@ -150,42 +151,37 @@ function SceneGlobe({ geoData, onClickPays, inversé }) {
 
   return (
     <group scale={[s, s, 1]}>
-      {/* Sphère de fond — vraie sphereGeometry, depth propre */}
-      <mesh>
-        <sphereGeometry args={[RAYON, 64, 32]}/>
-        <meshBasicMaterial map={texture}/>
+    <mesh>
+    <sphereGeometry args={[RAYON, 64, 32]}/>
+    <meshBasicMaterial map={texture}/>
+    </mesh>
+
+    {geos.mondeFill&&(
+      <mesh renderOrder={1}>
+      <primitive object={geos.mondeFill} attach="geometry"/>
+      <shaderMaterial vertexShader={vertSphereRempli} fragmentShader={fragRemplissage}
+      uniforms={uMonde} transparent depthWrite={false} side={THREE.DoubleSide}/>
       </mesh>
+    )}
 
-      {/* Remplissage monde sur sphère */}
-      {geos.mondeFill&&(
-        <mesh renderOrder={1}>
-          <primitive object={geos.mondeFill} attach="geometry"/>
-          <shaderMaterial vertexShader={vertSphereRempli} fragmentShader={fragRemplissage}
-            uniforms={uMonde} transparent depthWrite={false} side={THREE.DoubleSide}/>
-        </mesh>
-      )}
+    {geos.monde&&(
+      <lineSegments geometry={geos.monde} renderOrder={2}>
+      <shaderMaterial vertexShader={vertSphere} fragmentShader={fragMonde}
+      uniforms={uMonde} transparent depthWrite={false}/>
+      </lineSegments>
+    )}
 
-      {/* Frontières mondiales */}
-      {geos.monde&&(
-        <lineSegments geometry={geos.monde} renderOrder={2}>
-          <shaderMaterial vertexShader={vertSphere} fragmentShader={fragMonde}
-            uniforms={uMonde} transparent depthWrite={false}/>
-        </lineSegments>
-      )}
+    {Object.entries(PAYS).map(([id])=>geos[id]&&(
+      <lineSegments key={id} geometry={geos[id]} renderOrder={5}>
+      <shaderMaterial vertexShader={vertSphere} fragmentShader={fragNeon[id]}
+      uniforms={uPays.current[id]} transparent depthTest={false} depthWrite={false}/>
+      </lineSegments>
+    ))}
 
-      {/* Néons pays — r=5.03 > r=5 sphère → toujours devant, depthTest suffit */}
-      {Object.entries(PAYS).map(([id])=>geos[id]&&(
-        <lineSegments key={id} geometry={geos[id]} renderOrder={5}>
-          <shaderMaterial vertexShader={vertSphere} fragmentShader={fragNeon[id]}
-            uniforms={uPays.current[id]} transparent depthTest={false} depthWrite={false}/>
-        </lineSegments>
-      ))}
-
-      {/* Hitbox invisible pour détection clic pays */}
-      <mesh onClick={handleClick}>
-        <sphereGeometry args={[RAYON+0.05, 32, 32]}/>
-        <meshBasicMaterial transparent opacity={0} depthWrite={false}/>
-      </mesh>
+    <mesh onClick={handleClick}>
+    <sphereGeometry args={[RAYON+0.05, 32, 32]}/>
+    <meshBasicMaterial transparent opacity={0} depthWrite={false}/>
+    </mesh>
     </group>
   );
 }
@@ -194,34 +190,53 @@ export function GlobeView({ onEnter }) {
   const [geoData,     setGeoData]     = useState(null);
   const [paysSurvolé, setPaysSurvolé] = useState(null);
   const [inversé,     setInversé]     = useState(false);
+  const [modeFictif,  setModeFictif]  = useState(false);
+  const [seed, setSeed] = useState(42);
 
   useEffect(()=>{
     fetch('/geojson/ne_110m_admin_0_countries.geojson')
-      .then(r=>r.json()).then(setGeoData).catch(console.error);
+    .then(r=>r.json()).then(setGeoData).catch(console.error);
   },[]);
+
+  // Si mode fictif, afficher les hexagones en relief
+  if (modeFictif) {
+    return (
+      <MondeFictif
+      seed={seed}
+      onMondeReel={() => setModeFictif(false)}
+      onRetour={() => setModeFictif(false)}
+      onPaysDoubleClick={() => {}}
+      paysSelectionne={null}
+      />
+    );
+  }
 
   return (
     <div style={{width:'100vw',height:'100vh'}} onDoubleClick={onEnter}>
-      <Canvas camera={{position:[0,0,RAYON*3],fov:45}}>
-        <color attach="background" args={['#020208']}/>
-        <ambientLight intensity={0.15}/>
-        <Stars radius={130} depth={60} count={7000} factor={4} saturation={0} fade speed={0.4}/>
-        <OrbitControls makeDefault enablePan={false}/>
-        <SceneGlobe geoData={geoData} onClickPays={setPaysSurvolé} inversé={inversé}/>
-      </Canvas>
+    <Canvas camera={{position:[0,0,RAYON*3],fov:45}}>
+    <color attach="background" args={['#020208']}/>
+    <ambientLight intensity={0.15}/>
+    <Stars radius={130} depth={60} count={7000} factor={4} saturation={0} fade speed={0.4}/>
+    <OrbitControls makeDefault enablePan={false}/>
+    <SceneGlobe geoData={geoData} onClickPays={setPaysSurvolé} inversé={inversé}/>
+    </Canvas>
 
-      <button onClick={()=>setInversé(v=>!v)} style={ui.btnInv}>
-        {inversé ? '↻ normal' : '↕↔ inverser'}
-      </button>
+    <button onClick={()=>setInversé(v=>!v)} style={ui.btnInv}>
+    {inversé ? '↻ normal' : '↕↔ inverser'}
+    </button>
 
-      {paysSurvolé&&(
-        <div style={{...ui.badge, color:PAYS[paysSurvolé].couleur, borderColor:`${PAYS[paysSurvolé].couleur}55`}}>
-          {PAYS[paysSurvolé].label}
-        </div>
-      )}
-      <div style={ui.ind}>
-        {paysSurvolé ? `${PAYS[paysSurvolé].label} · double-clic → planisphère` : 'double-clic → planisphère · clic sur un pays'}
+    <button onClick={()=>setModeFictif(true)} style={ui.btnFictif}>
+    🌍 NOUVEAU MONDE
+    </button>
+
+    {paysSurvolé&&(
+      <div style={{...ui.badge, color:PAYS[paysSurvolé].couleur, borderColor:`${PAYS[paysSurvolé].couleur}55`}}>
+      {PAYS[paysSurvolé].label}
       </div>
+    )}
+    <div style={ui.ind}>
+    {paysSurvolé ? `${PAYS[paysSurvolé].label} · double-clic → planisphère` : 'double-clic → planisphère · clic sur un pays'}
+    </div>
     </div>
   );
 }
@@ -229,6 +244,13 @@ export function GlobeView({ onEnter }) {
 const ui = {
   btnInv: {
     position:'absolute',bottom:'20px',right:'20px',
+    padding:'8px 16px',background:'rgba(0,15,35,0.75)',
+    border:'1px solid rgba(0,200,255,0.3)',borderRadius:'4px',
+    color:'rgba(0,210,255,0.85)',cursor:'pointer',
+    fontSize:'0.88rem',fontFamily:'monospace',letterSpacing:'0.06em',
+  },
+  btnFictif: {
+    position:'absolute',bottom:'20px',left:'20px',
     padding:'8px 16px',background:'rgba(0,15,35,0.75)',
     border:'1px solid rgba(0,200,255,0.3)',borderRadius:'4px',
     color:'rgba(0,210,255,0.85)',cursor:'pointer',

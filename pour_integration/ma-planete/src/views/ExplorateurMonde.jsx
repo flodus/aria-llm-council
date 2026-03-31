@@ -4,14 +4,11 @@ import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
 import * as THREE from 'three';
-
+import { CURSEUR_DEFAUT, CURSEUR_POINTER, CURSEUR_GRAB, CURSEUR_GRABBING } from '../utils/curseurs.js';
 
 
 const RAYON = 2;
 const PI    = Math.PI;
-
-import { CURSEUR_DEFAUT, CURSEUR_POINTER, CURSEUR_GRAB, CURSEUR_GRABBING } from '../utils/curseurs.js';
-import MondeFictif from './MondeFictif';
 
 // ─── Shaders ─────────────────────────────────────────────────────────────────
 
@@ -495,9 +492,6 @@ export function ExplorateurMonde({ initialVue = 'globe', sansTransition = false 
   const [geo110, setGeo110] = useState(null);
   const [geo50, setGeo50] = useState(null);
   const [geo10, setGeo10] = useState(null);
-  const [modeFictif, setModeFictif] = useState(false);
-  const [seed, setSeed] = useState(42);
-
   useEffect(()=>{
     fetch('/geojson/ne_110m_admin_0_countries.geojson').then(r=>r.json()).then(setGeo110).catch(console.error);
     fetch('/geojson/ne_50m_admin_0_countries.geojson').then(r=>r.json()).then(setGeo50).catch(console.error);
@@ -516,8 +510,6 @@ export function ExplorateurMonde({ initialVue = 'globe', sansTransition = false 
 
   const geoActuel = estMercator ? geo50 : geo110;
   const cfg = paysFocus ? { NAME: paysFocus, mainland: null } : null;
-
-  if (modeFictif) return <MondeFictif seed={seed} onMondeReel={() => setModeFictif(false)} />;
 
   return (
     <div style={{position:'fixed', inset:0, overflow:'hidden', backgroundColor:'#000'}}>
@@ -569,13 +561,7 @@ export function ExplorateurMonde({ initialVue = 'globe', sansTransition = false 
         </div>;
       })()}
       <div style={ui.ind}>double-clic → planisphère · clic sur un pays pour le voir</div>
-      <div style={{position:'absolute',bottom:'60px',left:'20px',display:'flex',alignItems:'center',gap:'12px',pointerEvents:'all'}}>
-        <button style={{padding:'8px 16px',background:'rgba(0,15,35,0.75)',border:'1px solid rgba(0,200,255,0.3)',borderRadius:'4px',color:'rgba(0,210,255,0.85)',cursor:CURSEUR_POINTER,fontSize:'0.78rem',fontFamily:'monospace',letterSpacing:'0.06em'}}
-          onClick={()=>{ setSeed(Math.floor(Math.random()*99999)); setModeFictif(true); }}>
-          ⟳ NOUVEAU MONDE
-        </button>
-      </div>
-      </>
+</>
     )}
     {estMercator && (
       <>

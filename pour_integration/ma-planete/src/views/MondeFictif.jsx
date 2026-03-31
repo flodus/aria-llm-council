@@ -1,4 +1,4 @@
-// src/views/MondeFictif.jsx — relief couches + LOD zoom + océan habité
+// src/views/MondeFictif.jsx — avec nuages aléatoires sur toute la carte
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { mulberry32 } from '../utils/tectonique.js';
 import { CURSEUR_POINTER } from '../utils/curseurs.js';
@@ -10,6 +10,12 @@ const W3          = Math.sqrt(3);
 const VB_W        = 3000;
 const VB_H        = 1800;
 const SEUIL_TERRE = 0.55;
+const DY          = 2;
+const DX          = 1;
+const DIRS_SUD    = [2, 3, 4];
+const DIRS_NORD   = [5, 0, 1];
+
+const NUAGES_VISIBLE_MAX_SCALE = 1.5;
 
 // ─── Géométrie hex ────────────────────────────────────────────────────────────
 
@@ -27,6 +33,14 @@ function hexCorners(col, row) {
   });
 }
 
+function hexCornersOff(col, row, ox, oy) {
+  const [cx, cy] = hexCenter(col, row);
+  return Array.from({ length: 6 }, (_, k) => {
+    const a = -Math.PI / 2 + k * Math.PI / 3;
+    return [cx + HEX_R * Math.cos(a) + ox, cy + HEX_R * Math.sin(a) + oy];
+  });
+}
+
 function hexPath(col, row) {
   const pts = hexCorners(col, row);
   return pts.map(([x, y], k) => `${k === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join('') + 'Z';
@@ -39,17 +53,10 @@ function hexEdge(col, row, k) {
   return `M${x0.toFixed(1)},${y0.toFixed(1)}L${x1.toFixed(1)},${y1.toFixed(1)}`;
 }
 
-function bastionFace(col, row, k, dx, dy) {
-  const pts = hexCorners(col, row);
-  const [x0, y0] = pts[k];
-  const [x1, y1] = pts[(k + 1) % 6];
-  return `M${x0.toFixed(1)},${y0.toFixed(1)}`
-       + `L${x1.toFixed(1)},${y1.toFixed(1)}`
-       + `L${(x1 + dx).toFixed(1)},${(y1 + dy).toFixed(1)}`
-       + `L${(x0 + dx).toFixed(1)},${(y0 + dy).toFixed(1)}Z`;
+function ptsToPath(pts) {
+  return pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join('') + 'Z';
 }
 
-// Voisin (odd-r offset) k=0 NE, 1 E, 2 SE, 3 SW, 4 W, 5 NW
 function voisin(col, row, k) {
   const D = [
     [[0,-1],[1,0],[0,1],[-1,1],[-1,0],[-1,-1]],
@@ -74,28 +81,28 @@ function valueNoise(x, y, s) {
   const xi = Math.floor(x), yi = Math.floor(y);
   const xf = smoothstep(x - xi), yf = smoothstep(y - yi);
   return hash2(xi,   yi,   s) * (1-xf)*(1-yf)
-       + hash2(xi+1, yi,   s) * xf    *(1-yf)
-       + hash2(xi,   yi+1, s) * (1-xf)*yf
-       + hash2(xi+1, yi+1, s) * xf    *yf;
+  + hash2(xi+1, yi,   s) * xf    *(1-yf)
+  + hash2(xi,   yi+1, s) * (1-xf)*yf
+  + hash2(xi+1, yi+1, s) * xf    *yf;
 }
 
 function fbm(x, y, s) {
   return valueNoise(x,   y,   s)      * 0.50
-       + valueNoise(x*2, y*2, s+1111) * 0.30
-       + valueNoise(x*4, y*4, s+2222) * 0.20;
+  + valueNoise(x*2, y*2, s+1111) * 0.30
+  + valueNoise(x*4, y*4, s+2222) * 0.20;
 }
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 
 const BIOMES = [
   { seuil: 0.30, couleur: '#020a18' },
-  { seuil: 0.42, couleur: '#041422' },
-  { seuil: 0.55, couleur: '#0d2235' },
-  { seuil: 0.65, couleur: '#1a3045' },
-  { seuil: 0.72, couleur: '#1e3a40' },
-  { seuil: 0.80, couleur: '#243545' },
-  { seuil: 0.90, couleur: '#2a3050' },
-  { seuil: Infinity, couleur: '#1e2a38' },
+{ seuil: 0.42, couleur: '#041422' },
+{ seuil: 0.55, couleur: '#0d2235' },
+{ seuil: 0.65, couleur: '#1a3045' },
+{ seuil: 0.72, couleur: '#1e3a40' },
+{ seuil: 0.80, couleur: '#243545' },
+{ seuil: 0.90, couleur: '#2a3050' },
+{ seuil: Infinity, couleur: '#1e2a38' },
 ];
 
 function biomeCouleur(h) {
@@ -103,55 +110,16 @@ function biomeCouleur(h) {
   return BIOMES[BIOMES.length - 1].couleur;
 }
 
-// Océan base — 3 niveaux de profondeur
 function couleurOcean(d) {
-  if (d === 0) return '#0d2a4a'; // rivage
-  if (d === 1) return '#0a2240'; // mer côtière
-  return '#071a30';              // océan profond
-}
-
-// Stroke ocean : associé à chaque couleur de fond
-const OCEAN_STROKE = {
-  '#0d2a4a': '#102e50',
-  '#0a2240': '#0c2848',
-  '#071a30': '#081e36',
-};
-
-// Couches overlay relief (pics BFS)
-const RELIEF_LAYERS = [
-  { fill: '#4a4570', opacity: '0.85' }, // dist 0 — pic
-  { fill: '#3a3860', opacity: '0.60' }, // dist 1
-  { fill: '#2e3055', opacity: '0.40' }, // dist 2
-  { fill: '#253048', opacity: '0.25' }, // dist 3
-];
-
-// Couches overlay bathymétrie (côte BFS)
-const BATHO_LAYERS = [
-  { fill: '#0d2a4a', opacity: '0.50' }, // dist 0 — rivage
-  { fill: '#0a2040', opacity: '0.40' }, // dist 1
-  { fill: '#071830', opacity: '0.30' }, // dist 2
-];
-
-// Hauteur Bastion selon altitude
-function bastionDxDy(h) {
-  if (h >= 0.82) return [5, 10];
-  if (h >= 0.70) return [3, 6];
-  if (h >= 0.65) return [1.5, 3];
-  return [0.5, 1];
+  if (d === 0) return '#0d2a4a';
+  if (d === 1) return '#0a2240';
+  return '#071a30';
 }
 
 function assombrir(hex, f = 0.6) {
   const r = Math.round(parseInt(hex.slice(1, 3), 16) * f);
   const g = Math.round(parseInt(hex.slice(3, 5), 16) * f);
   const b = Math.round(parseInt(hex.slice(5, 7), 16) * f);
-  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
-}
-
-function varier(hex, delta) {
-  const clamp = v => Math.max(0, Math.min(255, Math.round(v)));
-  const r = clamp(parseInt(hex.slice(1, 3), 16) + delta);
-  const g = clamp(parseInt(hex.slice(3, 5), 16) + delta);
-  const b = clamp(parseInt(hex.slice(5, 7), 16) + delta);
   return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
 }
 
@@ -170,6 +138,71 @@ function shuffler(arr, rng) {
   return a;
 }
 
+// ─── ISO relief OPTIMISÉ (2 couches max) ─────────────────────────────────────
+
+function nbCouchesTerre(h) {
+  if (h >= 0.75) return 2;
+  if (h >= 0.60) return 2;
+  return 1;
+}
+
+function nbCouchesOcean(h) {
+  if (h < 0.20) return 2;
+  if (h < 0.42) return 1;
+  return 0;
+}
+
+function eclairir(hexColor, factor) {
+  const clamp = v => Math.max(0, Math.min(255, Math.round(v)));
+  const r = clamp(parseInt(hexColor.slice(1, 3), 16) * factor);
+  const g = clamp(parseInt(hexColor.slice(3, 5), 16) * factor);
+  const b = clamp(parseInt(hexColor.slice(5, 7), 16) * factor);
+  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
+// ─── NOUVEAUX NUAGES ALÉATOIRES (petits, moyens, gros, sur toute la carte) ───
+
+const genererNuages = (largeur, hauteur) => {
+  const nuages = [];
+  const nombreNuages = 45;
+
+  for (let i = 0; i < nombreNuages; i++) {
+    // Taille aléatoire : petit (20-35), moyen (35-55), gros (55-80)
+    let size;
+    const rand = Math.random();
+    if (rand < 0.4) size = 20 + Math.random() * 15;
+    else if (rand < 0.7) size = 35 + Math.random() * 20;
+    else size = 55 + Math.random() * 25;
+
+    // Position Y : sur toute la hauteur de la carte
+    const y = 30 + Math.random() * (hauteur - 60);
+
+    // Position X initiale aléatoire
+    const x = Math.random() * (largeur + 400) - 200;
+
+    // Vitesse individuelle
+    const speed = 0.6 + Math.random() * 1.2;
+
+    // Opacité individuelle
+    const opacity = 0.4 + Math.random() * 0.4;
+
+    nuages.push({
+      id: i,
+      x: x,
+      y: y,
+      size: size,
+      speed: speed,
+      opacity: opacity,
+    });
+  }
+  return nuages;
+};
+
+function createCloudPath(x, y, size) {
+  const r = size;
+  return `M${x},${y - r*0.5} Q${x + r*0.4},${y - r*0.7} ${x + r*0.8},${y - r*0.2} Q${x + r*1.0},${y - r*0.3} ${x + r*0.9},${y} Q${x + r*1.1},${y + r*0.2} ${x + r*0.7},${y + r*0.4} Q${x + r*0.5},${y + r*0.5} ${x + r*0.2},${y + r*0.4} Q${x},${y + r*0.6} ${x - r*0.2},${y + r*0.4} Q${x - r*0.5},${y + r*0.5} ${x - r*0.7},${y + r*0.4} Q${x - r*1.1},${y + r*0.2} ${x - r*0.9},${y} Q${x - r*1.0},${y - r*0.3} ${x - r*0.8},${y - r*0.2} Q${x - r*0.4},${y - r*0.7} ${x},${y - r*0.5}Z`;
+}
+
 // ─── Style partagé UI ─────────────────────────────────────────────────────────
 
 const btnStyle = {
@@ -181,9 +214,15 @@ const btnStyle = {
 
 // ─── Composant ────────────────────────────────────────────────────────────────
 
-export default function MondeFictif({ seed, onMondeReel }) {
+export default function MondeFictif({ seed, onMondeReel, onRetour, onPaysDoubleClick, paysSelectionne = null }) {
   const [localSeed, setLocalSeed]   = useState(seed);
   const [hoveredPays, setHoveredPays] = useState(null);
+  const [cloudOffset, setCloudOffset] = useState(0);
+  const cloudAnimationRef = useRef(null);
+  const [nuages, setNuages] = useState([]);
+  const tempsRef = useRef(0);
+
+  useEffect(() => { setLocalSeed(seed); }, [seed]);
 
   const wrapRef = useRef(null);
   const ptrDown = useRef(false);
@@ -192,12 +231,34 @@ export default function MondeFictif({ seed, onMondeReel }) {
   const [xf, setXf] = useState(() => ({
     scale: 0.5,
     x: Math.round((window.innerWidth  - VB_W * 0.5) / 2),
-    y: Math.round((window.innerHeight - VB_H * 0.5) / 2),
+                                      y: Math.round((window.innerHeight - VB_H * 0.5) / 2),
   }));
 
-  const lod = xf.scale < 0.7 ? 0 : xf.scale < 2.0 ? 1 : 2;
+  // Génération des nuages aléatoires (change à chaque nouvelle carte)
+  useEffect(() => {
+    setNuages(genererNuages(VB_W, VB_H));
+  }, [localSeed]);
 
-  // Zoom vers le curseur (passive:false requis pour preventDefault)
+  // Animation des nuages (défilement horizontal + variations)
+  useEffect(() => {
+    let lastTime = performance.now();
+    function animateClouds(now) {
+      const delta = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+      tempsRef.current += delta * 0.5;
+      setCloudOffset(prev => (prev + delta * 0.8) % (VB_W * 2));
+      cloudAnimationRef.current = requestAnimationFrame(animateClouds);
+    }
+    cloudAnimationRef.current = requestAnimationFrame(animateClouds);
+    return () => {
+      if (cloudAnimationRef.current) cancelAnimationFrame(cloudAnimationRef.current);
+    };
+  }, []);
+
+  const lod = xf.scale < 0.7 ? 0 : xf.scale < 2.0 ? 1 : 2;
+  const nuagesVisibles = xf.scale < NUAGES_VISIBLE_MAX_SCALE;
+  const nuagesOpacity = nuagesVisibles ? Math.max(0, 1 - (xf.scale / NUAGES_VISIBLE_MAX_SCALE) * 0.7) : 0;
+
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -230,19 +291,17 @@ export default function MondeFictif({ seed, onMondeReel }) {
   };
   const onPtrUp = () => { ptrDown.current = false; };
 
-  // ─── Génération (seed local) ─────────────────────────────────────────────────
+  // ─── Génération de la carte (optimisée, 2 couches max) ───────────────────────
 
   const svgData = useMemo(() => {
-    // 1. Heightmap FBM + fondu de bord
     const heights = Array.from({ length: ROWS }, (_, r) =>
-      Array.from({ length: COLS }, (_, c) => {
-        const h = fbm(c / COLS * 3.8, r / ROWS * 3.8, localSeed);
-        const fade = Math.min(1, c / 25, (COLS - 1 - c) / 25, r / 15, (ROWS - 1 - r) / 15);
-        return h * fade;
-      })
+    Array.from({ length: COLS }, (_, c) => {
+      const h = fbm(c / COLS * 3.8, r / ROWS * 3.8, localSeed);
+      const fade = Math.min(1, c / 25, (COLS - 1 - c) / 25, r / 15, (ROWS - 1 - r) / 15);
+      return h * fade;
+    })
     );
 
-    // 2. Flood-fill masses terrestres
     const massIdx = Array.from({ length: ROWS }, () => new Int16Array(COLS).fill(-1));
     const masses  = [];
     for (let r = 0; r < ROWS; r++) {
@@ -270,12 +329,11 @@ export default function MondeFictif({ seed, onMondeReel }) {
     });
     const massesFiltrees = masses.filter(m => m.length >= 60);
 
-    // 3. BFS pays
     const paysCarte = Array.from({ length: ROWS }, () => new Int16Array(COLS).fill(-1));
     const rng = mulberry32((localSeed * 6971 + 12345) | 0);
     let nbPays = 0;
     massesFiltrees.forEach(masse => {
-      const n = Math.max(1, Math.floor(masse.length / 55));
+      const n = Math.max(1, Math.floor(masse.length / 280));
       const q = [];
       shuffler(masse, rng).slice(0, n).forEach(([c, r]) => {
         paysCarte[r][c] = nbPays++;
@@ -294,45 +352,6 @@ export default function MondeFictif({ seed, onMondeReel }) {
       }
     });
 
-    // 4. BFS relief — pics (h > 0.82), max 4 anneaux
-    const dPic = Array.from({ length: ROWS }, () => new Int8Array(COLS).fill(-1));
-    const qPic = [];
-    for (let r = 0; r < ROWS; r++)
-      for (let c = 0; c < COLS; c++)
-        if (massIdx[r][c] !== -1 && heights[r][c] > 0.82) { dPic[r][c] = 0; qPic.push([c, r]); }
-    while (qPic.length) {
-      const [c, r] = qPic.shift();
-      if (dPic[r][c] >= 4) continue;
-      for (let k = 0; k < 6; k++) {
-        const [nc, nr] = voisin(c, r, k);
-        if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) continue;
-        if (massIdx[nr][nc] === -1 || dPic[nr][nc] !== -1) continue;
-        dPic[nr][nc] = dPic[r][c] + 1;
-        qPic.push([nc, nr]);
-      }
-    }
-
-    // 5. BFS relief — highlands (0.70–0.82), max 1 anneau
-    const dHigh = Array.from({ length: ROWS }, () => new Int8Array(COLS).fill(-1));
-    const qHigh = [];
-    for (let r = 0; r < ROWS; r++)
-      for (let c = 0; c < COLS; c++) {
-        const h = heights[r][c];
-        if (massIdx[r][c] !== -1 && h >= 0.70 && h < 0.82) { dHigh[r][c] = 0; qHigh.push([c, r]); }
-      }
-    while (qHigh.length) {
-      const [c, r] = qHigh.shift();
-      if (dHigh[r][c] >= 1) continue;
-      for (let k = 0; k < 6; k++) {
-        const [nc, nr] = voisin(c, r, k);
-        if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) continue;
-        if (massIdx[nr][nc] === -1 || dHigh[nr][nc] !== -1) continue;
-        dHigh[nr][nc] = dHigh[r][c] + 1;
-        qHigh.push([nc, nr]);
-      }
-    }
-
-    // 6. BFS océan — distance côte, max 4 anneaux
     const dCote = Array.from({ length: ROWS }, () => new Int8Array(COLS).fill(-1));
     const qCote = [];
     for (let r = 0; r < ROWS; r++)
@@ -345,235 +364,298 @@ export default function MondeFictif({ seed, onMondeReel }) {
         }
         if (adjTerre) { dCote[r][c] = 0; qCote.push([c, r]); }
       }
-    while (qCote.length) {
-      const [c, r] = qCote.shift();
-      if (dCote[r][c] >= 4) continue;
-      for (let k = 0; k < 6; k++) {
-        const [nc, nr] = voisin(c, r, k);
-        if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) continue;
-        if (massIdx[nr][nc] !== -1 || dCote[nr][nc] !== -1) continue;
-        dCote[nr][nc] = dCote[r][c] + 1;
-        qCote.push([nc, nr]);
-      }
-    }
-
-    // 7. Chemins SVG
-    const hexOceanD    = {};
-    const hexTerreD    = {};
-    const hexTerreVarD = {};
-    const bastionD     = {};
-    const paysD        = {};
-    const frontD       = {};
-    const coteSegs     = [];
-    // Couches overlay (polygones superposés)
-    const reliefD = ['', '', '', ''];  // dPic 0→3
-    const bathoD  = ['', '', ''];      // dCote 0→2
-
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        const h        = heights[r][c];
-        const estTerre = massIdx[r][c] !== -1;
-        const p        = paysCarte[r][c];
-        const hexId    = r * COLS + c;
-        const base     = biomeCouleur(h);
-
-        if (estTerre) {
-          const vLevel = Math.floor(hash2(c, r, localSeed + 7777) * 3);
-          const varied = vLevel === 0 ? base : varier(base, vLevel === 1 ? 18 : -18);
-          hexTerreD[base]      = (hexTerreD[base]      || '') + hexPath(c, r);
-          hexTerreVarD[varied] = (hexTerreVarD[varied] || '') + hexPath(c, r);
-          if (p !== -1) paysD[p] = (paysD[p] || '') + hexPath(c, r);
-          // Overlay relief — superposé après la couche base
-          const dp = dPic[r][c];
-          if (dp >= 0 && dp <= 3) reliefD[dp] += hexPath(c, r);
-        } else {
-          const oCol = couleurOcean(dCote[r][c]);
-          hexOceanD[oCol] = (hexOceanD[oCol] || '') + hexPath(c, r);
-          // Overlay bathymétrie — superposé après la couche ocean base
-          const dc = dCote[r][c];
-          if (dc >= 0 && dc <= 2) bathoD[dc] += hexPath(c, r);
-        }
-
+      while (qCote.length) {
+        const [c, r] = qCote.shift();
+        if (dCote[r][c] >= 4) continue;
         for (let k = 0; k < 6; k++) {
           const [nc, nr] = voisin(c, r, k);
-          const inB    = nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS;
-          const nId    = inB ? nr * COLS + nc : -1;
-          const lowest = !inB || hexId < nId;
-          const nTerre = inB && massIdx[nr][nc] !== -1;
-          const nP     = inB ? paysCarte[nr][nc] : -1;
+          if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) continue;
+          if (massIdx[nr][nc] !== -1 || dCote[nr][nc] !== -1) continue;
+          dCote[nr][nc] = dCote[r][c] + 1;
+          qCote.push([nc, nr]);
+        }
+      }
 
-          // Bastion — face latérale sur chaque arête exposée
-          if (estTerre && !nTerre) {
-            const [dx, dy] = bastionDxDy(h);
-            const sombre = assombrir(base, 0.55);
-            bastionD[sombre] = (bastionD[sombre] || '') + bastionFace(c, r, k, dx, dy);
+      const oceanSurfD = [{}, {}, {}, {}];
+      const oceanFaceD = [{}, {}, {}, {}];
+      const oceanGradD = ['', '', '', ''];
+      const terreSurfD = [{}, {}, {}, {}, {}, {}, {}];
+      const terreFaceD = [{}, {}, {}, {}, {}, {}, {}];
+      const terreGradD = ['', '', '', '', '', '', ''];
+      const paysD  = {};
+      const frontD = {};
+      const coteSegs = [];
+
+      function ajout(obj, couleur, path) {
+        obj[couleur] = (obj[couleur] || '') + path;
+      }
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const h        = heights[r][c];
+          const estTerre = massIdx[r][c] !== -1;
+          const p        = paysCarte[r][c];
+          const hexId    = r * COLS + c;
+
+          if (estTerre) {
+            const n          = nbCouchesTerre(h);
+            const baseCouleur = biomeCouleur(h);
+
+            for (let i = 0; i < n; i++) {
+              const oX = -i * DX, oY = -i * DY;
+              const pts = hexCornersOff(c, r, oX, oY);
+              const surfFactor = 1 + i * 0.18;
+              const surfCouleur = eclairir(baseCouleur, surfFactor);
+              ajout(terreSurfD[i], surfCouleur, ptsToPath(pts));
+            }
+
+            if (p !== -1) paysD[p] = (paysD[p] || '') + hexPath(c, r);
+
+          } else {
+            const n          = nbCouchesOcean(h);
+            const dcVal      = dCote[r][c];
+            const baseCouleur = couleurOcean(dcVal >= 0 ? Math.min(dcVal, 2) : 3);
+
+            ajout(oceanSurfD[0], baseCouleur, ptsToPath(hexCornersOff(c, r, 0, 0)));
+
+            for (let i = 1; i <= n; i++) {
+              const oX = i * DX, oY = i * DY;
+              const pts = hexCornersOff(c, r, oX, oY);
+              const surfFactor = 1 - i * 0.15;
+              const surfCouleur = eclairir(baseCouleur, surfFactor);
+              ajout(oceanSurfD[i], surfCouleur, ptsToPath(pts));
+            }
           }
 
-          // Côte
-          if (lowest && estTerre !== nTerre) coteSegs.push(hexEdge(c, r, k));
+          for (let k = 0; k < 6; k++) {
+            const [nc, nr] = voisin(c, r, k);
+            const inB    = nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS;
+            const nId    = inB ? nr * COLS + nc : -1;
+            const lowest = !inB || hexId < nId;
+            const nTerre = inB && massIdx[nr][nc] !== -1;
+            const nP     = inB ? paysCarte[nr][nc] : -1;
 
-          // Frontières (ajout aux deux pays)
-          if (lowest && estTerre && nTerre && p !== -1 && nP !== -1 && p !== nP) {
-            const seg = hexEdge(c, r, k);
-            frontD[p]  = (frontD[p]  || '') + seg;
-            frontD[nP] = (frontD[nP] || '') + seg;
+            if (lowest && estTerre !== nTerre) coteSegs.push(hexEdge(c, r, k));
+
+            if (lowest && estTerre && nTerre && p !== -1 && nP !== -1 && p !== nP) {
+              const seg = hexEdge(c, r, k);
+              frontD[p]  = (frontD[p]  || '') + seg;
+              frontD[nP] = (frontD[nP] || '') + seg;
+            }
           }
         }
       }
-    }
 
-    // 8. Particules (200 seedées)
-    const rngP = mulberry32((localSeed * 9973 + 54321) | 0);
-    const particules = Array.from({ length: 200 }, () => ({
-      x: (rngP() * VB_W).toFixed(1),
-      y: (rngP() * VB_H).toFixed(1),
-    }));
+      const rngP = mulberry32((localSeed * 9973 + 54321) | 0);
+      const particules = Array.from({ length: 200 }, () => ({
+        x: (rngP() * VB_W).toFixed(1),
+                                                            y: (rngP() * VB_H).toFixed(1),
+      }));
 
-    return { hexOceanD, hexTerreD, hexTerreVarD, bastionD, paysD, frontD,
-             coteD: coteSegs.join(''), particules, nRoyaumes: nbPays,
-             reliefD, bathoD };
+      const paysCentres = {};
+      for (let ri = 0; ri < ROWS; ri++) {
+        for (let ci = 0; ci < COLS; ci++) {
+          const pi = paysCarte[ri][ci];
+          if (pi === -1) continue;
+          if (!paysCentres[pi]) paysCentres[pi] = { sumC: 0, sumR: 0, n: 0 };
+          paysCentres[pi].sumC += ci;
+          paysCentres[pi].sumR += ri;
+          paysCentres[pi].n++;
+        }
+      }
+
+      return { oceanSurfD, oceanFaceD, oceanGradD,
+        terreSurfD, terreFaceD, terreGradD,
+        paysD, frontD, coteD: coteSegs.join(''),
+                          particules, nRoyaumes: nbPays, paysCentres };
   }, [localSeed]);
 
-  const { hexOceanD, hexTerreD, hexTerreVarD, bastionD, paysD, frontD,
-          coteD, particules, nRoyaumes, reliefD, bathoD } = svgData;
+  const { oceanSurfD, oceanFaceD, oceanGradD,
+    terreSurfD, terreFaceD, terreGradD,
+    paysD, frontD, coteD, particules, nRoyaumes, paysCentres } = svgData;
 
-  const strokeW = lod === 0 ? null : lod === 1 ? '0.3' : '0.5';
-  const nPart   = lod === 2 ? 200 : 120;
+    useEffect(() => {
+      if (paysSelectionne == null) return;
+      const centre = paysCentres[paysSelectionne];
+      if (!centre) return;
+      const [svgX, svgY] = hexCenter(centre.sumC / centre.n, centre.sumR / centre.n);
+      const scale = 3.0;
+      setXf({
+        scale,
+        x: window.innerWidth  / 2 - svgX * scale,
+        y: window.innerHeight / 2 - svgY * scale,
+      });
+    }, [paysSelectionne, paysCentres]);
 
-  return (
-    <div ref={wrapRef}
+    const nPart = lod === 2 ? 200 : 120;
+
+    return (
+      <div ref={wrapRef}
       style={{ position: 'fixed', inset: 0, overflow: 'hidden',
-               backgroundColor: '#061628', cursor: 'grab', userSelect: 'none' }}
-      onPointerDown={onPtrDown} onPointerMove={onPtrMove} onPointerUp={onPtrUp}>
+        backgroundColor: '#061628', cursor: 'grab', userSelect: 'none' }}
+        onPointerDown={onPtrDown} onPointerMove={onPtrMove} onPointerUp={onPtrUp}>
 
-      {/* ── UI fixe ────────────────────────────────────────────────────────────
-           stopPropagation sur pointerDown : empêche le map de capturer les
-           événements pointer quand on clique sur les boutons UI.           */}
-      <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10,
-        display: 'flex', alignItems: 'center', gap: '12px', pointerEvents: 'all' }}
-        onPointerDown={e => e.stopPropagation()}>
+        <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10,
+          display: 'flex', alignItems: 'center', gap: '12px', pointerEvents: 'all' }}
+          onPointerDown={e => e.stopPropagation()}>
 
-        <button onClick={onMondeReel} style={btnStyle}>
-          ← MONDE RÉEL
-        </button>
-
-        <button onClick={() => setLocalSeed(Math.floor(Math.random() * 99999))}
-          style={btnStyle}>
-          ⟳ NOUVEAU MONDE
-        </button>
-
-        <span style={{ padding: '6px 18px', background: 'rgba(0,8,22,0.85)',
-          border: '1px solid rgba(0,200,255,0.3)', borderRadius: '3px',
-          color: 'rgba(0,210,255,0.85)', fontSize: '0.78rem',
-          fontFamily: 'monospace', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-          MONDE #{localSeed}
-        </span>
-
-        <span style={{ color: 'rgba(0,200,255,0.45)', fontSize: '0.75rem',
-          fontFamily: 'monospace', letterSpacing: '0.08em' }}>
-          {nRoyaumes} royaumes
-        </span>
-
-        <span style={{ color: 'rgba(0,200,255,0.25)', fontSize: '0.68rem',
-          fontFamily: 'monospace' }}>
-          {xf.scale.toFixed(2)}×
-        </span>
-      </div>
-
-      {/* ── SVG zoomable ───────────────────────────────────────────────────── */}
-      <div style={{
-        position: 'absolute',
-        transform: `translate(${xf.x}px,${xf.y}px) scale(${xf.scale})`,
-        transformOrigin: '0 0',
-        width: `${VB_W}px`,
-        height: `${VB_H}px`,
-      }}>
-        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} style={{ width: '100%', height: '100%' }}>
-
-          <defs>
-            <filter id="border-glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="1.5"/>
-            </filter>
-            <filter id="pays-glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="2"/>
-            </filter>
-          </defs>
-
-          {/* 1. Fond océan bleu-nuit */}
-          <rect width={VB_W} height={VB_H} fill="#061628" />
-
-          {/* 2. Particules */}
-          {particules.slice(0, nPart).map((pt, i) => (
-            <circle key={i} cx={pt.x} cy={pt.y} r="0.8" fill="#1a3a5a" opacity="0.4" />
-          ))}
-
-          {/* 2. Hex océan base — toute la grille non-terre, avec stroke */}
-          {Object.entries(hexOceanD).map(([c, d]) => d &&
-            <path key={`oc-${c}`} d={d} fill={c}
-              stroke={OCEAN_STROKE[c] || 'none'} strokeWidth="0.4" />
-          )}
-
-          {/* 3. Couches bathymétriques — polygones superposés (dist 0→2 depuis côte) */}
-          {BATHO_LAYERS.map(({ fill, opacity }, i) => bathoD[i] &&
-            <path key={`ba-${i}`} d={bathoD[i]} fill={fill} opacity={opacity} stroke="none" />
-          )}
-
-          {/* 4. Faces latérales Bastion */}
-          {Object.entries(bastionD).map(([c, d]) => d &&
-            <path key={`bt-${c}`} d={d} fill={c} stroke="none" />
-          )}
-
-          {/* 5. Surface — biome base (LOD 0/1) */}
-          {lod < 2 && Object.entries(hexTerreD).map(([c, d]) => d &&
-            <path key={`te-${c}`} d={d} fill={c}
-              stroke={strokeW ? assombrir(c, 0.55) : null}
-              strokeWidth={strokeW} />
-          )}
-
-          {/* 5b. Surface — micro-variation ±18 RGB (LOD 2) */}
-          {lod >= 2 && Object.entries(hexTerreVarD).map(([c, d]) => d &&
-            <path key={`tv-${c}`} d={d} fill={c}
-              stroke={assombrir(c, 0.55)} strokeWidth="0.5" />
-          )}
-
-          {/* 6. Couches relief superposées — polygones par-dessus biome (dist 0→3 depuis pics) */}
-          {RELIEF_LAYERS.map(({ fill, opacity }, i) => reliefD[i] &&
-            <path key={`rl-${i}`} d={reliefD[i]} fill={fill} opacity={opacity} stroke="none" />
-          )}
-
-          {/* Côtes */}
-          {coteD &&
-            <path d={coteD} stroke="rgba(0,210,245,0.50)" strokeWidth="0.9" fill="none" />
+          {onRetour
+            ? <button onClick={onRetour} style={btnStyle}>
+            {paysSelectionne !== null ? '← PLANISPHÈRE' : '← GLOBE'}
+            </button>
+            : <button onClick={onMondeReel} style={btnStyle}>← MONDE RÉEL</button>
           }
 
-          {/* 7. Frontières pays — quasi-invisible par défaut, néon au survol */}
-          {Object.keys(frontD).map(idx => {
-            const id  = +idx;
-            const isH = hoveredPays === id;
-            const col = neonPays(id);
-            return (
-              <g key={`pays-${idx}`}>
-                {/* Glow — visible seulement au survol */}
-                <path d={frontD[idx]} stroke={col}
+          {!onRetour && (
+            <button onClick={() => setLocalSeed(Math.floor(Math.random() * 99999))}
+            style={btnStyle}>
+            ⟳ NOUVEAU MONDE
+            </button>
+          )}
+
+          <span style={{ padding: '6px 18px', background: 'rgba(0,8,22,0.85)',
+            border: '1px solid rgba(0,200,255,0.3)', borderRadius: '3px',
+            color: 'rgba(0,210,255,0.85)', fontSize: '0.78rem',
+            fontFamily: 'monospace', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+            MONDE #{localSeed}
+            </span>
+
+            {paysSelectionne !== null
+              ? <span style={{ color: 'rgba(0,200,255,0.45)', fontSize: '0.75rem',
+                fontFamily: 'monospace', letterSpacing: '0.08em' }}>
+                ROYAUME #{paysSelectionne}
+                </span>
+                : <span style={{ color: 'rgba(0,200,255,0.45)', fontSize: '0.75rem',
+                  fontFamily: 'monospace', letterSpacing: '0.08em' }}>
+                  {nRoyaumes} royaumes
+                  </span>
+            }
+
+              <span style={{ color: 'rgba(0,200,255,0.25)', fontSize: '0.68rem',
+                fontFamily: 'monospace' }}>
+                {xf.scale.toFixed(2)}× | {COLS * ROWS} hex
+              </span>
+            </div>
+
+              <div style={{
+                position: 'absolute',
+                transform: `translate(${xf.x}px,${xf.y}px) scale(${xf.scale})`,
+            transformOrigin: '0 0',
+            width: `${VB_W}px`,
+            height: `${VB_H}px`,
+              }}>
+              <svg viewBox={`0 0 ${VB_W} ${VB_H}`} style={{ width: '100%', height: '100%' }}>
+
+              <defs>
+              <linearGradient id="ombre-couche" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor="#000" stopOpacity="0.05" />
+              <stop offset="100%" stopColor="#000" stopOpacity="0.45" />
+              </linearGradient>
+              <filter id="pays-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2"/>
+              </filter>
+              <filter id="cloud-blur" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3"/>
+              </filter>
+              <filter id="relief-shadow" x="-0.5" y="-0.5" width="2" height="2">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+              <feOffset dx="3" dy="3" result="offsetblur"/>
+              <feComponentTransfer>
+              <feFuncA type="linear" slope="0.3"/>
+              </feComponentTransfer>
+              <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+              </filter>
+              </defs>
+
+              <rect width={VB_W} height={VB_H} fill="#061628" />
+
+              {particules.slice(0, nPart).map((pt, i) => (
+                <circle key={i} cx={pt.x} cy={pt.y} r="0.8" fill="#1a3a5a" opacity="0.4" />
+              ))}
+
+              {[0, 1, 2, 3].map(i => (
+                <React.Fragment key={`oi-${i}`}>
+                {i > 0 && Object.entries(oceanFaceD[i]).map(([c, d]) => d &&
+                  <path key={`of-${i}-${c}`} d={d} fill={c} stroke="none" />
+                )}
+                {i > 0 && oceanGradD[i] &&
+                  <path key={`og-${i}`} d={oceanGradD[i]} fill="url(#ombre-couche)" stroke="none" />
+                }
+                {Object.entries(oceanSurfD[i]).map(([c, d]) => d &&
+                  <path key={`os-${i}-${c}`} d={d} fill={c} stroke="none" />
+                )}
+                </React.Fragment>
+              ))}
+
+              {[0, 1, 2, 3, 4, 5, 6].map(i => (
+                <React.Fragment key={`ti-${i}`}>
+                {i > 0 && Object.entries(terreFaceD[i]).map(([c, d]) => d &&
+                  <path key={`tf-${i}-${c}`} d={d} fill={c} stroke="none" />
+                )}
+                {i > 0 && terreGradD[i] &&
+                  <path key={`tg-${i}`} d={terreGradD[i]} fill="url(#ombre-couche)" stroke="none" />
+                }
+                {Object.entries(terreSurfD[i]).map(([c, d]) => d &&
+                  <path
+                  key={`ts-${i}-${c}`}
+                  d={d}
+                  fill={c}
+                  stroke="none"
+                  filter={i === 1 ? "url(#relief-shadow)" : undefined}
+                  />
+                )}
+                </React.Fragment>
+              ))}
+
+              {coteD &&
+                <path d={coteD} stroke="rgba(0,210,245,0.50)" strokeWidth="0.9" fill="none" />
+              }
+
+              {Object.keys(frontD).map(idx => {
+                const id  = +idx;
+                const isH = hoveredPays === id;
+                const col = neonPays(id);
+                return (
+                  <g key={`pays-${idx}`}>
+                  <path d={frontD[idx]} stroke={col}
                   strokeWidth={isH ? '4' : '2'} fill="none"
                   filter="url(#pays-glow)" opacity={isH ? '0.55' : '0.08'} />
-                {/* Trait net */}
-                <path d={frontD[idx]} stroke={col}
+                  <path d={frontD[idx]} stroke={col}
                   strokeWidth={isH ? '1.5' : '0.5'} fill="none"
                   opacity={isH ? '0.9' : '0.2'} />
-                {/* Fill — pour détection hover (fillOpacity 0.001 = invisible mais réactif) */}
-                {paysD[idx] &&
-                  <path d={paysD[idx]} fill={col}
+                  {paysD[idx] &&
+                    <path d={paysD[idx]} fill={col}
                     fillOpacity={isH ? '0.08' : '0.001'} stroke="none"
                     onMouseEnter={() => setHoveredPays(id)}
-                    onMouseLeave={() => setHoveredPays(null)} />
-                }
-              </g>
-            );
-          })}
+                    onMouseLeave={() => setHoveredPays(null)}
+                    onDoubleClick={() => onPaysDoubleClick?.(id)} />
+                  }
+                  </g>
+                );
+              })}
 
-        </svg>
-      </div>
-    </div>
-  );
+              {/* NOUVEAUX NUAGES - sur toute la carte, taille aléatoire */}
+              {nuagesVisibles && nuages.map((cloud) => {
+                const facteurVitesse = 80; // ← ajuste ici (30=lent, 80=moyen, 150=rapide)
+                const xPos = (cloud.x + cloudOffset * cloud.speed * facteurVitesse) % (VB_W + 500) - 250;
+                const path = createCloudPath(xPos, cloud.y, cloud.size);
+                return (
+                  <path
+                  key={`cloud-${cloud.id}`}
+                  d={path}
+                  fill={`rgba(245, 248, 255, ${cloud.opacity * nuagesOpacity})`}
+                  filter="url(#cloud-blur)"
+                  stroke="none"
+                  style={{ pointerEvents: 'none' }}
+                  />
+                );
+              })}
+
+              </svg>
+              </div>
+              </div>
+    );
 }
