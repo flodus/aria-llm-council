@@ -1,12 +1,25 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-28_
+_Dernière mise à jour : 2026-04-03_
 
 ---
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
 _(aucun bug actif connu)_
+
+---
+
+## 🌍 INTÉGRATION ma-planete → ARIA
+_(prototype validé, intégration progressive — une feature à la fois sur branche dédiée)_
+
+- [ ] **MP1 — Dépendances** : ajouter `three`, `@react-three/fiber`, `@react-three/drei`, `@turf/turf` dans ARIA
+- [ ] **MP2 — Assets GeoJSON** : copier `ne_110m` + `ne_50m` dans `public/geojson/` ARIA · **ne pas inclure `ne_10m` (trop lourd)**
+- [ ] **MP3 — Shaders + utils** : copier `shaders/globe.js` · `utils/geo.js` · `data/pays.json` → `src/shared/`
+- [ ] **MP4 — Composants scène** : `SceneGlobeMercator` · `SceneWarRoom` · `LigneScan` · hooks `useGlobeOrbit` `useMercatorZoom` → `src/features/map/`
+- [ ] **MP5 — ExplorateurMonde** : intégrer la vue globe/mercator/warroom dans le flux ARIA (point d'entrée à définir — remplace-t-il `Dashboard_p2.jsx` ou s'ajoute en parallèle ?)
+- [ ] **MP6 — Settings : lien téléchargement `ne_10m`** : pour les utilisateurs qui veulent la warroom haute résolution
+- [ ] **MP7 — Monde fictif** : décider si ça rejoint ARIA ou reste standalone dans ma-planete
 
 ---
 
