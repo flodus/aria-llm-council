@@ -12,7 +12,7 @@
 import { useLocale } from '../../../ariaI18n';
 import { FONT, cinzel, mono } from '../../../shared/theme';
 
-export default function ARIAHeader({ showQuote, lang: langProp, setLang }) {
+export default function ARIAHeader({ showQuote, showSubtitle = true, lang: langProp, setLang }) {
   const { lang: localeLang } = useLocale();
   const lang = langProp ?? localeLang;
   return (
@@ -42,10 +42,12 @@ export default function ARIAHeader({ showQuote, lang: langProp, setLang }) {
           </div>
         )}
       </div>
-      <div style={{
-        fontFamily: FONT.cinzel, fontSize:'0.50rem', letterSpacing:'0.32em',
-        color:'#3A4A62', marginTop:'0.4rem', whiteSpace:'nowrap',
-      }}>ARCHITECTURE DE RAISONNEMENT INSTITUTIONNEL PAR L'IA</div>
+      {showSubtitle && (
+        <div style={{
+          fontFamily: FONT.cinzel, fontSize:'0.50rem', letterSpacing:'0.32em',
+          color:'#3A4A62', marginTop:'0.4rem', whiteSpace:'nowrap',
+        }}>ARCHITECTURE DE RAISONNEMENT INSTITUTIONNEL PAR L'IA</div>
+      )}
       {showQuote && (
         <p style={{
           fontSize:'0.75rem', color:'#5A6A8A', fontStyle:'italic',

@@ -41,7 +41,7 @@ export default function GeneratingScreen({ progress, msg, background }) {
     // Fallback : barre de progression originale
     return (
         <div style={wrap(false)}>
-        <ARIAHeader showQuote={false} />
+        <ARIAHeader showQuote={false} showSubtitle={false} />
         <div style={{ width:'100%', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.85rem' }}>
         <div style={{
             fontFamily:FONT.mono, fontSize:'0.55rem', letterSpacing:'0.14em',
