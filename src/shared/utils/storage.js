@@ -34,3 +34,7 @@ export function supprimerStorage(cle) {
     localStorage.removeItem(cle);
   } catch {}
 }
+
+// Helpers spécialisés — agents override (utilisés par ConstitutionModal)
+export function lireAgentsOverride()    { return lireStorage('aria_agents_override', null); }
+export function ecrireAgentsOverride(d) { ecrireStorage('aria_agents_override', d); }

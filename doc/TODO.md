@@ -47,7 +47,7 @@ _(bloqué sur refonte carte V1)_
   - Base : ANALYSE_STRUCTURE_PAYS.md · fichiers : ariaData.js · Dashboard_p1.jsx · InitScreen.jsx
 
 - [ ] **F1 — Minimum 2 pays en mode custom** : actuellement limité à 1 seul pays custom
-- [ ] **F2 — Bloquer doublons pays réels** : griser un pays réel déjà sélectionné dans un autre slot
+- [x] **F2 — Bloquer doublons pays réels** : déjà implémenté (disabled + ✗ + repoussé en bas dans RealCountryLocalSection + duplicate status dans RealCountryAISection)
 - [ ] **F3 — Settings gouvernement multi-pays** : constitution commune vs par pays
 
 ---

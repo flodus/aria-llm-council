@@ -14,3 +14,8 @@ export { default as MinistryDetail } from './MinistryDetail';
 export { default as NewMinisterForm } from './NewMinisterForm';
 export { default as NewMinistryForm } from './NewMinistryForm';
 export { default as PromptEditor } from './PromptEditor';
+export { default as TabRegime } from './TabRegime';
+export { default as TabPresidence } from './TabPresidence';
+export { default as TabMinisteres } from './TabMinisteres';
+export { default as TabMinistres } from './TabMinistres';
+export { default as TabDestin } from './TabDestin';
