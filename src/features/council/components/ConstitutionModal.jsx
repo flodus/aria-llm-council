@@ -1,46 +1,21 @@
 // src/features/council/components/ConstitutionModal.jsx
+// Hub d'état — orchestre les 5 onglets de constitution
 
-/**
- * Modale de modification de la constitution en cours de jeu
- * Permet de modifier le régime, la présidence, les ministères, les ministres et leurs prompts
- *
- * @param {Object} props
- * @param {Object} props.country - Le pays dont on modifie la constitution
- * @param {function} props.onSave - Callback de sauvegarde (reçoit la constitution modifiée)
- * @param {function} props.onClose - Callback de fermeture
- */
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
-import { FONT, CARD_STYLE, INPUT_STYLE, SELECT_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
-import { getStats, getOptions, DEFAULT_OPTIONS } from '../../../Dashboard_p1';
-import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
-import { getDestin } from '../services/agentsManager';
-import AgentGrid from '../../../shared/components/AgentGrid';
-import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
+import { FONT, BTN_PRIMARY, BTN_SECONDARY } from '../../../shared/theme';
+import { getStats, getOptions } from '../../../Dashboard_p1';
+import { getAgentsEffectifs, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
+import { ecrireAgentsOverride } from '../../../shared/utils/storage';
 import useConstitutionModal from '../hooks/useConstitutionModal';
 import {
-    PresidentDetail,
-    MinistersList,
-    MinisterDetail,
-    MinistriesList,
-    MinistryDetail,
-    NewMinisterForm,
-    NewMinistryForm,
-    PromptEditor
+    TabRegime, TabPresidence, TabMinisteres, TabMinistres, TabDestin,
 } from './constitution';
-import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
-import EmojiPicker from '../../../shared/components/EmojiPicker';
-
-// Helpers localStorage pour les overrides (copié de l'ancien)
-function readOv()   { try { return JSON.parse(localStorage.getItem('aria_agents_override')||'null'); } catch { return null; } }
-function writeOv(d) { try { localStorage.setItem('aria_agents_override', JSON.stringify(d)); } catch {} }
 
 export default function ConstitutionModal({ country, onSave, onClose }) {
     const { lang } = useLocale();
     const isEn = lang === 'en';
 
-    // Traductions inline (reprises de l'ancien)
     const tr = {
         title:        isEn ? '🏛️ Government'           : '🏛️ Gouvernement',
         tabRegime:    isEn ? 'REGIME'                   : 'RÉGIME',
@@ -51,849 +26,235 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         secLeader:    isEn ? 'HEAD OF STATE'            : 'CHEF D\'ÉTAT',
         secContext:   isEn ? 'CONTEXT IN DELIBERATIONS' : 'CONTEXTE DANS LES DÉLIBÉRATIONS',
         contextHint:  isEn
-        ? 'Controls which info about this country is injected into AI prompts. Leave "Inherit" to follow global setting.'
-        : 'Contrôle quelles infos sur ce pays sont injectées dans les prompts IA. Laissez "Hérite du global" pour suivre le réglage général.',
+            ? 'Controls which info about this country is injected into AI prompts. Leave "Inherit" to follow global setting.'
+            : 'Contrôle quelles infos sur ce pays sont injectées dans les prompts IA. Laissez "Hérite du global" pour suivre le réglage général.',
         ctxInherit:   isEn ? '⚙️ Inherit global'        : '⚙️ Hérite du global',
         ctxInheritH:  isEn ? 'Follows the Settings rule': 'Suit le réglage de Settings',
-        ctxAuto:      isEn ? '🤖 Auto'                  : '🤖 Auto',
         ctxRich:      isEn ? '📖 Enriched'              : '📖 Enrichi',
-        ctxRichH:     isEn ? 'Full context — prompts AI to reason historically'
-        : 'Contexte complet — incite l\'IA à raisonner historiquement',
+        ctxRichH:     isEn ? 'Full context — prompts AI to reason historically' : 'Contexte complet — incite l\'IA à raisonner historiquement',
         ctxStats:     isEn ? '📊 Stats only'            : '📊 Stats seules',
-        ctxStatsH:    isEn ? 'Numbers only — neutral, fewer hallucinations'
-        : 'Chiffres uniquement — neutre, moins d\'hallucinations',
+        ctxStatsH:    isEn ? 'Numbers only — neutral, fewer hallucinations' : 'Chiffres uniquement — neutre, moins d\'hallucinations',
         ctxOff:       isEn ? '🚫 Disabled'              : '🚫 Désactivé',
-        ctxOffH:      isEn ? 'No context — blind deliberation for this country'
-        : 'Aucun contexte — délibération à l\'aveugle pour ce pays',
-        secCustomCtx: isEn ? 'CUSTOM CONTEXT'           : 'CONTEXTE PERSONNALISÉ',
-        secPres:      isEn ? 'PRESIDENCY'               : 'PRÉSIDENCE',
-        secMins:      isEn ? 'MINISTRIES'               : 'MINISTÈRES',
+        ctxOffH:      isEn ? 'No context — blind deliberation for this country' : 'Aucun contexte — délibération à l\'aveugle pour ce pays',
         destinyTitle: isEn ? 'DESTINY OF THE WORLD'     : 'DESTINÉE DU MONDE',
         destinyLabel: isEn ? '👁️ Oracle & Wyrd'          : '👁️ Oracle & Wyrd',
-        destinyDesc:  isEn ? 'Activates Oracle and Wyrd for existential crises.'
-        : 'Active Oracle et Wyrd pour les crises existentielles.',
-        crisisTitle:  isEn ? 'CRISIS MANAGEMENT'        : 'GESTION DE CRISE',
-        crisisLabel:  isEn ? '⚡ Crisis mode'            : '⚡ Mode crise',
-        crisisDesc:   isEn ? 'Activates automatic crisis detection and adapted deliberation.'
-        : 'Active la détection automatique des crises et la délibération adaptée.',
-        assignedMins: isEn ? 'ASSIGNED MINISTERS'       : 'MINISTRES ASSIGNÉS',
-        secMinisters: isEn ? 'MINISTERS'                : 'MINISTRES',
+        destinyDesc:  isEn ? 'Activates Oracle and Wyrd for existential crises.' : 'Active Oracle et Wyrd pour les crises existentielles.',
         cancel:       isEn ? 'Cancel'                   : 'Annuler',
         apply:        isEn ? '✓ Apply Configuration'    : '✓ Appliquer la Configuration',
     };
 
-    // Récupération des options globales pour les valeurs par défaut
-    const savedGov  = getOptions().defaultGovernance || {};
-    const globalGov = {
-        presidency:  savedGov.presidency  || 'duale',
-        ministries:  savedGov.ministries  || getAgentsEffectifs().ministries.filter(m => m.base).map(m => m.id),
-    };
-    const current = { ...globalGov, ...(country?.governanceOverride || {}) };
-    const BASE_IDS = getAgentsEffectifs().ministries.filter(m => m.base).map(m => m.id);
-
-
-    // Version emoji — force le recalcul après sauvegarde
-    const [emojiVersion, setEmojiVersion] = useState(0);
-    const presSymbols = (() => { const ov = getEmojiOverrides(); return ov.presidency || {}; })();
-
-    // État local pour l'onglet actif
-    const [activeTab, setActiveTab] = useState('regime');
+    // ── État onglet ──────────────────────────────────────────────────────────
+    const [activeTab, setActiveTab]     = useState('regime');
     const [confirmReset, setConfirmReset] = useState(false);
 
-    // États pour l'onglet régime
-    const [emoji, setEmoji]   = useState(country?.emoji || '🌍');
-    const [regime, setRegime] = useState(country?.regime || 'democratie_liberale');
-    const rawReal = (isEn ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === country?.id);
-    const ctxGeo  = rawReal?.triple_combo        || country?.geoContext  || '';
-    const ctxSoc  = rawReal?.aria_sociology_logic || country?.description || '';
-
-    const [leader, setLeader] = useState(typeof country?.leader === 'string' ? country.leader : (country?.leader?.nom || ''));
-    const [contextMode, setContextMode] = useState(country?.context_mode || '');
+    // ── État onglet Régime ───────────────────────────────────────────────────
+    const [emoji, setEmoji]                   = useState(country?.emoji || '🌍');
+    const [regime, setRegime]                 = useState(country?.regime || 'democratie_liberale');
+    const [leader, setLeader]                 = useState(typeof country?.leader === 'string' ? country.leader : (country?.leader?.nom || ''));
+    const [contextMode, setContextMode]       = useState(country?.context_mode || '');
     const [contextOverride, setContextOverride] = useState(country?.contextOverride || '');
     const [ctxOverrideOpen, setCtxOverrideOpen] = useState(!!country?.contextOverride);
-    const [ctxAccOpen, setCtxAccOpen] = useState(country?.context_mode !== undefined || !!country?.contextOverride);
-    const [destinyMode, setDestinyMode] = useState(!!(country?.governanceOverride?.destiny_mode));
+    const [ctxAccOpen, setCtxAccOpen]         = useState(country?.context_mode !== undefined || !!country?.contextOverride);
+    const [destinyMode, setDestinyMode]       = useState(!!(country?.governanceOverride?.destiny_mode));
+
+    // ── État onglet Destin ───────────────────────────────────────────────────
     const [activeDestinAgents, setActiveDestinAgents] = useState(
-        country?.governanceOverride?.active_destin_agents ?? (getDestin()?.agents || ['oracle', 'wyrd'])
+        country?.governanceOverride?.active_destin_agents ?? (['oracle', 'wyrd'])
     );
     const [selectedDestin, setSelectedDestin] = useState(null);
 
-    // Hook personnalisé pour la constitution (gère tout sauf le régime)
+    // ── Hook constitution ────────────────────────────────────────────────────
     const {
-        constitution,
-        resetConstitution,
-        selectedPresident,
-        setSelectedPresident,
-        selectedMinistry,
-        setSelectedMinistry,
-        selectedMinister,
-        setSelectedMinister,
-        togglePresident,
-        setActivePres,
-        updatePresidency,
-        toggleMinistry,
-        isMinistryActive,
-        updateMinistryMission,
-        assignMinisterToMinistry,
-        toggleMinister,
-        isMinisterActive,
-        updateMinisterPrompt,
-        updateMinisterEssence,
-        updateMinisterComm,
+        constitution, resetConstitution,
+        selectedPresident, setSelectedPresident,
+        selectedMinistry,  setSelectedMinistry,
+        selectedMinister,  setSelectedMinister,
+        togglePresident, setActivePres, updatePresidency,
+        toggleMinistry,  isMinistryActive, updateMinistryMission,
+        assignMinisterToMinistry, updateMinisterPrompt,
+        toggleMinister, isMinisterActive,
+        updateMinisterPrompt: _unused,
+        updateMinisterEssence, updateMinisterComm,
         updateMinisterAnnotation,
-        addMinister,
-        addMinistry,
-        deleteMinister,
-        deleteMinistry,
-        setAllMinistersActive,
-        setAllMinistriesActive,
-        addPresident,
-        deletePresident,
+        addMinister, addMinistry, deleteMinister, deleteMinistry,
+        setAllMinistersActive, setAllMinistriesActive,
+        addPresident, deletePresident,
     } = useConstitutionModal(country?.governance);
 
-    // États pour l'UI des nouveaux ministres/ministères/président
-    const [showNewMin, setShowNewMin] = useState(false);
+    // ── État formulaires nouveaux éléments ───────────────────────────────────
+    const [showNewMin, setShowNewMin]           = useState(false);
     const [showNewMinistry, setShowNewMinistry] = useState(false);
     const [showNewPresident, setShowNewPresident] = useState(false);
-    const [nPresD, setNPresD] = useState({ id: '', name: '', emoji: '★', subtitle: '', essence: '' });
-    const [nMinD, setNMinD] = useState({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
+    const [nPresD, setNPresD] = useState({ id:'', name:'', emoji:'★', subtitle:'', essence:'' });
+    const [nMinD, setNMinD]   = useState({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
     const [nMinistryD, setNMinistryD] = useState({ id:'', name:'', emoji:'🏛️', color:'#8090C0', mission:'', ministers:[] });
+    const [emojiVersion, setEmojiVersion] = useState(0);
 
-    // Gestionnaires de clic pour les listes
-    const handlePresidentClick = (presidentId) => {
-        if (selectedPresident === presidentId) {
-            togglePresident(presidentId); // 2e clic = toggle
-        } else {
-            setSelectedPresident(presidentId);
-        }
-    };
+    const presSymbols = (() => { const ov = getEmojiOverrides(); return ov.presidency || {}; })();
+    const savedGov    = getOptions().defaultGovernance || {};
+    const BASE_IDS    = getAgentsEffectifs().ministries.filter(m => m.base).map(m => m.id);
 
-    const handleMinisterClick = (ministerId) => {
-        if (selectedMinister === ministerId) {
-            toggleMinister(ministerId);
-        } else {
-            setSelectedMinister(ministerId);
-        }
-    };
-
-    const handleMinistryClick = (ministryId) => {
-        if (selectedMinistry === ministryId) {
-            toggleMinistry(ministryId);
-        } else {
-            setSelectedMinistry(ministryId);
-        }
-    };
-
-    // Sauvegarde
+    // ── Sauvegarde ───────────────────────────────────────────────────────────
     const handleSave = () => {
-        // Sauvegarde des agents dans localStorage (pour les modifications de ministres/ministères)
         if (constitution) {
-            writeOv({
+            ecrireAgentsOverride({
                 ...constitution,
                 active_ministries: constitution.activeMins,
                 active_presidency: constitution.activePres,
-                active_ministers: constitution.activeMinsters,
+                active_ministers:  constitution.activeMinsters,
             });
         }
-
-        // Construction de l'objet pays modifié
         const presStr = constitution.activePres.length === 0 ? 'collegiale'
-        : constitution.activePres.length === 1
-        ? (constitution.activePres[0] === 'phare' ? 'solaire' : constitution.activePres[0] === 'boussole' ? 'lunaire' : 'solaire')
-        : constitution.activePres.length === 2
-        ? 'duale'
-        : 'trinaire';
+            : constitution.activePres.length === 1
+            ? (constitution.activePres[0] === 'phare' ? 'solaire' : constitution.activePres[0] === 'boussole' ? 'lunaire' : 'solaire')
+            : constitution.activePres.length === 2 ? 'duale' : 'trinaire';
 
         const regimeData = getStats().regimes?.[regime] || {};
-
-        const updatedCountry = {
-            ...country,
-            emoji,
-            regime,
-            regimeName: regimeData.name || regime,
+        onSave({
+            ...country, emoji, regime,
+            regimeName:  regimeData.name  || regime,
             regimeEmoji: regimeData.emoji || '🏛️',
             leader: leader || null,
-            context_mode: contextMode || undefined,
-            contextOverride: contextOverride || undefined,
+            context_mode:      contextMode    || undefined,
+            contextOverride:   contextOverride || undefined,
             governanceOverride: {
-                presidency: presStr,
-                active_presidency: constitution.activePres,
-                ministries: constitution.activeMins,
-                active_ministers: constitution.activeMinsters,
-                destiny_mode: destinyMode,
+                presidency:          presStr,
+                active_presidency:   constitution.activePres,
+                ministries:          constitution.activeMins,
+                active_ministers:    constitution.activeMinsters,
+                destiny_mode:        destinyMode,
                 active_destin_agents: activeDestinAgents,
-                crisis_mode: constitution.crisisMode !== false,
+                crisis_mode:         constitution.crisisMode !== false,
             },
-        };
-
-        onSave(updatedCountry);
+        });
         onClose();
     };
 
-    // Fermeture sans sauvegarde
-    const handleClose = () => {
-        resetConstitution();
-        onClose();
-    };
+    const handleClose = () => { resetConstitution(); onClose(); };
 
-    // Style des onglets
     const tabStyle = (tabId) => ({
-        ...BTN_SECONDARY,
-        flex: 1,
-        borderRadius: 0,
-        borderLeft: 'none',
-        borderRight: 'none',
-        borderTop: 'none',
+        ...BTN_SECONDARY, flex: 1, borderRadius: 0,
+        borderLeft: 'none', borderRight: 'none', borderTop: 'none',
         borderBottom: activeTab === tabId ? '2px solid rgba(200,164,74,0.70)' : '2px solid transparent',
-                                 color: activeTab === tabId ? 'rgba(200,164,74,0.90)' : 'rgba(140,160,200,0.35)',
-                                 padding: '0.45rem 0.3rem',
-                                 fontSize: '0.46rem',
-                                 letterSpacing: '0.12em',
+        color:   activeTab === tabId ? 'rgba(200,164,74,0.90)' : 'rgba(140,160,200,0.35)',
+        padding: '0.45rem 0.3rem', fontSize: '0.46rem', letterSpacing: '0.12em',
     });
 
+    // ── Rendu ────────────────────────────────────────────────────────────────
     return (
-        <div style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9000,
-            background: 'rgba(0,0,0,0.75)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backdropFilter: 'blur(3px)'
-        }} onClick={handleClose}>
-        <div style={{
-            width: '560px',
-            maxWidth: '96vw',
-            maxHeight: '90vh',
-            background: '#0D1117',
-            border: '1px solid rgba(200,164,74,0.22)',
-            borderRadius: '2px',
-            display: 'flex',
-            flexDirection: 'column',
-            fontFamily: FONT,
-            overflow: 'hidden'
-        }} onClick={e => e.stopPropagation()}>
+        <div style={{ position:'fixed', inset:0, zIndex:9000, background:'rgba(0,0,0,0.75)', display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(3px)' }} onClick={handleClose}>
+        <div style={{ width:'560px', maxWidth:'96vw', maxHeight:'90vh', background:'#0D1117', border:'1px solid rgba(200,164,74,0.22)', borderRadius:'2px', display:'flex', flexDirection:'column', fontFamily:FONT, overflow:'hidden' }} onClick={e => e.stopPropagation()}>
 
-        {/* Header */}
-        <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0.68rem 1rem',
-            borderBottom: '1px solid rgba(200,164,74,0.14)',
-            background: 'rgba(200,164,74,0.04)'
-        }}>
-        <span style={{ fontSize: '0.60rem', letterSpacing: '0.18em', color: 'rgba(200,164,74,0.85)', textTransform: 'uppercase' }}>
-        {tr.title} — {country?.nom || (isEn ? 'this country' : 'ce pays')}
-        </span>
-        <button
-        onClick={handleClose}
-        style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'rgba(200,164,74,0.40)',
-            fontSize: '0.80rem',
-            lineHeight: 1,
-            padding: '0.1rem 0.3rem'
-        }}
-        >
-        ✕
-        </button>
-        </div>
+            {/* Header */}
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0.68rem 1rem', borderBottom:'1px solid rgba(200,164,74,0.14)', background:'rgba(200,164,74,0.04)' }}>
+                <span style={{ fontSize:'0.60rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.85)', textTransform:'uppercase' }}>
+                    {tr.title} — {country?.nom || (isEn ? 'this country' : 'ce pays')}
+                </span>
+                <button onClick={handleClose} style={{ background:'none', border:'none', cursor:'pointer', color:'rgba(200,164,74,0.40)', fontSize:'0.80rem', lineHeight:1, padding:'0.1rem 0.3rem' }}>✕</button>
+            </div>
 
-        {/* Bandeau lambda/custom — G2 */}
-        <div style={{ padding: '0.28rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: country?.governanceOverride ? 'rgba(200,164,74,0.04)' : 'rgba(140,160,200,0.02)', borderBottom: '1px solid rgba(200,164,74,0.08)' }}>
-            <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', letterSpacing: '0.06em', color: country?.governanceOverride ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)' }}>
-                {country?.governanceOverride ? '✦ CONSTITUTION PROPRE' : '⚙️ SUIT LE MODÈLE MONDE'}
-            </span>
-        </div>
-
-        {/* Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid rgba(200,164,74,0.12)', flexWrap: 'wrap' }}>
-        <button style={tabStyle('regime')} onClick={() => setActiveTab('regime')}>{tr.tabRegime}</button>
-        <button style={tabStyle('presidency')} onClick={() => setActiveTab('presidency')}>{tr.tabPres}</button>
-        <button style={tabStyle('ministries')} onClick={() => setActiveTab('ministries')}>{tr.tabMins}</button>
-        <button style={tabStyle('ministers')} onClick={() => setActiveTab('ministers')}>{tr.tabMinisters}</button>
-        {destinyMode && (
-            <button style={{ ...tabStyle('destin'), color: activeTab === 'destin' ? 'rgba(140,100,220,0.90)' : 'rgba(140,100,220,0.40)', borderBottom: activeTab === 'destin' ? '2px solid rgba(140,100,220,0.70)' : '2px solid transparent' }}
-            onClick={() => setActiveTab('destin')}>
-            {isEn ? 'DESTINY' : 'DESTIN'}
-            </button>
-        )}
-        </div>
-
-        {/* Corps défilant */}
-        <div style={{
-            overflowY: 'auto',
-            flex: 1,
-            padding: '0.80rem 1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.1rem'
-        }}>
-
-        {/* ---------- ONGLET RÉGIME ---------- */}
-        {activeTab === 'regime' && (
-            <>
-            {/* Emoji pays */}
-            <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
-            <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
-            {isEn ? 'COUNTRY EMOJI' : 'EMOJI DU PAYS'}
-            </h3>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.3rem' }}>
-                <span style={{ fontSize: '2rem', lineHeight: 1 }}>{emoji}</span>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.44rem', color: 'rgba(140,160,200,0.55)' }}>
-                    {country?.nom}
+            {/* Bandeau statut constitution */}
+            <div style={{ padding:'0.28rem 1rem', display:'flex', alignItems:'center', gap:'0.5rem', background: country?.governanceOverride ? 'rgba(200,164,74,0.04)' : 'rgba(140,160,200,0.02)', borderBottom:'1px solid rgba(200,164,74,0.08)' }}>
+                <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', letterSpacing:'0.06em', color: country?.governanceOverride ? 'rgba(200,164,74,0.70)' : 'rgba(140,160,200,0.35)' }}>
+                    {country?.governanceOverride ? '✦ CONSTITUTION PROPRE' : '⚙️ SUIT LE MODÈLE MONDE'}
                 </span>
             </div>
-            <EmojiPicker value={emoji} onChange={setEmoji} compact />
-            </section>
 
-            {/* Régime */}
-            <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
-            <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
-            {tr.secRegime}
-            </h3>
-            <select
-            style={SELECT_STYLE}
-            value={regime}
-            onChange={e => setRegime(e.target.value)}
-            >
-            {Object.entries(getStats().regimes || {})
-              .sort(([, a], [, b]) => a.name.localeCompare(b.name, lang))
-              .map(([k, v]) => (
-                <option key={k} value={k}>{v.emoji || ''} {v.name}</option>
-            ))}
-            </select>
-            </section>
-
-            {/* Chef d'État */}
-            <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
-            <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
-            {tr.secLeader}
-            </h3>
-            <input
-            style={{
-                background: 'rgba(255,255,255,0.04)',
-                                    border: '1px solid rgba(200,164,74,0.18)',
-                                    borderRadius: '2px',
-                                    padding: '0.38rem 0.55rem',
-                                    color: 'rgba(220,228,240,0.85)',
-                                    fontFamily: FONT,
-                                    fontSize: '0.50rem',
-                                    outline: 'none'
-            }}
-            value={leader}
-            onChange={e => setLeader(e.target.value)}
-            placeholder={isEn ? "Head of state name…" : "Nom du dirigeant…"}
-            />
-            </section>
-
-            {/* Toggle Destinée du monde */}
-            <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
-            <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
-            {tr.destinyTitle}
-            </h3>
-            <button
-            onClick={() => setDestinyMode(v => !v)}
-            style={{
-                display: 'flex', alignItems: 'center', gap: '0.55rem',
-                padding: '0.48rem 0.65rem',
-                background: destinyMode ? 'rgba(140,100,220,0.12)' : 'rgba(20,28,45,0.55)',
-                border: `1px solid ${destinyMode ? 'rgba(140,100,220,0.45)' : 'rgba(140,160,200,0.10)'}`,
-                borderRadius: '2px', cursor: 'pointer', width: '100%',
-                textAlign: 'left', transition: 'all 0.15s', fontFamily: FONT,
-            }}
-            >
-            <span style={{ fontSize: '1.05rem' }}>👁️</span>
-            <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.50rem', color: destinyMode ? 'rgba(140,100,220,0.85)' : 'rgba(200,215,240,0.50)' }}>{tr.destinyLabel}</div>
-                <div style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.45)', marginTop: '0.06rem' }}>{tr.destinyDesc}</div>
+            {/* Tabs */}
+            <div style={{ display:'flex', borderBottom:'1px solid rgba(200,164,74,0.12)', flexWrap:'wrap' }}>
+                <button style={tabStyle('regime')}    onClick={() => setActiveTab('regime')}>{tr.tabRegime}</button>
+                <button style={tabStyle('presidency')} onClick={() => setActiveTab('presidency')}>{tr.tabPres}</button>
+                <button style={tabStyle('ministries')} onClick={() => setActiveTab('ministries')}>{tr.tabMins}</button>
+                <button style={tabStyle('ministers')}  onClick={() => setActiveTab('ministers')}>{tr.tabMinisters}</button>
+                {destinyMode && (
+                    <button style={{ ...tabStyle('destin'), color: activeTab === 'destin' ? 'rgba(140,100,220,0.90)' : 'rgba(140,100,220,0.40)', borderBottom: activeTab === 'destin' ? '2px solid rgba(140,100,220,0.70)' : '2px solid transparent' }}
+                        onClick={() => setActiveTab('destin')}>
+                        {isEn ? 'DESTINY' : 'DESTIN'}
+                    </button>
+                )}
             </div>
-            <span style={{ fontFamily: FONT, fontSize: '0.45rem', color: destinyMode ? 'rgba(140,100,220,0.85)' : 'rgba(140,160,200,0.22)' }}>
-                {destinyMode ? '● ACTIF' : '○ INACTIF'}
-            </span>
-            </button>
-            </section>
 
-            {/* Contexte délibérations — accordéon */}
-            <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
-            <button
-            onClick={() => setCtxAccOpen(v => !v)}
-            style={{
-                display: 'flex', alignItems: 'center', gap: '0.5rem',
-                background: 'none', border: 'none', cursor: 'pointer',
-                padding: 0, fontFamily: FONT, textAlign: 'left',
-            }}
-            >
-            <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase', flex: 1 }}>
-                {tr.secContext}{contextMode ? ' ●' : ''}
-            </h3>
-            <span style={{ color: 'rgba(200,164,74,0.40)', fontSize: '0.55rem' }}>{ctxAccOpen ? '▾' : '▸'}</span>
-            </button>
-            {ctxAccOpen && (
-                <>
-                <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.48)', margin: 0, lineHeight: 1.5 }}>
-                {tr.contextHint}
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.32rem' }}>
-                {[
-                    ['', tr.ctxInherit, tr.ctxInheritH],
-                    ['auto', '🤖 Auto', 'Stats + description si disponible'],
-                    ['rich', tr.ctxRich, tr.ctxRichH],
-                    ['stats_only', tr.ctxStats, tr.ctxStatsH],
-                    ['off', tr.ctxOff, tr.ctxOffH],
-                ].map(([val, lbl, hint]) => {
-                    const on = contextMode === val;
-                    return (
-                        <label
-                        key={val}
-                        style={{
-                            display: 'flex', alignItems: 'flex-start',
-                            gap: '0.45rem', cursor: 'pointer',
-                            padding: '0.30rem 0.45rem', borderRadius: '2px',
-                            background: on ? 'rgba(200,164,74,0.08)' : 'transparent',
-                            border: `1px solid ${on ? 'rgba(200,164,74,0.28)' : 'transparent'}`
-                        }}
-                        >
-                        <input
-                        type="radio" name="ctx_mode" value={val}
-                        checked={on} onChange={() => setContextMode(val)}
-                        style={{ marginTop: '0.08rem', accentColor: '#C8A44A' }}
-                        />
-                        <div>
-                        <div style={{ fontFamily: FONT, fontSize: '0.50rem', color: 'rgba(220,228,240,0.85)' }}>{lbl}</div>
-                        <div style={{ fontSize: '0.44rem', color: 'rgba(140,160,200,0.48)', marginTop: '0.08rem', lineHeight: 1.4 }}>{hint}</div>
-                        </div>
-                        </label>
-                    );
-                })}
-                </div>
-
-                {/* Contexte actuel + personnalisé */}
-                <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: '0.35rem 0 0.20rem', textTransform: 'uppercase' }}>
-                {isEn ? 'CURRENT CONTEXT' : 'CONTEXTE ACTUEL'}
-                </h3>
-                {(ctxGeo || ctxSoc)
-                    ? <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                    {ctxGeo && <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.55)', margin: 0, lineHeight: 1.6 }}>{ctxGeo}</p>}
-                    {ctxSoc && <p style={{ fontSize: '0.41rem', color: 'rgba(140,160,200,0.45)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>{ctxSoc}</p>}
-                    </div>
-                    : <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.28)', margin: 0 }}>—</p>
-                }
-                <button
-                style={{ ...BTN_SECONDARY, alignSelf: 'flex-start', fontSize: '0.42rem', padding: '0.22rem 0.55rem' }}
-                onClick={() => setCtxOverrideOpen(v => !v)}
-                >
-                {ctxOverrideOpen ? '▾' : '▸'} {isEn ? 'Custom context' : 'Contexte personnalisé'}
-                {contextOverride ? ' ●' : ''}
-                </button>
-                {ctxOverrideOpen && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.32rem' }}>
-                    <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: 0, lineHeight: 1.5 }}>
-                    {isEn
-                        ? 'Replaces the context above in all AI deliberations for this country.'
-                        : 'Remplace le contexte ci-dessus dans toutes les délibérations IA pour ce pays.'}
-                    </p>
-                    <textarea
-                    style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: `1px solid ${contextOverride ? 'rgba(200,164,74,0.30)' : 'rgba(200,164,74,0.18)'}`,
-                        borderRadius: '2px', padding: '0.38rem 0.55rem',
-                        color: 'rgba(220,228,240,0.85)', fontFamily: FONT,
-                        fontSize: '0.50rem', outline: 'none',
-                        minHeight: '80px', resize: 'vertical', lineHeight: 1.55
-                    }}
-                    value={contextOverride}
-                    onChange={e => setContextOverride(e.target.value)}
-                    placeholder={isEn
-                        ? `E.g. ${country?.nom || 'This country'} is an island theocracy whose constitution dates from 1847…`
-                        : `Ex : ${country?.nom || 'Ce pays'} est une théocratie insulaire dont la constitution date de 1847…`}
+            {/* Corps défilant */}
+            <div style={{ overflowY:'auto', flex:1, padding:'0.80rem 1rem', display:'flex', flexDirection:'column', gap:'1.1rem' }}>
+                {activeTab === 'regime' && (
+                    <TabRegime country={country} isEn={isEn} tr={tr}
+                        state={{ emoji, regime, leader, contextMode, contextOverride, ctxAccOpen, ctxOverrideOpen, destinyMode }}
+                        handlers={{ setEmoji, setRegime, setLeader, setContextMode, setContextOverride, setCtxAccOpen, setCtxOverrideOpen, setDestinyMode }}
                     />
-                    {contextOverride && (
-                        <button
-                        style={{ ...BTN_SECONDARY, alignSelf: 'flex-end', fontSize: '0.42rem', color: 'rgba(200,80,80,0.50)', border: '1px solid rgba(200,80,80,0.20)' }}
-                        onClick={() => setContextOverride('')}
-                        >
-                        {isEn ? '✕ Clear' : '✕ Effacer'}
-                        </button>
-                    )}
-                    </div>
                 )}
-                </>
-            )}
-            </section>
-            </>
-        )}
+                {activeTab === 'presidency' && (
+                    <TabPresidence isEn={isEn} constitution={constitution} presSymbols={presSymbols}
+                        selectedPresident={selectedPresident} setSelectedPresident={setSelectedPresident}
+                        setActivePres={setActivePres} togglePresident={togglePresident}
+                        updatePresidency={updatePresidency} addPresident={addPresident} deletePresident={deletePresident}
+                        setEmojiVersion={setEmojiVersion}
+                        showNewPresident={showNewPresident} setShowNewPresident={setShowNewPresident}
+                        nPresD={nPresD} setNPresD={setNPresD}
+                    />
+                )}
+                {activeTab === 'ministries' && (
+                    <TabMinisteres isEn={isEn} constitution={constitution} BASE_IDS={BASE_IDS}
+                        selectedMinistry={selectedMinistry} setSelectedMinistry={setSelectedMinistry}
+                        toggleMinistry={toggleMinistry} isMinistryActive={isMinistryActive}
+                        updateMinistryMission={updateMinistryMission}
+                        assignMinisterToMinistry={assignMinisterToMinistry}
+                        updateMinisterPrompt={updateMinisterPrompt}
+                        addMinistry={addMinistry} deleteMinistry={deleteMinistry}
+                        setAllMinistriesActive={setAllMinistriesActive} setEmojiVersion={setEmojiVersion}
+                        showNewMinistry={showNewMinistry} setShowNewMinistry={setShowNewMinistry}
+                        nMinistryD={nMinistryD} setNMinistryD={setNMinistryD}
+                    />
+                )}
+                {activeTab === 'ministers' && (
+                    <TabMinistres isEn={isEn} constitution={constitution}
+                        selectedMinister={selectedMinister} setSelectedMinister={setSelectedMinister}
+                        toggleMinister={toggleMinister} isMinisterActive={isMinisterActive}
+                        updateMinisterEssence={updateMinisterEssence} updateMinisterComm={updateMinisterComm}
+                        updateMinisterAnnotation={updateMinisterAnnotation}
+                        addMinister={addMinister} deleteMinister={deleteMinister}
+                        setAllMinistersActive={setAllMinistersActive} setEmojiVersion={setEmojiVersion}
+                        showNewMin={showNewMin} setShowNewMin={setShowNewMin}
+                        nMinD={nMinD} setNMinD={setNMinD}
+                    />
+                )}
+                {activeTab === 'destin' && (
+                    <TabDestin isEn={isEn} constitution={constitution} lang={lang}
+                        selectedDestin={selectedDestin} setSelectedDestin={setSelectedDestin}
+                        activeDestinAgents={activeDestinAgents} setActiveDestinAgents={setActiveDestinAgents}
+                        setDestinyMode={setDestinyMode} setActiveTab={setActiveTab}
+                        updateMinisterEssence={updateMinisterEssence} updateMinisterComm={updateMinisterComm}
+                        setEmojiVersion={setEmojiVersion}
+                    />
+                )}
+            </div>
 
-        {/* ---------- ONGLET PRÉSIDENCE ---------- */}
-        {activeTab === 'presidency' && (() => {
-            // Ordre canonique : phare, boussole, puis custom
-            const ORDRE = ['phare', 'boussole'];
-            const presEntries = [
-                ...ORDRE.map(id => [id, constitution.presidency?.[id]]).filter(([, d]) => d),
-                ...Object.entries(constitution.presidency || {}).filter(([k, d]) => d && !ORDRE.includes(k)),
-            ];
-            const ACCENTS_PRES = ['rgba(200,164,74,0.88)', 'rgba(140,100,220,0.85)', 'rgba(60,200,140,0.85)'];
-            return (
-            <>
-            {/* Tuiles preset (0-2 présidents prédéfinis) */}
-            <PresidencyTiles
-                presType={activePresToType(constitution.activePres)}
-                onSelect={v => { setActivePres(typeToActivePres(v)); setSelectedPresident(null); }}
-                isEn={isEn}
-                presSymbols={presSymbols}
-                onEditEmoji={(presId, emoji) => { sauvegarderEmojiAgent('presidency', presId, emoji); setEmojiVersion(v => v + 1); }}
-                showTrinaire={Object.keys(constitution.presidency || {}).some(k => !['phare','boussole'].includes(k))}
-            />
-            {/* Description 0-3 présidents */}
-            <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: '0.3rem 0 0.5rem', lineHeight: 1.5 }}>
-                {isEn
-                    ? `${presEntries.length}/3 figures — 0 to 3 presidents active. No presidency → collegial mode.`
-                    : `${presEntries.length}/3 figures — 0 à 3 présidents actifs. Sans présidence → mode collégial.`}
-            </p>
-
-            {/* Boutons configurer pour tous les présidents */}
-            {presEntries.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.4rem' }}>
-                    {presEntries.map(([pid, p], i) => {
-                        if (!p) return null;
-                        const isSel = selectedPresident === pid;
-                        const acc   = ACCENTS_PRES[i] || ACCENTS_PRES[ACCENTS_PRES.length - 1];
-                        const isActif = constitution.activePres.includes(pid);
-                        return (
-                            <button key={pid}
-                                onClick={() => setSelectedPresident(isSel ? null : pid)}
-                                style={{
-                                    fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.42rem',
-                                    padding: '0.25rem 0.65rem', borderRadius: '2px', cursor: 'pointer',
-                                    background: isSel ? acc.replace('0.88','0.12').replace('0.85','0.12') : 'rgba(255,255,255,0.03)',
-                                    border: `1px solid ${isSel ? acc.replace('0.88','0.45').replace('0.85','0.45') : 'rgba(140,160,200,0.15)'}`,
-                                    color: isActif ? acc : 'rgba(140,160,200,0.35)',
-                                    opacity: isActif ? 1 : 0.5,
-                                }}>
-                                {p.symbol || p.emoji || '★'} {isEn ? `Configure ${p.name}` : `Configurer ${p.name}`}
-                            </button>
-                        );
-                    })}
-                    {/* Bouton ajouter un 3e président */}
-                    {presEntries.length < 3 && (
-                        <button
-                            onClick={() => setShowNewPresident(v => !v)}
-                            style={{
-                                fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.42rem',
-                                padding: '0.25rem 0.65rem', borderRadius: '2px', cursor: 'pointer',
-                                background: 'transparent',
-                                border: '1px dashed rgba(60,200,140,0.30)',
-                                color: 'rgba(60,200,140,0.60)',
-                            }}>
-                            + {isEn ? 'Add president' : 'Ajouter'}
+            {/* Footer */}
+            <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', padding:'0.68rem 1rem', borderTop:'1px solid rgba(200,164,74,0.12)', background:'rgba(0,0,0,0.22)' }}>
+                {country?.governanceOverride && (
+                    confirmReset
+                    ? <>
+                        <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(200,80,80,0.60)' }}>
+                            {isEn ? 'Confirm reset?' : 'Confirmer ?'}
+                        </span>
+                        <button style={{ ...BTN_SECONDARY, fontSize:'0.42rem' }} onClick={() => setConfirmReset(false)}>
+                            {isEn ? 'No' : 'Non'}
                         </button>
-                    )}
+                        <button style={{ ...BTN_SECONDARY, fontSize:'0.42rem', color:'rgba(200,80,80,0.55)', border:'1px solid rgba(200,80,80,0.30)' }}
+                            onClick={() => { onSave({ ...country, governanceOverride: null }); onClose(); }}>
+                            {isEn ? '↺ Yes' : '↺ Oui'}
+                        </button>
+                      </>
+                    : <button style={{ ...BTN_SECONDARY, fontSize:'0.42rem', color:'rgba(200,80,80,0.50)', border:'1px solid rgba(200,80,80,0.20)' }}
+                        onClick={() => setConfirmReset(true)}>
+                        {isEn ? '↺ Revert to world model' : '↺ Revenir au modèle monde'}
+                      </button>
+                )}
+                <div style={{ display:'flex', gap:'0.6rem', marginLeft:'auto' }}>
+                    <button style={BTN_SECONDARY} onClick={handleClose}>{tr.cancel}</button>
+                    <button style={BTN_PRIMARY}    onClick={handleSave}>{tr.apply}</button>
                 </div>
-            )}
+            </div>
 
-            {/* Formulaire nouveau président */}
-            {showNewPresident && (
-                <section style={{ ...CARD_STYLE, border: '1px solid rgba(60,200,140,0.22)', padding: '0.7rem', marginBottom: '0.5rem' }}>
-                    <h3 style={{ fontSize: '0.50rem', color: 'rgba(60,200,140,0.65)', marginBottom: '0.5rem' }}>
-                        + {isEn ? 'NEW PRESIDENT' : 'NOUVEAU PRÉSIDENT'}
-                    </h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr', gap: '0.38rem', marginBottom: '0.28rem' }}>
-                        <details style={{ position: 'relative' }}>
-                            <summary style={{ listStyle: 'none', cursor: 'pointer', fontSize: '1.2rem', width: '2.8rem', textAlign: 'center', padding: '0.2rem', border: '1px solid rgba(60,200,140,0.25)', borderRadius: '2px' }}>
-                                {nPresD.emoji || '★'}
-                            </summary>
-                            <div style={{ position: 'absolute', zIndex: 200, top: '2.4rem', left: 0, background: 'rgba(8,13,22,0.98)', border: '1px solid rgba(60,200,140,0.22)', borderRadius: '3px', padding: '0.5rem', width: '340px' }}>
-                                <EmojiPicker value={nPresD.emoji} onChange={e => setNPresD(d => ({ ...d, emoji: e }))} />
-                            </div>
-                        </details>
-                        <input style={INPUT_STYLE} value={nPresD.name} placeholder={isEn ? 'Name' : 'Nom'}
-                            onChange={e => setNPresD(d => ({ ...d, name: e.target.value }))} />
-                        <input style={INPUT_STYLE} value={nPresD.id} placeholder="id_unique"
-                            onChange={e => setNPresD(d => ({ ...d, id: e.target.value }))} />
-                    </div>
-                    <input style={{ ...INPUT_STYLE, marginBottom: '0.28rem' }} value={nPresD.subtitle}
-                        placeholder={isEn ? 'Subtitle (optional)' : 'Sous-titre (optionnel)'}
-                        onChange={e => setNPresD(d => ({ ...d, subtitle: e.target.value }))} />
-                    <textarea style={{ ...INPUT_STYLE, minHeight: '38px', resize: 'vertical', fontFamily: FONT, lineHeight: 1.5, marginBottom: '0.38rem' }}
-                        value={nPresD.essence} placeholder={isEn ? 'Essence…' : 'Essence…'}
-                        onChange={e => setNPresD(d => ({ ...d, essence: e.target.value }))} />
-                    <div style={{ display: 'flex', gap: '0.38rem', justifyContent: 'flex-end' }}>
-                        <button style={BTN_SECONDARY} onClick={() => { setShowNewPresident(false); setNPresD({ id:'', name:'', emoji:'★', subtitle:'', essence:'' }); }}>
-                            {isEn ? 'Cancel' : 'Annuler'}
-                        </button>
-                        <button
-                            style={{ ...BTN_PRIMARY, opacity: nPresD.name && nPresD.id ? 1 : 0.35 }}
-                            disabled={!nPresD.name || !nPresD.id}
-                            onClick={() => {
-                                const id = nPresD.id.trim().toLowerCase().replace(/\s+/g,'_');
-                                addPresident({ id, name: nPresD.name.trim(), symbol: nPresD.emoji, emoji: nPresD.emoji, subtitle: nPresD.subtitle.trim() || (isEn ? 'Custom president' : 'Président personnalisé'), essence: nPresD.essence.trim(), custom: true });
-                                setShowNewPresident(false);
-                                setNPresD({ id:'', name:'', emoji:'★', subtitle:'', essence:'' });
-                                setSelectedPresident(id);
-                            }}>
-                            {isEn ? 'Create' : 'Créer'}
-                        </button>
-                    </div>
-                </section>
-            )}
-
-            {selectedPresident && constitution.presidency[selectedPresident] && (
-                <PresidentDetail
-                    president={constitution.presidency[selectedPresident]}
-                    presidentId={selectedPresident}
-                    isActive={constitution.activePres.includes(selectedPresident)}
-                    isSelected={true}
-                    onToggleActive={() => togglePresident(selectedPresident)}
-                    onUpdateField={(field, value) => updatePresidency(selectedPresident, field, value)}
-                    onDelete={constitution.presidency[selectedPresident]?.custom ? () => { deletePresident(selectedPresident); setSelectedPresident(null); } : undefined}
-                    onClose={() => setSelectedPresident(null)}
-                />
-            )}
-            </>
-            );
-        })()}
-
-        {/* ---------- ONGLET MINISTÈRES ---------- */}
-        {activeTab === 'ministries' && (
-            <>
-            <MinistriesList
-            ministries={constitution.ministries}
-            activeMins={constitution.activeMins}
-            onToggleMinistry={toggleMinistry}
-            onMinistryClick={handleMinistryClick}
-            onSetAllActive={setAllMinistriesActive}
-            onEditEmoji={(id, emoji) => { sauvegarderEmojiAgent('ministries', id, emoji); setEmojiVersion(v => v + 1); }}
-            />
-
-            {/* Bouton pour ajouter un nouveau ministère */}
-            {showNewMinistry ? (
-                <NewMinistryForm
-                formData={nMinistryD}
-                setFormData={setNMinistryD}
-                onCancel={() => setShowNewMinistry(false)}
-                onSubmit={() => {
-                    // Implémente la logique d'ajout (ex: appeler une fonction du hook)
-                    // Par exemple : addMinistry(nMinistryD);
-                    const id = nMinistryD.id.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
-                    if (!id || constitution.ministries.some(m => m.id === id)) return;
-                    addMinistry({ ...nMinistryD, id }, (newId) => {
-                        setSelectedMinistry(newId);
-                    });
-                    setNMinistryD({ id:'', name:'', emoji:'🏛️', color:'#8090C0', mission:'', ministers:[] });
-                    setShowNewMinistry(false);
-                }}
-                />
-            ) : (
-                <button style={{ ...BTN_SECONDARY, alignSelf: 'center', color: 'rgba(100,160,255,0.55)', border: '1px solid rgba(100,160,255,0.22)' }}
-                onClick={() => setShowNewMinistry(true)}>
-                + {isEn ? 'New ministry' : 'Nouveau ministère'}
-                </button>
-            )}
-            {/* Détail du ministère sélectionné */}
-            {selectedMinistry && (
-                <MinistryDetail
-                ministry={constitution.ministries.find(m => m.id === selectedMinistry)}
-                isActive={isMinistryActive(selectedMinistry)}
-                isSelected={true}
-                onToggleActive={() => toggleMinistry(selectedMinistry)}
-                onUpdateMission={(newMission) => updateMinistryMission(selectedMinistry, newMission)}
-                ministers={Object.fromEntries(
-                    Object.entries(constitution.ministers).filter(([id]) => !(getDestin()?.agents || []).includes(id))
-                )}
-                onAssignMinister={(ministerId, isIn) => assignMinisterToMinistry(selectedMinistry, ministerId, isIn)}
-                onUpdatePrompt={(ministerId, newPrompt) => updateMinisterPrompt(selectedMinistry, ministerId, newPrompt)}
-                onClose={() => setSelectedMinistry(null)}
-                onDelete={() => {
-                    deleteMinistry(selectedMinistry);
-                    setSelectedMinistry(null);
-                }}
-                isBase={BASE_IDS.includes(selectedMinistry)}
-                />
-            )}
-
-
-            </>
-        )}
-
-        {/* ---------- ONGLET MINISTRES ---------- */}
-        {activeTab === 'ministers' && (
-            <>
-            <MinistersList
-            ministers={constitution.ministers}
-            activeMinsters={constitution.activeMinsters}
-            onMinisterClick={handleMinisterClick}
-            onSetAllActive={setAllMinistersActive}
-            onEditEmoji={(id, emoji) => { sauvegarderEmojiAgent('ministers', id, emoji); setEmojiVersion(v => v + 1); }}
-            />
-            {/* Bouton pour ajouter un nouveau ministre */}
-            {showNewMin ? (
-                <NewMinisterForm
-                formData={nMinD}
-                setFormData={setNMinD}
-                onCancel={() => setShowNewMin(false)}
-                onSubmit={() => {
-                    // Implémente la logique d'ajout (ex: appeler une fonction du hook)
-                    // Par exemple : addMinister(nMinisterD);
-                    const id = nMinD.id.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
-                    if (!id || constitution.ministers[id]) return;
-                    addMinister({ ...nMinD, id }, (newId) => {
-                        setSelectedMinister(newId);
-                    });
-                    setNMinD({ id:'', name:'', emoji:'🌟', color:'#8090C0', essence:'', comm:'', annotation:'' });
-                    setShowNewMin(false);
-                }}
-                />
-            ) : (
-
-                <button style={{ ...BTN_SECONDARY, alignSelf: 'center', color: 'rgba(100,200,120,0.55)', border: '1px solid rgba(100,200,120,0.22)' }}
-                onClick={() => setShowNewMin(true)}>
-                + {isEn ? 'New minister' : 'Nouveau ministre'}
-                </button>
-            )}
-            {/* Détail du ministre sélectionné */}
-            {selectedMinister && constitution.ministers[selectedMinister] && (
-                <MinisterDetail
-                minister={constitution.ministers[selectedMinister]}
-                ministerId={selectedMinister}
-                isActive={isMinisterActive(selectedMinister)}
-                isSelected={true}
-                onToggleActive={() => toggleMinister(selectedMinister)}
-                onUpdateEssence={(value) => updateMinisterEssence(selectedMinister, value)}
-                onUpdateComm={(value) => updateMinisterComm(selectedMinister, value)}
-                onUpdateAnnotation={(value) => updateMinisterAnnotation(selectedMinister, value)}
-                onClose={() => setSelectedMinister(null)}
-                onDelete={() => {
-                    deleteMinister(selectedMinister);
-                    setSelectedMinister(null);
-                }}
-                isCustom={constitution.ministers[selectedMinister]?.sign === 'Custom'}
-                />
-            )}
-
-            </>
-        )}
-
-        {/* ---------- ONGLET DESTIN ---------- */}
-        {activeTab === 'destin' && (() => {
-            const destin = getDestin();
-            const destingIds = destin?.agents || [];
-            const destAgents = destingIds
-                .map(id => ({ id, ...(constitution.ministers?.[id] || getAgentsEffectifs().ministers?.[id] || {}) }))
-                .filter(a => a.name);
-
-            const toggleDestinAgent = (id) => {
-                setActiveDestinAgents(prev => {
-                    const all = destin?.agents || [];
-                    const cur = prev || all;
-                    const on = cur.includes(id);
-                    const next = on ? cur.filter(k => k !== id) : [...cur, id];
-                    if (next.length === 0) {
-                        setDestinyMode(false);
-                        setActiveTab('regime');
-                        return all;
-                    }
-                    return next.length === all.length ? all : next;
-                });
-            };
-
-            return (
-                <>
-                <AgentGrid
-                agents={destAgents}
-                selectedId={selectedDestin}
-                activeIds={activeDestinAgents}
-                onAgentClick={id => {
-                    if (selectedDestin !== id) {
-                        setSelectedDestin(id);
-                    } else {
-                        toggleDestinAgent(id);
-                        setSelectedDestin(null);
-                    }
-                }}
-                onResetAll={() => setActiveDestinAgents(destin?.agents || [])}
-                onEditEmoji={(id, emoji) => { sauvegarderEmojiAgent('ministers', id, emoji); setEmojiVersion(v => v + 1); }}
-                countLabel={`${destAgents.length} ${isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}`}
-                lang={lang}
-                />
-
-                {destAgents.map(agent => {
-                    if (selectedDestin && selectedDestin !== agent.id) return null;
-                    const on = activeDestinAgents === null || activeDestinAgents.includes(agent.id);
-                    return (
-                        <div key={agent.id} style={{ ...CARD_STYLE, border: `1px solid ${agent.color}33`, opacity: on ? 1 : 0.4 }}>
-                        <div style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: agent.color + 'CC', marginBottom: '0.4rem' }}>
-                        {agent.emoji} {agent.name?.toUpperCase()}
-                        </div>
-                        <div style={{ fontFamily: FONT.mono, fontSize: '0.37rem', color: 'rgba(90,110,150,0.38)', marginBottom: '0.12rem' }}>ESSENCE</div>
-                        <textarea
-                        style={{ ...INPUT_STYLE, width: '100%', minHeight: '40px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5, marginBottom: '0.25rem' }}
-                        readOnly={!on}
-                        value={agent.essence || ''}
-                        onChange={e => on && updateMinisterEssence && updateMinisterEssence(agent.id, e.target.value)}
-                        />
-                        <div style={{ fontFamily: FONT.mono, fontSize: '0.37rem', color: 'rgba(90,110,150,0.38)', marginBottom: '0.12rem' }}>
-                        {isEn ? 'COMMUNICATION STYLE' : 'STYLE DE COMMUNICATION'}
-                        </div>
-                        <textarea
-                        style={{ ...INPUT_STYLE, width: '100%', minHeight: '32px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5 }}
-                        readOnly={!on}
-                        value={agent.comm || ''}
-                        onChange={e => on && updateMinisterComm && updateMinisterComm(agent.id, e.target.value)}
-                        />
-                        </div>
-                    );
-                })}
-                </>
-            );
-        })()}
-        </div>
-
-        {/* Footer */}
-        <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            padding: '0.68rem 1rem',
-            borderTop: '1px solid rgba(200,164,74,0.12)',
-            background: 'rgba(0,0,0,0.22)'
-        }}>
-        {/* Bouton retour modèle monde — custom uniquement */}
-        {country?.governanceOverride && (
-            confirmReset
-            ? <>
-                <span style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(200,80,80,0.60)' }}>
-                    {isEn ? 'Confirm reset?' : 'Confirmer ?'}
-                </span>
-                <button style={{ ...BTN_SECONDARY, fontSize: '0.42rem' }} onClick={() => setConfirmReset(false)}>
-                    {isEn ? 'No' : 'Non'}
-                </button>
-                <button
-                    style={{ ...BTN_SECONDARY, fontSize: '0.42rem', color: 'rgba(200,80,80,0.55)', border: '1px solid rgba(200,80,80,0.30)' }}
-                    onClick={() => { onSave({ ...country, governanceOverride: null }); onClose(); }}
-                >
-                    {isEn ? '↺ Yes' : '↺ Oui'}
-                </button>
-              </>
-            : <button
-                style={{ ...BTN_SECONDARY, fontSize: '0.42rem', color: 'rgba(200,80,80,0.50)', border: '1px solid rgba(200,80,80,0.20)' }}
-                onClick={() => setConfirmReset(true)}
-              >
-                {isEn ? '↺ Revert to world model' : '↺ Revenir au modèle monde'}
-              </button>
-        )}
-        <div style={{ display: 'flex', gap: '0.6rem', marginLeft: 'auto' }}>
-        <button style={BTN_SECONDARY} onClick={handleClose}>
-        {tr.cancel}
-        </button>
-        <button style={BTN_PRIMARY} onClick={handleSave}>
-        {tr.apply}
-        </button>
-        </div>
-        </div>
         </div>
         </div>
     );
