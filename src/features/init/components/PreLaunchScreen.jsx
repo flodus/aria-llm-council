@@ -166,7 +166,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             maxWidth: 680,
             padding: '2rem',
             paddingBottom: '14vh',
-            overflowY: 'auto',
+            overflowY: 'auto', overflowX: 'hidden',
             maxHeight: 'calc(100vh - 2rem)',
             boxSizing: 'border-box'
         }}>
