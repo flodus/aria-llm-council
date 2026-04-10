@@ -25,11 +25,9 @@ export default function RealWorldFlow({ worldName, mode, onBack, onPreLaunch, ba
         onPreLaunch('custom', filled);
     };
 
-    const unvalidated = countries.filter(c =>
-        mode === 'ai' && !c.realData?.id && !c.nom.trim()
-    );
+    const unvalidated = countries.filter(c => !c.realData?.id);
     const hasNotFound = countries.some(c =>
-        mode === 'ai' && !c.realData?.id &&
+        !c.realData?.id &&
         (c._rcStatus === 'notfound' || c._rcStatus === 'suggestion' || c._rcStatus === 'duplicate')
     );
     const canGen = unvalidated.length === 0 && !hasNotFound;
