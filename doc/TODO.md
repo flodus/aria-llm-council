@@ -10,12 +10,13 @@ _(aucun bug actif connu)_
 
 ---
 
-## ✅ LIVRÉ cette session (2026-04-10)
+## ✅ LIVRÉ cette session (2026-04-07)
 
 - [x] **Fix scrollbar horizontale** : `overflowX: hidden` sur `wrap`/`wrapNarrow`/`wrapWide` (shared/theme/components.js) + CustomFlow + RealWorldFlow + PreLaunchScreen (migré vers `wrapWide` — source unique)
 - [x] **Fix validation RealWorldFlow** : pays réel obligatoire quel que soit le mode (condition `mode === 'ai'` bypassait la validation en mode démo)
 - [x] **App.css ménage printemps** : 1057 → 289 lignes — suppression des classes mortes (ancienne carte SVG, ancienne UI sélection monde, modales/forms/sliders CSS, providers settings, keyframes orphelins, tokens topographie inutilisés)
 - [x] **npm audit fix** + git nettoyé (main à jour, branches mergées supprimées)
+- [x] **ConstitutionModal refactor** : 900L → hub ~200L + 5 onglets extraits (`TabRegime`, `TabPresidence`, `TabMinisteres`, `TabMinistres`, `TabDestin`) · `lireAgentsOverride`/`ecrireAgentsOverride` dans `shared/utils/storage.js`
 
 ---
 
