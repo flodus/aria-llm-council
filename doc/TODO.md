@@ -29,7 +29,10 @@ _(aucun bug actif connu)_
 
 ## 🟡 UX COURT TERME
 
-- [x] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser** _(voir session 2026-04-10)_
+- [x] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création**
+  - Formulaire en 2 étapes : step 1 = saisie · step 2 = résumé + choix
+  - `[Hériter →]` : comportement existant · `[Personnaliser →]` / `[S'en affranchir →]` : ouvre ConstitutionModal du nouveau pays
+  - `addFictionalCountry` retourne désormais `newCountry` (Dashboard_p1)
 
 - [ ] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
   - GovernanceForm existe déjà · à faire lors du refactor Settings (session dédiée)

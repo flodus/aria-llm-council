@@ -1672,6 +1672,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
 
     setCountries(prev => [...prev, newCountry]);
     pushNotif(`🌍 ${nom} rejoint le monde.`, 'ok', 4000);
+    return newCountry;
   }, [countries, pushNotif]);
 
   // ── Reset complet ─────────────────────────────────────────────────────────
