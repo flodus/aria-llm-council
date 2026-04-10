@@ -38,7 +38,7 @@ export default function CustomFlow({ worldName, mode, onBack, onPreLaunch }) {
         <div style={{
             display:'flex', flexDirection:'column', alignItems:'center',
             gap:'1.8rem', width:'100%', maxWidth: 700, padding:'2rem',
-            overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
+            overflowY:'auto', overflowX:'hidden', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
             paddingBottom:'14vh'
         }}>
         <ARIAHeader showQuote={false} />

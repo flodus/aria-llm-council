@@ -8,21 +8,21 @@ export const wrap = (wide) => ({
     display:'flex', flexDirection:'column', alignItems:'center',
     gap:'1.8rem', width:'100%', maxWidth: wide ? 700 : 460, padding:'2rem',
     paddingBottom:'14vh',
-    overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
+    overflowY:'auto', overflowX:'hidden', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
 });
 
 export const wrapNarrow = {
     display:'flex', flexDirection:'column', alignItems:'center',
     gap:'1.8rem', width:'100%', maxWidth: 460, padding:'2rem',
     paddingBottom:'14vh',
-    overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
+    overflowY:'auto', overflowX:'hidden', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
 };
 
 export const wrapWide = {
     display:'flex', flexDirection:'column', alignItems:'center',
     gap:'1.8rem', width:'100%', maxWidth: 700, padding:'2rem',
     paddingBottom:'14vh',
-    overflowY:'auto', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
+    overflowY:'auto', overflowX:'hidden', maxHeight:'calc(100vh - 2rem)', boxSizing:'border-box',
 };
 
 export const mCard = {
