@@ -10,6 +10,13 @@ _(aucun bug actif connu)_
 
 ---
 
+## ✅ LIVRÉ cette session (2026-04-10)
+
+- [x] **Fix destin jamais actif** : condition `detectCrisis(question)` sur la phase destin → Oracle/Wyrd ne s'exprimaient jamais (condition doublement impossible). Fix : `destiny_mode === true` suffit, sans vérification crise.
+- [x] **G3 — AddCountryModal + SecessionModal** : formulaire 2 étapes · `[Hériter →]` / `[Personnaliser/S'en affranchir →]` ouvre ConstitutionModal du nouveau pays · `addFictionalCountry` retourne `newCountry`
+
+---
+
 ## ✅ LIVRÉ cette session (2026-04-07)
 
 - [x] **Fix scrollbar horizontale** : `overflowX: hidden` sur `wrap`/`wrapNarrow`/`wrapWide` (shared/theme/components.js) + CustomFlow + RealWorldFlow + PreLaunchScreen (migré vers `wrapWide` — source unique)
@@ -22,10 +29,7 @@ _(aucun bug actif connu)_
 
 ## 🟡 UX COURT TERME
 
-- [ ] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création**
-  - Nouveau pays : résumé aria_options + `[Hériter →]` / `[Personnaliser →]`
-  - Sécession : résumé constitution parent + `[Hériter du parent →]` / `[S'en affranchir →]`
-  - `[Personnaliser/S'en affranchir →]` : ferme modale → ouvre ConstitutionModal du nouveau pays
+- [x] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser** _(voir session 2026-04-10)_
 
 - [ ] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
   - GovernanceForm existe déjà · à faire lors du refactor Settings (session dédiée)

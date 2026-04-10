@@ -81,9 +81,9 @@ export function useCouncilSession(country, onVoteResult) {
             const cercleResult = await runCerclePhase(resolvedId, question, ministereResult.synthese, country);
             setSession(prev => ({ ...prev, cercle: cercleResult }));
 
-            // Phase Destin — optionnelle si destiny_mode actif + crise détectée
+            // Phase Destin — active dès que destiny_mode est activé (oracle + wyrd sur toutes les questions)
             let destinResult = null;
-            if (gov.destiny_mode === true && gov.crisis_mode !== false && detectCrisis(question)) {
+            if (gov.destiny_mode === true) {
                 destinResult = await runDestinPhase(question, country, false);
                 setSession(prev => ({ ...prev, destin: destinResult }));
             }
