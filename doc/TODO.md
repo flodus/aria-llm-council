@@ -1,12 +1,21 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-03-28_
+_Dernière mise à jour : 2026-04-10_
 
 ---
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
 _(aucun bug actif connu)_
+
+---
+
+## ✅ LIVRÉ cette session (2026-04-10)
+
+- [x] **Fix scrollbar horizontale** : `overflowX: hidden` sur `wrap`/`wrapNarrow`/`wrapWide` (shared/theme/components.js) + CustomFlow + RealWorldFlow + PreLaunchScreen (migré vers `wrapWide` — source unique)
+- [x] **Fix validation RealWorldFlow** : pays réel obligatoire quel que soit le mode (condition `mode === 'ai'` bypassait la validation en mode démo)
+- [x] **App.css ménage printemps** : 1057 → 289 lignes — suppression des classes mortes (ancienne carte SVG, ancienne UI sélection monde, modales/forms/sliders CSS, providers settings, keyframes orphelins, tokens topographie inutilisés)
+- [x] **npm audit fix** + git nettoyé (main à jour, branches mergées supprimées)
 
 ---
 
