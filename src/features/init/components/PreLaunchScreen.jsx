@@ -13,7 +13,7 @@
 
 import { useRef, useState, useMemo } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
-import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle } from '../../../shared/theme';
+import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle, wrapWide } from '../../../shared/theme';
 import AgentGrid from '../../../shared/components/AgentGrid';
 import GovernanceForm from '../../../shared/components/GovernanceForm';
 import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
@@ -157,19 +157,7 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
     };
 
     return (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '1.2rem',
-            width: '100%',
-            maxWidth: 680,
-            padding: '2rem',
-            paddingBottom: '14vh',
-            overflowY: 'auto', overflowX: 'hidden',
-            maxHeight: 'calc(100vh - 2rem)',
-            boxSizing: 'border-box'
-        }}>
+        <div style={{ ...wrapWide, gap: '1.2rem', maxWidth: 680 }}>
         <ARIAHeader showQuote={false} />
 
         {/* ── Question initiale : gouvernance du monde ─────────────────────── */}
