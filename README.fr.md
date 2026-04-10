@@ -19,7 +19,7 @@
 [![Licence](https://img.shields.io/badge/licence-MIT-green?style=flat-square)](LICENSE)
 [![Démo](https://img.shields.io/badge/Démo-Live-3ABF7A?style=flat-square)](https://flodus.github.io/aria-llm-council)
 
-**[🚀 Lancer la démo](https://flodus.github.io/aria-llm-council)** &nbsp;·&nbsp; **[🇬🇧 English version](README.md)**
+**[🚀 Lancer la démo](https://flodus.github.io/aria-llm-council)** &nbsp;·&nbsp; **[📄 Manifeste](https://github.com/flodus/aria-llm-council/blob/main/doc/ARIA_Manifeste_FR.pdf)** &nbsp;·&nbsp; **[🇬🇧 English version](README.md)**
 
 </div>
 
