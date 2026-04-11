@@ -1,6 +1,8 @@
 // src/shared/services/storage.js
-
-// Centralisation de toutes les fonctions localStorage
+// ── COUCHE ACCÈS BRUT ────────────────────────────────────────────────────────
+// Fonctions nommées par clé : lecture / écriture / statut.
+// Aucune logique métier ici — pas de merge, pas de valeurs par défaut.
+// Pour la logique options (merge + defaults) → shared/config/options.js
 
 export const loadOpts = () => {
     try { return JSON.parse(localStorage.getItem('aria_options')||'{}'); }

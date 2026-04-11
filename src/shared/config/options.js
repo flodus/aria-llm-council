@@ -1,5 +1,9 @@
 // src/shared/config/options.js
-// Options utilisateur par défaut, persistance localStorage
+// ── COUCHE LOGIQUE MÉTIER OPTIONS ────────────────────────────────────────────
+// Valeurs par défaut (DEFAULT_OPTIONS) + merge avec localStorage.
+// Aucun accès brut localStorage ici — passe par shared/services/storage.js
+
+import { loadOpts, saveOpts, loadKeys } from '../services/storage';
 
 export const DEFAULT_OPTIONS = {
   api_keys: { claude: '', gemini: '', grok: '', openai: '' },
@@ -29,8 +33,8 @@ export const DEFAULT_OPTIONS = {
 
 export function getOptions() {
   try {
-    const saved   = JSON.parse(localStorage.getItem('aria_options') || '{}');
-    const apiKeys = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+    const saved   = loadOpts();
+    const apiKeys = loadKeys();
     return {
       ...DEFAULT_OPTIONS, ...saved,
       api_keys:          { ...DEFAULT_OPTIONS.api_keys, ...apiKeys, ...saved.api_keys },
@@ -44,6 +48,5 @@ export function getOptions() {
 }
 
 export function saveOptions(opts) {
-  try { localStorage.setItem('aria_options', JSON.stringify(opts)); }
-  catch { console.warn('[ARIA] Sauvegarde options impossible.'); }
+  saveOpts(opts);
 }
