@@ -157,8 +157,9 @@
  ├─[V7] Crisis protocol ......... [Emergency referendums] ........... ⬡ 0%
  ├─[V8] Scenarios hub ........... [Historical & Sandbox presets] .... ⬡ 0%
  └─[V9] i18n full coverage ....... [Audit → centralise → translate] .. ⬡ 0%
+        ├─> FALLBACK_PHRASES externalised to ariaI18n.js FR+EN (2026-04-11)
         ├─> Audit all inline franglais strings (isEn ? '…' : '…')
-        ├─> Centralise ~300 strings + AI prompts to ariaI18n.js
+        ├─> Centralise ~300 remaining strings + AI prompts to ariaI18n.js
         ├─> Full FR/EN UI translation (all components)
         ├─> Sync base_agents_en.json ↔ base_agents.json
         └─> ariaQA_en.json (when ariaQA is created)
@@ -171,7 +172,10 @@
  [ PHASE V4 : QUALITY & MAINTAINABILITY ] ........................ STATUS: QUEUED
  ├─[V5] Src refactor ............ [src/components · engine · lib] .... ⬡ 0%
  │      └─> Partially done — Dashboard_p1 extracted into 9 modules (2026-04-11)
- │           Remaining: normalizeCountry() · full storageKeys adoption
+ │           storageKeys.js inventory complete (2026-04-11)
+ │           models.js DEFAULT_MODELS centralised (2026-04-11)
+ │           ARBORESCENCE.md cleaned + storage roles clarified (2026-04-11)
+ │           Remaining: normalizeCountry() · STORAGE_KEYS adoption in 33 files
  └─[V8] Engine optimisation ..... [Re-renders · useCallback · AI calls] ⬡ 0%
 
  [ PHASE V5 : MULTIPLAYER ] ...................................... STATUS: DISTANT
@@ -202,6 +206,8 @@
            Phase B1 done — all bugs B1→B15 fixed.
            Quality refactor (2026-04-11): src/ restructured,
            dead files removed, storage/options responsibilities clarified.
+           XS quality post-audit: models.js, storageKeys complete, FALLBACK_PHRASES i18n,
+           V4 stubs annotated, ARBORESCENCE.md cleaned.
            Next: U3 Chronolog enriched.
 ================================================================================
 ```
