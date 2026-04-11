@@ -7,7 +7,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { loadLang, t, useLocale } from '../../ariaI18n';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { C, FONT } from '../../shared/theme';
 
 
@@ -416,7 +416,8 @@ function CycleBlock({ cycle, filterCountryId, filterType, defaultOpen, isCurrent
   if (visibleGroups.length === 0) return null;
 
   const totalEvs = visibleGroups.reduce((s, g) => s + g.events.length, 0);
-  const narratif = cycleSummaryLine(cycle.events, lang);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const narratif = useMemo(() => cycleSummaryLine(cycle.events, lang), [cycle.cycleNum, cycle.events.length, lang]);
 
   return (
     <div style={{ marginBottom:'0.55rem',

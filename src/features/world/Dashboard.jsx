@@ -10,6 +10,7 @@
 //  Ce fichier conserve uniquement le composant Dashboard() et les imports.
 // ═══════════════════════════════════════════════════════════════════════════════
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../shared/data/ariaData';
+import { STORAGE_KEYS } from '../../shared/services/storageKeys';
 import { loadLang, t } from '../../ariaI18n';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -48,7 +49,8 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   }, []);
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
 
-  const cycleNumRef = useRef(1);
+  const _storedCycleNum = parseInt(localStorage.getItem(STORAGE_KEYS.CYCLE_NUM) || '1', 10);
+  const cycleNumRef = useRef(isNaN(_storedCycleNum) ? 1 : _storedCycleNum);
 
   const [openMinistry, setOpenMinistry] = useState(null);
   const [customQ, setCustomQ] = useState('');
@@ -69,7 +71,14 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   const [modalCycleConfirm, setModalCycleConfirm] = useState(false);
   const [modalAddCountry,   setModalAddCountry]   = useState(false);
 
-  const [cycleHistory, setCycleHistory] = useState([]);
+  const [cycleHistory, setCycleHistory] = useState(() => {
+    // B7 — hydratation au mount depuis aria_chronolog_cycles
+    try {
+      const cycles = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHRONOLOG_CYCLES) || '[]');
+      const current = cycles.find(c => c.cycleNum === cycleNumRef.current);
+      return current?.events?.filter(e => e.type === 'vote') || [];
+    } catch { return []; }
+  });
 
   const {
     session:        councilSession,
@@ -490,6 +499,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
                 );
                 closeCycle(cycleNumRef.current);
                 cycleNumRef.current += 1;
+                localStorage.setItem(STORAGE_KEYS.CYCLE_NUM, String(cycleNumRef.current));
                 setCurrentCycleQuestions({});
                 setModalCycleConfirm(false);
                 setCycleHistory([]);
