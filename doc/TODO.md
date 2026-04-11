@@ -10,15 +10,23 @@ _(aucun bug actif connu)_
 
 ---
 
-## ✅ LIVRÉ cette session (2026-04-12) — Chronolog enrichi (U3)
+## ✅ LIVRÉ cette session (2026-04-12) — Chroniqueur + Chronolog phase 2
 
-- [x] **Résumé narratif par cycle** : ligne "3 votes · 1 sécession — SAT +4 ARIA −2" dans le header de chaque accordéon cycle
-- [x] **Filtre par type d'événement** : select "Tous types / Vote / Sécession / Constitution / Nouveau pays" (ET logique avec filtre pays existant)
-- [x] **Pagination cycles anciens** : boutons ← Précédent / Suivant → pour les cycles _summary (> 5 cycles)
-- [x] **Persistance** : `aria_chronolog_cycles` déjà correctement sauvegardé/restauré — aucun bug
-- [x] **Seul fichier modifié** : `ChronologView.jsx` — `useChronolog.js` intact
+- [x] **C1 — Chroniqueur institutionnel** : agent mémoire narrative par pays
+  - `useChroniqueur.js` : `runChroniqueur()` IA + fallback déterministe
+  - Injection dans `buildCountryContext()` (résolution pays > global)
+  - Stockage : `aria_chroniqueur = { [countryId]: { memoire, cycle } }`
+  - Tout paramétrable partout : global (Settings) → init par pays (PreLaunchScreen/ContextPanel) → in-game (ConstitutionModal/TabRegime)
+  - Provider/modèle : `chroniqueur_model` dans SectionConstitution avec les autres ia_roles
+  - CycleConfirmModal option B : `onGenerate` async (spinner → narratives → confirm débloqué)
+  - Dashboard : `onGenerate` (pushCycleStats + runChroniqueur) séparé de `onConfirm`, protection double-push
 
-- [ ] **B7 — cycleHistory non persisté au reload** (cycle live perdu si rechargement avant clôture) — hors scope U3, traité séparément
+- [x] **Visibilité mémoire** :
+  - CountryPanelTimeline : bloc 📜 en haut, polling 2s
+  - ChronologView vue PAYS : bloc 📜 épinglé au-dessus des cycles quand pays sélectionné
+  - LLMCouncil : accordéon 📜 après la question, avant les ministres
+
+- [x] **B7 — cycleHistory persisté au reload** : hydratation depuis `aria_chronolog_cycles` au mount + `cycleNumRef` depuis localStorage
 
 ---
 
@@ -62,13 +70,7 @@ _(aucun bug actif connu)_
 
 - [x] **U3 — Chronolog enrichi** : livré (résumé narratif, filtres, pagination, CountryPanel Timeline, délibération complète, B7 fix)
 
-- [ ] **C1 — Chroniqueur** : agent mémoire institutionnelle par pays — s'active à la clôture de chaque cycle
-  - Lit narration précédente + events du cycle clos → produit narration enrichie (progressif)
-  - IA mode : `callAI('council_chroniqueur')` · Board game : templates déterministes JSON
-  - Stockage : `aria_chroniqueur` = `{ [countryId]: { memoire, cycle } }`
-  - Injection dans contexte Boussole + Phare via `contextBuilder.js`
-  - Settings : toggle activer/désactiver · modèle dédié (dépend T1 pour provider custom)
-  - Branche : `feature/chroniqueur`
+- [x] **C1 — Chroniqueur** : livré — voir section LIVRÉ ci-dessus
 
 - [x] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
 
