@@ -230,7 +230,7 @@ html, body, #root {
 .btn:disabled { opacity:0.30; cursor:not-allowed; pointer-events:none; }
 .btn-full     { width:100%; }
 
-.cp-act-btn      { padding:0.55rem 0.72rem; font-family:var(--f-serif); font-size:clamp(0.50rem,0.65vw,0.58rem); letter-spacing:0.13em; cursor:pointer; transition:all var(--t-xs); text-align:center; border:1px solid; }
+.cp-act-btn      { padding:0.55rem 0.72rem; font-family:var(--f-serif); font-size:clamp(0.50rem,0.65vw,0.58rem); letter-spacing:0.13em; cursor:pointer; transition:all var(--t-xs); text-align:center; border:1px solid; background:transparent; }
 .cp-act-btn.gold   { background:rgba(200,164,74,0.06); border-color:var(--gold);    color:var(--gold);    } .cp-act-btn.gold:hover   { background:rgba(200,164,74,0.14); }
 .cp-act-btn.blue   { background:rgba(74,126,200,0.06); border-color:var(--blue);    color:var(--blue);    } .cp-act-btn.blue:hover   { background:rgba(74,126,200,0.14); }
 .cp-act-btn.purple { background:rgba(138,110,200,0.06);border-color:var(--purple);  color:var(--purple);  } .cp-act-btn.purple:hover { background:rgba(138,110,200,0.14); }
