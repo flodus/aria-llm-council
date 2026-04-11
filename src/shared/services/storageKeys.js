@@ -21,6 +21,11 @@ export const STORAGE_KEYS = {
   LANG:              'aria_lang',
   AUDIO_MUTED:       'aria_audio_muted',
 
+  // Radio (RadioPlayer)
+  RADIO_STATIONS:    'radio_stations',
+  RADIO_CURRENT:     'current_station_id',
+  RADIO_VOLUME:      'radio_volume',
+
   // Chrono
   CHRONOLOG_CYCLES:  'aria_chronolog_cycles',
 

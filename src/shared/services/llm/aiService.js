@@ -3,9 +3,10 @@
 
 import { getOptions } from '../../config/options';
 import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN } from '../../data/ariaData';
-import { loadLang } from '../../../ariaI18n';
+import { loadLang, FALLBACK_PHRASES } from '../../../ariaI18n';
 import { setIaStatus } from '../iaStatusStore';
 import { getPrompts } from '../../../features/settings/utils/settingsStorage';
+import { DEFAULT_MODELS } from '../../constants/models';
 
 // ── Validation clés ───────────────────────────────────────────────────────────
 
@@ -134,16 +135,11 @@ Génère une notification d'analyse en JSON :
 }
 
 // ── Fallbacks ─────────────────────────────────────────────────────────────────
-
-const FALLBACK_PHRASES = [
-  "ERREUR 404 : La conscience d'ARIA est partie prendre un café virtuel. Réessayez plus tard.",
-  "SIGNAL PERDU : L'IA est actuellement en train de recalculer le sens de la vie (42).",
-  "DÉFAILLANCE SYNAPTIQUE : Les serveurs d'ARIA boudent. Vérifiez vos clés API.",
-  "FRONTIÈRE NUMÉRIQUE : Le Grand Pare-feu bloque nos transmissions diplomatiques.",
-  "MOTEUR EN RADE : L'IA de synthèse a fondu un fusible. Retour au mode manuel.",
-  "SILENCE RADIO : Les ministres sont en grève numérique pour une durée indéterminée.",
-];
-const getRandomFallback = () => FALLBACK_PHRASES[Math.floor(Math.random() * FALLBACK_PHRASES.length)];
+// FALLBACK_PHRASES importé depuis ariaI18n.js
+const getRandomFallback = () => {
+  const phrases = FALLBACK_PHRASES[loadLang()] || FALLBACK_PHRASES.fr;
+  return phrases[Math.floor(Math.random() * phrases.length)];
+};
 
 // Pioche une réponse locale (mode hors-ligne)
 function getLocalResponse(type, context = {}) {
@@ -182,7 +178,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
   if (model === 'claude') {
     const claudeKeys = getProviderKeys('claude');
-    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').claude || 'claude-sonnet-4-6'; } catch { return 'claude-sonnet-4-6'; } })();
+    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').claude || DEFAULT_MODELS.claude; } catch { return DEFAULT_MODELS.claude; } })();
     for (const keyEntry of claudeKeys) {
       try {
         const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -208,7 +204,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     const geminiKeys = getProviderKeys('gemini');
     const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').gemini; } catch { return null; } })();
     for (const keyEntry of geminiKeys) {
-      const GEMINI_MODELS = [keyEntry.model || prefModel, 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
+      const GEMINI_MODELS = [keyEntry.model || prefModel, DEFAULT_MODELS.gemini, 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
       let lastWas429 = false;
       for (const gModel of GEMINI_MODELS) {
         if (lastWas429) await new Promise(r => setTimeout(r, 1500));
@@ -245,7 +241,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
   if (model === 'grok') {
     const grokKeys = getProviderKeys('grok');
-    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').grok || 'grok-3-mini'; } catch { return 'grok-3-mini'; } })();
+    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').grok || DEFAULT_MODELS.grok; } catch { return DEFAULT_MODELS.grok; } })();
     for (const keyEntry of grokKeys) {
       if (isFakeKey('grok', keyEntry.key)) return { error: true, msg: getRandomFallback() };
       if (!isValidKeyFormat('grok', keyEntry.key)) continue;
@@ -268,7 +264,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
   if (model === 'openai') {
     const openaiKeys = getProviderKeys('openai');
-    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').openai || 'gpt-4.1-mini'; } catch { return 'gpt-4.1-mini'; } })();
+    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').openai || DEFAULT_MODELS.openai; } catch { return DEFAULT_MODELS.openai; } })();
     for (const keyEntry of openaiKeys) {
       if (isFakeKey('openai', keyEntry.key)) return { error: true, msg: getRandomFallback() };
       if (!isValidKeyFormat('openai', keyEntry.key)) continue;

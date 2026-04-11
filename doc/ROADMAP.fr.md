@@ -93,8 +93,10 @@
 
  [ PHASE B0 : STABILISATION ] .................................... STATUT: ✅ TERMINÉ
  │
- ├─[B1] Bug ajout pays in-game .. [addFictionalCountry — Dashboard_p1] ✅ 100%
- └─[B2] Pipeline Country Context  [Init → délibérations in-game] ..... ✅ 100%
+ ├─[B1] Bug ajout pays in-game .. [addFictionalCountry] ............... ✅ 100%
+ ├─[B2] Pipeline Country Context  [Init → délibérations in-game] ..... ✅ 100%
+ └─[R1] dispatchEvent vote ....... [aria:vote-stored — Dashboard.jsx] . ✅ 100%
+        └─> Survécu au refactor Dashboard_p1 → Dashboard.jsx:195
 
  [ PHASE B1 : STABILISATION II ] ................................ STATUT: ✅ TERMINÉ
  │  Bugs post-refactor + moteur délibération
@@ -156,8 +158,9 @@
  ├─[V7] Protocole de crise ....... [Référendums d'urgence] ........... ⬡ 0%
  ├─[V8] Hub de scénarios ......... [Présets historiques & sandbox] ... ⬡ 0%
  └─[V9] i18n couverture complète .. [Audit → centraliser → traduire] . ⬡ 0%
+        ├─> FALLBACK_PHRASES externalisées vers ariaI18n.js FR+EN (2026-04-11)
         ├─> Audit des chaînes franglais inline (isEn ? '…' : '…')
-        ├─> Centralisation ~300 chaînes + prompts IA vers ariaI18n.js
+        ├─> Centralisation ~300 chaînes restantes + prompts IA vers ariaI18n.js
         ├─> Traduction complète FR/EN de toute l'interface
         ├─> Sync base_agents_en.json ↔ base_agents.json
         └─> ariaQA_en.json (quand ariaQA sera créé)
@@ -169,6 +172,11 @@
 
  [ PHASE V4 : QUALITÉ & MAINTENABILITÉ ] ......................... STATUT: EN FILE
  ├─[V5] Refactor arborescence ... [src/components · engine · lib] .... ⬡ 0%
+ │      └─> Partiellement fait — Dashboard_p1 extrait en 9 modules (2026-04-11)
+ │           storageKeys.js inventaire complet (2026-04-11)
+ │           models.js DEFAULT_MODELS centralisé (2026-04-11)
+ │           ARBORESCENCE.md nettoyée + storage clarifiés (2026-04-11)
+ │           Reste : normalizeCountry() · adoption STORAGE_KEYS dans 33 fichiers
  └─[V8] Optimisation moteur ..... [Re-renders · useCallback · appels IA] ⬡ 0%
 
  [ PHASE V5 : MULTIJOUEUR ] ...................................... STATUT: DISTANT
@@ -200,6 +208,8 @@
         Phase B1 terminée — tous les bugs B1→B15 corrigés.
         Refactor qualité (2026-04-11) : arborescence src/ restructurée,
         fichiers morts supprimés, responsabilités storage/options clarifiées.
+        XS qualité post-audit : models.js, storageKeys complet, FALLBACK_PHRASES i18n,
+        stubs V4 annotés, ARBORESCENCE.md nettoyée.
         Prochain : U3 Chronolog enrichi.
 ================================================================================
 ```
