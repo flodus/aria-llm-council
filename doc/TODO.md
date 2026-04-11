@@ -80,6 +80,7 @@ _(bloqué sur refonte carte V1)_
 - [ ] **F1 — Minimum 2 pays en mode custom** : actuellement limité à 1 seul pays custom
 - [x] **F2 — Bloquer doublons pays réels** : déjà implémenté (disabled + ✗ + repoussé en bas dans RealCountryLocalSection + duplicate status dans RealCountryAISection)
 - [ ] **F3 — Settings gouvernement multi-pays** : constitution commune vs par pays
+- [ ] **D2 — Diplomatie dans CountryPanel Timeline** : ajouter event type `diplomacy` dans `useChronolog` + pousser quand une alliance change → affiché dans le panel pays (côté droit) — à traiter lors du chantier diplomatie · prérequis : CountryPanel Timeline Phase 1 livrée
 
 ---
 

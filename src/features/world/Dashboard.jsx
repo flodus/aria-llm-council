@@ -188,6 +188,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
         aria_delta:   impact.aria_current - (selectedCountry.aria_current ?? 40),
       },
       voteCounts: { oui: impact.oui, non: impact.non },
+      isCrisis:   !!(session.crisis?.crisis),
     };
 
     pushEvent(cycleNumRef.current, selectedCountry.annee || 2026, entryBase);
