@@ -68,9 +68,24 @@ La PR est créée manuellement sur GitHub par Flo après validation du chantier.
 
 ---
 
+## Convention styles
+
+**Source de vérité CSS :**
+- `App.css` — tokens CSS vars + classes globales réutilisables (`cp-act-btn`, `side-panel`, `resource-badge`, etc.)
+- Styles inline React — pour les styles ponctuels propres à un composant, non réutilisables ailleurs
+- `Settings.css` — exception historique, à migrer en inline lors du refactor Settings
+
+**Règles :**
+- Ne jamais dupliquer dans du inline ce qui est déjà dans App.css
+- Pas de CSS modules (`.module.css`) — jamais
+- Pas de nouveaux fichiers `.css` séparés sans demande explicite
+- Si un style inline est réutilisé à 3+ endroits → le promouvoir dans App.css
+
+---
+
 ## Règles absolues
 
 - Ne jamais modifier `llmCouncilEngine.js`, `ariaData.js`, `ariaTheme.js` sans demande explicite
-- Ne jamais introduire de CSS modules, fichiers .css séparés, ou TypeScript
+- Pas de CSS modules, pas de TypeScript
 - `perGov[i] = null` = héritage commun, ne jamais initialiser autrement
 - Commentaires et noms de variables en français
