@@ -14,6 +14,7 @@ _(aucun bug actif connu)_
 
 - [x] **Fix destin jamais actif** : condition `detectCrisis(question)` sur la phase destin → Oracle/Wyrd ne s'exprimaient jamais (condition doublement impossible). Fix : `destiny_mode === true` suffit, sans vérification crise.
 - [x] **G3 — AddCountryModal + SecessionModal** : formulaire 2 étapes · `[Hériter →]` / `[Personnaliser/S'en affranchir →]` ouvre ConstitutionModal du nouveau pays · `addFictionalCountry` retourne `newCountry`
+- [x] **Fix CountryPanel tuiles blanches** : classes `cp-act-btn` + `resource-badge` supprimées par erreur lors du ménage App.css — restaurées + `background:transparent` sur la base
 
 ---
 
