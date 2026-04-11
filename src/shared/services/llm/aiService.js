@@ -5,6 +5,7 @@ import { getOptions } from '../../config/options';
 import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN } from '../../data/ariaData';
 import { loadLang } from '../../../ariaI18n';
 import { setIaStatus } from '../iaStatusStore';
+import { getPrompts } from '../../../features/settings/utils/settingsStorage';
 
 // ── Validation clés ───────────────────────────────────────────────────────────
 
@@ -130,84 +131,6 @@ Génère une notification d'analyse en JSON :
   "severite": "une valeur parmi : info | warning | critical",
   "impact": { "satisfaction": "entier entre -15 et 5", "popularite": "entier entre -10 et 5" }
 }`;
-}
-
-// ── Prompts système ───────────────────────────────────────────────────────────
-
-const DEFAULT_PROMPTS_SYS = {
-  synthese_ministere: `Tu es le système de synthèse institutionnelle du gouvernement ARIA.
-  Tu reçois les positions de deux ministres du même ministère.
-  Ton rôle : produire la SYNTHÈSE OFFICIELLE DU MINISTÈRE en 3-4 phrases.
-
-  Règles :
-  - Ton sobre, institutionnel, factuel — aucune rhétorique.
-  - Parle au nom du ministère.
-  - Si les deux positions sont irréconciliables, dis-le clairement.
-
-  Réponds UNIQUEMENT au format JSON suivant :
-  {
-    "convergence": boolean,
-    "synthese": "string (3-4 phrases)",
-    "tension_residuelle": "string ou null",
-    "recommandation": "string (1 phrase)"
-  }`,
-  synthese_presidence: `Tu es le système d'arbitrage présidentiel du gouvernement ARIA.
-
-  Tu reçois les positions du PHARE (vision, direction, long terme)
-  et de la BOUSSOLE (mémoire, protection, humanité).
-  Ton rôle : déterminer s'il y a convergence ou divergence,
-  puis formater la décision pour référendum citoyen.
-
-  Règles :
-  - Convergence : les deux positions aboutissent à la même décision
-  même par des raisonnements différents
-  - Divergence : les positions mènent à des choix incompatibles
-  → le peuple reçoit les DEUX options distinctes
-  - Ne tranche jamais toi-même — tu formats, tu n'arbitres pas
-  - Langage citoyen, accessible, sans jargon institutionnel
-
-  Réponds UNIQUEMENT au format JSON suivant :
-  {
-    "convergence": true | false,
-    "position_phare_resume": "1 phrase résumant la position du Phare",
-    "position_boussole_resume": "1 phrase résumant la position de la Boussole",
-    "question_referendum": "La question exacte soumise au peuple (si convergence : 1 option, si divergence : 2 options)",
-    "enjeu_principal": "1 phrase — ce qui est vraiment en jeu pour les citoyens"
-  }`,
-  factcheck_evenement: `Tu es le système de cohérence factuelle du gouvernement ARIA.
-
-  Tu reçois un événement narratif généré par l'IA et les statistiques
-  réelles du pays concerné.
-  Ton rôle : vérifier que l'événement est cohérent avec les données,
-  et l'ajuster si nécessaire.
-
-  Vérifie :
-  - L'impact chiffré est-il réaliste par rapport au niveau actuel ?
-  (ex: satisfaction -20 sur un pays à 25% = impossible)
-  - La sévérité correspond-elle à l'impact ?
-  - Le texte mentionne-t-il des éléments contradictoires avec les stats ?
-
-  Réponds UNIQUEMENT au format JSON suivant :
-  {
-    "coherent": true | false,
-    "titre": "conservé ou corrigé",
-    "texte": "conservé ou corrigé",
-    "severite": "info | warning | critical",
-    "impact": {
-      "satisfaction": entier corrigé si nécessaire,
-      "popularite": entier corrigé si nécessaire
-    },
-    "correction_appliquee": "null ou description de la correction"
-  }`,
-};
-
-export function getPromptsSys() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('aria_prompts') || '{}');
-    return { ...DEFAULT_PROMPTS_SYS, ...saved };
-  } catch {
-    return { ...DEFAULT_PROMPTS_SYS };
-  }
 }
 
 // ── Fallbacks ─────────────────────────────────────────────────────────────────
@@ -373,7 +296,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
 export async function callAI(prompt, type = 'standard', context = {}) {
   const opts       = getOptions();
-  const promptsSys = getPromptsSys();
+  const promptsSys = getPrompts();
   const keys       = opts.api_keys;
   const roles      = opts.ia_roles;
   const hasKeyForProv = (v) => !!(v && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some(k => k.key?.trim()) : false));
