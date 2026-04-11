@@ -11,7 +11,7 @@ import BASE_AGENTS    from '../templates/languages/fr/governance.json';
 import BASE_AGENTS_EN from '../templates/languages/en/governance.json';
 import './App.css';
 
-import Dashboard        from './Dashboard_p3';
+import Dashboard        from './features/world/Dashboard';
 import Settings         from './features/settings';
 import InitScreen       from './features/init/InitScreen';
 import CountryPanel from './features/world/components/CountryPanel/CountryPanel';

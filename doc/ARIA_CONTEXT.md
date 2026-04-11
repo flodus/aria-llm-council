@@ -7,7 +7,7 @@ Session courante : Claude.ai (Assess/Decide) + Claude Code terminal (Do)
 ## Stack technique
 
 - React 19 + Vite, SPA client-side, pas de backend
-- Styles inline uniquement — pas de CSS modules, pas de TypeScript
+- App.css = source de vérité (tokens + classes globales) · Inline = styles ponctuels non réutilisables · Jamais de CSS modules
 - MDI icons (Material Design Icons via CDN)
 - Mulberry32 PRNG — generateWorld() 100% déterministe
 - localStorage comme couche de persistance principale
