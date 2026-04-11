@@ -6,10 +6,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import defaultStationsData from '../data/defaultStations.json';
+import { STORAGE_KEYS } from '../services/storageKeys';
 
-const STORAGE_KEY = 'radio_stations';
-const CURRENT_KEY = 'current_station_id';
-const VOLUME_KEY  = 'radio_volume';
+const STORAGE_KEY = STORAGE_KEYS.RADIO_STATIONS;
+const CURRENT_KEY = STORAGE_KEYS.RADIO_CURRENT;
+const VOLUME_KEY  = STORAGE_KEYS.RADIO_VOLUME;
 
 function RadioPlayer() {
     // Chargement des stations : localStorage en priorité, sinon le fichier JSON
