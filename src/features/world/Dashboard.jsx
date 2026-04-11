@@ -327,6 +327,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
             return [baseText, statsLine].filter(Boolean).join('\n\n');
           })()}
           countryNom={selectedCountry?.nom || ''}
+          countryId={selectedCountry?.id}
           ctxMode={(() => {
             const c = selectedCountry;
             if (!c) return null;

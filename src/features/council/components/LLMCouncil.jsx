@@ -22,6 +22,7 @@ import { loadLang, t, useLocale } from '../../../ariaI18n';
 import { useState, useRef } from 'react';
 import { C, FONT } from '../../../shared/theme';
 import { sectionTitle, bubble } from './councilStyles';
+import { loadMemoire } from '../../chronolog/useChroniqueur';
 import {
   PhaseTracker,
   MinisterBlock,
@@ -39,10 +40,11 @@ import {
 //  COMPOSANT PRINCIPAL
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function LLMCouncil({ session, onVote, isRunning, countryContext, countryNom, ctxMode }) {
+export default function LLMCouncil({ session, onVote, isRunning, countryContext, countryNom, ctxMode, countryId }) {
   const { lang } = useLocale();
   const scrollRef = useRef(null);
-  const [openCtx, setOpenCtx] = useState(false);
+  const [openCtx,      setOpenCtx]      = useState(false);
+  const [openMemoire,  setOpenMemoire]  = useState(false);
 
   // Accordéon contexte — visible même en IDLE
   const ctxText = session?.countryDescription || countryContext || '';
@@ -153,6 +155,32 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             </div>
           </PhaseBlock>
         )}
+
+        {/* ── Mémoire institutionnelle (après question, avant ministères) ─── */}
+        {show.PEUPLE_IN && countryId && (() => {
+          const mem = loadMemoire(countryId);
+          if (!mem?.memoire) return null;
+          return (
+            <div className={`aria-accordion${openMemoire ? ' open' : ''}`}
+              style={{ marginBottom:'0.7rem', animation:'fadeSlideIn 0.5s ease both' }}>
+              <button className="aria-accordion__hdr" onClick={() => setOpenMemoire(v => !v)}>
+                <span className="aria-accordion__arrow">{openMemoire ? '▾' : '▸'}</span>
+                <span className="aria-accordion__label" style={{ flex:1 }}>
+                  📜 {lang==='en' ? 'Institutional memory' : 'Mémoire institutionnelle'}
+                  {mem.cycle ? ` — ${lang==='en'?'cycle':'cycle'} ${mem.cycle}` : ''}
+                </span>
+              </button>
+              {openMemoire && (
+                <div className="aria-accordion__body" style={{
+                  fontFamily:FONT.mono, fontSize:'0.42rem', lineHeight:1.7,
+                  color:'rgba(180,200,230,0.60)', fontStyle:'italic',
+                }}>
+                  {mem.memoire}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* ── PHASE 2 : MINISTERE ──────────────────────────────────────────── */}
         {show.MINISTERE && ministere && (
