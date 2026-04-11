@@ -10,6 +10,7 @@
 //  Ce fichier conserve uniquement le composant Dashboard() et les imports.
 // ═══════════════════════════════════════════════════════════════════════════════
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../shared/data/ariaData';
+import { STORAGE_KEYS } from '../../shared/services/storageKeys';
 import { loadLang, t } from '../../ariaI18n';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -48,7 +49,8 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   }, []);
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
 
-  const cycleNumRef = useRef(1);
+  const _storedCycleNum = parseInt(localStorage.getItem(STORAGE_KEYS.CYCLE_NUM) || '1', 10);
+  const cycleNumRef = useRef(isNaN(_storedCycleNum) ? 1 : _storedCycleNum);
 
   const [openMinistry, setOpenMinistry] = useState(null);
   const [customQ, setCustomQ] = useState('');
@@ -69,7 +71,14 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   const [modalCycleConfirm, setModalCycleConfirm] = useState(false);
   const [modalAddCountry,   setModalAddCountry]   = useState(false);
 
-  const [cycleHistory, setCycleHistory] = useState([]);
+  const [cycleHistory, setCycleHistory] = useState(() => {
+    // B7 — hydratation au mount depuis aria_chronolog_cycles
+    try {
+      const cycles = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHRONOLOG_CYCLES) || '[]');
+      const current = cycles.find(c => c.cycleNum === cycleNumRef.current);
+      return current?.events?.filter(e => e.type === 'vote') || [];
+    } catch { return []; }
+  });
 
   const {
     session:        councilSession,
@@ -188,6 +197,47 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
         aria_delta:   impact.aria_current - (selectedCountry.aria_current ?? 40),
       },
       voteCounts: { oui: impact.oui, non: impact.non },
+      isCrisis:   !!(session.crisis?.crisis),
+      deliberation: {
+        ministere: session.ministere ? {
+          ministryName:  session.ministere.ministryName,
+          ministryEmoji: session.ministere.ministryEmoji,
+          ministerA: {
+            name:     session.ministere.ministerA?.name,
+            emoji:    session.ministere.ministerA?.emoji,
+            position: session.ministere.ministerA?.position,
+            mot_cle:  session.ministere.ministerA?.mot_cle,
+          },
+          ministerB: {
+            name:     session.ministere.ministerB?.name,
+            emoji:    session.ministere.ministerB?.emoji,
+            position: session.ministere.ministerB?.position,
+            mot_cle:  session.ministere.ministerB?.mot_cle,
+          },
+          synthese: session.ministere.synthese,
+        } : null,
+        cercle: (session.cercle || []).map(a => ({
+          ministryId:    a.ministryId,
+          ministryName:  a.ministryName,
+          ministryEmoji: a.ministryEmoji,
+          annotation:    a.annotation,
+        })),
+        destin: session.destin ? {
+          oracle: { name: session.destin.oracle?.name, position: session.destin.oracle?.position },
+          wyrd:   { name: session.destin.wyrd?.name,   position: session.destin.wyrd?.position   },
+        } : null,
+        presidence: session.presidence ? {
+          presidents: session.presidence.presidents || null,
+          synthese:   session.presidence.synthese   || null,
+          collegial:  !!session.presidence.collegial,
+        } : null,
+        crisis: session.crisis?.ministries?.map(m => ({
+          ministryId:    m.ministryId,
+          ministryName:  m.ministryName,
+          ministryEmoji: m.ministryEmoji,
+          synthese:      m.synthese?.synthese || m.synthese?.recommandation || '',
+        })) || null,
+      },
     };
 
     pushEvent(cycleNumRef.current, selectedCountry.annee || 2026, entryBase);
@@ -489,6 +539,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
                 );
                 closeCycle(cycleNumRef.current);
                 cycleNumRef.current += 1;
+                localStorage.setItem(STORAGE_KEYS.CYCLE_NUM, String(cycleNumRef.current));
                 setCurrentCycleQuestions({});
                 setModalCycleConfirm(false);
                 setCycleHistory([]);

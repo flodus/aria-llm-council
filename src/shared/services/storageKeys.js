@@ -28,6 +28,7 @@ export const STORAGE_KEYS = {
 
   // Chrono
   CHRONOLOG_CYCLES:  'aria_chronolog_cycles',
+  CYCLE_NUM:         'aria_cycle_num',
 
   // Clés legacy — présentes dans SectionSysteme (possiblement obsolètes)
   WORLD_LEGACY:      'aria_world',
