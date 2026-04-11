@@ -106,11 +106,20 @@ export function buildCountryContext(country) {
         : `\n\nContexte : Pays fictif — approche objective basée sur les statistiques fournies.`;
     }
 
-    // Mémoire institutionnelle (Chroniqueur)
-    const memoireEntry = loadMemoire(country.id);
-    if (memoireEntry?.memoire) {
-      const lbl = en ? 'Institutional memory' : 'Mémoire institutionnelle';
-      ctx += `\n\n[${lbl}]\n${memoireEntry.memoire}`;
+    // Mémoire institutionnelle (Chroniqueur) — résolution pays > global
+    const chronEnabled = (() => {
+      if (country.chroniqueur_enabled !== undefined) return country.chroniqueur_enabled;
+      try {
+        const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+        return opts.chroniqueur?.enabled ?? true;
+      } catch { return true; }
+    })();
+    if (chronEnabled) {
+      const memoireEntry = loadMemoire(country.id);
+      if (memoireEntry?.memoire) {
+        const lbl = en ? 'Institutional memory' : 'Mémoire institutionnelle';
+        ctx += `\n\n[${lbl}]\n${memoireEntry.memoire}`;
+      }
     }
 
     return ctx;

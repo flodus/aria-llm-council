@@ -400,57 +400,43 @@ export default function SectionConseil() {
             <SectionGouvernanceDefaut opts={govOpts} setOpts={handleSetGovOpts} />
         )}
 
-        {tab === 'chroniqueur' && (() => {
-          const MODELS = [
-            { id: 'claude',  label: 'Claude'  },
-            { id: 'gemini',  label: 'Gemini'  },
-            { id: 'grok',    label: 'Grok'    },
-            { id: 'openai',  label: 'OpenAI'  },
-          ];
-          return (
-            <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
-              <div style={{ padding:'0.55rem 0.75rem', background:'rgba(90,110,160,0.05)',
-                border:'1px solid rgba(90,110,160,0.12)', borderRadius:'2px',
-                fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
-                color:'rgba(140,160,200,0.50)', lineHeight:1.6 }}>
-                {isEn
-                  ? 'At each cycle close, the Chronicler synthesizes the narrative memory of each country. This memory is injected into future deliberations — the Council cannot forget its own history.'
-                  : 'À chaque clôture de cycle, le Chroniqueur synthétise la mémoire narrative de chaque pays. Cette mémoire est injectée dans les délibérations futures — le Conseil ne peut pas oublier sa propre histoire.'}
-              </div>
-
-              <Field label={isEn ? 'Enable Chronicler' : 'Activer le Chroniqueur'}
-                hint={isEn ? 'Generates institutional memory at each cycle end' : 'Génère la mémoire institutionnelle à chaque fin de cycle'}>
-                <label style={{ display:'flex', alignItems:'center', gap:'0.5rem', cursor:'pointer' }}>
-                  <input type="checkbox"
-                    checked={govOpts.chroniqueur?.enabled ?? true}
-                    onChange={e => updateGovOpts('chroniqueur.enabled', e.target.checked)}
-                  />
-                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
-                    color: (govOpts.chroniqueur?.enabled ?? true) ? 'rgba(58,191,122,0.80)' : 'rgba(140,160,200,0.40)' }}>
-                    {(govOpts.chroniqueur?.enabled ?? true)
-                      ? (isEn ? 'Active' : 'Actif')
-                      : (isEn ? 'Disabled' : 'Désactivé')}
-                  </span>
-                </label>
-              </Field>
-
-              <Field label={isEn ? 'Model' : 'Modèle IA'}
-                hint={isEn ? 'Provider used for narrative generation (IA mode only)' : 'Provider utilisé pour la génération narrative (mode IA uniquement)'}>
-                <select
-                  value={govOpts.ia_roles?.chroniqueur_model || 'gemini'}
-                  onChange={e => updateGovOpts('ia_roles.chroniqueur_model', e.target.value)}
-                  style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
-                    background:'rgba(14,20,36,0.8)', color:'rgba(200,215,240,0.75)',
-                    border:'1px solid rgba(140,160,200,0.20)', borderRadius:'2px',
-                    padding:'0.25rem 0.45rem', cursor:'pointer' }}>
-                  {MODELS.map(m => (
-                    <option key={m.id} value={m.id}>{m.label}</option>
-                  ))}
-                </select>
-              </Field>
+        {tab === 'chroniqueur' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+            <div style={{ padding:'0.55rem 0.75rem', background:'rgba(90,110,160,0.05)',
+              border:'1px solid rgba(90,110,160,0.12)', borderRadius:'2px',
+              fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
+              color:'rgba(140,160,200,0.50)', lineHeight:1.6 }}>
+              {isEn
+                ? 'At each cycle close, the Chronicler synthesizes the narrative memory of each country. Injected into future deliberations — the Council cannot repeat its own mistakes.'
+                : 'À chaque clôture de cycle, le Chroniqueur synthétise la mémoire narrative de chaque pays. Injectée dans les délibérations futures — le Conseil ne peut pas répéter ses propres erreurs.'}
             </div>
-          );
-        })()}
+
+            <Field label={isEn ? 'Enable Chronicler (global default)' : 'Activer le Chroniqueur (défaut global)'}
+              hint={isEn
+                ? 'Can be overridden per country in Constitution or at world init'
+                : 'Peut être surchargé par pays dans la Constitution ou à l\'init du monde'}>
+              <label style={{ display:'flex', alignItems:'center', gap:'0.5rem', cursor:'pointer' }}>
+                <input type="checkbox"
+                  checked={govOpts.chroniqueur?.enabled ?? true}
+                  onChange={e => updateGovOpts('chroniqueur.enabled', e.target.checked)}
+                />
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
+                  color: (govOpts.chroniqueur?.enabled ?? true) ? 'rgba(58,191,122,0.80)' : 'rgba(140,160,200,0.40)' }}>
+                  {(govOpts.chroniqueur?.enabled ?? true)
+                    ? (isEn ? 'Active' : 'Actif')
+                    : (isEn ? 'Disabled' : 'Désactivé')}
+                </span>
+              </label>
+            </Field>
+
+            <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
+              color:'rgba(90,110,160,0.55)', margin:0, lineHeight:1.5 }}>
+              {isEn
+                ? '→ Provider/model: configured in Constitution → Deliberation Architecture'
+                : '→ Provider/modèle : configuré dans Constitution → Architecture de délibération'}
+            </p>
+          </div>
+        )}
 
         <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>

@@ -78,9 +78,10 @@ export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaun
               terrain:  c.terrain  || c.realData?.terrain,
               realData: c.realData || null,
               // Préserver les overrides passés par PreLaunchScreen
-              ...(c.context_mode      ? { context_mode:      c.context_mode      } : {}),
-              ...(c.contextOverride   ? { contextOverride:   c.contextOverride   } : {}),
-              ...(c.governanceOverride? { governanceOverride: c.governanceOverride } : {}),
+              ...(c.context_mode         ? { context_mode:         c.context_mode         } : {}),
+              ...(c.contextOverride      ? { contextOverride:      c.contextOverride       } : {}),
+              ...(c.governanceOverride   ? { governanceOverride:   c.governanceOverride    } : {}),
+              ...(c.chroniqueur_enabled !== undefined ? { chroniqueur_enabled: c.chroniqueur_enabled } : {}),
             };
           });
           onLaunchAI(defs);

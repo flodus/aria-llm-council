@@ -140,8 +140,9 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
             const gov = constitution.perGov[i];
             return {
                 ...d,
-                context_mode: countryContext.plCtxModes[i] || undefined,
-                contextOverride: countryContext.plCtxOvrs[i] || undefined,
+                context_mode:        countryContext.plCtxModes[i]    || undefined,
+                contextOverride:     countryContext.plCtxOvrs[i]     || undefined,
+                chroniqueur_enabled: countryContext.plChroniqueur[i] !== null ? countryContext.plChroniqueur[i] : undefined,
                 ...(gov ? {
                     governanceOverride: {
                         agents: gov.agents,
@@ -270,6 +271,8 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                 setMode={v => countryContext.setPlCtxModes(p => { const a = [...p]; a[countryOverride.plCountry] = v; return a; })}
                 override={countryContext.plCtxOvrs[countryOverride.plCountry] || ''}
                 setOverride={v => countryContext.setPlCtxOvrs(p => { const a = [...p]; a[countryOverride.plCountry] = v; return a; })}
+                chroniqueur={countryContext.plChroniqueur[countryOverride.plCountry] ?? null}
+                setChroniqueur={v => countryContext.setPlChroniqueur(p => { const a = [...p]; a[countryOverride.plCountry] = v; return a; })}
                 />
 
                 <IAConfigAccordion

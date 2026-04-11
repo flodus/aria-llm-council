@@ -171,7 +171,11 @@ export function useChroniqueur() {
 
   const runChroniqueur = useCallback(async (country, cycleEvents, cycleNum) => {
     const opts = getOptions();
-    if (!opts.chroniqueur?.enabled) return;
+    // Résolution enabled : pays > global
+    const enabled = country.chroniqueur_enabled !== undefined
+      ? country.chroniqueur_enabled
+      : (opts.chroniqueur?.enabled ?? true);
+    if (!enabled) return;
 
     const lang       = loadLang();
     const prevEntry  = loadMemoire(country.id);
@@ -209,6 +213,7 @@ export function useChroniqueur() {
     }
 
     saveMemoire(country.id, memoire, cycleNum);
+    return memoire;
   }, []);
 
   return { runChroniqueur, loadMemoire, resetChroniqueur };

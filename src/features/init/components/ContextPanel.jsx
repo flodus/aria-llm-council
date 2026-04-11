@@ -13,7 +13,7 @@
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, INPUT_STYLE, BTN_SECONDARY } from '../../../shared/theme';
 
-export default function ContextPanel({ countryName, open, onToggle, mode, setMode, override, setOverride, embedded }) {
+export default function ContextPanel({ countryName, open, onToggle, mode, setMode, override, setOverride, embedded, chroniqueur, setChroniqueur }) {
   const { lang } = useLocale();
   const GOLD = 'rgba(200,164,74,0.88)';
   const DIM  = 'rgba(140,160,200,0.46)';
@@ -83,6 +83,35 @@ export default function ContextPanel({ countryName, open, onToggle, mode, setMod
               );
             })}
           </div>
+
+          {/* Chroniqueur — toggle par pays */}
+          {setChroniqueur && (
+            <div style={{ display:'flex', alignItems:'center', gap:'0.5rem',
+              padding:'0.28rem 0.45rem', borderRadius:'2px',
+              background:'rgba(90,110,160,0.04)',
+              border:'1px solid rgba(90,110,160,0.12)' }}>
+              <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:DIM, flex:1 }}>
+                📜 {lang==='en' ? 'Chronicler' : 'Chroniqueur'}
+              </span>
+              {[
+                [null,  lang==='en' ? '⚙ Global' : '⚙ Global'],
+                [true,  lang==='en' ? '● On'     : '● Actif'],
+                [false, lang==='en' ? '○ Off'    : '○ Inactif'],
+              ].map(([val, lbl]) => {
+                const on = chroniqueur === val;
+                return (
+                  <button key={String(val)} onClick={() => setChroniqueur(val)}
+                    style={{ fontFamily:FONT.mono, fontSize:'0.38rem', padding:'0.10rem 0.35rem',
+                      borderRadius:'2px', cursor:'pointer',
+                      background: on ? 'rgba(200,164,74,0.10)' : 'transparent',
+                      border:`1px solid ${on ? 'rgba(200,164,74,0.35)' : 'rgba(140,160,200,0.12)'}`,
+                      color: on ? 'rgba(200,164,74,0.85)' : 'rgba(140,160,200,0.40)' }}>
+                    {lbl}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Textarea override */}
           <div>
