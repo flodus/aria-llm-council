@@ -60,7 +60,15 @@ _(aucun bug actif connu)_
   - UI : bouton "+ Ajouter un provider" dans Init + Settings · nom, endpoint, clé API, modèle
   - Impacte `callAI()` · `aria_api_keys` · InitScreen · Settings — session dédiée
 
-- [→] **U3 — Chronolog enrichi** : PROCHAIN CHANTIER — voir section dédiée ci-dessus
+- [x] **U3 — Chronolog enrichi** : livré (résumé narratif, filtres, pagination, CountryPanel Timeline, délibération complète, B7 fix)
+
+- [ ] **C1 — Chroniqueur** : agent mémoire institutionnelle par pays — s'active à la clôture de chaque cycle
+  - Lit narration précédente + events du cycle clos → produit narration enrichie (progressif)
+  - IA mode : `callAI('council_chroniqueur')` · Board game : templates déterministes JSON
+  - Stockage : `aria_chroniqueur` = `{ [countryId]: { memoire, cycle } }`
+  - Injection dans contexte Boussole + Phare via `contextBuilder.js`
+  - Settings : toggle activer/désactiver · modèle dédié (dépend T1 pour provider custom)
+  - Branche : `feature/chroniqueur`
 
 - [x] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
 
