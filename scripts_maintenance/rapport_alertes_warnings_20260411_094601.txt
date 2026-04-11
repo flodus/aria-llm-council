@@ -1,0 +1,40 @@
+╔════════════════════════════════════════════════════════════════╗
+║     🔴 ALERTES (fichiers > 800 lignes) + ⚠️ AVERTISSEMENTS     ║
+║              (fichiers 400-800 lignes)                         ║
+╚════════════════════════════════════════════════════════════════╝
+📅 Date : sam. 11 avril 2026 09:46:01 CEST
+📁 Source : /home/florian/aria/src
+
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 🔴 ALERTES (fichiers > 800 lignes)                                                         │
+├─────┬─────────┬───────────────────────────────────────────────────┬─────────────────────────┤
+│  #  │ LIGNES  │ FICHIER                                           │ DOSSIER                 │
+├─────┼─────────┼───────────────────────────────────────────────────┼─────────────────────────┤
+│   1 │ 1726|Dashboard_p1.jsx|src │                                                   │                         │
+├─────┴─────────┴───────────────────────────────────────────────────┴─────────────────────────┤
+│ ⚠️ AVERTISSEMENTS (fichiers 400-800 lignes)                                                │
+├─────┬─────────┬───────────────────────────────────────────────────┬─────────────────────────┤
+│  #  │ LIGNES  │ FICHIER                                           │ DOSSIER                 │
+├─────┼─────────┼───────────────────────────────────────────────────┼─────────────────────────┤
+│   1 │ 793|Settings.css|src/features/settings │                                                   │                         │
+│   2 │ 594|deliberationEngine.js|src/features/council/services │                                                   │                         │
+│   3 │ 589|WorldEngineCapsule.js|src/features/map │                                                   │                         │
+│   4 │ 584|WorldEngine.js|src/features/world/services │                                                   │                         │
+│   5 │ 559|HexGrid.jsx|src/features/map │                                                   │                         │
+│   6 │ 546|PreLaunchScreen.jsx|src/features/init/components │                                                   │                         │
+│   7 │ 530|Dashboard_p3.jsx|src │                                                   │                         │
+│   8 │ 519|ChronologView.jsx|src/features/chronolog │                                                   │                         │
+│   9 │ 495|SectionSysteme.jsx|src/features/settings/components │                                                   │                         │
+│  10 │ 483|App.jsx|src │                                                   │                         │
+│  11 │ 444|LLMCouncil.jsx|src/features/council/components │                                                   │                         │
+│  12 │ 441|AddCountryModal.jsx|src/features/world/modals │                                                   │                         │
+│  13 │ 418|useConstitutionModal.js|src/features/council/hooks │                                                   │                         │
+│  14 │ 414|GovernanceForm.jsx|src/shared/components │                                                   │                         │
+│  15 │ 407|SectionConseil.jsx|src/features/settings/components │                                                   │                         │
+└─────┴─────────┴───────────────────────────────────────────────────┴─────────────────────────┘
+
+📊 RÉSUMÉ :
+   🔴 Alertes (800+ lignes) : 1 fichier(s)
+   ⚠️ Avertissements (400-800 lignes) : 15 fichier(s)
+   📁 Total fichiers analysés : 198
+   📝 Total lignes : 26229

@@ -1,29 +1,29 @@
-// src/Dashboard_p3.jsx
+// src/features/world/Dashboard.jsx
 
 // ═══════════════════════════════════════════════════════════════════════════════
-//  Dashboard_p3.jsx — Hub principal (assemblage)
+//  Dashboard.jsx — Hub principal (assemblage)
 //
-//  Composants extraits dans src/features/world/modals/ :
+//  Composants extraits dans ./modals/ :
 //    VoteResultModal · CycleConfirmModal · AddCountryModal · SecessionModal
 //    DiplomacyModal · IaStatusBadge · Toast · AIErrorModal
 //
 //  Ce fichier conserve uniquement le composant Dashboard() et les imports.
 // ═══════════════════════════════════════════════════════════════════════════════
-import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from './shared/data/ariaData';
-import { loadLang, t } from './ariaI18n';
+import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../shared/data/ariaData';
+import { loadLang, t } from '../../ariaI18n';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useChronolog } from './features/chronolog/useChronolog';
-import ChronologView   from './features/chronolog/ChronologView';
-import { useARIA } from './Dashboard_p1';
-import { MapSVG } from './Dashboard_p2';
-import ConstitutionModal from './features/council/components/ConstitutionModal';
-import CountryPanelCouncil from './features/world/components/CountryPanel/CountryPanelCouncil';
-import LLMCouncil from './features/council/components/LLMCouncil';
-import { MINISTRIES_LIST } from './features/council/services/councilEngine';
-import { useCouncilSession } from './features/council/hooks/useCouncilSession';
-import { GarbageModal, MismatchModal } from './features/council/components/CouncilModals';
-import { S } from './features/world/modals/modalStyles';
+import { useChronolog } from '../chronolog/useChronolog';
+import ChronologView   from '../chronolog/ChronologView';
+import { useARIA } from '../../Dashboard_p1';
+import { MapSVG } from '../map/MapSVG';
+import ConstitutionModal from '../council/components/ConstitutionModal';
+import CountryPanelCouncil from './components/CountryPanel/CountryPanelCouncil';
+import LLMCouncil from '../council/components/LLMCouncil';
+import { MINISTRIES_LIST } from '../council/services/councilEngine';
+import { useCouncilSession } from '../council/hooks/useCouncilSession';
+import { GarbageModal, MismatchModal } from '../council/components/CouncilModals';
+import { S } from './modals/modalStyles';
 import {
   VoteResultModal,
   CycleConfirmModal,
@@ -34,7 +34,7 @@ import {
   IaStatusBadge,
   Toast,
   AIErrorModal,
-} from './features/world/modals';
+} from './modals';
 
 export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisis, activeTab, onGoToCouncil, onReady, onReset, onCountriesUpdate, chronologKey, onGoToSettings, onWorldStarted }) {
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });

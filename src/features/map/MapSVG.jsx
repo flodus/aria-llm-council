@@ -1,7 +1,7 @@
-// src/Dashboard_p2.jsx
+// src/features/map/MapSVG.jsx
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  Dashboard_p2.jsx  —  Assembleur MapSVG (nouvelle architecture hexagonale)
+//  MapSVG.jsx  —  Assembleur MapSVG (nouvelle architecture hexagonale)
 //
 //  Responsabilités :
 //  - Générer le monde (WorldEngine) au montage, stocker en state
@@ -13,9 +13,9 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from 'react';
-import { HexGrid } from './features/map/HexGrid';
-import { generateWorld, placeCountries, strToSeed, MAP_W, MAP_H } from './features/world/services/WorldEngine';
-import { loadLang, t } from './ariaI18n';
+import { HexGrid } from './HexGrid';
+import { generateWorld, placeCountries, strToSeed, MAP_W, MAP_H } from '../world/services/WorldEngine';
+import { loadLang, t } from '../../ariaI18n';
 
 // ── Génération asynchrone (évite de bloquer le thread principal) ──────────
 // Le monde (~3300 hex + FBM) prend ~20–60ms selon le device.
