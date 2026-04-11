@@ -68,6 +68,11 @@ _(aucun bug actif connu)_
 
 - [ ] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
 
+- [ ] **D1 — Clarté Destinée vs Mode crise** : les deux features sont distinctes et doivent être bien séparées dans l'UI et la doc
+  - **Destinée** (`destiny_mode: true`) = Oracle + Wyrd participent à chaque délibération pour les pays concernés (régimes religieux/théocratiques) — ils s'expriment avant la synthèse présidentielle, systématiquement. La religion a toujours son mot à dire.
+  - **Mode crise** = tous les ministères + Destinée répondent directement à la question de base, sans phase de cercle (pas d'annotations inter-ministérielles). Déclenché manuellement ou par détection de crise.
+  - Vérifier que l'UI (Settings + ConstitutionModal) présente bien ces deux toggles comme indépendants avec des descriptions claires
+
 ---
 
 ## 🟠 FONCTIONNEL MOYEN TERME

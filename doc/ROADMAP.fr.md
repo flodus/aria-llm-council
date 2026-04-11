@@ -45,6 +45,11 @@
  └─[✓] Industrie par défaut ...... [remplace chance dans toute l'UI et le moteur] ..... ■ 100%
 
  [ DESTINÉE DU MONDE ] ............................................ STATUT: ✅ FAIT
+ │
+ │  destiny_mode = Oracle + Wyrd s'expriment à chaque délibération pour les pays
+ │  concernés (régimes religieux/théocratiques). La religion a toujours son mot à
+ │  dire avant la synthèse présidentielle — pas seulement en cas de crise.
+ │
  ├─[✓] Oracle + Wyrd ............. [agents philosophiques dans ministers{}] ......... ■ 100%
  │      └─> Pas un ministère — bloc destin séparé de ministries[]
  ├─[✓] Détection crise ........... [detectCrisis() — keywords destin, sync, local] .. ■ 100%
@@ -55,9 +60,13 @@
  └─[✓] Questions destin .......... [aria_questions.json — 7 crises existentielles, FR+EN] ■ 100%
 
  [ MODE COLLÉGIAL + CRISE ] ...................................... STATUT: ✅ FAIT
+ │
+ │  Mode crise ≠ Destinée. Mode crise = tous les ministères + Destinée répondent
+ │  directement à la question de base, sans cercle d'annotations inter-ministérielles.
+ │
  ├─[✓] B10 — Mode collégial ...... [?? null + active !== null dans agentsManager] ... ■ 100%
  │      └─> [] (présidence désactivée) déclenche bien _runCollegialPhase
- ├─[✓] B11 — Mode crise .......... [runCrisisPhase() — tous ministères || skip cercle+pres] ■ 100%
+ ├─[✓] B11 — Mode crise .......... [tous ministères répondent en parallèle · skip cercle+pres] ■ 100%
  ├─[✓] Synthèses collégiales JSON . [aria_syntheses.json collegial — 7 régimes, FR+EN] ■ 100%
  │      └─> getSyntheseCollegial() dans responseService · câblé dans _runCollegialPhase
  └─[✓] UI mode collégial ......... [SYNTHÈSE CONSTITUTIONNELLE · referendum non-littéral] ■ 100%
