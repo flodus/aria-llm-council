@@ -57,8 +57,7 @@ _(aucun bug actif connu)_
   - `[Hériter →]` : comportement existant · `[Personnaliser →]` / `[S'en affranchir →]` : ouvre ConstitutionModal du nouveau pays
   - `addFictionalCountry` retourne désormais `newCountry` (Dashboard_p1)
 
-- [ ] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
-  - GovernanceForm existe déjà · à faire lors du refactor Settings (session dédiée)
+- [x] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
 
 - [ ] **T1 — Ajout de provider + modèle custom** : DeepSeek, Mistral, Ollama local…
   - UI : bouton "+ Ajouter un provider" dans Init + Settings · nom, endpoint, clé API, modèle
@@ -66,7 +65,7 @@ _(aucun bug actif connu)_
 
 - [→] **U3 — Chronolog enrichi** : PROCHAIN CHANTIER — voir section dédiée ci-dessus
 
-- [ ] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
+- [x] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
 
 - [ ] **D1 — Clarté Destinée vs Mode crise** : les deux features sont distinctes et doivent être bien séparées dans l'UI et la doc
   - **Destinée** (`destiny_mode: true`) = Oracle + Wyrd participent à chaque délibération pour les pays concernés (régimes religieux/théocratiques) — ils s'expriment avant la synthèse présidentielle, systématiquement. La religion a toujours son mot à dire.

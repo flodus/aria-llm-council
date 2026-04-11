@@ -123,8 +123,8 @@
  │      └─> Lambda ⚙️ + presidency summary + [Customise →] · Custom ✦ + override summary
  ├─[G2] ConstitutionModal : lambda/custom banner + return to model .... ✅ 100%
  │      └─> Status banner between header/tabs · [↺ Return to world model] + confirm
- ├─[G3] AddCountryModal + SecessionModal : inherit/customise choice ... ⬡ 0%
- └─[G4] Settings : wire GovernanceForm context='settings' ............ ⬡ 0%
+ ├─[G3] AddCountryModal + SecessionModal : inherit/customise choice ... ✅ 100%
+ └─[G4] Settings : wire GovernanceForm context='settings' ............ ✅ 100%
 
  [ PHASE V1 : WORLD MAP — FULL REWORK ] .......................... STATUS: PLANNED
  │

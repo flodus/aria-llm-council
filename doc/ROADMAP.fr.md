@@ -123,8 +123,8 @@
  │      └─> Lambda ⚙️ + résumé présidence + [Personnaliser →] · Custom ✦ + résumé override
  ├─[G2] ConstitutionModal : bandeau lambda/custom + retour modèle .... ✅ 100%
  │      └─> Bandeau statut entre header/tabs · [↺ Revenir au modèle monde] + confirm
- ├─[G3] AddCountryModal + SecessionModal : choix hériter/personnaliser ⬡ 0%
- └─[G4] Settings : brancher GovernanceForm context='settings' ........ ⬡ 0%
+ ├─[G3] AddCountryModal + SecessionModal : choix hériter/personnaliser ✅ 100%
+ └─[G4] Settings : brancher GovernanceForm context='settings' ........ ✅ 100%
 
  [ PHASE V1 : CARTE DU MONDE — REFONTE COMPLÈTE ] ................ STATUT: PLANIFIÉ
  │
