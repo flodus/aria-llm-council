@@ -1,12 +1,34 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-04-10_
+_Dernière mise à jour : 2026-04-11_
 
 ---
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
 _(aucun bug actif connu)_
+
+---
+
+## 🟢 PROCHAIN CHANTIER — Chronolog enrichi (U3)
+
+- [ ] **Vue détaillée par cycle** : pour chacun des 5 derniers cycles, afficher la liste des décisions prises (vote, événement, sécession) avec leur impact chiffré (satisfaction Δ, popularité Δ)
+- [ ] **Résumé narratif par cycle** : texte court généré depuis les entrées du chronolog (titre décision + pays + résultat)
+- [ ] **Filtres / navigation** : trier par pays · par type d'entrée · pagination si > 5 cycles
+- [ ] **Persistance** : vérifier que `aria_chronolog_cycles` est bien sauvegardé/restauré à la reprise de session
+- [ ] **Composant ChronologView** : identifier les fichiers à toucher avant de coder
+
+---
+
+## ✅ LIVRÉ cette session (2026-04-11)
+
+- [x] **Chantier qualité XS** : 6 items refactor sur `refactor/dashboard-p1`
+  - `storageKeys.js` : inventaire centralisé de toutes les clés localStorage
+  - `aria_lang` directs → `loadLang()` (4 fichiers : fallbacks, deliberationEngine, CycleConfirmModal, AIErrorModal)
+  - `handleReset()` App.jsx simplifié → délègue à `clearSession()` · `clearSession()` étendue à `aria_chronolog_cycles`
+  - `storage.js` vs `options.js` : commentaires rôles + `options.js` branché sur `storage.js` (plus de localStorage direct)
+  - `DEFAULT_PROMPTS` : source unique dans `settingsStorage.js` — supprimé de `aiService.js` (-79L)
+  - 4 fichiers morts supprimés : `crisisEngine`, `useAriaOptions`, `ariaHexWorld`, `WorldEngineCapsule`
 
 ---
 
@@ -42,8 +64,7 @@ _(aucun bug actif connu)_
   - UI : bouton "+ Ajouter un provider" dans Init + Settings · nom, endpoint, clé API, modèle
   - Impacte `callAI()` · `aria_api_keys` · InitScreen · Settings — session dédiée
 
-- [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
-  (satisfaction détaillée, décisions clés, événements notables)
+- [→] **U3 — Chronolog enrichi** : PROCHAIN CHANTIER — voir section dédiée ci-dessus
 
 - [ ] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
 

@@ -5,7 +5,7 @@
 ```text
 ================================================================================
   ARIA FEUILLE DE ROUTE STRATÉGIQUE  —  v8.0
-  Dernière mise à jour : 2026-03-26
+  Dernière mise à jour : 2026-04-11
 ================================================================================
 
  ████████████████████████████████████████  LIVRÉ  ████████████████████████████
@@ -104,7 +104,7 @@
  ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ✅ 100%
  ├─[U2] Harmonisation tuiles .... [PresidencyTiles partagé — 4 écrans] ✅ 100%
  │      └─> Settings · GovernanceForm · ConstitutionModal · PreLaunchScreen
- └─[U3] Chronolog enrichi ........ [Détail 5 derniers cycles] ........ ⬡ 0%
+ └─[U3] Chronolog enrichi ........ [Détail 5 derniers cycles] ........ ▶ PROCHAIN
 
  [ PHASE G1 : COHÉRENCE GOUVERNANCE ] ........................... STATUT: EN COURS
  │  Spec validée (2026-03-26) — GovernanceForm existe, wiring à compléter
@@ -181,7 +181,7 @@
  └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [██████████░░░░░░░░░░░░░░░░░░░░░░░░] ~28%
+ PROGRESSION : [██████████░░░░░░░░░░░░░░░░░░░░░░░░] ~30%
  BASE : Moteur + constitution par pays complets.
         Init UX poli. Mode Board Game offline complet (pipeline 4 JSON).
         Source unique de vérité. Destinée du Monde opérationnelle.
@@ -189,8 +189,9 @@
         Interface : curseurs SVG or + RadioPlayer topbar.
         Documentation : CONTRIBUTING complet + doc/ réorganisé.
         Phase B1 terminée — tous les bugs B1→B15 corrigés.
-        Chantier G1 (cohérence gouvernance) en file.
-        Refonte carte en approche.
+        Refactor qualité (2026-04-11) : arborescence src/ restructurée,
+        fichiers morts supprimés, responsabilités storage/options clarifiées.
+        Prochain : U3 Chronolog enrichi.
 ================================================================================
 ```
 
