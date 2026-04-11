@@ -33,7 +33,7 @@ export default function SectionConseil() {
     const [govOpts, setGovOpts] = useState(() => getOptions());
     const [selectedMin, setSelectedMin] = useState('initiateur');
     const [selectedMin2, setSelectedMin2] = useState('justice');
-    const [tab, setTab] = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres' | 'destinee' | 'chroniqueur'
+    const [tab, setTab] = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres' | 'destinee'
     const [presOpenAcc, setPresOpenAcc] = useState(null);
     const [activeDestinSettings, setActiveDestinSettings] = useState(() => {
         const opts = getOptions();
@@ -174,12 +174,11 @@ export default function SectionConseil() {
 
         <div className="settings-tabs">
         {[
-            { id: 'gouvernance',  label: isEn ? 'Governance'  : 'Gouvernance'  },
-            { id: 'presidence',   label: isEn ? 'Presidency'  : 'Présidence'   },
-            { id: 'ministeres',   label: isEn ? 'Ministries'  : 'Ministères'   },
-            { id: 'ministres',    label: isEn ? 'Ministers'   : 'Ministres'    },
-            { id: 'destinee',     label: isEn ? 'Destiny'     : 'Destinée'     },
-            { id: 'chroniqueur',  label: isEn ? 'Chronicler'  : 'Chroniqueur'  },
+            { id: 'gouvernance', label: isEn ? 'Governance' : 'Gouvernance' },
+            { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence'  },
+            { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères'  },
+            { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'   },
+            { id: 'destinee',    label: isEn ? 'Destiny'    : 'Destinée'    },
         ].map(t => (
             <button key={t.id}
             className={`settings-tab${tab === t.id ? ' active' : ''}`}
@@ -400,43 +399,6 @@ export default function SectionConseil() {
             <SectionGouvernanceDefaut opts={govOpts} setOpts={handleSetGovOpts} />
         )}
 
-        {tab === 'chroniqueur' && (
-          <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
-            <div style={{ padding:'0.55rem 0.75rem', background:'rgba(90,110,160,0.05)',
-              border:'1px solid rgba(90,110,160,0.12)', borderRadius:'2px',
-              fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
-              color:'rgba(140,160,200,0.50)', lineHeight:1.6 }}>
-              {isEn
-                ? 'At each cycle close, the Chronicler synthesizes the narrative memory of each country. Injected into future deliberations — the Council cannot repeat its own mistakes.'
-                : 'À chaque clôture de cycle, le Chroniqueur synthétise la mémoire narrative de chaque pays. Injectée dans les délibérations futures — le Conseil ne peut pas répéter ses propres erreurs.'}
-            </div>
-
-            <Field label={isEn ? 'Enable Chronicler (global default)' : 'Activer le Chroniqueur (défaut global)'}
-              hint={isEn
-                ? 'Can be overridden per country in Constitution or at world init'
-                : 'Peut être surchargé par pays dans la Constitution ou à l\'init du monde'}>
-              <label style={{ display:'flex', alignItems:'center', gap:'0.5rem', cursor:'pointer' }}>
-                <input type="checkbox"
-                  checked={govOpts.chroniqueur?.enabled ?? true}
-                  onChange={e => updateGovOpts('chroniqueur.enabled', e.target.checked)}
-                />
-                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
-                  color: (govOpts.chroniqueur?.enabled ?? true) ? 'rgba(58,191,122,0.80)' : 'rgba(140,160,200,0.40)' }}>
-                  {(govOpts.chroniqueur?.enabled ?? true)
-                    ? (isEn ? 'Active' : 'Actif')
-                    : (isEn ? 'Disabled' : 'Désactivé')}
-                </span>
-              </label>
-            </Field>
-
-            <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
-              color:'rgba(90,110,160,0.55)', margin:0, lineHeight:1.5 }}>
-              {isEn
-                ? '→ Provider/model: configured in Constitution → Deliberation Architecture'
-                : '→ Provider/modèle : configuré dans Constitution → Architecture de délibération'}
-            </p>
-          </div>
-        )}
 
         <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
