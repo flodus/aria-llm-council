@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-04-11_
+_Dernière mise à jour : 2026-04-12_
 
 ---
 
@@ -10,17 +10,19 @@ _(aucun bug actif connu)_
 
 ---
 
-## 🟢 PROCHAIN CHANTIER — Chronolog enrichi (U3)
+## ✅ LIVRÉ cette session (2026-04-12) — Chronolog enrichi (U3)
 
-- [ ] **Vue détaillée par cycle** : pour chacun des 5 derniers cycles, afficher la liste des décisions prises (vote, événement, sécession) avec leur impact chiffré (satisfaction Δ, popularité Δ)
-- [ ] **Résumé narratif par cycle** : texte court généré depuis les entrées du chronolog (titre décision + pays + résultat)
-- [ ] **Filtres / navigation** : trier par pays · par type d'entrée · pagination si > 5 cycles
-- [ ] **Persistance** : vérifier que `aria_chronolog_cycles` est bien sauvegardé/restauré à la reprise de session
-- [ ] **Composant ChronologView** : identifier les fichiers à toucher avant de coder
+- [x] **Résumé narratif par cycle** : ligne "3 votes · 1 sécession — SAT +4 ARIA −2" dans le header de chaque accordéon cycle
+- [x] **Filtre par type d'événement** : select "Tous types / Vote / Sécession / Constitution / Nouveau pays" (ET logique avec filtre pays existant)
+- [x] **Pagination cycles anciens** : boutons ← Précédent / Suivant → pour les cycles _summary (> 5 cycles)
+- [x] **Persistance** : `aria_chronolog_cycles` déjà correctement sauvegardé/restauré — aucun bug
+- [x] **Seul fichier modifié** : `ChronologView.jsx` — `useChronolog.js` intact
+
+- [ ] **B7 — cycleHistory non persisté au reload** (cycle live perdu si rechargement avant clôture) — hors scope U3, traité séparément
 
 ---
 
-## ✅ LIVRÉ cette session (2026-04-11)
+## ✅ LIVRÉ session précédente (2026-04-11)
 
 - [x] **Chantier qualité XS** : 6 items refactor sur `refactor/dashboard-p1`
   - `storageKeys.js` : inventaire centralisé de toutes les clés localStorage

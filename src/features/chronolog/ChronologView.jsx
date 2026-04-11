@@ -25,6 +25,49 @@ function loadCycles() {
   catch { return []; }
 }
 
+// ── Résumé narratif d'un cycle (calculé à la volée) ──────────────────────────
+function cycleSummaryLine(events, lang) {
+  const isEn = lang === 'en';
+  const counts = { vote: 0, secession: 0, constitution: 0, new_country: 0 };
+  for (const ev of events) {
+    if (ev.type in counts) counts[ev.type]++;
+  }
+
+  // Deltas : priorité cycle_stats (net cycle), sinon somme des vote.impacts (cycle live)
+  let satDelta = 0, ariaDelta = 0;
+  const statsEv = events.find(e => e.type === 'cycle_stats');
+  if (statsEv?.snapshot?.length) {
+    satDelta  = statsEv.snapshot.reduce((s, c) => s + (c.satDelta  || 0), 0);
+    ariaDelta = statsEv.snapshot.reduce((s, c) => s + (c.ariaDelta || 0), 0);
+  } else {
+    for (const ev of events) {
+      if (ev.type === 'vote') {
+        satDelta  += ev.impacts?.satisfaction || 0;
+        ariaDelta += ev.impacts?.aria_delta   || 0;
+      }
+    }
+  }
+
+  const parts = [];
+  if (counts.vote > 0)
+    parts.push(`${counts.vote} ${isEn ? 'vote' + (counts.vote > 1 ? 's' : '') : 'vote' + (counts.vote > 1 ? 's' : '')}`);
+  if (counts.secession > 0)
+    parts.push(`${counts.secession} ${isEn ? 'secession' + (counts.secession > 1 ? 's' : '') : 'sécession' + (counts.secession > 1 ? 's' : '')}`);
+  if (counts.constitution > 0)
+    parts.push(`${counts.constitution} ${isEn ? 'amendment' + (counts.constitution > 1 ? 's' : '') : 'amendement' + (counts.constitution > 1 ? 's' : '')}`);
+  if (counts.new_country > 0)
+    parts.push(`${counts.new_country} ${isEn ? 'new nation' + (counts.new_country > 1 ? 's' : '') : 'nouvelle' + (counts.new_country > 1 ? 's' : '') + ' nation' + (counts.new_country > 1 ? 's' : '')}`);
+
+  if (parts.length === 0) return null;
+  let line = parts.join(' · ');
+
+  const satStr  = satDelta  !== 0 ? ` SAT ${satDelta  > 0 ? '+' : ''}${Math.round(satDelta)}`  : '';
+  const ariaStr = ariaDelta !== 0 ? ` ARIA ${ariaDelta > 0 ? '+' : ''}${Math.round(ariaDelta)}` : '';
+  if (satStr || ariaStr) line += ` —${satStr}${ariaStr}`;
+
+  return line;
+}
+
 // ── Pill delta ────────────────────────────────────────────────────────────────
 function Pill({ label, delta }) {
   if (delta === undefined || delta === null || delta === 0) return null;
@@ -344,7 +387,7 @@ function CountryBlock({ countryId, countryNom, countryEmoji, events, isSummary, 
 }
 
 // ── Bloc cycle ────────────────────────────────────────────────────────────────
-function CycleBlock({ cycle, filterCountryId, defaultOpen, isCurrent }) {
+function CycleBlock({ cycle, filterCountryId, filterType, defaultOpen, isCurrent }) {
   const lang = loadLang();
   const isEn = lang === 'en';
   const [open, setOpen] = useState(defaultOpen);
@@ -354,13 +397,15 @@ function CycleBlock({ cycle, filterCountryId, defaultOpen, isCurrent }) {
   const groups = {};
 
   for (const ev of cycle.events) {
-    // cycle_stats : on l'affiche une seule fois dans un groupe monde
+    // cycle_stats : toujours inclus (stats techniques, non filtré par type)
     if (ev.type === 'cycle_stats') {
       const key = '__monde__';
       if (!groups[key]) groups[key] = { id: null, nom: 'Monde', emoji: '🌐', events: [] };
       if (!filterCountryId) groups[key].events.push(ev);
       continue;
     }
+    // Filtre type
+    if (filterType && ev.type !== filterType) continue;
     const cid = ev.countryId || '__monde__';
     if (filterCountryId && cid !== filterCountryId) continue;
     if (!groups[cid]) groups[cid] = { id: cid, nom: ev.countryNom || 'Monde', emoji: ev.countryEmoji || '🌐', events: [] };
@@ -371,6 +416,7 @@ function CycleBlock({ cycle, filterCountryId, defaultOpen, isCurrent }) {
   if (visibleGroups.length === 0) return null;
 
   const totalEvs = visibleGroups.reduce((s, g) => s + g.events.length, 0);
+  const narratif = cycleSummaryLine(cycle.events, lang);
 
   return (
     <div style={{ marginBottom:'0.55rem',
@@ -382,19 +428,28 @@ function CycleBlock({ cycle, filterCountryId, defaultOpen, isCurrent }) {
           cursor:'pointer', background: isCurrent ? 'rgba(58,191,122,0.04)' : 'rgba(200,164,74,0.025)' }}
         onClick={() => setOpen(o => !o)}
       >
-        {isCurrent && (
-          <span style={{ fontFamily: FONT.mono, fontSize:'0.34rem', letterSpacing:'0.14em', color:C.green,
-            background:'rgba(58,191,122,0.10)', border:'1px solid rgba(58,191,122,0.28)',
-            borderRadius:'2px', padding:'0.08rem 0.32rem', flexShrink:0 }}>EN COURS</span>
-        )}
-        <span style={{ fontFamily: FONT.cinzel, fontSize:'0.52rem', letterSpacing:'0.18em',
-          color: isCurrent ? C.green : C.gold, flex:1 }}>
-          CYCLE {cycle.cycleNum} — {isEn?'Year':'An'} {cycle.annee}
-        </span>
-        <span style={{ fontFamily: FONT.mono, fontSize:'0.37rem', color:C.dimmed }}>
+        <div style={{ flex:1, display:'flex', flexDirection:'column', gap:'0.15rem', minWidth:0 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'0.45rem' }}>
+            {isCurrent && (
+              <span style={{ fontFamily: FONT.mono, fontSize:'0.34rem', letterSpacing:'0.14em', color:C.green,
+                background:'rgba(58,191,122,0.10)', border:'1px solid rgba(58,191,122,0.28)',
+                borderRadius:'2px', padding:'0.08rem 0.32rem', flexShrink:0 }}>EN COURS</span>
+            )}
+            <span style={{ fontFamily: FONT.cinzel, fontSize:'0.52rem', letterSpacing:'0.18em',
+              color: isCurrent ? C.green : C.gold }}>
+              CYCLE {cycle.cycleNum} — {isEn?'Year':'An'} {cycle.annee}
+            </span>
+          </div>
+          {narratif && (
+            <span style={{ fontFamily: FONT.mono, fontSize:'0.37rem', color:C.dimmed, letterSpacing:'0.04em' }}>
+              {narratif}
+            </span>
+          )}
+        </div>
+        <span style={{ fontFamily: FONT.mono, fontSize:'0.37rem', color:C.dimmed, flexShrink:0 }}>
           {totalEvs} év. {cycle._summary ? `· ${t('CHRON_RESUME',loadLang())}` : `· ${t('CHRON_COMPLET',loadLang())}`}
         </span>
-        <span style={{ color:C.dimmed, fontSize:'0.45rem',
+        <span style={{ color:C.dimmed, fontSize:'0.45rem', flexShrink:0,
           transform: open ? 'rotate(90deg)' : 'none', transition:'transform 0.15s' }}>▶</span>
       </div>
 
@@ -428,7 +483,10 @@ export default function ChronologView({
   const isEn = lang === 'en';
   const [view,           setView]           = useState('world');
   const [filterCountry,  setFilterCountry]  = useState(null);
+  const [filterType,     setFilterType]     = useState(null);
+  const [summaryPage,    setSummaryPage]    = useState(0);
   const [cycles,         setCycles]         = useState([]);
+  const SUMMARY_PAGE_SIZE = 3;
 
   useEffect(() => {
     setCycles(loadCycles());
@@ -445,10 +503,18 @@ export default function ChronologView({
     _live:     true,
   } : null;
 
+  const persistedCycles = cycles.filter(c => !liveCycle || c.cycleNum !== liveCycle.cycleNum);
   const allCycles = [
     ...(liveCycle ? [liveCycle] : []),
-    ...cycles.filter(c => !liveCycle || c.cycleNum !== liveCycle.cycleNum),
+    ...persistedCycles,
   ];
+
+  // Séparer cycles récents (détail complet) et anciens (résumé, paginés)
+  const recentCycles  = allCycles.filter(c => !c._summary);
+  const summaryCycles = allCycles.filter(c =>  c._summary);
+  const summaryTotal  = summaryCycles.length;
+  const summaryStart  = summaryPage * SUMMARY_PAGE_SIZE;
+  const summarySlice  = summaryCycles.slice(summaryStart, summaryStart + SUMMARY_PAGE_SIZE);
 
   if (allCycles.length === 0) return (
     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flex:1, gap:'0.6rem', opacity:0.35 }}>
@@ -497,6 +563,21 @@ export default function ChronologView({
           </select>
         )}
 
+        {/* Filtre par type d'événement */}
+        <select
+          style={{ background:'rgba(8,14,26,0.80)', border:`1px solid ${C.border}`, borderRadius:'2px',
+            padding:'0.26rem 0.5rem', cursor:'pointer', fontFamily:FONT.mono, fontSize:'0.40rem',
+            color: filterType ? C.gold : C.dimmed, outline:'none' }}
+          value={filterType || ''}
+          onChange={e => { setFilterType(e.target.value || null); setSummaryPage(0); }}
+        >
+          <option value="">{isEn ? 'All types' : 'Tous types'}</option>
+          <option value="vote">🗳 {isEn ? 'Vote' : 'Vote'}</option>
+          <option value="secession">✂️ {isEn ? 'Secession' : 'Sécession'}</option>
+          <option value="constitution">📜 {isEn ? 'Constitution' : 'Constitution'}</option>
+          <option value="new_country">🌍 {isEn ? 'New nation' : 'Nouveau pays'}</option>
+        </select>
+
         <div style={{ marginLeft:'auto', fontFamily: FONT.mono, fontSize:'0.37rem', color:C.dimmed }}>
           {allCycles.length} cycle{allCycles.length>1?'s':''} · {totalEvs} {isEn?'events':'événements'}
         </div>
@@ -504,15 +585,72 @@ export default function ChronologView({
 
       {/* Liste cycles */}
       <div style={{ flex:1, overflowY:'auto', padding:'0.55rem 0.6rem' }}>
-        {allCycles.map((cycle, i) => (
+
+        {/* Cycles récents — détail complet */}
+        {recentCycles.map((cycle, i) => (
           <CycleBlock
             key={cycle.cycleNum + (cycle._live ? '-live' : '')}
             cycle={cycle}
             filterCountryId={view === 'country' ? filterCountry : null}
+            filterType={filterType}
             defaultOpen={i === 0}
             isCurrent={!!cycle._live}
           />
         ))}
+
+        {/* Cycles anciens — résumés paginés */}
+        {summarySlice.map(cycle => (
+          <CycleBlock
+            key={cycle.cycleNum}
+            cycle={cycle}
+            filterCountryId={view === 'country' ? filterCountry : null}
+            filterType={filterType}
+            defaultOpen={false}
+            isCurrent={false}
+          />
+        ))}
+
+        {/* Message si aucun cycle visible après filtres */}
+        {recentCycles.length === 0 && summarySlice.length === 0 && allCycles.length > 0 && (
+          <div style={{ display:'flex', justifyContent:'center', padding:'1.5rem',
+            fontFamily: FONT.mono, fontSize:'0.40rem', color:C.dimmed, opacity:0.5 }}>
+            {isEn ? 'No events matching the selected filters.' : 'Aucun événement correspondant aux filtres.'}
+          </div>
+        )}
+
+        {/* Pagination cycles anciens */}
+        {summaryTotal > SUMMARY_PAGE_SIZE && (
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.5rem', padding:'0.5rem 0 0.3rem' }}>
+            <button
+              disabled={summaryPage === 0}
+              onClick={() => setSummaryPage(p => p - 1)}
+              style={{
+                background: summaryPage === 0 ? 'transparent' : 'rgba(200,164,74,0.06)',
+                border:`1px solid ${summaryPage === 0 ? 'rgba(200,164,74,0.06)' : 'rgba(200,164,74,0.22)'}`,
+                borderRadius:'2px', padding:'0.26rem 0.6rem', cursor: summaryPage === 0 ? 'default' : 'pointer',
+                fontFamily: FONT.mono, fontSize:'0.38rem', letterSpacing:'0.08em',
+                color: summaryPage === 0 ? C.dimmed : C.gold, opacity: summaryPage === 0 ? 0.35 : 1,
+              }}>
+              ← {isEn ? 'Previous' : 'Précédent'}
+            </button>
+            <span style={{ fontFamily: FONT.mono, fontSize:'0.37rem', color:C.dimmed }}>
+              {summaryPage + 1} / {Math.ceil(summaryTotal / SUMMARY_PAGE_SIZE)}
+            </span>
+            <button
+              disabled={summaryStart + SUMMARY_PAGE_SIZE >= summaryTotal}
+              onClick={() => setSummaryPage(p => p + 1)}
+              style={{
+                background: summaryStart + SUMMARY_PAGE_SIZE >= summaryTotal ? 'transparent' : 'rgba(200,164,74,0.06)',
+                border:`1px solid ${summaryStart + SUMMARY_PAGE_SIZE >= summaryTotal ? 'rgba(200,164,74,0.06)' : 'rgba(200,164,74,0.22)'}`,
+                borderRadius:'2px', padding:'0.26rem 0.6rem', cursor: summaryStart + SUMMARY_PAGE_SIZE >= summaryTotal ? 'default' : 'pointer',
+                fontFamily: FONT.mono, fontSize:'0.38rem', letterSpacing:'0.08em',
+                color: summaryStart + SUMMARY_PAGE_SIZE >= summaryTotal ? C.dimmed : C.gold,
+                opacity: summaryStart + SUMMARY_PAGE_SIZE >= summaryTotal ? 0.35 : 1,
+              }}>
+              {isEn ? 'Next' : 'Suivant'} →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

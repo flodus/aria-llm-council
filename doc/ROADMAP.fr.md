@@ -115,7 +115,10 @@
  ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ✅ 100%
  ├─[U2] Harmonisation tuiles .... [PresidencyTiles partagé — 4 écrans] ✅ 100%
  │      └─> Settings · GovernanceForm · ConstitutionModal · PreLaunchScreen
- └─[U3] Chronolog enrichi ........ [Détail 5 derniers cycles] ........ ▶ PROCHAIN
+ └─[U3] Chronolog enrichi ........ [Résumé narratif, filtres, pagination] ✅ 100%
+        └─> Résumé "3 votes · 1 sécession — SAT +4 ARIA −2" par cycle
+            Filtre type (vote/sécession/constitution/nouveau pays) ET filtre pays
+            Pagination ← → pour cycles anciens (_summary)
 
  [ PHASE G1 : COHÉRENCE GOUVERNANCE ] ........................... STATUT: EN COURS
  │  Spec validée (2026-03-26) — GovernanceForm existe, wiring à compléter

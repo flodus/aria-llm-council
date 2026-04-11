@@ -115,7 +115,10 @@
  ├─[U1] Regime icons ............ [Dropdowns in Init + in-game] ..... ✅ 100%
  ├─[U2] Tile harmonisation ...... [PresidencyTiles shared — 4 screens] ✅ 100%
  │      └─> Settings · GovernanceForm · ConstitutionModal · PreLaunchScreen
- └─[U3] Chronolog enriched ....... [Last 5 cycles detail view] ....... ▶ NEXT
+ └─[U3] Chronolog enriched ....... [Narrative summary, filters, pagination] ✅ 100%
+        └─> Narrative "3 votes · 1 secession — SAT +4 ARIA −2" per cycle
+            Type filter (vote/secession/constitution/new nation) AND country filter
+            ← → pagination for old cycles (_summary)
 
  [ PHASE G1 : GOVERNANCE COHERENCE ] ............................. STATUS: IN PROGRESS
  │  Spec validated (2026-03-26) — GovernanceForm exists, wiring to complete
