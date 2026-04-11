@@ -86,73 +86,208 @@ function Pill({ label, delta }) {
   );
 }
 
+// ── Bloc phase délibération ───────────────────────────────────────────────────
+function PhaseBlock({ borderColor, label, children }) {
+  return (
+    <div style={{ borderLeft:`2px solid ${borderColor}30`, paddingLeft:'0.55rem', marginTop:'0.25rem' }}>
+      <div style={{ fontFamily:FONT.mono, fontSize:'0.34rem', letterSpacing:'0.14em',
+        color:borderColor, marginBottom:'0.18rem', opacity:0.75 }}>
+        {label}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function MinisteText({ who }) {
+  if (!who?.position) return null;
+  return (
+    <div style={{ marginBottom:'0.25rem' }}>
+      <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', color:C.dimmed }}>
+        {who.emoji} {who.name}{who.mot_cle ? ` · ${who.mot_cle}` : ''} —{' '}
+      </span>
+      <span style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.muted, lineHeight:1.6 }}>
+        {who.position}
+      </span>
+    </div>
+  );
+}
+
 // ── Rendu détail par type ─────────────────────────────────────────────────────
 function EventDetail({ ev, isSummary }) {
+  const lang = loadLang();
+  const isEn = lang === 'en';
+
   if (ev.type === 'vote') {
+    const d = ev.deliberation;
     return (
       <div style={{ display:'flex', flexDirection:'column', gap:'0.4rem', padding:'0.45rem 0.7rem 0.55rem' }}>
-      {/* Label du résultat avec couleur selon l'option choisie */}
-      {ev.label && (
-        <p style={{
-          fontFamily: FONT.mono, fontSize:'0.42rem',
-          color: ev.chosenOption === 'phare' ? C.gold :
-          ev.chosenOption === 'boussole' ? C.purple :
-          ev.vote==='oui' ? 'rgba(58,191,122,0.65)' : 'rgba(200,80,80,0.65)',
-                    fontStyle:'italic', margin:0, lineHeight:1.6
-        }}>
-        {ev.chosenOption === 'phare' && '☉ '}
-        {ev.chosenOption === 'boussole' && '☽ '}
-        « {ev.label} »
-        </p>
-      )}
 
-      {/* Option choisie détaillée si disponible */}
-      {ev.chosenLabel && (
-        <p style={{
-          fontFamily: FONT.mono, fontSize:'0.40rem',
-          color: C.muted, margin:0, lineHeight:1.5, paddingLeft:'0.3rem'
-        }}>
-        {ev.chosenLabel}
-        </p>
-      )}
-
-      {/* Résultats du vote */}
-      {ev.voteCounts && (
-        <div style={{ display:'flex', gap:'0.8rem', marginTop:'0.2rem' }}>
-        <span style={{ fontFamily: FONT.mono, fontSize:'0.38rem', color:'rgba(58,191,122,0.50)' }}>
-        {loadLang()==='en'?'YES':'OUI'} {Math.round((ev.voteCounts.oui||0)/1000)} k
-        </span>
-        <span style={{ fontFamily: FONT.mono, fontSize:'0.38rem', color:'rgba(200,80,80,0.50)' }}>
-        {loadLang()==='en'?'NO':'NON'} {Math.round((ev.voteCounts.non||0)/1000)} k
-        </span>
-        </div>
-      )}
-
-      {/* Synthèses ministère/présidence */}
-      {!isSummary && (ev.syntheseMinistere || ev.synthesePresidence) && (
-        <div style={{ display:'flex', flexDirection:'column', gap:'0.35rem', marginTop:'0.2rem' }}>
-        {ev.syntheseMinistere && (
-          <div style={{ borderLeft:`2px solid ${C.blue}30`, paddingLeft:'0.55rem' }}>
-          <div style={{ fontFamily: FONT.mono, fontSize:'0.36rem', letterSpacing:'0.14em', color:C.blue, marginBottom:'0.15rem' }}>
-          {loadLang()==='en'?'MINISTRY':'MINISTÈRE'} — {ev.ministereNom||ev.ministereId}
-          </div>
-          <p style={{ fontFamily: FONT.mono, fontSize:'0.40rem', color:C.muted, lineHeight:1.65, margin:0 }}>
-          {ev.syntheseMinistere}
+        {/* Label résultat */}
+        {ev.label && (
+          <p style={{ fontFamily:FONT.mono, fontSize:'0.42rem', fontStyle:'italic', margin:0, lineHeight:1.6,
+            color: ev.chosenOption==='phare' ? C.gold : ev.chosenOption==='boussole' ? C.purple :
+              ev.vote==='oui' ? 'rgba(58,191,122,0.65)' : 'rgba(200,80,80,0.65)' }}>
+            {ev.chosenOption==='phare' && '☉ '}
+            {ev.chosenOption==='boussole' && '☽ '}
+            « {ev.label} »
           </p>
+        )}
+        {ev.chosenLabel && (
+          <p style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:C.muted, margin:0, lineHeight:1.5, paddingLeft:'0.3rem' }}>
+            {ev.chosenLabel}
+          </p>
+        )}
+
+        {/* Décompte */}
+        {ev.voteCounts && (
+          <div style={{ display:'flex', gap:'0.8rem' }}>
+            <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(58,191,122,0.50)' }}>
+              {isEn?'YES':'OUI'} {Math.round((ev.voteCounts.oui||0)/1000)} k
+            </span>
+            <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(200,80,80,0.50)' }}>
+              {isEn?'NO':'NON'} {Math.round((ev.voteCounts.non||0)/1000)} k
+            </span>
           </div>
         )}
-        {ev.synthesePresidence && (
-          <div style={{ borderLeft:`2px solid ${C.gold}30`, paddingLeft:'0.55rem' }}>
-          <div style={{ fontFamily: FONT.mono, fontSize:'0.36rem', letterSpacing:'0.14em', color:C.goldDim, marginBottom:'0.15rem' }}>
-          {t('CHRON_PRESIDENCE', loadLang())}
-          </div>
-          <p style={{ fontFamily: FONT.mono, fontSize:'0.40rem', color:C.muted, lineHeight:1.65, margin:0 }}>
-          {ev.synthesePresidence}
-          </p>
+
+        {/* ── Délibération complète (cycles récents) ─────────────────────────── */}
+        {!isSummary && d && (
+          <div style={{ display:'flex', flexDirection:'column', gap:'0.3rem', marginTop:'0.1rem' }}>
+
+            {/* Phase Ministère */}
+            {d.ministere && (
+              <PhaseBlock borderColor={C.blue}
+                label={`${isEn?'MINISTRY':'MINISTÈRE'} — ${d.ministere.ministryEmoji} ${d.ministere.ministryName}`}>
+                <MinisteText who={d.ministere.ministerA} />
+                <MinisteText who={d.ministere.ministerB} />
+                {d.ministere.synthese?.synthese && (
+                  <p style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.muted,
+                    lineHeight:1.65, margin:'0.15rem 0 0 0', borderTop:`1px solid ${C.blue}15`, paddingTop:'0.20rem' }}>
+                    {d.ministere.synthese.synthese}
+                  </p>
+                )}
+                {d.ministere.synthese?.recommandation && (
+                  <p style={{ fontFamily:FONT.mono, fontSize:'0.37rem', color:C.blue,
+                    lineHeight:1.5, margin:'0.10rem 0 0 0', opacity:0.65 }}>
+                    → {d.ministere.synthese.recommandation}
+                  </p>
+                )}
+              </PhaseBlock>
+            )}
+
+            {/* Phase Cercle */}
+            {d.cercle?.length > 0 && (
+              <PhaseBlock borderColor={C.teal} label={isEn?'CIRCLE':'CERCLE'}>
+                {d.cercle.map((a, i) => (
+                  <div key={i} style={{ display:'flex', gap:'0.3rem', marginBottom:'0.18rem' }}>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:C.dimmed, flexShrink:0 }}>
+                      {a.ministryEmoji} {a.ministryName} —
+                    </span>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:C.muted, lineHeight:1.55 }}>
+                      {a.annotation}
+                    </span>
+                  </div>
+                ))}
+              </PhaseBlock>
+            )}
+
+            {/* Phase Destin */}
+            {d.destin && (
+              <PhaseBlock borderColor={C.purple} label={isEn?'DESTINY':'DESTIN'}>
+                {d.destin.oracle?.position && (
+                  <div style={{ marginBottom:'0.20rem' }}>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', color:C.dimmed }}>
+                      👁️ {d.destin.oracle.name || 'Oracle'} —{' '}
+                    </span>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.muted, fontStyle:'italic', lineHeight:1.6 }}>
+                      {d.destin.oracle.position}
+                    </span>
+                  </div>
+                )}
+                {d.destin.wyrd?.position && (
+                  <div>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', color:C.dimmed }}>
+                      🕸️ {d.destin.wyrd.name || 'Wyrd'} —{' '}
+                    </span>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.muted, fontStyle:'italic', lineHeight:1.6 }}>
+                      {d.destin.wyrd.position}
+                    </span>
+                  </div>
+                )}
+              </PhaseBlock>
+            )}
+
+            {/* Phase Présidence */}
+            {d.presidence && (
+              <PhaseBlock borderColor={C.gold}
+                label={d.presidence.collegial ? (isEn?'COLLEGIAL':'COLLÉGIAL') : (isEn?'PRESIDENCY':'PRÉSIDENCE')}>
+                {d.presidence.presidents && Object.entries(d.presidence.presidents).map(([id, p]) => (
+                  p?.position && (
+                    <div key={id} style={{ marginBottom:'0.22rem' }}>
+                      <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', color:C.dimmed }}>
+                        {p.emoji || p.symbol || '★'} {p.name} —{' '}
+                      </span>
+                      <span style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.muted, lineHeight:1.6 }}>
+                        {p.position}
+                      </span>
+                      {p.decision && (
+                        <div style={{ fontFamily:FONT.mono, fontSize:'0.37rem', color:C.goldDim,
+                          opacity:0.70, marginLeft:'1rem', marginTop:'0.08rem' }}>
+                          → {p.decision}
+                        </div>
+                      )}
+                    </div>
+                  )
+                ))}
+                {d.presidence.synthese?.synthese && (
+                  <p style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.muted,
+                    lineHeight:1.65, margin:'0.15rem 0 0 0', borderTop:`1px solid ${C.gold}15`, paddingTop:'0.20rem' }}>
+                    {d.presidence.synthese.synthese}
+                  </p>
+                )}
+              </PhaseBlock>
+            )}
+
+            {/* Mode Crise : toutes les synthèses ministérielles */}
+            {d.crisis && (
+              <PhaseBlock borderColor='rgba(255,140,0,0.7)' label={isEn?'CRISIS MODE':'MODE CRISE'}>
+                {d.crisis.map((m, i) => m.synthese && (
+                  <div key={i} style={{ marginBottom:'0.18rem' }}>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', color:C.dimmed }}>
+                      {m.ministryEmoji} {m.ministryName} —{' '}
+                    </span>
+                    <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:C.muted, lineHeight:1.55 }}>
+                      {m.synthese}
+                    </span>
+                  </div>
+                ))}
+              </PhaseBlock>
+            )}
+
           </div>
         )}
-        </div>
-      )}
+
+        {/* Fallback ancien format (pas de deliberation) */}
+        {!isSummary && !d && (ev.syntheseMinistere || ev.synthesePresidence) && (
+          <div style={{ display:'flex', flexDirection:'column', gap:'0.35rem', marginTop:'0.2rem' }}>
+            {ev.syntheseMinistere && (
+              <PhaseBlock borderColor={C.blue}
+                label={`${isEn?'MINISTRY':'MINISTÈRE'} — ${ev.ministereNom||ev.ministereId}`}>
+                <p style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:C.muted, lineHeight:1.65, margin:0 }}>
+                  {ev.syntheseMinistere}
+                </p>
+              </PhaseBlock>
+            )}
+            {ev.synthesePresidence && (
+              <PhaseBlock borderColor={C.gold} label={t('CHRON_PRESIDENCE', lang)}>
+                <p style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:C.muted, lineHeight:1.65, margin:0 }}>
+                  {ev.synthesePresidence}
+                </p>
+              </PhaseBlock>
+            )}
+          </div>
+        )}
       </div>
     );
   }

@@ -198,6 +198,46 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       },
       voteCounts: { oui: impact.oui, non: impact.non },
       isCrisis:   !!(session.crisis?.crisis),
+      deliberation: {
+        ministere: session.ministere ? {
+          ministryName:  session.ministere.ministryName,
+          ministryEmoji: session.ministere.ministryEmoji,
+          ministerA: {
+            name:     session.ministere.ministerA?.name,
+            emoji:    session.ministere.ministerA?.emoji,
+            position: session.ministere.ministerA?.position,
+            mot_cle:  session.ministere.ministerA?.mot_cle,
+          },
+          ministerB: {
+            name:     session.ministere.ministerB?.name,
+            emoji:    session.ministere.ministerB?.emoji,
+            position: session.ministere.ministerB?.position,
+            mot_cle:  session.ministere.ministerB?.mot_cle,
+          },
+          synthese: session.ministere.synthese,
+        } : null,
+        cercle: (session.cercle || []).map(a => ({
+          ministryId:    a.ministryId,
+          ministryName:  a.ministryName,
+          ministryEmoji: a.ministryEmoji,
+          annotation:    a.annotation,
+        })),
+        destin: session.destin ? {
+          oracle: { name: session.destin.oracle?.name, position: session.destin.oracle?.position },
+          wyrd:   { name: session.destin.wyrd?.name,   position: session.destin.wyrd?.position   },
+        } : null,
+        presidence: session.presidence ? {
+          presidents: session.presidence.presidents || null,
+          synthese:   session.presidence.synthese   || null,
+          collegial:  !!session.presidence.collegial,
+        } : null,
+        crisis: session.crisis?.ministries?.map(m => ({
+          ministryId:    m.ministryId,
+          ministryName:  m.ministryName,
+          ministryEmoji: m.ministryEmoji,
+          synthese:      m.synthese?.synthese || m.synthese?.recommandation || '',
+        })) || null,
+      },
     };
 
     pushEvent(cycleNumRef.current, selectedCountry.annee || 2026, entryBase);
