@@ -135,10 +135,8 @@ aria/
 │   │   │       └── realCountries.js
 │   │   │
 │   │   ├── map/                         # Rendu carte hexagonale
-│   │   │   ├── ariaHexWorld.js          # Utilitaires hex
 │   │   │   ├── HexGrid.jsx              # Grille hexagonale SVG
-│   │   │   ├── MapSVG.jsx               # Assembleur carte (seed → HexGrid)
-│   │   │   └── WorldEngineCapsule.js    # Capsule WorldEngine pour proto
+│   │   │   └── MapSVG.jsx               # Assembleur carte (seed → HexGrid)
 │   │   │
 │   │   ├── settings/                    # Page de configuration
 │   │   │   ├── Settings.jsx             # Composant Settings principal
@@ -237,18 +235,19 @@ aria/
 │       ├── config/
 │       │   └── options.js               # DEFAULT_OPTIONS, getOptions, saveOptions
 │       ├── constants/
-│       │   └── llmRegistry.js           # Registre providers LLM
+│       │   ├── llmRegistry.js           # Registre providers LLM
+│       │   └── models.js                # DEFAULT_MODELS + PING_MODELS par provider
 │       ├── data/
 │       │   ├── ariaData.js              # LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_COUNTRIES ⚠
 │       │   ├── gameData.js              # getStats, getAgents, REGIMES, TERRAINS…
 │       │   └── worldLabels.js           # getTerrainLabel, getRegimeLabel
 │       ├── hooks/
-│       │   ├── useAccordion.js
-│       │   └── useAriaOptions.js
+│       │   └── useAccordion.js
 │       ├── services/
 │       │   ├── index.js
 │       │   ├── iaStatusStore.js         # setIaStatus, getIaStatus
-│       │   ├── storage.js
+│       │   ├── storage.js               # Accesseurs nommés par clé métier (loadOpts, saveOpts…)
+│       │   ├── storageKeys.js           # Inventaire centralisé de toutes les clés localStorage
 │       │   ├── boardgame/
 │       │   │   ├── questionService.js
 │       │   │   └── responseService.js
@@ -274,7 +273,7 @@ aria/
 │           ├── curseurs.js
 │           ├── normalizeCountry.js
 │           ├── prng.js                  # seededRand, strToSeed, randRange…
-│           └── storage.js
+│           └── storage.js               # Primitives génériques lireStorage/ecrireStorage/supprimerStorage
 │
 ├── templates/                           # Données de jeu (JSON)
 │   └── languages/
@@ -308,3 +307,12 @@ aria/
 - `Stubs V4` = fichiers vides, réservés pour l'architecture multijoueur future
 - `shared/` = code transversal, jamais lié à une feature spécifique
 - `Settings.css` = exception historique (CSS fichier séparé) — refactorisé et nettoyé (793L → 584L)
+
+### Deux modules storage — rôles distincts
+
+| Fichier | Rôle |
+|---------|------|
+| `shared/services/storage.js` | **Accesseurs nommés par clé métier** — `loadOpts()`, `saveOpts()`, `loadKeys()`… Chaque fonction encapsule une clé spécifique. Utilisé par `options.js`. |
+| `shared/utils/storage.js` | **Primitives génériques** — `lireStorage(clé, défaut)`, `ecrireStorage(clé, val)`, `supprimerStorage(clé)`. Utilisé par `settingsStorage.js` et `ConstitutionModal`. |
+
+Ne pas fusionner : les deux niveaux sont intentionnels et ont des consommateurs différents.
