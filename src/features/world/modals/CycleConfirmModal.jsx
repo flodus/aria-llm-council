@@ -1,7 +1,7 @@
 // src/features/world/modals/CycleConfirmModal.jsx
 import { useLocale } from '../../../ariaI18n';
 import { REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
-import { getStats } from '../../../Dashboard_p1';
+import { getStats } from '../../../shared/data/gameData';
 import { S } from './modalStyles';
 
 function getLocalizedNom(country) {

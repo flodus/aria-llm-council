@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { loadLang } from '../../../ariaI18n';
 import { BASE_AGENTS, BASE_AGENTS_EN } from '../../../../templates';
-import { getAgents } from '../../../Dashboard_p1';
+import { getAgents } from '../../../shared/data/gameData';
 
 function defaultMins() {
     return getAgents().ministries.filter(m => m.base).map(m => m.id);

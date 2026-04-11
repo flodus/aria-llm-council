@@ -8,7 +8,7 @@ import {
     wrapWide, mCard
 } from '../../../../shared/theme';
 import { getTerrainLabelMap, getRegimeLabelMap, getTerrainIcon, getRegimeIcon, getPaysLocaux } from '../../services/labels';
-import { getStats } from '../../../../Dashboard_p1';
+import { getStats } from '../../../../shared/data/gameData';
 import ARIAHeader from '../ARIAHeader';
 
 export default function DefaultLocalFlow({ worldName, onBack, onPreLaunch }) {

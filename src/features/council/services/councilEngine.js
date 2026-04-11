@@ -14,7 +14,9 @@
 //  NE RESTE ICI QUE LA FONCTION PRINCIPALE D'ORCHESTRATION
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { callAI, getApiKeys, getStats, getOptions } from '../../../Dashboard_p1';
+import { callAI, getApiKeys } from '../../../shared/services/llm/aiService';
+import { getStats } from '../../../shared/data/gameData';
+import { getOptions } from '../../../shared/config/options';
 import { loadLang } from '../../../ariaI18n';
 import { getAgentsFor, getMinistriesList, getMinistriesListFor, getMinistersMapFor, getPresidencyFor, MINISTRIES_LIST, MINISTERS_MAP, PRESIDENCY } from './agentsManager';
 import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase, runCrisisPhase } from './deliberationEngine';

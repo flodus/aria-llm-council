@@ -3,7 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
 import { getTerrainLabel, getRegimeLabel } from '../../../shared/data/worldLabels';
-import { getStats, getApiKeys } from '../../../Dashboard_p1';
+import { getStats } from '../../../shared/data/gameData';
+import { getApiKeys } from '../../../shared/services/llm/aiService';
 import { S } from './modalStyles';
 
 // ── Helpers fuzzy-match pays réels ────────────────────────────────────────────

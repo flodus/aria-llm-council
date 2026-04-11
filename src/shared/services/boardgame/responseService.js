@@ -10,7 +10,7 @@
 //  Fallbacks : régime inconnu → _meta.fallbacks → democratie_liberale
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { getAgents } from '../../../Dashboard_p1';
+import { getAgents } from '../../../shared/data/gameData';
 import REPONSES_FR    from '../../../../templates/languages/fr/aria_reponses.json';
 import SYNTHESES_FR   from '../../../../templates/languages/fr/aria_syntheses.json';
 import ANNOTATIONS_FR from '../../../../templates/languages/fr/aria_annotations.json';

@@ -14,7 +14,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useCallback } from 'react';
-import { getOptions } from '../../../Dashboard_p1';
+import { getOptions } from '../../../shared/config/options';
 import { routeQuestion, getBestMatch, detectCrisis } from '../services/routingEngine';
 import { runMinisterePhase, runCerclePhase, runPresidencePhase, runDestinPhase, runCrisisPhase } from '../services/deliberationEngine';
 import { computeVoteImpact } from '../services/voteEngine';

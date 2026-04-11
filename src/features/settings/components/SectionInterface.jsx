@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
-import { getOptions, saveOptions } from '../../../Dashboard_p1';
+import { getOptions, saveOptions } from '../../../shared/config/options';
 import { SectionTitle, Field, Toggle } from '../ui/SettingsUI';
 
 export default function SectionInterface() {

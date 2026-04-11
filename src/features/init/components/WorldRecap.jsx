@@ -11,7 +11,7 @@
 //    onModify  () => void — "Je veux le modifier"
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { getAgents } from '../../../Dashboard_p1';
+import { getAgents } from '../../../shared/data/gameData';
 import { getDestin } from '../../council/services/agentsManager';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY } from '../../../shared/theme';
 

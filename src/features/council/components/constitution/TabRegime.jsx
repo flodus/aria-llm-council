@@ -2,7 +2,7 @@
 // Onglet Régime de ConstitutionModal — emoji, régime politique, chef d'état, destinée, contexte
 
 import { FONT, BTN_SECONDARY, INPUT_STYLE, SELECT_STYLE } from '../../../../shared/theme';
-import { getStats } from '../../../../Dashboard_p1';
+import { getStats } from '../../../../shared/data/gameData';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../../shared/data/ariaData';
 import EmojiPicker from '../../../../shared/components/EmojiPicker';
 

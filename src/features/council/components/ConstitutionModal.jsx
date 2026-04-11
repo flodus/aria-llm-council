@@ -4,7 +4,8 @@
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY } from '../../../shared/theme';
-import { getStats, getOptions } from '../../../Dashboard_p1';
+import { getStats } from '../../../shared/data/gameData';
+import { getOptions } from '../../../shared/config/options';
 import { getAgentsEffectifs, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 import { ecrireAgentsOverride } from '../../../shared/utils/storage';
 import useConstitutionModal from '../hooks/useConstitutionModal';

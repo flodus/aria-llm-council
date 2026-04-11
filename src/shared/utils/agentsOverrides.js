@@ -2,7 +2,7 @@
 // Surcharges emoji/symbole sur les agents ARIA (ministres, ministères, présidents)
 // getAgentsEffectifs() = getAgents() + overrides depuis aria_emoji_overrides
 
-import { getAgents } from '../../Dashboard_p1';
+import { getAgents } from '../../shared/data/gameData';
 import { lireStorage, ecrireStorage } from './storage';
 
 const CLE = 'aria_emoji_overrides';

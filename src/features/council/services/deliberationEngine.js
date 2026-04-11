@@ -4,7 +4,7 @@
 // PHASES DE DÉLIBÉRATION DU CONSEIL
 // ============================================================
 
-import { callAI, getApiKeys } from '../../../Dashboard_p1';
+import { callAI, getApiKeys } from '../../../shared/services/llm/aiService';
 import { getMinistersMapFor, getMinistriesListFor, getPresidencyFor, getDestin } from './agentsManager';
 import { buildCountryContext, langPrefix } from './contextBuilder';  // direct
 import { FALLBACK_RESPONSES, localMinisterFallback, localSyntheseFallback, localAnnotationFallback } from './fallbacks';

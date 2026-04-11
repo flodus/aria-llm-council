@@ -13,7 +13,7 @@
 import { useLocale } from '../../../ariaI18n';
 import { FONT } from '../../../shared/theme';
 import { getTerrainLabelMap } from '../services/labels';
-import { getStats } from '../../../Dashboard_p1';
+import { getStats } from '../../../shared/data/gameData';
 
 export default function CountryEstimations({ regime, terrain }) {
     const { lang } = useLocale();

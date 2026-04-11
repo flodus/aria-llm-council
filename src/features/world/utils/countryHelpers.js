@@ -2,7 +2,7 @@
 
 import { loadLang } from '../../../ariaI18n';
 import { REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
-import { getStats } from '../../../Dashboard_p1';
+import { getStats } from '../../../shared/data/gameData';
 
 export function getCountryEmoji(country) {
     if (country?.emoji) return country.emoji;

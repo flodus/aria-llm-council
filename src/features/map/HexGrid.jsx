@@ -28,7 +28,7 @@
 import { useCallback, useState, useMemo, memo } from 'react';
 import { BIOME, BIOME_COLOR, MAP_W, MAP_H, HEX_R, hexPointsStr } from '../world/services/WorldEngine';
 import { getRegimeIcon } from '../../shared/data/worldLabels';
-import { getStats } from '../../Dashboard_p1';
+import { getStats } from '../../shared/data/gameData';
 
 function getCountryEmoji(country) {
   if (country?.emoji) return country.emoji;
