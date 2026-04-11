@@ -15,6 +15,7 @@ import { loadLang, t } from '../../ariaI18n';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useChronolog } from '../chronolog/useChronolog';
+import { useChroniqueur } from '../chronolog/useChroniqueur';
 import ChronologView   from '../chronolog/ChronologView';
 import { useARIA } from './hooks/useARIA';
 import { MapSVG } from '../map/MapSVG';
@@ -48,6 +49,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     return () => window.removeEventListener('aria-lang-change', onLang);
   }, []);
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
+  const { runChroniqueur } = useChroniqueur();
 
   const _storedCycleNum = parseInt(localStorage.getItem(STORAGE_KEYS.CYCLE_NUM) || '1', 10);
   const cycleNumRef = useRef(isNaN(_storedCycleNum) ? 1 : _storedCycleNum);
@@ -538,6 +540,15 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
                   aria.countries,
                 );
                 closeCycle(cycleNumRef.current);
+                // Chroniqueur : enrichit la mémoire narrative de chaque pays
+                const cycleNum = cycleNumRef.current;
+                const cycleEvs = (() => {
+                  try {
+                    const all = JSON.parse(localStorage.getItem('aria_chronolog_cycles') || '[]');
+                    return all.find(c => c.cycleNum === cycleNum)?.events || [];
+                  } catch { return []; }
+                })();
+                aria.countries.forEach(c => runChroniqueur(c, cycleEvs, cycleNum));
                 cycleNumRef.current += 1;
                 localStorage.setItem(STORAGE_KEYS.CYCLE_NUM, String(cycleNumRef.current));
                 setCurrentCycleQuestions({});

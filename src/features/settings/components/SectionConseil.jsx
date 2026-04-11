@@ -399,6 +399,24 @@ export default function SectionConseil() {
             <SectionGouvernanceDefaut opts={govOpts} setOpts={handleSetGovOpts} />
         )}
 
+        {/* ── Chroniqueur ──────────────────────────────────────────────────── */}
+        <div style={{ marginTop:'1rem', paddingTop:'0.8rem', borderTop:'1px solid rgba(90,110,160,0.12)' }}>
+          <Field label={isEn ? 'Institutional Chronicler' : 'Chroniqueur institutionnel'}
+            hint={isEn
+              ? 'At each cycle close, an agent synthesizes the narrative memory of each country. Injected into deliberations.'
+              : 'À chaque clôture de cycle, un agent synthétise la mémoire narrative de chaque pays. Injectée dans les délibérations.'}>
+            <label style={{ display:'flex', alignItems:'center', gap:'0.5rem', cursor:'pointer' }}>
+              <input type="checkbox"
+                checked={govOpts.chroniqueur?.enabled ?? true}
+                onChange={e => updateGovOpts('chroniqueur.enabled', e.target.checked)}
+              />
+              <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem' }}>
+                {isEn ? 'Enable Chronicler' : 'Activer le Chroniqueur'}
+              </span>
+            </label>
+          </Field>
+        </div>
+
         <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
         <SaveBadge saved={saved} />
