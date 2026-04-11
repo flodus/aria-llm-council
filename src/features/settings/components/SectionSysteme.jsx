@@ -9,6 +9,7 @@ import BASE_AGENTS_EN from '../../../../templates/languages/en/governance.json';
 import { DEFAULT_OPTIONS, getOptions, saveOptions } from '../../../shared/config/options';
 import { getAgents } from '../../../shared/data/gameData';
 import { isValidKeyFormat, isFakeKey } from '../../../shared/services/llm/aiService';
+import { PING_MODELS } from '../../../shared/constants/models';
 import { SectionTitle, Field, TextInput, Toggle, NumberInput, Select, DangerButton, SaveBadge } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
 import { getPrompts, savePrompts, getAgentOverrides, saveAgentOverrides, getSimOverrides, saveSimOverrides } from '../utils/settingsStorage';
@@ -217,22 +218,22 @@ export default function SectionSysteme({ onHardReset }) {
                 const r = await fetch('https://api.anthropic.com/v1/messages', {
                     method:'POST', headers:{'Content-Type':'application/json','x-api-key':k,
                         'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-                        body: JSON.stringify({ model: modelVal||'claude-haiku-4-5-20251001', max_tokens:10, messages:[{role:'user',content:'ping'}] }),
+                        body: JSON.stringify({ model: modelVal||PING_MODELS.claude, max_tokens:10, messages:[{role:'user',content:'ping'}] }),
                 }); ok = r.ok;
             } else if (provId === 'gemini') {
-                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelVal||'gemini-2.0-flash'}:generateContent?key=${k}`,
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelVal||PING_MODELS.gemini}:generateContent?key=${k}`,
                                       { method:'POST', headers:{'Content-Type':'application/json'},
                                       body: JSON.stringify({ contents:[{parts:[{text:'ping'}]}] }) });
                 ok = r.ok || r.status===429;
             } else if (provId === 'grok') {
                 const r = await fetch('https://api.x.ai/v1/chat/completions', {
                     method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${k}`},
-                    body: JSON.stringify({ model: modelVal||'grok-3-mini', max_tokens:10, messages:[{role:'user',content:'ping'}] }),
+                    body: JSON.stringify({ model: modelVal||PING_MODELS.grok, max_tokens:10, messages:[{role:'user',content:'ping'}] }),
                 }); ok = r.ok;
             } else if (provId === 'openai') {
                 const r = await fetch('https://api.openai.com/v1/chat/completions', {
                     method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${k}`},
-                    body: JSON.stringify({ model: modelVal||'gpt-4.1-mini', max_tokens:10, messages:[{role:'user',content:'ping'}] }),
+                    body: JSON.stringify({ model: modelVal||PING_MODELS.openai, max_tokens:10, messages:[{role:'user',content:'ping'}] }),
                 }); ok = r.ok;
             }
             setKS2(ks => ({...ks, [_id]: ok?'ok':'error'}));
