@@ -298,6 +298,26 @@ export const TRANSLATIONS = {
   RESET:               { fr: 'RÉINITIALISER',          en: 'RESET'              },
 };
 
+// ── Messages de secours IA (erreur API / hors ligne) ──────────────────────
+export const FALLBACK_PHRASES = {
+  fr: [
+    "ERREUR 404 : La conscience d'ARIA est partie prendre un café virtuel. Réessayez plus tard.",
+    "SIGNAL PERDU : L'IA est actuellement en train de recalculer le sens de la vie (42).",
+    "DÉFAILLANCE SYNAPTIQUE : Les serveurs d'ARIA boudent. Vérifiez vos clés API.",
+    "FRONTIÈRE NUMÉRIQUE : Le Grand Pare-feu bloque nos transmissions diplomatiques.",
+    "MOTEUR EN RADE : L'IA de synthèse a fondu un fusible. Retour au mode manuel.",
+    "SILENCE RADIO : Les ministres sont en grève numérique pour une durée indéterminée.",
+  ],
+  en: [
+    "ERROR 404: ARIA's consciousness stepped out for a virtual coffee. Please try again later.",
+    "SIGNAL LOST: The AI is currently recalculating the meaning of life (42).",
+    "SYNAPTIC FAILURE: ARIA's servers are sulking. Check your API keys.",
+    "DIGITAL BORDER: The Great Firewall is blocking our diplomatic transmissions.",
+    "ENGINE DOWN: The synthesis AI has blown a fuse. Switching to manual mode.",
+    "RADIO SILENCE: The ministers are on a digital strike for the foreseeable future.",
+  ],
+};
+
 // ── Fonction t() ─────────────────────────────────────────────────────────
 export function t(key, lang = 'fr') {
   const entry = TRANSLATIONS[key];
