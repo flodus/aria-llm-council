@@ -533,22 +533,32 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
             <CycleConfirmModal
               countries={aria.countries}
               councilHistory={cycleHistory}
-              onConfirm={() => {
-                pushCycleStats(
-                  cycleNumRef.current,
-                  aria.countries[0]?.annee || 2026,
-                  aria.countries,
-                );
-                closeCycle(cycleNumRef.current);
-                // Chroniqueur : enrichit la mémoire narrative de chaque pays
+              onGenerate={async () => {
                 const cycleNum = cycleNumRef.current;
-                const cycleEvs = (() => {
-                  try {
-                    const all = JSON.parse(localStorage.getItem('aria_chronolog_cycles') || '[]');
-                    return all.find(c => c.cycleNum === cycleNum)?.events || [];
-                  } catch { return []; }
-                })();
-                aria.countries.forEach(c => runChroniqueur(c, cycleEvs, cycleNum));
+                const annee    = aria.countries[0]?.annee || 2026;
+                // Pousser stats une seule fois (protection si modal rouverte)
+                try {
+                  const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHRONOLOG_CYCLES) || '[]');
+                  const hasStats = existing.find(c => c.cycleNum === cycleNum)?.events?.some(e => e.type === 'cycle_stats');
+                  if (!hasStats) pushCycleStats(cycleNum, annee, aria.countries);
+                } catch { pushCycleStats(cycleNum, annee, aria.countries); }
+                // Lire events après ajout des stats
+                let cycleEvs = [];
+                try {
+                  const all = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHRONOLOG_CYCLES) || '[]');
+                  cycleEvs = all.find(c => c.cycleNum === cycleNum)?.events || [];
+                } catch {}
+                // Chroniqueur : une narration par pays
+                const narratives = await Promise.all(
+                  aria.countries.map(async c => {
+                    const memoire = await runChroniqueur(c, cycleEvs, cycleNum);
+                    return { countryId: c.id, nom: c.nom, emoji: c.emoji, memoire };
+                  })
+                );
+                return narratives.filter(n => n.memoire);
+              }}
+              onConfirm={() => {
+                closeCycle(cycleNumRef.current);
                 cycleNumRef.current += 1;
                 localStorage.setItem(STORAGE_KEYS.CYCLE_NUM, String(cycleNumRef.current));
                 setCurrentCycleQuestions({});

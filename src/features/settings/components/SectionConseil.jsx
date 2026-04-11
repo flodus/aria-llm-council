@@ -33,7 +33,7 @@ export default function SectionConseil() {
     const [govOpts, setGovOpts] = useState(() => getOptions());
     const [selectedMin, setSelectedMin] = useState('initiateur');
     const [selectedMin2, setSelectedMin2] = useState('justice');
-    const [tab, setTab] = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres' | 'destinee'
+    const [tab, setTab] = useState('gouvernance'); // 'gouvernance' | 'presidence' | 'ministeres' | 'ministres' | 'destinee' | 'chroniqueur'
     const [presOpenAcc, setPresOpenAcc] = useState(null);
     const [activeDestinSettings, setActiveDestinSettings] = useState(() => {
         const opts = getOptions();
@@ -174,11 +174,12 @@ export default function SectionConseil() {
 
         <div className="settings-tabs">
         {[
-            { id: 'gouvernance', label: isEn ? 'Governance' : 'Gouvernance' },
-            { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence' },
-            { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères' },
-            { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'  },
-            { id: 'destinee',    label: isEn ? 'Destiny'    : 'Destinée'   },
+            { id: 'gouvernance',  label: isEn ? 'Governance'  : 'Gouvernance'  },
+            { id: 'presidence',   label: isEn ? 'Presidency'  : 'Présidence'   },
+            { id: 'ministeres',   label: isEn ? 'Ministries'  : 'Ministères'   },
+            { id: 'ministres',    label: isEn ? 'Ministers'   : 'Ministres'    },
+            { id: 'destinee',     label: isEn ? 'Destiny'     : 'Destinée'     },
+            { id: 'chroniqueur',  label: isEn ? 'Chronicler'  : 'Chroniqueur'  },
         ].map(t => (
             <button key={t.id}
             className={`settings-tab${tab === t.id ? ' active' : ''}`}
@@ -399,23 +400,57 @@ export default function SectionConseil() {
             <SectionGouvernanceDefaut opts={govOpts} setOpts={handleSetGovOpts} />
         )}
 
-        {/* ── Chroniqueur ──────────────────────────────────────────────────── */}
-        <div style={{ marginTop:'1rem', paddingTop:'0.8rem', borderTop:'1px solid rgba(90,110,160,0.12)' }}>
-          <Field label={isEn ? 'Institutional Chronicler' : 'Chroniqueur institutionnel'}
-            hint={isEn
-              ? 'At each cycle close, an agent synthesizes the narrative memory of each country. Injected into deliberations.'
-              : 'À chaque clôture de cycle, un agent synthétise la mémoire narrative de chaque pays. Injectée dans les délibérations.'}>
-            <label style={{ display:'flex', alignItems:'center', gap:'0.5rem', cursor:'pointer' }}>
-              <input type="checkbox"
-                checked={govOpts.chroniqueur?.enabled ?? true}
-                onChange={e => updateGovOpts('chroniqueur.enabled', e.target.checked)}
-              />
-              <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem' }}>
-                {isEn ? 'Enable Chronicler' : 'Activer le Chroniqueur'}
-              </span>
-            </label>
-          </Field>
-        </div>
+        {tab === 'chroniqueur' && (() => {
+          const MODELS = [
+            { id: 'claude',  label: 'Claude'  },
+            { id: 'gemini',  label: 'Gemini'  },
+            { id: 'grok',    label: 'Grok'    },
+            { id: 'openai',  label: 'OpenAI'  },
+          ];
+          return (
+            <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+              <div style={{ padding:'0.55rem 0.75rem', background:'rgba(90,110,160,0.05)',
+                border:'1px solid rgba(90,110,160,0.12)', borderRadius:'2px',
+                fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
+                color:'rgba(140,160,200,0.50)', lineHeight:1.6 }}>
+                {isEn
+                  ? 'At each cycle close, the Chronicler synthesizes the narrative memory of each country. This memory is injected into future deliberations — the Council cannot forget its own history.'
+                  : 'À chaque clôture de cycle, le Chroniqueur synthétise la mémoire narrative de chaque pays. Cette mémoire est injectée dans les délibérations futures — le Conseil ne peut pas oublier sa propre histoire.'}
+              </div>
+
+              <Field label={isEn ? 'Enable Chronicler' : 'Activer le Chroniqueur'}
+                hint={isEn ? 'Generates institutional memory at each cycle end' : 'Génère la mémoire institutionnelle à chaque fin de cycle'}>
+                <label style={{ display:'flex', alignItems:'center', gap:'0.5rem', cursor:'pointer' }}>
+                  <input type="checkbox"
+                    checked={govOpts.chroniqueur?.enabled ?? true}
+                    onChange={e => updateGovOpts('chroniqueur.enabled', e.target.checked)}
+                  />
+                  <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
+                    color: (govOpts.chroniqueur?.enabled ?? true) ? 'rgba(58,191,122,0.80)' : 'rgba(140,160,200,0.40)' }}>
+                    {(govOpts.chroniqueur?.enabled ?? true)
+                      ? (isEn ? 'Active' : 'Actif')
+                      : (isEn ? 'Disabled' : 'Désactivé')}
+                  </span>
+                </label>
+              </Field>
+
+              <Field label={isEn ? 'Model' : 'Modèle IA'}
+                hint={isEn ? 'Provider used for narrative generation (IA mode only)' : 'Provider utilisé pour la génération narrative (mode IA uniquement)'}>
+                <select
+                  value={govOpts.ia_roles?.chroniqueur_model || 'gemini'}
+                  onChange={e => updateGovOpts('ia_roles.chroniqueur_model', e.target.value)}
+                  style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
+                    background:'rgba(14,20,36,0.8)', color:'rgba(200,215,240,0.75)',
+                    border:'1px solid rgba(140,160,200,0.20)', borderRadius:'2px',
+                    padding:'0.25rem 0.45rem', cursor:'pointer' }}>
+                  {MODELS.map(m => (
+                    <option key={m.id} value={m.id}>{m.label}</option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+          );
+        })()}
 
         <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>

@@ -11,6 +11,7 @@
 import { useState, useEffect } from 'react';
 import { FONT, C } from '../../../../shared/theme';
 import { loadLang } from '../../../../ariaI18n';
+import { loadMemoire } from '../../../chronolog/useChroniqueur';
 
 const LS_CYCLES    = 'aria_chronolog_cycles';
 const LS_ALLIANCES = 'aria_session_alliances';
@@ -197,14 +198,17 @@ function CycleItem({ cycle, defaultOpen, isEn }) {
 export default function TimelineView({ country, lang }) {
   const [cycles,    setCycles]    = useState([]);
   const [diplomacy, setDiplomacy] = useState([]);
+  const [memoire,   setMemoire]   = useState(null);
   const isEn = lang === 'en';
 
   useEffect(() => {
     setCycles(loadCyclesForCountry(country.id));
     setDiplomacy(loadDiplomacy(country.id));
+    setMemoire(loadMemoire(country.id));
     const id = setInterval(() => {
       setCycles(loadCyclesForCountry(country.id));
       setDiplomacy(loadDiplomacy(country.id));
+      setMemoire(loadMemoire(country.id));
     }, 2000);
     return () => clearInterval(id);
   }, [country.id]);
@@ -235,6 +239,26 @@ export default function TimelineView({ country, lang }) {
   return (
     <div className="side-panel-scroll">
       <div style={{ padding:'0.55rem 0.75rem', display:'flex', flexDirection:'column', gap:'0.55rem' }}>
+
+        {/* Mémoire institutionnelle */}
+        {memoire?.memoire && (
+          <div style={{ padding:'0.55rem 0.70rem',
+            background:'rgba(90,110,160,0.05)',
+            border:'1px solid rgba(90,110,160,0.14)', borderRadius:'2px' }}>
+            <div style={{ fontFamily:FONT.mono, fontSize:'0.35rem', letterSpacing:'0.15em',
+              color:C.goldDim, marginBottom:'0.30rem' }}>
+              📜 {isEn ? 'INSTITUTIONAL MEMORY' : 'MÉMOIRE INSTITUTIONNELLE'}
+              <span style={{ marginLeft:'0.5rem', color:C.dimmed, fontWeight:'normal',
+                letterSpacing:'0.08em' }}>
+                — {isEn ? 'cycle' : 'cycle'} {memoire.cycle}
+              </span>
+            </div>
+            <p style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:'rgba(180,200,230,0.60)',
+              lineHeight:1.65, margin:0, fontStyle:'italic' }}>
+              {memoire.memoire}
+            </p>
+          </div>
+        )}
 
         {/* Relations diplomatiques actives */}
         {diplomacy.length > 0 && (

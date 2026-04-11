@@ -1,4 +1,5 @@
 // src/features/world/modals/CycleConfirmModal.jsx
+import { useState, useEffect } from 'react';
 import { useLocale, loadLang } from '../../../ariaI18n';
 import { REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
 import { getStats } from '../../../shared/data/gameData';
@@ -14,10 +15,28 @@ function getLocalizedNom(country) {
   } catch { return country?.nom || ''; }
 }
 
-export default function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose }) {
+export default function CycleConfirmModal({ countries, councilHistory, onConfirm, onClose, onGenerate }) {
   const { lang: uiLang } = useLocale();
   const MONO  = "'JetBrains Mono', monospace";
   const popForecasts = {}; // réservé — prévisions population par pays (non encore calculées)
+
+  // Chroniqueur — génération async à l'ouverture
+  const [chronPhase,    setChronPhase]    = useState('generating'); // 'generating' | 'ready'
+  const [chronNarrations, setChronNarrations] = useState([]);
+
+  useEffect(() => {
+    if (!onGenerate) { setChronPhase('ready'); return; }
+    let cancelled = false;
+    onGenerate().then(narratives => {
+      if (!cancelled) {
+        setChronNarrations(narratives || []);
+        setChronPhase('ready');
+      }
+    }).catch(() => {
+      if (!cancelled) setChronPhase('ready');
+    });
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const withCouncil = councilHistory.filter(h => h.vote);
   const councilledIds = new Set(withCouncil.map(h => h.countryId));
@@ -214,11 +233,62 @@ export default function CycleConfirmModal({ countries, councilHistory, onConfirm
             {uiLang==='en'?'Confirm advancement to the next cycle?':'Confirmer le passage au cycle suivant ?'}
           </p>
 
+          {/* ── Chroniqueur ──────────────────────────────────────────────── */}
+          {onGenerate && (
+            <div style={{ borderTop: '1px solid rgba(90,110,160,0.15)', paddingTop: '0.65rem' }}>
+              <div style={{ fontFamily: MONO, fontSize: '0.38rem', letterSpacing: '0.18em',
+                color: 'rgba(140,160,200,0.40)', marginBottom: '0.45rem' }}>
+                📜 {uiLang==='en' ? 'INSTITUTIONAL MEMORY' : 'MÉMOIRE INSTITUTIONNELLE'}
+              </div>
+
+              {chronPhase === 'generating' ? (
+                <div style={{ display:'flex', alignItems:'center', gap:'0.5rem',
+                  padding:'0.6rem 0.75rem', background:'rgba(14,20,36,0.4)',
+                  border:'1px solid rgba(90,110,160,0.15)', borderRadius:'2px' }}>
+                  <span style={{ fontSize:'0.9rem', animation:'spin 1.5s linear infinite' }}>⟳</span>
+                  <span style={{ fontFamily:MONO, fontSize:'0.44rem', color:'rgba(140,160,200,0.50)', fontStyle:'italic' }}>
+                    {uiLang==='en'
+                      ? 'The Chronicler is composing the institutional memory...'
+                      : 'Le Chroniqueur élabore la mémoire institutionnelle...'}
+                  </span>
+                </div>
+              ) : chronNarrations.length > 0 ? (
+                <div style={{ display:'flex', flexDirection:'column', gap:'0.45rem' }}>
+                  {chronNarrations.map(n => (
+                    <div key={n.countryId} style={{ padding:'0.55rem 0.75rem',
+                      background:'rgba(14,20,36,0.45)',
+                      border:'1px solid rgba(200,164,74,0.10)', borderRadius:'2px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'0.35rem', marginBottom:'0.3rem' }}>
+                        <span style={{ fontSize:'0.85rem' }}>{n.emoji}</span>
+                        <span style={{ fontFamily:MONO, fontSize:'0.40rem', letterSpacing:'0.10em',
+                          color:'rgba(200,164,74,0.55)' }}>{n.nom}</span>
+                      </div>
+                      <p style={{ fontFamily:MONO, fontSize:'0.43rem', color:'rgba(180,200,230,0.65)',
+                        lineHeight:1.65, margin:0, fontStyle:'italic' }}>
+                        {n.memoire}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{ fontFamily:MONO, fontSize:'0.42rem', color:'rgba(140,160,200,0.35)',
+                  fontStyle:'italic', margin:0 }}>
+                  {uiLang==='en' ? 'No institutional memory yet.' : 'Aucune mémoire institutionnelle pour ce cycle.'}
+                </p>
+              )}
+            </div>
+          )}
+
         </div>
 
         <div style={S.modalFooter}>
           <button style={S.cancelBtn} onClick={onClose}>{uiLang==='en'?'CANCEL':'ANNULER'}</button>
-          <button style={S.saveBtn} onClick={onConfirm}>{uiLang==='en'?'CONFIRM CYCLE ⏭':'CONFIRMER LE CYCLE ⏭'}</button>
+          <button style={{ ...S.saveBtn, opacity: chronPhase === 'generating' ? 0.45 : 1,
+            cursor: chronPhase === 'generating' ? 'not-allowed' : 'pointer' }}
+            onClick={chronPhase === 'generating' ? undefined : onConfirm}
+            disabled={chronPhase === 'generating'}>
+            {uiLang==='en'?'CONFIRM CYCLE ⏭':'CONFIRMER LE CYCLE ⏭'}
+          </button>
         </div>
       </div>
     </div>
