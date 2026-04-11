@@ -230,6 +230,24 @@ html, body, #root {
 .btn:disabled { opacity:0.30; cursor:not-allowed; pointer-events:none; }
 .btn-full     { width:100%; }
 
+.cp-act-btn      { padding:0.55rem 0.72rem; font-family:var(--f-serif); font-size:clamp(0.50rem,0.65vw,0.58rem); letter-spacing:0.13em; cursor:pointer; transition:all var(--t-xs); text-align:center; border:1px solid; }
+.cp-act-btn.gold   { background:rgba(200,164,74,0.06); border-color:var(--gold);    color:var(--gold);    } .cp-act-btn.gold:hover   { background:rgba(200,164,74,0.14); }
+.cp-act-btn.blue   { background:rgba(74,126,200,0.06); border-color:var(--blue);    color:var(--blue);    } .cp-act-btn.blue:hover   { background:rgba(74,126,200,0.14); }
+.cp-act-btn.purple { background:rgba(138,110,200,0.06);border-color:var(--purple);  color:var(--purple);  } .cp-act-btn.purple:hover { background:rgba(138,110,200,0.14); }
+.cp-act-btn.muted  { background:transparent;            border-color:var(--border); color:var(--muted);   } .cp-act-btn.muted:hover  { border-color:var(--muted); color:var(--text); }
+.cp-act-btn:disabled { opacity:0.32; cursor:not-allowed; pointer-events:none; }
+
+.resource-badge { display:inline-flex; align-items:center; gap:0.30rem; padding:0.20rem 0.52rem; background:rgba(6,10,20,0.85); border:1px solid rgba(200,164,74,0.13); font-family:var(--f-mono); font-size:0.50rem; letter-spacing:0.10em; color:var(--text-dim); text-transform:uppercase; white-space:nowrap; }
+.resource-badge .r-icon { font-size:0.72rem; line-height:1; flex-shrink:0; }
+.resource-badge .r-name { color:var(--muted); font-size:0.44rem; letter-spacing:0.13em; }
+.resource-badge.agriculture { border-color:rgba(170,155,55,0.24); }
+.resource-badge.bois        { border-color:rgba(72,130,55,0.24);  }
+.resource-badge.eau         { border-color:rgba(55,130,200,0.28); }
+.resource-badge.energie     { border-color:rgba(210,175,55,0.28); }
+.resource-badge.mineraux    { border-color:rgba(130,95,200,0.28); }
+.resource-badge.peche       { border-color:rgba(55,175,200,0.24); }
+.resource-badge.petrole     { border-color:rgba(75,75,75,0.38);   }
+
 .btn-icon              { width:28px; height:28px; padding:0; display:flex; align-items:center; justify-content:center; background:none; border:1px solid var(--border); color:var(--muted); cursor:pointer; font-size:0.88rem; transition:border-color var(--t-xs), color var(--t-xs); }
 .btn-icon:hover        { border-color:var(--gold); color:var(--gold); }
 .btn-icon.danger       { border-color:rgba(192,58,58,0.26); color:#C03A3A; }
