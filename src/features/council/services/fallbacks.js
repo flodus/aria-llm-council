@@ -81,7 +81,7 @@ export function localMinisterFallback(ministerId, question, regime = null) {
 }
 
 export function localSyntheseFallback(ministry, resA, resB, regime = null) {
-    const isEn = ((() => { try { return localStorage.getItem('aria_lang'); } catch { return 'fr'; } })()) === 'en';
+    const isEn = loadLang() === 'en';
     const texte = getSyntheseMinistere(ministry?.id, regime, true);
     return {
         convergence: true,
@@ -100,7 +100,7 @@ export function localAnnotationFallback(ministry, question, regime = null) {
     if (texte) return texte;
 
     // Ultime fallback si JSON ne couvre pas ce ministère
-    const isEn = ((() => { try { return localStorage.getItem('aria_lang'); } catch { return 'fr'; } })()) === 'en';
+    const isEn = loadLang() === 'en';
     return isEn
         ? `The ${ministry.name} ministry notes the importance of this question.`
         : `Le ministère ${ministry.name} note l'importance de cette question.`;
