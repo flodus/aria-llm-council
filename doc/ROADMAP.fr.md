@@ -93,8 +93,10 @@
 
  [ PHASE B0 : STABILISATION ] .................................... STATUT: ✅ TERMINÉ
  │
- ├─[B1] Bug ajout pays in-game .. [addFictionalCountry — Dashboard_p1] ✅ 100%
- └─[B2] Pipeline Country Context  [Init → délibérations in-game] ..... ✅ 100%
+ ├─[B1] Bug ajout pays in-game .. [addFictionalCountry] ............... ✅ 100%
+ ├─[B2] Pipeline Country Context  [Init → délibérations in-game] ..... ✅ 100%
+ └─[R1] dispatchEvent vote ....... [aria:vote-stored — Dashboard.jsx] . ✅ 100%
+        └─> Survécu au refactor Dashboard_p1 → Dashboard.jsx:195
 
  [ PHASE B1 : STABILISATION II ] ................................ STATUT: ✅ TERMINÉ
  │  Bugs post-refactor + moteur délibération
@@ -169,6 +171,8 @@
 
  [ PHASE V4 : QUALITÉ & MAINTENABILITÉ ] ......................... STATUT: EN FILE
  ├─[V5] Refactor arborescence ... [src/components · engine · lib] .... ⬡ 0%
+ │      └─> Partiellement fait — Dashboard_p1 extrait en 9 modules (2026-04-11)
+ │           Reste : normalizeCountry() · storageKeys adoption complète
  └─[V8] Optimisation moteur ..... [Re-renders · useCallback · appels IA] ⬡ 0%
 
  [ PHASE V5 : MULTIJOUEUR ] ...................................... STATUT: DISTANT
