@@ -307,4 +307,4 @@ aria/
 - `⚠` = ne pas modifier sans demande explicite
 - `Stubs V4` = fichiers vides, réservés pour l'architecture multijoueur future
 - `shared/` = code transversal, jamais lié à une feature spécifique
-- `Settings.css` = exception historique (CSS fichier séparé) — à migrer en inline lors d'un futur refactor
+- `Settings.css` = exception historique (CSS fichier séparé) — refactorisé et nettoyé (793L → 584L)
