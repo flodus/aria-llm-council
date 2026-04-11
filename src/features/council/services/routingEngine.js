@@ -4,7 +4,7 @@
 // ROUTAGE DES QUESTIONS VERS LES MINISTÈRES
 // ============================================================
 
-import { callAI, getApiKeys } from '../../../Dashboard_p1';
+import { callAI, getApiKeys } from '../../../shared/services/llm/aiService';
 import { getMinistriesList, getDestin } from './agentsManager';
 import { langPrefix } from './contextBuilder';
 

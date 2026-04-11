@@ -3,7 +3,7 @@
 
 import { useState, useMemo } from 'react';
 import { useLocale } from '../../../ariaI18n';
-import { getOptions } from '../../../Dashboard_p1';
+import { getOptions } from '../../../shared/config/options';
 import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 import { getDestin } from '../../council/services/agentsManager';
 import PresidencyTiles from '../../../shared/components/PresidencyTiles';

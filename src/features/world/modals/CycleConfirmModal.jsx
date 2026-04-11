@@ -1,13 +1,13 @@
 // src/features/world/modals/CycleConfirmModal.jsx
-import { useLocale } from '../../../ariaI18n';
+import { useLocale, loadLang } from '../../../ariaI18n';
 import { REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
-import { getStats } from '../../../Dashboard_p1';
+import { getStats } from '../../../shared/data/gameData';
 import { S } from './modalStyles';
 
 function getLocalizedNom(country) {
   if (!country?.id) return country?.nom || '';
   try {
-    const lang = localStorage.getItem('aria_lang') || 'fr';
+    const lang = loadLang();
     if (lang !== 'en') return country?.nom || '';
     const enData = REAL_COUNTRIES_DATA_EN.find(r => r.id === country.id);
     return enData?.nom || country?.nom || '';

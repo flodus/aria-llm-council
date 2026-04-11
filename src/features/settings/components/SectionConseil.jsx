@@ -3,7 +3,8 @@
 
 import { useState, useMemo } from 'react';
 import { useLocale } from '../../../ariaI18n';
-import { getStats, getOptions, saveOptions } from '../../../Dashboard_p1';
+import { getStats } from '../../../shared/data/gameData';
+import { getOptions, saveOptions } from '../../../shared/config/options';
 import { getDestin } from '../../council/services/agentsManager';
 import AgentGrid from '../../../shared/components/AgentGrid';
 import PresidencyTiles from '../../../shared/components/PresidencyTiles';

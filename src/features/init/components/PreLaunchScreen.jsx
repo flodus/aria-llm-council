@@ -17,7 +17,7 @@ import { FONT, BTN_PRIMARY, BTN_SECONDARY, CARD_STYLE, INPUT_STYLE, labelStyle, 
 import AgentGrid from '../../../shared/components/AgentGrid';
 import GovernanceForm from '../../../shared/components/GovernanceForm';
 import PresidencyTiles, { activePresToType, typeToActivePres } from '../../../shared/components/PresidencyTiles';
-import { getOptions, saveOptions } from '../../../Dashboard_p1';
+import { getOptions, saveOptions } from '../../../shared/config/options';
 import { getEmojiOverrides, sauvegarderEmojiAgent } from '../../../shared/utils/agentsOverrides';
 import {
     ARIAHeader,

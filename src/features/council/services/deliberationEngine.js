@@ -4,7 +4,8 @@
 // PHASES DE DÉLIBÉRATION DU CONSEIL
 // ============================================================
 
-import { callAI, getApiKeys } from '../../../Dashboard_p1';
+import { callAI, getApiKeys } from '../../../shared/services/llm/aiService';
+import { loadLang } from '../../../ariaI18n';
 import { getMinistersMapFor, getMinistriesListFor, getPresidencyFor, getDestin } from './agentsManager';
 import { buildCountryContext, langPrefix } from './contextBuilder';  // direct
 import { FALLBACK_RESPONSES, localMinisterFallback, localSyntheseFallback, localAnnotationFallback } from './fallbacks';
@@ -136,7 +137,7 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
             ministryName:  m.name,
             ministryEmoji: m.emoji,
             ministryColor: m.color,
-            annotation:    FALLBACK_RESPONSES.cercleAnnotations[m.id] || ((() => { try { return localStorage.getItem('aria_lang') === 'en'; } catch { return false; } })() ? `The ${m.name} ministry takes note of the request.` : `Le ministère ${m.name} prend note de la requête.`),
+            annotation:    FALLBACK_RESPONSES.cercleAnnotations[m.id] || (loadLang() === 'en' ? `The ${m.name} ministry takes note of the request.` : `Le ministère ${m.name} prend note de la requête.`),
         }));
     }
 

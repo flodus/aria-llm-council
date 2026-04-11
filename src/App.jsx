@@ -22,6 +22,7 @@ import { applyThemeVars } from './shared/theme/applyTheme';
 applyThemeVars();
 import { loadLang, t, useLocale } from './ariaI18n';
 import { CURSEUR_DEFAUT, CURSEUR_POINTER } from './shared/utils/curseurs';
+import { clearSession } from './features/world/services/sessionStore';
 import RadioPlayer from './shared/components/RadioPlayer';
 
 function getTabs() {
@@ -210,18 +211,7 @@ export default function App() {
   const handleCrisisToggle = useCallback(() => setIsCrisis(p => !p), []);
 
   const handleReset = useCallback(() => {
-    // Nettoyer toute la session persistée
-    try {
-      localStorage.removeItem('aria_session_active');
-      localStorage.removeItem('aria_session_world');
-      localStorage.removeItem('aria_session_countries');
-      localStorage.removeItem('aria_session_alliances');
-      localStorage.removeItem('aria_chronolog_cycles');
-      const _o = JSON.parse(localStorage.getItem('aria_options') || '{}');
-      if (!_o.gameplay) _o.gameplay = {};
-      _o.gameplay.context_mode = 'auto';
-      localStorage.setItem('aria_options', JSON.stringify(_o));
-    } catch {}
+    clearSession();
     // Réécrire aria_agents_override avec la langue courante
     try {
       const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;

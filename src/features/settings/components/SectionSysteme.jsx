@@ -6,10 +6,9 @@ import { useLocale, t } from '../../../ariaI18n';
 import { getIaStatus } from '../../../shared/services/iaStatusStore';
 import BASE_AGENTS from '../../../../templates/languages/fr/governance.json';
 import BASE_AGENTS_EN from '../../../../templates/languages/en/governance.json';
-import {
-    DEFAULT_OPTIONS, getOptions, saveOptions,
-    getAgents, isValidKeyFormat, isFakeKey,
-} from '../../../Dashboard_p1';
+import { DEFAULT_OPTIONS, getOptions, saveOptions } from '../../../shared/config/options';
+import { getAgents } from '../../../shared/data/gameData';
+import { isValidKeyFormat, isFakeKey } from '../../../shared/services/llm/aiService';
 import { SectionTitle, Field, TextInput, Toggle, NumberInput, Select, DangerButton, SaveBadge } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
 import { getPrompts, savePrompts, getAgentOverrides, saveAgentOverrides, getSimOverrides, saveSimOverrides } from '../utils/settingsStorage';

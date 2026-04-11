@@ -5,7 +5,7 @@
 ```text
 ================================================================================
   ARIA FEUILLE DE ROUTE STRATÉGIQUE  —  v8.0
-  Dernière mise à jour : 2026-03-26
+  Dernière mise à jour : 2026-04-11
 ================================================================================
 
  ████████████████████████████████████████  LIVRÉ  ████████████████████████████
@@ -45,6 +45,11 @@
  └─[✓] Industrie par défaut ...... [remplace chance dans toute l'UI et le moteur] ..... ■ 100%
 
  [ DESTINÉE DU MONDE ] ............................................ STATUT: ✅ FAIT
+ │
+ │  destiny_mode = Oracle + Wyrd s'expriment à chaque délibération pour les pays
+ │  concernés (régimes religieux/théocratiques). La religion a toujours son mot à
+ │  dire avant la synthèse présidentielle — pas seulement en cas de crise.
+ │
  ├─[✓] Oracle + Wyrd ............. [agents philosophiques dans ministers{}] ......... ■ 100%
  │      └─> Pas un ministère — bloc destin séparé de ministries[]
  ├─[✓] Détection crise ........... [detectCrisis() — keywords destin, sync, local] .. ■ 100%
@@ -55,9 +60,13 @@
  └─[✓] Questions destin .......... [aria_questions.json — 7 crises existentielles, FR+EN] ■ 100%
 
  [ MODE COLLÉGIAL + CRISE ] ...................................... STATUT: ✅ FAIT
+ │
+ │  Mode crise ≠ Destinée. Mode crise = tous les ministères + Destinée répondent
+ │  directement à la question de base, sans cercle d'annotations inter-ministérielles.
+ │
  ├─[✓] B10 — Mode collégial ...... [?? null + active !== null dans agentsManager] ... ■ 100%
  │      └─> [] (présidence désactivée) déclenche bien _runCollegialPhase
- ├─[✓] B11 — Mode crise .......... [runCrisisPhase() — tous ministères || skip cercle+pres] ■ 100%
+ ├─[✓] B11 — Mode crise .......... [tous ministères répondent en parallèle · skip cercle+pres] ■ 100%
  ├─[✓] Synthèses collégiales JSON . [aria_syntheses.json collegial — 7 régimes, FR+EN] ■ 100%
  │      └─> getSyntheseCollegial() dans responseService · câblé dans _runCollegialPhase
  └─[✓] UI mode collégial ......... [SYNTHÈSE CONSTITUTIONNELLE · referendum non-littéral] ■ 100%
@@ -104,7 +113,7 @@
  ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ✅ 100%
  ├─[U2] Harmonisation tuiles .... [PresidencyTiles partagé — 4 écrans] ✅ 100%
  │      └─> Settings · GovernanceForm · ConstitutionModal · PreLaunchScreen
- └─[U3] Chronolog enrichi ........ [Détail 5 derniers cycles] ........ ⬡ 0%
+ └─[U3] Chronolog enrichi ........ [Détail 5 derniers cycles] ........ ▶ PROCHAIN
 
  [ PHASE G1 : COHÉRENCE GOUVERNANCE ] ........................... STATUT: EN COURS
  │  Spec validée (2026-03-26) — GovernanceForm existe, wiring à compléter
@@ -114,8 +123,8 @@
  │      └─> Lambda ⚙️ + résumé présidence + [Personnaliser →] · Custom ✦ + résumé override
  ├─[G2] ConstitutionModal : bandeau lambda/custom + retour modèle .... ✅ 100%
  │      └─> Bandeau statut entre header/tabs · [↺ Revenir au modèle monde] + confirm
- ├─[G3] AddCountryModal + SecessionModal : choix hériter/personnaliser ⬡ 0%
- └─[G4] Settings : brancher GovernanceForm context='settings' ........ ⬡ 0%
+ ├─[G3] AddCountryModal + SecessionModal : choix hériter/personnaliser ✅ 100%
+ └─[G4] Settings : brancher GovernanceForm context='settings' ........ ✅ 100%
 
  [ PHASE V1 : CARTE DU MONDE — REFONTE COMPLÈTE ] ................ STATUT: PLANIFIÉ
  │
@@ -181,7 +190,7 @@
  └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [██████████░░░░░░░░░░░░░░░░░░░░░░░░] ~28%
+ PROGRESSION : [██████████░░░░░░░░░░░░░░░░░░░░░░░░] ~30%
  BASE : Moteur + constitution par pays complets.
         Init UX poli. Mode Board Game offline complet (pipeline 4 JSON).
         Source unique de vérité. Destinée du Monde opérationnelle.
@@ -189,8 +198,9 @@
         Interface : curseurs SVG or + RadioPlayer topbar.
         Documentation : CONTRIBUTING complet + doc/ réorganisé.
         Phase B1 terminée — tous les bugs B1→B15 corrigés.
-        Chantier G1 (cohérence gouvernance) en file.
-        Refonte carte en approche.
+        Refactor qualité (2026-04-11) : arborescence src/ restructurée,
+        fichiers morts supprimés, responsabilités storage/options clarifiées.
+        Prochain : U3 Chronolog enrichi.
 ================================================================================
 ```
 

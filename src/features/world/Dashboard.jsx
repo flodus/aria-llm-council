@@ -15,7 +15,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useChronolog } from '../chronolog/useChronolog';
 import ChronologView   from '../chronolog/ChronologView';
-import { useARIA } from '../../Dashboard_p1';
+import { useARIA } from './hooks/useARIA';
 import { MapSVG } from '../map/MapSVG';
 import ConstitutionModal from '../council/components/ConstitutionModal';
 import CountryPanelCouncil from './components/CountryPanel/CountryPanelCouncil';

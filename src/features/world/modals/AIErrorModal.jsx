@@ -1,10 +1,12 @@
 // src/features/world/modals/AIErrorModal.jsx
 
+import { loadLang } from '../../../ariaI18n';
+
 export default function AIErrorModal({ error, onClose, onSettings, onOffline, onCreateLocal }) {
   if (!error) return null;
   const isQuota = error.type === 'quota';
   const FONT_MONO = "'JetBrains Mono', monospace";
-  const isEn = (localStorage.getItem('aria_lang') || 'fr') === 'en';
+  const isEn = loadLang() === 'en';
   return (
     <div style={{
       position:'fixed', inset:0, zIndex:9000,

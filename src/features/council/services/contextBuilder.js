@@ -5,7 +5,7 @@
 // ============================================================
 
 import { loadLang } from '../../../ariaI18n';
-import { getStats } from '../../../Dashboard_p1';
+import { getStats } from '../../../shared/data/gameData';
 
 // ============================================================
 // HELPER DE LANGUE

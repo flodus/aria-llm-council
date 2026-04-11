@@ -1,12 +1,34 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-04-10_
+_Dernière mise à jour : 2026-04-11_
 
 ---
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
 _(aucun bug actif connu)_
+
+---
+
+## 🟢 PROCHAIN CHANTIER — Chronolog enrichi (U3)
+
+- [ ] **Vue détaillée par cycle** : pour chacun des 5 derniers cycles, afficher la liste des décisions prises (vote, événement, sécession) avec leur impact chiffré (satisfaction Δ, popularité Δ)
+- [ ] **Résumé narratif par cycle** : texte court généré depuis les entrées du chronolog (titre décision + pays + résultat)
+- [ ] **Filtres / navigation** : trier par pays · par type d'entrée · pagination si > 5 cycles
+- [ ] **Persistance** : vérifier que `aria_chronolog_cycles` est bien sauvegardé/restauré à la reprise de session
+- [ ] **Composant ChronologView** : identifier les fichiers à toucher avant de coder
+
+---
+
+## ✅ LIVRÉ cette session (2026-04-11)
+
+- [x] **Chantier qualité XS** : 6 items refactor sur `refactor/dashboard-p1`
+  - `storageKeys.js` : inventaire centralisé de toutes les clés localStorage
+  - `aria_lang` directs → `loadLang()` (4 fichiers : fallbacks, deliberationEngine, CycleConfirmModal, AIErrorModal)
+  - `handleReset()` App.jsx simplifié → délègue à `clearSession()` · `clearSession()` étendue à `aria_chronolog_cycles`
+  - `storage.js` vs `options.js` : commentaires rôles + `options.js` branché sur `storage.js` (plus de localStorage direct)
+  - `DEFAULT_PROMPTS` : source unique dans `settingsStorage.js` — supprimé de `aiService.js` (-79L)
+  - 4 fichiers morts supprimés : `crisisEngine`, `useAriaOptions`, `ariaHexWorld`, `WorldEngineCapsule`
 
 ---
 
@@ -30,22 +52,20 @@ _(aucun bug actif connu)_
 
 ## 🟡 UX COURT TERME
 
-- [x] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création**
-  - Formulaire en 2 étapes : step 1 = saisie · step 2 = résumé + choix
-  - `[Hériter →]` : comportement existant · `[Personnaliser →]` / `[S'en affranchir →]` : ouvre ConstitutionModal du nouveau pays
-  - `addFictionalCountry` retourne désormais `newCountry` (Dashboard_p1)
-
-- [ ] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
-  - GovernanceForm existe déjà · à faire lors du refactor Settings (session dédiée)
+- [x] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
 
 - [ ] **T1 — Ajout de provider + modèle custom** : DeepSeek, Mistral, Ollama local…
   - UI : bouton "+ Ajouter un provider" dans Init + Settings · nom, endpoint, clé API, modèle
   - Impacte `callAI()` · `aria_api_keys` · InitScreen · Settings — session dédiée
 
-- [ ] **U3 — Chronolog enrichi** : vue détaillée des 5 derniers cycles
-  (satisfaction détaillée, décisions clés, événements notables)
+- [→] **U3 — Chronolog enrichi** : PROCHAIN CHANTIER — voir section dédiée ci-dessus
 
-- [ ] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
+- [x] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
+
+- [ ] **D1 — Clarté Destinée vs Mode crise** : les deux features sont distinctes et doivent être bien séparées dans l'UI et la doc
+  - **Destinée** (`destiny_mode: true`) = Oracle + Wyrd participent à chaque délibération pour les pays concernés (régimes religieux/théocratiques) — ils s'expriment avant la synthèse présidentielle, systématiquement. La religion a toujours son mot à dire.
+  - **Mode crise** = tous les ministères + Destinée répondent directement à la question de base, sans phase de cercle (pas d'annotations inter-ministérielles). Déclenché manuellement ou par détection de crise.
+  - Vérifier que l'UI (Settings + ConstitutionModal) présente bien ces deux toggles comme indépendants avec des descriptions claires
 
 ---
 
@@ -53,7 +73,7 @@ _(aucun bug actif connu)_
 _(bloqué sur refonte carte V1)_
 
 - [ ] **N1 — normalizeCountry()** : harmoniser les structures d'objet pays — risque élevé, session dédiée
-  - Base : ANALYSE_STRUCTURE_PAYS.md · fichiers : ariaData.js · Dashboard_p1.jsx · InitScreen.jsx
+  - Base : ANALYSE_STRUCTURE_PAYS.md · fichiers : ariaData.js · countryEngine.js · InitScreen.jsx
 
 - [ ] **F1 — Minimum 2 pays en mode custom** : actuellement limité à 1 seul pays custom
 - [x] **F2 — Bloquer doublons pays réels** : déjà implémenté (disabled + ✗ + repoussé en bas dans RealCountryLocalSection + duplicate status dans RealCountryAISection)
@@ -63,24 +83,20 @@ _(bloqué sur refonte carte V1)_
 
 ## 🔵 VISION / LONG TERME
 
-- [ ] **R1 — Refactor : conserver `dispatchEvent` vote** ⚠️
-  - Quand Dashboard_p3 est supprimé, dispatcher :
-    `window.dispatchEvent(new CustomEvent('aria:vote-stored', { detail: { cycleNum } }))`
-  - Nécessaire pour que `CouncilMinistryQuestions` se re-rende avec la couleur de résultat
+- [x] **R1 — `dispatchEvent` vote** : `aria:vote-stored` dispatché dans `Dashboard.jsx:195`, écouté dans `CouncilMinistryQuestions.jsx:80` — survécu au refactor ✓
 
 - [ ] **V1 — Refonte génération procédurale** : toute la carte est à reconstruire
 - [ ] **V2 — Crises aléatoires** : protocole 6.2 (3 ministres validateurs · 3 ministres de sortie)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
-- [~] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal ✓ — reste :
-  - Settings.jsx : section présidence ne gère pas encore le 3e président custom
-  - Icône tripartite : `PresidencyTiles` n'a pas de tuile "Trinaire" (☉☽★) pour 3 présidents actifs
+- [~] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal + tuile Trinaire ✓ — reste :
+  - Settings (SectionConseil + SectionGouvernanceDefaut) ne passent pas encore `showTrinaire` à PresidencyTiles
 - [ ] **V5 — Refactor arborescence** : réorganiser src/ en components/ · engine/ · lib/ — session dédiée
 - [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
   - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
 - [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants
 - [ ] **V9 — i18n couverture complète** : ~300 strings inline restants
-  - Settings.jsx (182 ternaires) → lors du refactor Settings (G4)
-  - Voir `i18n_todolist.md` pour le détail
+  - G4 (Settings refactor) livré — strings i18n Settings non encore centralisées
+  - Audit des `isEn ? '…' : '…'` inline dans tout src/
 
 ---
 
@@ -90,7 +106,7 @@ _(bloqué sur refonte carte V1)_
 - [x] **Git cleanup** : branches `chore/todo-update` + `refactor/llmcouncil-split` mergées dans main et supprimées local + distant
 - [x] **shared/hooks/useAccordion.js** : déplacé de `features/settings/hooks/` → `shared/hooks/` · branché sur Settings (4 sections) + GovernanceForm
 - [x] **shared/utils/storage.js** : primitives `lireStorage` / `ecrireStorage` / `supprimerStorage` · settingsStorage.js migré dessus
-- [ ] **Dashboard_p1 — refactor futur** : extraire `getOptions/saveOptions` → `src/shared/utils/optionsStorage.js` · extraire les constantes (MINISTERS, MINISTRIES, REGIMES...) → `src/shared/data/` · Dashboard_p1 ne devrait plus être un fichier fourre-tout importé partout
+- [x] **Dashboard_p1 — refactor** : extrait en 9 modules dans `src/features/world/` · constantes dans `src/shared/data/` · options dans `src/shared/config/` · fichier racine supprimé
 
 ---
 
@@ -120,4 +136,4 @@ _(bloqué sur refonte carte V1)_
 ---
 
 ## 📁 Fichiers actifs
-`src/features/settings/` · `Dashboard_p1.jsx` · `App.jsx`
+`src/features/settings/` · `src/features/world/` · `App.jsx`

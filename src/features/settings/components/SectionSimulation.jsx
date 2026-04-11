@@ -4,10 +4,8 @@
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { getRegimeLabel, getTerrainLabel } from '../../../shared/data/worldLabels';
-import {
-    getStats, getOptions, saveOptions,
-    REGIMES, TERRAINS, CYCLES_CFG,
-} from '../../../Dashboard_p1';
+import { getStats, REGIMES, TERRAINS, CYCLES_CFG } from '../../../shared/data/gameData';
+import { getOptions, saveOptions } from '../../../shared/config/options';
 import { SectionTitle, Field, NumberInput, Toggle, SaveBadge } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
 
