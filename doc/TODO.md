@@ -52,11 +52,6 @@ _(aucun bug actif connu)_
 
 ## 🟡 UX COURT TERME
 
-- [x] **G3 — AddCountryModal + SecessionModal : choix hériter/personnaliser à la création**
-  - Formulaire en 2 étapes : step 1 = saisie · step 2 = résumé + choix
-  - `[Hériter →]` : comportement existant · `[Personnaliser →]` / `[S'en affranchir →]` : ouvre ConstitutionModal du nouveau pays
-  - `addFictionalCountry` retourne désormais `newCountry` (Dashboard_p1)
-
 - [x] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
 
 - [ ] **T1 — Ajout de provider + modèle custom** : DeepSeek, Mistral, Ollama local…
@@ -78,7 +73,7 @@ _(aucun bug actif connu)_
 _(bloqué sur refonte carte V1)_
 
 - [ ] **N1 — normalizeCountry()** : harmoniser les structures d'objet pays — risque élevé, session dédiée
-  - Base : ANALYSE_STRUCTURE_PAYS.md · fichiers : ariaData.js · Dashboard_p1.jsx · InitScreen.jsx
+  - Base : ANALYSE_STRUCTURE_PAYS.md · fichiers : ariaData.js · countryEngine.js · InitScreen.jsx
 
 - [ ] **F1 — Minimum 2 pays en mode custom** : actuellement limité à 1 seul pays custom
 - [x] **F2 — Bloquer doublons pays réels** : déjà implémenté (disabled + ✗ + repoussé en bas dans RealCountryLocalSection + duplicate status dans RealCountryAISection)
@@ -88,24 +83,20 @@ _(bloqué sur refonte carte V1)_
 
 ## 🔵 VISION / LONG TERME
 
-- [ ] **R1 — Refactor : conserver `dispatchEvent` vote** ⚠️
-  - Quand Dashboard_p3 est supprimé, dispatcher :
-    `window.dispatchEvent(new CustomEvent('aria:vote-stored', { detail: { cycleNum } }))`
-  - Nécessaire pour que `CouncilMinistryQuestions` se re-rende avec la couleur de résultat
+- [x] **R1 — `dispatchEvent` vote** : `aria:vote-stored` dispatché dans `Dashboard.jsx:195`, écouté dans `CouncilMinistryQuestions.jsx:80` — survécu au refactor ✓
 
 - [ ] **V1 — Refonte génération procédurale** : toute la carte est à reconstruire
 - [ ] **V2 — Crises aléatoires** : protocole 6.2 (3 ministres validateurs · 3 ministres de sortie)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
-- [~] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal ✓ — reste :
-  - Settings.jsx : section présidence ne gère pas encore le 3e président custom
-  - Icône tripartite : `PresidencyTiles` n'a pas de tuile "Trinaire" (☉☽★) pour 3 présidents actifs
+- [~] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal + tuile Trinaire ✓ — reste :
+  - Settings (SectionConseil + SectionGouvernanceDefaut) ne passent pas encore `showTrinaire` à PresidencyTiles
 - [ ] **V5 — Refactor arborescence** : réorganiser src/ en components/ · engine/ · lib/ — session dédiée
 - [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
   - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
 - [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants
 - [ ] **V9 — i18n couverture complète** : ~300 strings inline restants
-  - Settings.jsx (182 ternaires) → lors du refactor Settings (G4)
-  - Voir `i18n_todolist.md` pour le détail
+  - G4 (Settings refactor) livré — strings i18n Settings non encore centralisées
+  - Audit des `isEn ? '…' : '…'` inline dans tout src/
 
 ---
 
@@ -115,7 +106,7 @@ _(bloqué sur refonte carte V1)_
 - [x] **Git cleanup** : branches `chore/todo-update` + `refactor/llmcouncil-split` mergées dans main et supprimées local + distant
 - [x] **shared/hooks/useAccordion.js** : déplacé de `features/settings/hooks/` → `shared/hooks/` · branché sur Settings (4 sections) + GovernanceForm
 - [x] **shared/utils/storage.js** : primitives `lireStorage` / `ecrireStorage` / `supprimerStorage` · settingsStorage.js migré dessus
-- [ ] **Dashboard_p1 — refactor futur** : extraire `getOptions/saveOptions` → `src/shared/utils/optionsStorage.js` · extraire les constantes (MINISTERS, MINISTRIES, REGIMES...) → `src/shared/data/` · Dashboard_p1 ne devrait plus être un fichier fourre-tout importé partout
+- [x] **Dashboard_p1 — refactor** : extrait en 9 modules dans `src/features/world/` · constantes dans `src/shared/data/` · options dans `src/shared/config/` · fichier racine supprimé
 
 ---
 
@@ -145,4 +136,4 @@ _(bloqué sur refonte carte V1)_
 ---
 
 ## 📁 Fichiers actifs
-`src/features/settings/` · `Dashboard_p1.jsx` · `App.jsx`
+`src/features/settings/` · `src/features/world/` · `App.jsx`
