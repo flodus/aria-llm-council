@@ -2,6 +2,7 @@
 // Fonctions pures du moteur de jeu : humeur, influence, cycles, seuils
 
 import { getStats, CYCLES_CFG } from '../../../shared/data/gameData';
+import { INFLUENCE, RESOURCE_WEIGHTS } from '../../../shared/constants/gameBalance';
 
 /** Mappe un score de satisfaction sur un objet humeur {label, color} */
 export function getHumeur(score) {
@@ -14,10 +15,10 @@ export function getHumeur(score) {
 
 /** Calcule le rayon d'influence (cercle pointillé au clic) */
 export function calcInfluenceRadius(population, coastal, ressources) {
-  const base     = 45 + (population / 1_000_000) * 3;
-  const maritime = coastal ? 22 : 0;
+  const base     = INFLUENCE.baseRadius + (population / 1_000_000) * INFLUENCE.popFactor;
+  const maritime = coastal ? INFLUENCE.maritimeFactor : 0;
   const resCount = Object.values(ressources).filter(Boolean).length;
-  return Math.min(Math.round(base + maritime + resCount * 4), 130);
+  return Math.min(Math.round(base + maritime + resCount * INFLUENCE.resFactor), INFLUENCE.maxRadius);
 }
 
 /** Applique un impact d'événement à un pays */
@@ -57,8 +58,8 @@ export function calcSatisfactionDelta(country, alliances) {
   Object.entries(country.ressources).forEach(([k, present]) => {
     const weight = resMinisters[k] || 1.0;
     delta += present
-      ? cfg.impact_ressource_presente * weight * 0.4
-      : cfg.impact_ressource_absente  * weight * 0.3;
+      ? cfg.impact_ressource_presente * weight * RESOURCE_WEIGHTS.presente
+      : cfg.impact_ressource_absente  * weight * RESOURCE_WEIGHTS.absente;
   });
 
   Object.values(country.relations || {}).forEach(type => {

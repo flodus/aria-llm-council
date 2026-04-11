@@ -7,23 +7,20 @@ import { seededRand, strToSeed, randBool } from '../../../shared/utils/prng';
 import { genOrganicPath, findSpawnPoint } from './svgWorldEngine';
 import { getHumeur, calcInfluenceRadius } from './gameEngine';
 import { normalizeCountry } from '../../../shared/utils/normalizeCountry';
+import { ARIA_IRL, ARIA_FLUCTUATION, ARIA_DRIFT, SVG_VIEWPORT, COUNTRY_SIZE, LOCAL_SPAWN as LOCAL_SPAWN_CFG } from '../../../shared/constants/gameBalance';
 
-// Positions de départ pour les 3 pays locaux (coordonnées SVG 1400×800)
-const LOCAL_SPAWN = {
-  valoria:   { cx: 280, cy: 320 },
-  eldoria:   { cx: 700, cy: 220 },
-  thalassia: { cx: 1080, cy: 480 },
-};
+// Positions de départ pour les 3 pays locaux — voir gameBalance.js
+const LOCAL_SPAWN = LOCAL_SPAWN_CFG;
 
 // ── Calculs ARIA ─────────────────────────────────────────────────────────────
 
 /** Calcule le taux IRL pour un pays FICTIF (déterministe) */
 export function calcAriaIRL(country) {
   const base     = getStats().regimes[country.regime]?.aria_irl_base ?? 35;
-  const satBonus = (country.satisfaction - 50) * 0.28;
-  const ecoBonus = ((country.economie || 100) - 100) * 0.06;
-  const island   = ['island', 'archipelago'].includes(country.terrain) ? 4 : 0;
-  return Math.round(Math.max(5, Math.min(95, base + satBonus + ecoBonus + island)));
+  const satBonus = (country.satisfaction - ARIA_IRL.satCenter) * ARIA_IRL.satWeighting;
+  const ecoBonus = ((country.economie || ARIA_IRL.ecoCenter) - ARIA_IRL.ecoCenter) * ARIA_IRL.ecoWeighting;
+  const island   = ['island', 'archipelago'].includes(country.terrain) ? ARIA_IRL.islandBonus : 0;
+  return Math.round(Math.max(ARIA_IRL.min, Math.min(ARIA_IRL.max, base + satBonus + ecoBonus + island)));
 }
 
 /**
@@ -34,24 +31,26 @@ export function calcAriaIRL(country) {
  * @param {boolean} convergent - Phare et Boussole convergents ?
  */
 export function fluctuateAria(current, irl, vote, convergent = true) {
-  const inertia = Math.max(0.40, Math.min(1.0, irl / 75));
+  const inertia = Math.max(ARIA_FLUCTUATION.inertiaMin, Math.min(ARIA_FLUCTUATION.inertiaMax, irl / ARIA_FLUCTUATION.irlDivisor));
 
   let delta = 0;
   if (vote === 'oui') {
-    delta = convergent ? +3.0 : +1.5;
+    delta = convergent ? ARIA_FLUCTUATION.voteOuiConvergent : ARIA_FLUCTUATION.voteOuiDivergent;
   } else if (vote === 'non') {
-    delta = convergent ? -1.2 : -3.8;
+    delta = convergent ? ARIA_FLUCTUATION.voteNonConvergent : ARIA_FLUCTUATION.voteNonDivergent;
   }
 
   const adjusted = delta > 0 ? delta * inertia : delta;
-  return Math.round(Math.max(5, Math.min(95, current + adjusted)));
+  return Math.round(Math.max(ARIA_IRL.min, Math.min(ARIA_IRL.max, current + adjusted)));
 }
 
 /** Dérive passive à chaque cycle +5 ans. Mean-reversion vers l'ancre IRL + drift satisfaction. */
 export function driftAria(current, irl, satisfaction) {
-  const reversion = (irl - current) * 0.05;
-  const satDrift  = satisfaction > 65 ? +0.4 : satisfaction < 40 ? -0.35 : 0;
-  return Math.round(Math.max(5, Math.min(95, current + reversion + satDrift)));
+  const reversion = (irl - current) * ARIA_DRIFT.reversionRate;
+  const satDrift  = satisfaction > ARIA_DRIFT.satHighThreshold ? ARIA_DRIFT.satDriftHigh
+                  : satisfaction < ARIA_DRIFT.satLowThreshold  ? ARIA_DRIFT.satDriftLow
+                  : 0;
+  return Math.round(Math.max(ARIA_IRL.min, Math.min(ARIA_IRL.max, current + reversion + satDrift)));
 }
 
 /** Calcule les ressources selon le terrain et le seed */
@@ -80,12 +79,12 @@ export function buildCountryFromLocal(template, worldData) {
   const terrain  = getStats().terrains[template.terrain] || getStats().terrains.coastal;
   const spawn    = LOCAL_SPAWN[template.id] || { cx: 400, cy: 300 };
 
-  const scaleX = (worldData?.W || 1400) / 1400;
-  const scaleY = (worldData?.H || 800)  / 800;
+  const scaleX = (worldData?.W || SVG_VIEWPORT.WIDTH)  / SVG_VIEWPORT.WIDTH;
+  const scaleY = (worldData?.H || SVG_VIEWPORT.HEIGHT) / SVG_VIEWPORT.HEIGHT;
   const cx     = spawn.cx * scaleX;
   const cy     = spawn.cy * scaleY;
 
-  const size    = 55 + (template.population / 1_000_000) * 2.5;
+  const size    = COUNTRY_SIZE.localBase + (template.population / 1_000_000) * COUNTRY_SIZE.localPop;
   const coastal = ['coastal', 'island', 'archipelago'].includes(template.terrain);
 
   const brut = {
@@ -135,7 +134,7 @@ export function buildCountryFromAI(aiData, worldData, existingCountries) {
   const spawn   = findSpawnPoint(worldData, existingCountries, preferredType);
   const { cx, cy } = spawn;
 
-  const size = 45 + (aiData.population / 1_000_000) * 2;
+  const size = COUNTRY_SIZE.aiBase + (aiData.population / 1_000_000) * COUNTRY_SIZE.aiPop;
   const res  = aiData.ressources
     ? Object.fromEntries(RESOURCE_KEYS.map(k => [k, !!(aiData.ressources[k])]))
     : calcRessources(terrain, seed);
