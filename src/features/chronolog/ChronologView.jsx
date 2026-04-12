@@ -534,9 +534,13 @@ function CycleBlock({ cycle, filterCountryId, filterType, defaultOpen, isCurrent
   for (const ev of cycle.events) {
     // cycle_stats : toujours inclus (stats techniques, non filtré par type)
     if (ev.type === 'cycle_stats') {
-      const key = '__monde__';
-      if (!groups[key]) groups[key] = { id: null, nom: 'Monde', emoji: '🌐', events: [] };
-      if (!filterCountryId) groups[key].events.push(ev);
+      // Tuile Monde uniquement si snapshot multi-pays (inutile avec 1 seul pays)
+      const snapshotCount = ev.snapshot?.length ?? 0;
+      if (!filterCountryId && snapshotCount > 1) {
+        const key = '__monde__';
+        if (!groups[key]) groups[key] = { id: null, nom: 'Monde', emoji: '🌐', events: [] };
+        groups[key].events.push(ev);
+      }
       continue;
     }
     // Filtre type
