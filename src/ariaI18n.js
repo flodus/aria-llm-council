@@ -9,15 +9,15 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState, useCallback, useEffect, createContext, useContext } from 'react';
+import { STORAGE_KEYS } from './shared/services/storageKeys';
 
 // ── Clé locale persistée ──────────────────────────────────────────────────
-const LS_LANG = 'aria_lang';
 export function loadLang() {
-  try { return localStorage.getItem(LS_LANG) || 'fr'; } catch { return 'fr'; }
+  try { return localStorage.getItem(STORAGE_KEYS.LANG) || 'fr'; } catch { return 'fr'; }
 }
 export function saveLang(l) {
   try {
-    localStorage.setItem(LS_LANG, l);
+    localStorage.setItem(STORAGE_KEYS.LANG, l);
     window.dispatchEvent(new CustomEvent('aria-lang-change', { detail: l }));
   } catch {}
 }

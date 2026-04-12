@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FONT, CARD_STYLE, labelStyle } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';
 import APIKeyInline from '../APIKeyInline';
+import { loadOpts, saveOpts } from '../../../../shared/services/storage';
 
 export default function NameScreen({
     lang,
@@ -15,7 +16,7 @@ export default function NameScreen({
     onSelectWorld,
 }) {
     const [iaBoardGame, setIaBoardGame] = useState(() => {
-        try { return JSON.parse(localStorage.getItem('aria_options') || '{}').ia_mode === 'none'; } catch { return false; }
+        try { return loadOpts().ia_mode === 'none'; } catch { return false; }
     });
 
     const [isOnline, setIsOnline] = useState(() => navigator.onLine);
@@ -36,16 +37,16 @@ export default function NameScreen({
         const next = !iaBoardGame;
         setIaBoardGame(next);
         try {
-            const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+            const opts = loadOpts();
             opts.ia_mode = next ? 'none' : (opts.ia_mode === 'none' ? 'aria' : opts.ia_mode);
-            localStorage.setItem('aria_options', JSON.stringify(opts));
+            saveOpts(opts);
         } catch {}
     };
 
     const handleCloseKeys = () => {
         setShowKeys(false);
         onRefreshKeys?.();
-        try { setIaBoardGame(JSON.parse(localStorage.getItem('aria_options') || '{}').ia_mode === 'none'); } catch {}
+        try { setIaBoardGame(loadOpts().ia_mode === 'none'); } catch {}
     };
 
     const cardBase = {

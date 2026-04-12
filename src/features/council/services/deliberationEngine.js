@@ -6,6 +6,7 @@
 
 import { callAI, getApiKeys } from '../../../shared/services/llm/aiService';
 import { loadLang } from '../../../ariaI18n';
+import { loadOpts } from '../../../shared/services/storage';
 import { getMinistersMapFor, getMinistriesListFor, getPresidencyFor, getDestin } from './agentsManager';
 import { buildCountryContext, langPrefix } from './contextBuilder';  // direct
 import { FALLBACK_RESPONSES, localMinisterFallback, localSyntheseFallback, localAnnotationFallback } from './fallbacks';
@@ -63,7 +64,7 @@ export async function runMinisterePhase(ministry, question, country) {
 
     // ── Synthèse ministère ───────────────────────────────────────────────────
     const keys = getApiKeys();
-    const _iaMode = (() => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}').ia_mode||'aria'; } catch { return 'aria'; } })();
+    const _iaMode = (() => { try { return loadOpts().ia_mode || 'aria'; } catch { return 'aria'; } })();
     const _useAI = _iaMode !== 'none' && (keys.claude || keys.gemini || keys.grok || keys.openai);
 
     let resA = null, resB = null;
@@ -152,7 +153,7 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
             const annotation = minister1?.annotation || `Analyse la question du point de vue de ${m.name}.`;
 
             let result = null;
-            const _iaMode3 = (() => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}').ia_mode||'aria'; } catch { return 'aria'; } })();
+            const _iaMode3 = (() => { try { return loadOpts().ia_mode || 'aria'; } catch { return 'aria'; } })();
             if (_iaMode3 !== 'none' && (keys.claude || keys.gemini || keys.grok || keys.openai)) {
                 const p = `${langPrefix()}Tu représentes le ministère "${m.name}" (${m.emoji}) du gouvernement ARIA.
                 ${ctx}

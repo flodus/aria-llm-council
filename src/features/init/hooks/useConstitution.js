@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { loadLang } from '../../../ariaI18n';
 import { BASE_AGENTS, BASE_AGENTS_EN } from '../../../../templates';
 import { getAgents } from '../../../shared/data/gameData';
+import { loadAgentsOverride } from '../../../shared/services/storage';
+import { supprimerStorage } from '../../../shared/utils/storage';
+import { STORAGE_KEYS } from '../../../shared/services/storageKeys';
 
 function defaultMins() {
     return getAgents().ministries.filter(m => m.base).map(m => m.id);
@@ -21,7 +24,7 @@ export default function useConstitution(pendingDefs) {
     useEffect(() => {
         const load = async () => {
             try {
-                const ov = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
+                const ov = loadAgentsOverride();
                 if (ov) {
                     setCommonAgents(ov);
                     if (ov.active_ministries) setCommonMins(ov.active_ministries);
@@ -41,7 +44,7 @@ export default function useConstitution(pendingDefs) {
     }, []);
 
     const resetAgents = () => {
-        localStorage.removeItem('aria_agents_override');
+        supprimerStorage(STORAGE_KEYS.AGENTS_OVERRIDE);
         setCommonMins(defaultMins());
         setCommonPres(['phare', 'boussole']);
         setCommonMinsters(null);

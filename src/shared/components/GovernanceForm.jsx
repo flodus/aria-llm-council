@@ -14,6 +14,8 @@
 import { useState } from 'react';
 import { useAccordion } from '../hooks/useAccordion';
 import { useLocale, t } from '../../ariaI18n';
+import { lireStorage } from '../utils/storage';
+import { STORAGE_KEYS } from '../services/storageKeys';
 import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../utils/agentsOverrides';
 import { getDestin } from '../../features/council/services/agentsManager';
 import { FONT } from '../theme';
@@ -48,8 +50,7 @@ function getDefaultGov() {
 }
 
 function readCountries() {
-    try { return JSON.parse(localStorage.getItem('aria_session_countries') || '[]'); }
-    catch { return []; }
+    return lireStorage(STORAGE_KEYS.SESSION_COUNTRIES, []);
 }
 
 // ── Accordéon inline ─────────────────────────────────────────────────────────

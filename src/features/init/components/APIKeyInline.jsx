@@ -13,7 +13,7 @@
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
-import { loadKeys, saveKeys, loadKeyStatus, saveKeyStatus, loadCustomProviders, saveCustomProviders, loadCustomModels, saveCustomModels } from '../../../shared/services';
+import { loadKeys, saveKeys, loadKeyStatus, saveKeyStatus, loadCustomProviders, saveCustomProviders, loadCustomModels, saveCustomModels, loadPreferredModels, savePreferredModels } from '../../../shared/services';
 import { ARIA_FALLBACK_MODELS } from '../../../shared/constants/llmRegistry';
 import { ProviderAccordion } from './api';
 
@@ -248,8 +248,8 @@ export default function APIKeyInline({ onClose }) {
       const defKey = valid.find(k => k.default) || valid[0];
       if (defKey?.model) {
         try {
-          const pm = JSON.parse(localStorage.getItem('aria_preferred_models') || '{}');
-          localStorage.setItem('aria_preferred_models', JSON.stringify({ ...pm, [provId]: defKey.model }));
+          const pm = loadPreferredModels();
+          savePreferredModels({ ...pm, [provId]: defKey.model });
         } catch {}
       }
     }

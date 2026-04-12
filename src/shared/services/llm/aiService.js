@@ -7,7 +7,7 @@ import { loadLang, FALLBACK_PHRASES } from '../../../ariaI18n';
 import { setIaStatus } from '../iaStatusStore';
 import { getPrompts } from '../../../features/settings/utils/settingsStorage';
 import { DEFAULT_MODELS } from '../../constants/models';
-import { loadCustomProviders } from '../storage';
+import { loadCustomProviders, loadKeys, loadPreferredModels } from '../storage';
 
 // ── Validation clés ───────────────────────────────────────────────────────────
 
@@ -34,7 +34,7 @@ export function isFakeKey(provider, key) {
 /** Récupère les clés API (défaut/active) depuis localStorage */
 export function getApiKeys() {
   try {
-    const raw = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+    const raw = loadKeys();
     const result = {};
     for (const [id, val] of Object.entries(raw)) {
       if (typeof val === 'string') result[id] = val;
@@ -50,7 +50,7 @@ export function getApiKeys() {
 // Retourne les clés d'un provider ordonnées (default en premier)
 function getProviderKeys(provider) {
   try {
-    const raw = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+    const raw = loadKeys();
     const val = raw[provider];
     if (!val) return [];
     if (typeof val === 'string') return val.trim() ? [{ key: val.trim(), model: null }] : [];
@@ -181,7 +181,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
   if (model === 'claude') {
     const claudeKeys = getProviderKeys('claude');
-    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').claude || DEFAULT_MODELS.claude; } catch { return DEFAULT_MODELS.claude; } })();
+    const prefModel = loadPreferredModels().claude || DEFAULT_MODELS.claude;
     for (const keyEntry of claudeKeys) {
       try {
         const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -205,7 +205,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
   if (model === 'gemini') {
     const geminiKeys = getProviderKeys('gemini');
-    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').gemini; } catch { return null; } })();
+    const prefModel = loadPreferredModels().gemini || null;
     for (const keyEntry of geminiKeys) {
       const GEMINI_MODELS = [keyEntry.model || prefModel, DEFAULT_MODELS.gemini, 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
       let lastWas429 = false;
@@ -244,7 +244,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
   if (model === 'grok') {
     const grokKeys = getProviderKeys('grok');
-    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').grok || DEFAULT_MODELS.grok; } catch { return DEFAULT_MODELS.grok; } })();
+    const prefModel = loadPreferredModels().grok || DEFAULT_MODELS.grok;
     for (const keyEntry of grokKeys) {
       if (isFakeKey('grok', keyEntry.key)) return { error: true, msg: getRandomFallback() };
       if (!isValidKeyFormat('grok', keyEntry.key)) continue;
@@ -267,7 +267,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
   if (model === 'openai') {
     const openaiKeys = getProviderKeys('openai');
-    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').openai || DEFAULT_MODELS.openai; } catch { return DEFAULT_MODELS.openai; } })();
+    const prefModel = loadPreferredModels().openai || DEFAULT_MODELS.openai;
     for (const keyEntry of openaiKeys) {
       if (isFakeKey('openai', keyEntry.key)) return { error: true, msg: getRandomFallback() };
       if (!isValidKeyFormat('openai', keyEntry.key)) continue;
@@ -290,7 +290,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
 
   if (model === 'openrouter') {
     const orKeys = getProviderKeys('openrouter');
-    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').openrouter || DEFAULT_MODELS.openrouter; } catch { return DEFAULT_MODELS.openrouter; } })();
+    const prefModel = loadPreferredModels().openrouter || DEFAULT_MODELS.openrouter;
     for (const keyEntry of orKeys) {
       if (isFakeKey('openrouter', keyEntry.key)) return { error: true, msg: getRandomFallback() };
       if (!isValidKeyFormat('openrouter', keyEntry.key)) continue;

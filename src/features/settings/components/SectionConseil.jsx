@@ -10,6 +10,7 @@ import AgentGrid from '../../../shared/components/AgentGrid';
 import { SectionTitle, Field, TextArea, SaveBadge } from '../ui/SettingsUI';
 import SectionGouvernanceDefaut from './SectionGouvernanceDefaut';
 import { getAgentOverrides, saveAgentOverrides } from '../utils/settingsStorage';
+import { loadAgentsOverride, saveAgentsOverride } from '../../../shared/services/storage';
 import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 
 function getMinisterLabels() {
@@ -94,13 +95,13 @@ export default function SectionConseil() {
         const presMap = { solaire: ['phare'], lunaire: ['boussole'], collegiale: [], duale: null };
         const activePres = presMap[presType] ?? null;
         try {
-            const ov = JSON.parse(localStorage.getItem('aria_agents_override') || 'null') || {};
+            const ov = loadAgentsOverride() || {};
             if (activePres === null) delete ov.active_presidency;
             else ov.active_presidency = activePres;
             const activeMins = govOpts.defaultGovernance?.active_ministers ?? null;
             if (activeMins === null) delete ov.active_ministers;
             else ov.active_ministers = activeMins;
-            localStorage.setItem('aria_agents_override', JSON.stringify(ov));
+            saveAgentsOverride(ov);
         } catch {}
 
         setSaved(true);

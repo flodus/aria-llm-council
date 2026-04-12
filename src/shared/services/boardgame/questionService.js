@@ -9,6 +9,7 @@
 import QUESTIONS_FR from '../../../../templates/languages/fr/aria_questions.json';
 import { loadLang } from '../../../ariaI18n';
 import { COLORS } from '../../theme';
+import { STORAGE_KEYS } from '../storageKeys';
 
 const FALLBACK_QUESTIONS = [
     "Faut-il réformer le système judiciaire en profondeur ?",
@@ -18,7 +19,7 @@ const FALLBACK_QUESTIONS = [
 "L'éducation publique doit-elle rester gratuite à tous les niveaux ?",
 ];
 
-const LS_KEY = 'aria_chronolog_cycles';
+const LS_KEY = STORAGE_KEYS.CHRONOLOG_CYCLES;
 
 function loadQuestions() {
     try {

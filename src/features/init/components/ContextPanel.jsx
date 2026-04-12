@@ -12,6 +12,7 @@
 
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, INPUT_STYLE, BTN_SECONDARY } from '../../../shared/theme';
+import { loadOpts } from '../../../shared/services/storage';
 import ContextModeSelector from '../../../shared/components/ContextModeSelector';
 import ChroniqueurToggle from '../../../shared/components/ChroniqueurToggle';
 
@@ -20,7 +21,7 @@ export default function ContextPanel({ countryName, open, onToggle, mode, setMod
   const GOLD = 'rgba(200,164,74,0.88)';
   const DIM  = 'rgba(140,160,200,0.46)';
   // Lecture du mode global pour afficher dans le label "Hérite du global"
-  const _globalCtxMode = (() => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}').gameplay?.context_mode || 'auto'; } catch { return 'auto'; } })();
+  const _globalCtxMode = (() => { try { return loadOpts().gameplay?.context_mode || 'auto'; } catch { return 'auto'; } })();
   const _globalCtxLabel = ({ auto:'🤖 Auto', rich: lang==='en'?'📖 Enriched':'📖 Enrichi', stats_only: lang==='en'?'📊 Stats only':'📊 Stats seules', off: lang==='en'?'🚫 Disabled':'🚫 Désactivé' })[_globalCtxMode] || '🤖 Auto';
   return (
     <div style={{ width:'100%', borderRadius:'2px',

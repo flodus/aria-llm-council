@@ -14,6 +14,7 @@
 
 import { FONT, COLORS } from '../../../../../shared/theme';
 import { t } from '../../../../../ariaI18n';
+import { STORAGE_KEYS } from '../../../../../shared/services/storageKeys';
 import { getQuestionState } from '../../../../../shared/services/boardgame/questionService';
 import QUESTIONS_FR from '../../../../../../templates/languages/fr/aria_questions.json';
 import QUESTIONS_EN from '../../../../../../templates/languages/en/aria_questions.json';
@@ -34,7 +35,7 @@ function getPool(ministryId, lang) {
     return src?.par_ministere?.[ministryId]?.questions || [];
 }
 
-const LS_KEY = 'aria_chronolog_cycles';
+const LS_KEY = STORAGE_KEYS.CHRONOLOG_CYCLES;
 
 function readVotedEntry(ministryId, countryId, cycleActuel) {
     try {

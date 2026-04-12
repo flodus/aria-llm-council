@@ -12,8 +12,9 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useCallback } from 'react';
+import { STORAGE_KEYS } from '../../shared/services/storageKeys';
 
-const LS_KEY      = 'aria_chronolog_cycles';
+const LS_KEY      = STORAGE_KEYS.CHRONOLOG_CYCLES;
 const FULL_CYCLES = 5;
 const SYNTH_MAX   = 250;
 
