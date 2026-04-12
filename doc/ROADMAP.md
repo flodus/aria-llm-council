@@ -168,9 +168,10 @@
  │
  │  Blocked on V1 map rework — country interactions depend on geography.
  │
- ├─[F1] Min 2 countries custom .. [Custom mode currently allows 1] ... ⬡ 0%
- ├─[F2] Duplicate blocking ...... [Real country picked once only] .... ⬡ 0%
- └─[F3] Settings multi-country .. [Common vs per-country config] ..... ⬡ 0%
+ ├─[F1] Multi-country fictional .. [DefaultLocalFlow: up to 6 nations] ✅ 100%
+ │      └─> CustomFlow.jsx removed (dead file — never imported)
+ ├─[F2] Duplicate blocking ...... [Real country picked once only] .... ✅ 100%
+ └─[F3] Settings multi-country .. [Global · init · in-game — 3 levels] ✅ 100%
 
  [ PHASE V2 : SYSTEMIC TRIGGERS ] ................................ STATUS: QUEUED
  ├─[V6] Global repercussions .... [Cross-country policy effects] .... ⬡ 0%

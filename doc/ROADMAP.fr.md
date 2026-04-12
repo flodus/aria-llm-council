@@ -169,9 +169,10 @@
  │  Bloqué sur la refonte V1 — les interactions entre pays dépendent
  │  de la géographie.
  │
- ├─[F1] Min. 2 pays en custom .... [Mode custom limité à 1 actuellement] ⬡ 0%
- ├─[F2] Blocage doublons ......... [Pays réel sélectionnable une fois] ⬡ 0%
- └─[F3] Settings multi-pays ...... [Config commune vs par pays] ....... ⬡ 0%
+ ├─[F1] Multi-pays fictifs ........ [DefaultLocalFlow : jusqu'à 6 pays] ✅ 100%
+ │      └─> CustomFlow.jsx supprimé (fichier mort — jamais utilisé)
+ ├─[F2] Blocage doublons ......... [Pays réel sélectionnable une fois] ✅ 100%
+ └─[F3] Settings multi-pays ...... [Global · init · in-game — 3 niveaux] ✅ 100%
 
  [ PHASE V2 : DÉCLENCHEURS SYSTÉMIQUES ] ......................... STATUT: EN FILE
  ├─[V6] Répercussions mondiales .. [Effets croisés entre pays] ....... ⬡ 0%

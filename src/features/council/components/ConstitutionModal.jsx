@@ -39,7 +39,9 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         ctxOffH:      isEn ? 'No context — blind deliberation for this country' : 'Aucun contexte — délibération à l\'aveugle pour ce pays',
         destinyTitle: isEn ? 'DESTINY OF THE WORLD'     : 'DESTINÉE DU MONDE',
         destinyLabel: isEn ? '👁️ Oracle & Wyrd'          : '👁️ Oracle & Wyrd',
-        destinyDesc:  isEn ? 'Activates Oracle and Wyrd for existential crises.' : 'Active Oracle et Wyrd pour les crises existentielles.',
+        destinyDesc:  isEn
+            ? 'Oracle & Wyrd speak at every deliberation for this country — independently of crisis mode.'
+            : 'Oracle & Wyrd s\'expriment à chaque délibération pour ce pays — indépendamment du mode crise.',
         cancel:       isEn ? 'Cancel'                   : 'Annuler',
         apply:        isEn ? '✓ Apply Configuration'    : '✓ Appliquer la Configuration',
     };
