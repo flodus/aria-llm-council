@@ -29,14 +29,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
         contextHint:  isEn
             ? 'Controls which info about this country is injected into AI prompts. Leave "Inherit" to follow global setting.'
             : 'Contrôle quelles infos sur ce pays sont injectées dans les prompts IA. Laissez "Hérite du global" pour suivre le réglage général.',
-        ctxInherit:   isEn ? '⚙️ Inherit global'        : '⚙️ Hérite du global',
         ctxInheritH:  isEn ? 'Follows the Settings rule': 'Suit le réglage de Settings',
-        ctxRich:      isEn ? '📖 Enriched'              : '📖 Enrichi',
-        ctxRichH:     isEn ? 'Full context — prompts AI to reason historically' : 'Contexte complet — incite l\'IA à raisonner historiquement',
-        ctxStats:     isEn ? '📊 Stats only'            : '📊 Stats seules',
-        ctxStatsH:    isEn ? 'Numbers only — neutral, fewer hallucinations' : 'Chiffres uniquement — neutre, moins d\'hallucinations',
-        ctxOff:       isEn ? '🚫 Disabled'              : '🚫 Désactivé',
-        ctxOffH:      isEn ? 'No context — blind deliberation for this country' : 'Aucun contexte — délibération à l\'aveugle pour ce pays',
         destinyTitle: isEn ? 'DESTINY OF THE WORLD'     : 'DESTINÉE DU MONDE',
         destinyLabel: isEn ? '👁️ Oracle & Wyrd'          : '👁️ Oracle & Wyrd',
         destinyDesc:  isEn

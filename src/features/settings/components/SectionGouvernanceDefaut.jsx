@@ -7,6 +7,8 @@ import { getOptions } from '../../../shared/config/options';
 import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 import { getDestin } from '../../council/services/agentsManager';
 import PresidencyTiles from '../../../shared/components/PresidencyTiles';
+import ContextModeSelector from '../../../shared/components/ContextModeSelector';
+import ChroniqueurToggle from '../../../shared/components/ChroniqueurToggle';
 import { Field, Toggle } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
 
@@ -270,52 +272,15 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
                 {isEn ? "Controls what country info is injected into each deliberation prompt. Overridable per country in the Constitution."
                     : "Contrôle quelles infos sur le pays sont injectées dans chaque prompt. Surchargeable par pays dans la Constitution."}
                     </div>
-                    {[
-                        ['auto',       '🤖 Auto',                isEn ? 'Stats always + description if available (default)' : 'Stats toujours + description si disponible (défaut)'],
-                                 ['rich',       isEn ? '📖 Enriched' : '📖 Enrichi', isEn ? 'Full context — prompts AI to invent a coherent history' : 'Contexte complet même pour fictifs — incite l\'IA à inventer un historique cohérent'],
-                                 ['stats_only', isEn ? '📊 Stats only' : '📊 Stats seules', isEn ? 'Numbers only — more neutral, fewer hallucinations' : 'Uniquement les chiffres — délibération plus neutre'],
-                                 ['off',        isEn ? '🚫 Disabled' : '🚫 Désactivé', isEn ? 'No context injected — blind universal deliberation' : 'Aucun contexte injecté — délibération aveugle'],
-                    ].map(([val, lbl, hint]) => (
-                        <label key={val} style={{ display:'flex', alignItems:'flex-start', gap:'0.5rem',
-                            cursor:'pointer', padding:'0.35rem 0.5rem', borderRadius:'2px',
-                            background: (opts.gameplay?.context_mode || 'auto') === val ? 'rgba(200,164,74,0.08)' : 'transparent',
-                                                 border: `1px solid ${(opts.gameplay?.context_mode || 'auto') === val ? 'rgba(200,164,74,0.30)' : 'transparent'}` }}>
-                                                 <input type="radio" name="context_mode_gov" value={val}
-                                                 checked={(opts.gameplay?.context_mode || 'auto') === val}
-                                                 onChange={() => setCtx(val)}
-                                                 style={{ marginTop:'0.1rem', accentColor:'#C8A44A' }} />
-                                                 <div>
-                                                 <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.52rem',
-                                                     color:'rgba(220,228,240,0.85)' }}>{lbl}</div>
-                                                     <div style={{ fontSize:'0.46rem', color:'rgba(140,160,200,0.50)',
-                                                         marginTop:'0.1rem', lineHeight:1.45 }}>{hint}</div>
-                                                         </div>
-                                                         </label>
-                    ))}
+                    <ContextModeSelector
+                        value={opts.gameplay?.context_mode || 'auto'}
+                        onChange={setCtx}
+                        name="context_mode_gov"
+                    />
 
                     {/* Chroniqueur — mémoire institutionnelle */}
-                    <div style={{ marginTop:'0.5rem', paddingTop:'0.5rem',
-                        borderTop:'1px solid rgba(90,110,160,0.12)',
-                        display:'flex', alignItems:'center', gap:'0.6rem' }}>
-                        <div style={{ flex:1 }}>
-                            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.50rem',
-                                color:'rgba(200,215,240,0.75)' }}>
-                                📜 {isEn ? 'Institutional Chronicler' : 'Chroniqueur institutionnel'}
-                            </div>
-                            <div style={{ fontSize:'0.42rem', color:'rgba(140,160,200,0.45)',
-                                marginTop:'0.08rem', lineHeight:1.4 }}>
-                                {isEn
-                                    ? 'Generates narrative memory at each cycle end — injected into future deliberations'
-                                    : 'Génère la mémoire narrative à chaque fin de cycle — injectée dans les délibérations futures'}
-                            </div>
-                        </div>
-                        <Toggle
-                            value={opts.chroniqueur?.enabled ?? true}
-                            onChange={setChron}
-                            label={opts.chroniqueur?.enabled ?? true
-                                ? (isEn ? 'Active' : 'Actif')
-                                : (isEn ? 'Off' : 'Inactif')}
-                        />
+                    <div style={{ marginTop:'0.5rem', paddingTop:'0.5rem', borderTop:'1px solid rgba(90,110,160,0.12)' }}>
+                        <ChroniqueurToggle value={opts.chroniqueur?.enabled ?? true} onChange={setChron} />
                     </div>
                     </div>
             )}

@@ -12,6 +12,8 @@
 
 import { useLocale, t } from '../../../ariaI18n';
 import { FONT, INPUT_STYLE, BTN_SECONDARY } from '../../../shared/theme';
+import ContextModeSelector from '../../../shared/components/ContextModeSelector';
+import ChroniqueurToggle from '../../../shared/components/ChroniqueurToggle';
 
 export default function ContextPanel({ countryName, open, onToggle, mode, setMode, override, setOverride, embedded, chroniqueur, setChroniqueur }) {
   const { lang } = useLocale();
@@ -56,61 +58,19 @@ export default function ContextPanel({ countryName, open, onToggle, mode, setMod
           </div>
 
           {/* Mode radio */}
-          <div style={{ display:'flex', flexDirection:'column', gap:'0.26rem' }}>
-            {[
-              ['', '⚙️ '+(lang==='en'?'Inherit global':'Hérite du global'), lang==='en'?`Follows global setting (currently: ${_globalCtxLabel})`:`Suit le réglage mondial (actuellement : ${_globalCtxLabel})`],
-              ['auto',       '🤖 Auto',                  'Stats + description si disponible'],
-              ['rich', '📖 '+(lang==='en'?'Enriched':'Enrichi'), lang==='en'?"Full context — AI reasons from regime history and its resources.":"Contexte complet — l'IA raisonne sur l'historique du régime."],
-              ['stats_only', '📊 Stats seules',          'Chiffres uniquement — neutre'],
-              ['off', '🚫 '+(lang==='en'?'Disabled':'Désactivé'), lang==='en'?'No context — blind deliberation':'Aucun contexte — délibération aveugle'],
-            ].map(([val, lbl, hint]) => {
-              const on = mode === val;
-              return (
-                <label key={val} style={{ display:'flex', alignItems:'center', gap:'0.5rem',
-                  cursor:'pointer', padding:'0.30rem 0.5rem', borderRadius:'2px',
-                  background: on ? 'rgba(200,164,74,0.07)' : 'transparent',
-                  border:`1px solid ${on ? 'rgba(200,164,74,0.25)' : 'transparent'}`,
-                  width:'100%', boxSizing:'border-box' }}>
-                  <input type="radio" name={`ctx_mode_${(countryName||'x').replace(/\s+/g,'_')}`} value={val} checked={on}
-                    onChange={() => setMode(val)}
-                    style={{ accentColor:'#C8A44A', flexShrink:0 }} />
-                  <div>
-                    <div style={{ fontFamily:FONT.mono, fontSize:'0.46rem',
-                      color: on ? GOLD : 'rgba(200,215,240,0.78)' }}>{lbl}</div>
-                    <div style={{ fontSize:'0.40rem', color:DIM, marginTop:'0.05rem', lineHeight:1.35 }}>{hint}</div>
-                  </div>
-                </label>
-              );
-            })}
-          </div>
+          <ContextModeSelector
+            value={mode}
+            onChange={setMode}
+            name={`ctx_mode_${(countryName||'x').replace(/\s+/g,'_')}`}
+            showInherit
+            inheritHint={lang==='en'
+              ? `Follows global setting (currently: ${_globalCtxLabel})`
+              : `Suit le réglage mondial (actuellement : ${_globalCtxLabel})`}
+          />
 
           {/* Chroniqueur — toggle par pays */}
           {setChroniqueur && (
-            <div style={{ display:'flex', alignItems:'center', gap:'0.5rem',
-              padding:'0.28rem 0.45rem', borderRadius:'2px',
-              background:'rgba(90,110,160,0.04)',
-              border:'1px solid rgba(90,110,160,0.12)' }}>
-              <span style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:DIM, flex:1 }}>
-                📜 {lang==='en' ? 'Chronicler' : 'Chroniqueur'}
-              </span>
-              {[
-                [null,  lang==='en' ? '⚙ Global' : '⚙ Global'],
-                [true,  lang==='en' ? '● On'     : '● Actif'],
-                [false, lang==='en' ? '○ Off'    : '○ Inactif'],
-              ].map(([val, lbl]) => {
-                const on = chroniqueur === val;
-                return (
-                  <button key={String(val)} onClick={() => setChroniqueur(val)}
-                    style={{ fontFamily:FONT.mono, fontSize:'0.38rem', padding:'0.10rem 0.35rem',
-                      borderRadius:'2px', cursor:'pointer',
-                      background: on ? 'rgba(200,164,74,0.10)' : 'transparent',
-                      border:`1px solid ${on ? 'rgba(200,164,74,0.35)' : 'rgba(140,160,200,0.12)'}`,
-                      color: on ? 'rgba(200,164,74,0.85)' : 'rgba(140,160,200,0.40)' }}>
-                    {lbl}
-                  </button>
-                );
-              })}
-            </div>
+            <ChroniqueurToggle value={chroniqueur} onChange={setChroniqueur} />
           )}
 
           {/* Textarea override */}
