@@ -5,6 +5,8 @@ import { FONT, BTN_SECONDARY, INPUT_STYLE, SELECT_STYLE } from '../../../../shar
 import { getStats } from '../../../../shared/data/gameData';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../../shared/data/ariaData';
 import EmojiPicker from '../../../../shared/components/EmojiPicker';
+import ContextModeSelector from '../../../../shared/components/ContextModeSelector';
+import ChroniqueurToggle from '../../../../shared/components/ChroniqueurToggle';
 
 export default function TabRegime({ country, isEn, tr, state, handlers }) {
     const {
@@ -92,26 +94,13 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
         {ctxAccOpen && (
             <>
             <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.48)', margin: 0, lineHeight: 1.5 }}>{tr.contextHint}</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.32rem' }}>
-                {[
-                    ['', tr.ctxInherit, tr.ctxInheritH],
-                    ['auto', '🤖 Auto', 'Stats + description si disponible'],
-                    ['rich', tr.ctxRich, tr.ctxRichH],
-                    ['stats_only', tr.ctxStats, tr.ctxStatsH],
-                    ['off', tr.ctxOff, tr.ctxOffH],
-                ].map(([val, lbl, hint]) => {
-                    const on = contextMode === val;
-                    return (
-                        <label key={val} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', cursor: 'pointer', padding: '0.30rem 0.45rem', borderRadius: '2px', background: on ? 'rgba(200,164,74,0.08)' : 'transparent', border: `1px solid ${on ? 'rgba(200,164,74,0.28)' : 'transparent'}` }}>
-                            <input type="radio" name="ctx_mode" value={val} checked={on} onChange={() => setContextMode(val)} style={{ marginTop: '0.08rem', accentColor: '#C8A44A' }} />
-                            <div>
-                                <div style={{ fontFamily: FONT, fontSize: '0.50rem', color: 'rgba(220,228,240,0.85)' }}>{lbl}</div>
-                                <div style={{ fontSize: '0.44rem', color: 'rgba(140,160,200,0.48)', marginTop: '0.08rem', lineHeight: 1.4 }}>{hint}</div>
-                            </div>
-                        </label>
-                    );
-                })}
-            </div>
+            <ContextModeSelector
+                value={contextMode}
+                onChange={setContextMode}
+                name="ctx_mode_constitution"
+                showInherit
+                inheritHint={tr.ctxInheritH}
+            />
 
             <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: '0.35rem 0 0.20rem', textTransform: 'uppercase' }}>
                 {isEn ? 'CURRENT CONTEXT' : 'CONTEXTE ACTUEL'}
@@ -123,32 +112,7 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
                   </div>
                 : <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.28)', margin: 0 }}>—</p>
             }
-            {/* Chroniqueur — toggle par pays */}
-            <div style={{ display:'flex', alignItems:'center', gap:'0.5rem',
-              padding:'0.28rem 0.45rem', borderRadius:'2px',
-              background:'rgba(90,110,160,0.04)',
-              border:'1px solid rgba(90,110,160,0.12)' }}>
-              <span style={{ fontFamily: FONT, fontSize:'0.44rem', color:'rgba(140,160,200,0.55)', flex:1 }}>
-                📜 {isEn ? 'Chronicler' : 'Chroniqueur'}
-              </span>
-              {[
-                [null,  isEn ? '⚙ Global' : '⚙ Global'],
-                [true,  isEn ? '● On'     : '● Actif'],
-                [false, isEn ? '○ Off'    : '○ Inactif'],
-              ].map(([val, lbl]) => {
-                const on = chroniqueurEnabled === val;
-                return (
-                  <button key={String(val)} onClick={() => setChroniqueurEnabled(val)}
-                    style={{ fontFamily: FONT, fontSize:'0.38rem', padding:'0.10rem 0.35rem',
-                      borderRadius:'2px', cursor:'pointer',
-                      background: on ? 'rgba(200,164,74,0.10)' : 'transparent',
-                      border:`1px solid ${on ? 'rgba(200,164,74,0.35)' : 'rgba(140,160,200,0.12)'}`,
-                      color: on ? 'rgba(200,164,74,0.85)' : 'rgba(140,160,200,0.40)' }}>
-                    {lbl}
-                  </button>
-                );
-              })}
-            </div>
+            <ChroniqueurToggle value={chroniqueurEnabled} onChange={setChroniqueurEnabled} />
 
             <button style={{ ...BTN_SECONDARY, alignSelf: 'flex-start', fontSize: '0.42rem', padding: '0.22rem 0.55rem' }} onClick={() => setCtxOverrideOpen(v => !v)}>
                 {ctxOverrideOpen ? '▾' : '▸'} {isEn ? 'Custom context' : 'Contexte personnalisé'}{contextOverride ? ' ●' : ''}
