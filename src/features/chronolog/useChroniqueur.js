@@ -63,14 +63,15 @@ function buildNarrationDeterministe(country, cycleEvents, cycleNum, prevMemoire,
 
   const parts = [];
 
-  // Premier cycle
-  if (cycleNum === 1 || !prevMemoire) {
+  // Mémoire précédente ou amorce si premier cycle réel
+  if (prevMemoire) {
+    parts.push(prevMemoire);
+  } else if (cycleNum === 1) {
     parts.push(isEn
       ? `${country.nom} enters its first deliberation cycle.`
       : `${country.nom} entre dans son premier cycle de délibération.`);
-  } else {
-    parts.push(prevMemoire);
   }
+  // cycleNum > 1 sans mémoire précédente : on commence directement par les faits
 
   // Résultats du cycle
   if (votes.length > 0) {
