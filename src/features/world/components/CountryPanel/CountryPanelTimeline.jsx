@@ -34,7 +34,7 @@ function loadCyclesForCountry(countryId) {
         if (stat && (stat.satDelta !== 0 || stat.ariaDelta !== 0)) {
           evs.push({ ...ev, _myStat: stat });
         }
-      } else if (ev.countryId === countryId) {
+      } else if (ev.countryId === countryId || (ev.type === 'diplomacy' && ev.paysB?.id === countryId)) {
         evs.push(ev);
       }
     }
@@ -79,6 +79,7 @@ const TYPE_STYLE = {
   constitution: { icon: '📜', bg: 'rgba(140,100,220,0.06)', border: 'rgba(140,100,220,0.18)'},
   new_country:  { icon: '🌍', bg: 'rgba(58,191,122,0.06)',  border: 'rgba(58,191,122,0.18)' },
   cycle_stats:  { icon: '📊', bg: 'rgba(90,110,160,0.04)',  border: 'rgba(90,110,160,0.12)' },
+  diplomacy:    { icon: '🤝', bg: 'rgba(90,140,220,0.05)',  border: 'rgba(90,140,220,0.15)' },
 };
 
 // ── Ligne événement ───────────────────────────────────────────────────────────
@@ -215,6 +216,35 @@ function EventRow({ ev, onOpenEvent }) {
           <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim }}>
             {ev.nom || ev.countryNom}
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (ev.type === 'diplomacy') {
+    const isSource = ev.countryId === ev.countryId; // toujours vrai, pour clarté
+    const partner  = ev.paysB;
+    const relColor = ev.relationType === 'Alliance' ? C.green
+      : ev.relationType === 'Tension' ? C.red
+      : C.muted;
+    const relIcon  = ev.relationType === 'Alliance' ? '🤝'
+      : ev.relationType === 'Tension' ? '⚔️'
+      : '○';
+    return (
+      <div style={{ display:'flex', gap:'0.55rem', alignItems:'flex-start',
+        padding:'0.40rem 0.55rem', marginBottom:'0.28rem',
+        background: ts.bg, border:`1px solid ${ts.border}`, borderRadius:'3px' }}>
+        <span style={{ fontSize:'1.3rem', lineHeight:1, flexShrink:0 }}>{ts.icon}</span>
+        <div>
+          <div style={{ fontFamily:FONT.mono, fontSize:'0.43rem', fontWeight:700,
+            color: relColor, letterSpacing:'0.08em', marginBottom:'0.08rem' }}>
+            {relIcon} {ev.relationType}
+          </div>
+          {partner && (
+            <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim }}>
+              {partner.emoji} {partner.nom}
+            </div>
+          )}
         </div>
       </div>
     );

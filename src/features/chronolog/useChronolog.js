@@ -9,6 +9,7 @@
 //    'constitution'  — amendement constitution
 //    'new_country'   — nouveau pays fictif
 //    'cycle_stats'   — snapshot automatique fin de cycle
+//    'diplomacy'     — changement de relation entre deux pays
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useCallback } from 'react';
@@ -134,5 +135,16 @@ export function useChronolog() {
     }
   }, []);
 
-  return { pushEvent, pushCycleStats, closeCycle, getCycles, resetChronolog };
+  const pushDiplomacy = useCallback((cycleNum, annee, idA, nomA, emoA, idB, nomB, emoB, relationType) => {
+    pushEvent(cycleNum, annee || 0, {
+      type: 'diplomacy',
+      countryId:    idA,
+      countryNom:   nomA,
+      countryEmoji: emoA,
+      paysB: { id: idB, nom: nomB, emoji: emoB },
+      relationType,
+    });
+  }, [pushEvent]);
+
+  return { pushEvent, pushCycleStats, pushDiplomacy, closeCycle, getCycles, resetChronolog };
 }

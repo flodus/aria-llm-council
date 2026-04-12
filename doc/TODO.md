@@ -116,7 +116,7 @@ _(bloqué sur refonte carte V1)_
 - [x] **F1 — Multi-pays mode fictif** : DefaultLocalFlow supporte déjà jusqu'à 6 pays (fictifs prédéfinis + créés à la main) — CustomFlow.jsx supprimé (fichier mort)
 - [x] **F2 — Bloquer doublons pays réels** : déjà implémenté (disabled + ✗ + repoussé en bas dans RealCountryLocalSection + duplicate status dans RealCountryAISection)
 - [x] **F3 — Settings gouvernement multi-pays** : Settings = global · PreLaunchScreen/ContextPanel = init par pays · ConstitutionModal = in-game par pays — architecture 3 niveaux déjà en place
-- [ ] **D2 — Diplomatie dans CountryPanel Timeline** : ajouter event type `diplomacy` dans `useChronolog` + pousser quand une alliance change → affiché dans le panel pays (côté droit) — à traiter lors du chantier diplomatie · prérequis : CountryPanel Timeline Phase 1 livrée
+- [x] **D2 — Diplomatie dans CountryPanel Timeline** : event type `diplomacy` dans `useChronolog` · `pushDiplomacy` appelé depuis `handleSetRelation` dans Dashboard · affiché dans CountryPanelTimeline + ChronologView · filtre inclut `paysB.id === countryId`
 
 ---
 

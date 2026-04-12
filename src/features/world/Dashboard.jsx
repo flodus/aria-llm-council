@@ -48,7 +48,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     window.addEventListener('aria-lang-change', onLang);
     return () => window.removeEventListener('aria-lang-change', onLang);
   }, []);
-  const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
+  const { pushEvent, pushCycleStats, pushDiplomacy, closeCycle, resetChronolog } = useChronolog();
   const { runChroniqueur } = useChroniqueur();
 
   const _storedCycleNum = parseInt(localStorage.getItem(STORAGE_KEYS.CYCLE_NUM) || '1', 10);
@@ -365,6 +365,19 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     );
   };
 
+  // ── Diplomatie avec chronolog ──────────────────────────────────────────────
+  const handleSetRelation = useCallback((idA, idB, type) => {
+    aria.setRelation(idA, idB, type);
+    const cA = aria.countries.find(c => c.id === idA);
+    const cB = aria.countries.find(c => c.id === idB);
+    pushDiplomacy(
+      cycleNumRef.current, cA?.annee ?? 0,
+      idA, cA?.nom || idA, cA?.emoji || '🌍',
+      idB, cB?.nom || idB, cB?.emoji || '🌍',
+      type
+    );
+  }, [aria, pushDiplomacy]);
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
 
@@ -585,7 +598,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
               sourceCountry={selectedCountry}
               allCountries={aria.countries}
               alliances={aria.alliances}
-              onSetRelation={aria.setRelation}
+              onSetRelation={handleSetRelation}
               onClose={() => setModalDiplomacy(false)}
             />
           )}
