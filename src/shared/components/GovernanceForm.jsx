@@ -13,7 +13,7 @@
 
 import { useState } from 'react';
 import { useAccordion } from '../hooks/useAccordion';
-import { useLocale } from '../../ariaI18n';
+import { useLocale, t } from '../../ariaI18n';
 import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../utils/agentsOverrides';
 import { getDestin } from '../../features/council/services/agentsManager';
 import { FONT } from '../theme';
@@ -203,9 +203,7 @@ export default function GovernanceForm({ context, opts, onChange }) {
                         margin: 0, fontFamily: `'JetBrains Mono', monospace`,
                         fontSize: '0.44rem', color: 'rgba(140,160,200,0.65)', lineHeight: 1.6,
                     }}>
-                        {isEn
-                            ? 'These settings apply to countries without their own constitution. Each country can be configured individually in its panel → Governance.'
-                            : 'Ces paramètres s\'appliquent aux pays sans constitution propre. Chaque pays est configurable dans son panneau → Gouvernance.'}
+                        {t('GOV_FORM_SETTINGS_HINT', lang)}
                     </p>
                     {countryCounter && (
                         <p style={{
@@ -224,7 +222,7 @@ export default function GovernanceForm({ context, opts, onChange }) {
             <Acc
                 open={openAcc === 'pres'}
                 onToggle={() => toggle('pres')}
-                label={isEn ? 'DEFAULT PRESIDENCY' : 'PRÉSIDENCE PAR DÉFAUT'}
+                label={t('GOV_PRES_DEFAULT', lang)}
                 badge={presType}
             >
                 <PresidencyTiles presType={presType} onSelect={v => setGov('presidency', v)} isEn={isEn}
@@ -233,7 +231,7 @@ export default function GovernanceForm({ context, opts, onChange }) {
                     fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.40rem',
                     color: 'rgba(140,160,200,0.30)', marginTop: '0.2rem', letterSpacing: '0.06em',
                 }}>
-                    {isEn ? 'Applied to all new countries unless overridden' : 'Appliqué à tous les nouveaux pays sauf override'}
+                    {t('GOV_FORM_APPLIED', lang)}
                 </div>
             </Acc>
 
@@ -241,7 +239,7 @@ export default function GovernanceForm({ context, opts, onChange }) {
             <Acc
                 open={openAcc === 'mins'}
                 onToggle={() => toggle('mins')}
-                label={isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT'}
+                label={t('GOV_MINS_DEFAULT', lang)}
                 badge={`${(gov.ministries || getAllMinistryIds()).length}/${getAllMinistryIds().length}`}
             >
                 {getAllMinistryIds().map(id => {
@@ -274,7 +272,7 @@ export default function GovernanceForm({ context, opts, onChange }) {
             <Acc
                 open={openAcc === 'ministers'}
                 onToggle={() => toggle('ministers')}
-                label={isEn ? 'ACTIVE MINISTERS BY DEFAULT' : 'MINISTRES ACTIFS PAR DÉFAUT'}
+                label={t('GOV_DEF_MINISTERS', lang)}
                 badge={(() => {
                     const allIds = getAllMinisters().map(([id]) => id);
                     const active = gov.active_ministers || allIds;
@@ -308,22 +306,20 @@ export default function GovernanceForm({ context, opts, onChange }) {
             <Acc
                 open={openAcc === 'ctx'}
                 onToggle={() => toggle('ctx')}
-                label={isEn ? 'COUNTRY CONTEXT IN DELIBERATIONS' : 'CONTEXTE PAYS DANS LES DÉLIBÉRATIONS'}
+                label={t('GOV_CTX_HDR', lang)}
                 badge={ctxMode}
             >
                 <div style={{
                     fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.42rem',
                     color: 'rgba(140,160,200,0.45)', lineHeight: 1.55, marginBottom: '0.3rem',
                 }}>
-                    {isEn
-                        ? 'Controls what country info is injected into each deliberation prompt.'
-                        : 'Contrôle quelles infos sur le pays sont injectées dans chaque prompt.'}
+                    {t('GOV_FORM_CTX_HINT', lang)}
                 </div>
                 {[
-                    ['auto',       '🤖 Auto',                isEn ? 'Stats always + description if available (default)' : 'Stats toujours + description si disponible (défaut)'],
-                    ['rich',       isEn ? '📖 Enriched' : '📖 Enrichi', isEn ? 'Full context — prompts AI to invent a coherent history' : 'Contexte complet — incite l\'IA à inventer un historique cohérent'],
-                    ['stats_only', isEn ? '📊 Stats only' : '📊 Stats seules', isEn ? 'Numbers only — more neutral' : 'Uniquement les chiffres — délibération plus neutre'],
-                    ['off',        isEn ? '🚫 Disabled' : '🚫 Désactivé', isEn ? 'No context injected — blind universal deliberation' : 'Aucun contexte injecté — délibération aveugle'],
+                    ['auto',       t('CTX_AUTO_LBL', lang),  t('CTX_AUTO_DESC', lang)],
+                    ['rich',       t('CTX_RICH_LBL', lang),  t('CTX_RICH_DESC', lang)],
+                    ['stats_only', t('CTX_STATS_LBL', lang), t('CTX_STATS_DESC', lang)],
+                    ['off',        t('CTX_OFF_LBL', lang),   t('CTX_OFF_DESC', lang)],
                 ].map(([val, lbl, hint]) => (
                     <label key={val} style={{
                         display: 'flex', alignItems: 'flex-start', gap: '0.5rem',
@@ -346,21 +342,19 @@ export default function GovernanceForm({ context, opts, onChange }) {
             <Acc
                 open={openAcc === 'destin'}
                 onToggle={() => toggle('destin')}
-                label={isEn ? 'DO YOU BELIEVE IN DESTINY?' : 'CROYEZ-VOUS AU DESTIN ?'}
+                label={t('GOV_DESTIN_HDR', lang)}
             >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                     <div style={{
                         fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.42rem',
                         color: 'rgba(140,100,220,0.55)', lineHeight: 1.55,
                     }}>
-                        {isEn
-                            ? "Introduces external forces into deliberations (existential crises, civilizational ruptures…)"
-                            : "Introduit des forces extérieures dans les délibérations (crises existentielles, ruptures civilisationnelles…)"}
+                        {t('GOV_FORM_DESTIN_DESC', lang)}
                     </div>
                     <Toggle
                         value={gov.destiny_mode === true}
                         onChange={v => setGov('destiny_mode', v)}
-                        label={gov.destiny_mode === true ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')}
+                        label={gov.destiny_mode === true ? t('ENABLED', lang) : t('DISABLED', lang)}
                     />
                     {gov.destiny_mode === true && (
                         <div style={{ paddingLeft: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.3rem', borderLeft: '1px solid rgba(140,100,220,0.25)', marginTop: '0.15rem' }}>
@@ -370,8 +364,8 @@ export default function GovernanceForm({ context, opts, onChange }) {
                                 const activeList = gov.active_destin_agents || allIds;
                                 const active = activeList.includes(a.id);
                                 const tip = a.id === 'oracle'
-                                    ? (isEn ? 'Takes a position in deliberations' : 'Prend position dans les délibérations')
-                                    : (isEn ? 'Shapes the global narrative over cycles' : 'Oriente le récit global sur la durée des cycles');
+                                    ? t('RECAP_ORACLE_TIP', lang)
+                                    : t('RECAP_TRAME_TIP', lang);
                                 return (
                                     <Toggle
                                         key={a.id}
@@ -390,21 +384,19 @@ export default function GovernanceForm({ context, opts, onChange }) {
             <Acc
                 open={openAcc === 'crise'}
                 onToggle={() => toggle('crise')}
-                label={isEn ? 'CRISIS MANAGEMENT' : 'GESTION DE CRISE'}
+                label={t('GOV_CRISIS_MODE', lang)}
             >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                     <div style={{
                         fontFamily: `'JetBrains Mono', monospace`, fontSize: '0.42rem',
                         color: 'rgba(140,160,200,0.45)', lineHeight: 1.55,
                     }}>
-                        {isEn
-                            ? 'Activates automatic crisis detection and adapted deliberation.'
-                            : 'Active la détection automatique des crises et la délibération adaptée.'}
+                        {t('GOV_FORM_CRISIS_HINT', lang)}
                     </div>
                     <Toggle
                         value={gov.crisis_mode !== false}
                         onChange={v => setGov('crisis_mode', v)}
-                        label={gov.crisis_mode !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')}
+                        label={gov.crisis_mode !== false ? t('ENABLED', lang) : t('DISABLED', lang)}
                     />
                 </div>
             </Acc>

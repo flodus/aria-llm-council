@@ -5,8 +5,10 @@ import { BTN_SECONDARY } from '../../../../shared/theme';
 import { sauvegarderEmojiAgent } from '../../../../shared/utils/agentsOverrides';
 import { getDestin } from '../../services/agentsManager';
 import { MinistriesList, MinistryDetail, NewMinistryForm } from './index';
+import { t } from '../../../../ariaI18n';
 
 export default function TabMinisteres({ isEn, constitution, BASE_IDS, selectedMinistry, setSelectedMinistry, toggleMinistry, isMinistryActive, updateMinistryMission, assignMinisterToMinistry, updateMinisterPrompt, addMinistry, deleteMinistry, setAllMinistriesActive, setEmojiVersion, showNewMinistry, setShowNewMinistry, nMinistryD, setNMinistryD }) {
+    const lang = isEn ? 'en' : 'fr';
     return (
         <>
         <MinistriesList
@@ -33,7 +35,7 @@ export default function TabMinisteres({ isEn, constitution, BASE_IDS, selectedMi
             />
         ) : (
             <button style={{ ...BTN_SECONDARY, alignSelf: 'center', color: 'rgba(100,160,255,0.55)', border: '1px solid rgba(100,160,255,0.22)' }} onClick={() => setShowNewMinistry(true)}>
-                + {isEn ? 'New ministry' : 'Nouveau ministère'}
+                + {t('TAB_MINISTRY_NEW', lang)}
             </button>
         )}
 

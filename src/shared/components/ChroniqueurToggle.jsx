@@ -1,23 +1,22 @@
 // src/shared/components/ChroniqueurToggle.jsx
 // Toggle chroniqueur partagé : null = hérite global, true = actif, false = inactif
 
-import { useLocale } from '../../ariaI18n';
+import { useLocale, t } from '../../ariaI18n';
 import { FONT } from '../theme';
 
 export default function ChroniqueurToggle({ value, onChange }) {
   const { lang } = useLocale();
-  const isEn = lang === 'en';
   const options = [
-    [null,  isEn ? '⚙ Global'  : '⚙ Global' ],
-    [true,  isEn ? '● On'      : '● Actif'   ],
-    [false, isEn ? '○ Off'     : '○ Inactif' ],
+    [null,  '⚙ Global'             ],
+    [true,  t('CHRON_TOGGLE_ON', lang) ],
+    [false, t('CHRON_TOGGLE_OFF', lang)],
   ];
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem',
       padding: '0.28rem 0.45rem', borderRadius: '2px',
       background: 'rgba(90,110,160,0.04)', border: '1px solid rgba(90,110,160,0.12)' }}>
       <span style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(140,160,200,0.55)', flex: 1 }}>
-        📜 {isEn ? 'Chronicler' : 'Chroniqueur'}
+        📜 {t('CHRON_LABEL', lang)}
       </span>
       {options.map(([val, lbl]) => {
         const on = value === val;

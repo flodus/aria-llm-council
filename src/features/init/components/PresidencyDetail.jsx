@@ -8,7 +8,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from 'react';
-import { useLocale } from '../../../ariaI18n';
+import { useLocale, t } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY } from '../../../shared/theme';
 import PresidencyList from '../../../shared/components/PresidencyList';
 import EmojiPicker from '../../../shared/components/EmojiPicker';
@@ -58,7 +58,7 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
             name:     formData.name.trim(),
             symbol:   formData.emoji || '★',
             emoji:    formData.emoji || '★',
-            subtitle: formData.subtitle.trim() || (isEn ? 'Custom president' : 'Président personnalisé'),
+            subtitle: formData.subtitle.trim() || t('TAB_PRES_CUSTOM', lang),
             essence:  formData.essence.trim(),
             custom:   true,
         };
@@ -94,7 +94,7 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
         {ajoutOuvert && (
             <section style={{ ...CARD_STYLE, border: '1px solid rgba(60,200,140,0.22)', padding: '0.7rem' }}>
                 <h3 style={{ fontSize: '0.50rem', color: 'rgba(60,200,140,0.65)', marginBottom: '0.5rem' }}>
-                    + {isEn ? 'NEW PRESIDENT' : 'NOUVEAU PRÉSIDENT'}
+                    + {t('TAB_PRES_NEW', lang)}
                 </h3>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr', gap: '0.38rem', marginBottom: '0.32rem' }}>
@@ -111,7 +111,7 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
                         style={INPUT_STYLE}
                         value={formData.name}
                         onChange={e => setFormData({ ...formData, name: e.target.value })}
-                        placeholder={isEn ? 'President name' : 'Nom du président'}
+                        placeholder={t('PRES_NAME_PH', lang)}
                     />
                     <input
                         style={INPUT_STYLE}
@@ -125,24 +125,24 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
                     style={{ ...INPUT_STYLE, marginBottom: '0.28rem' }}
                     value={formData.subtitle}
                     onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                    placeholder={isEn ? 'Subtitle (optional)' : 'Sous-titre (optionnel)'}
+                    placeholder={t('TAB_PRES_SUBTITLE_PH', lang)}
                 />
                 <textarea
                     style={{ ...INPUT_STYLE, minHeight: '40px', resize: 'vertical', fontFamily: FONT.mono, lineHeight: 1.5, marginBottom: '0.38rem' }}
                     value={formData.essence}
                     onChange={e => setFormData({ ...formData, essence: e.target.value })}
-                    placeholder={isEn ? 'Essence — personality and role…' : 'Essence — personnalité et rôle…'}
+                    placeholder={t('PRES_ESSENCE_PH', lang)}
                 />
                 <div style={{ display: 'flex', gap: '0.38rem', justifyContent: 'flex-end' }}>
                     <button style={BTN_SECONDARY} onClick={() => { setAjoutOuvert(false); setFormData(FORM_VIDE); }}>
-                        {isEn ? 'Cancel' : 'Annuler'}
+                        {t('TAB_PRES_CANCEL', lang)}
                     </button>
                     <button
                         style={{ ...BTN_PRIMARY, opacity: formData.name && formData.id ? 1 : 0.35 }}
                         disabled={!formData.name || !formData.id}
                         onClick={handleAjouter}
                     >
-                        {isEn ? 'Create' : 'Créer'}
+                        {t('TAB_PRES_CREATE', lang)}
                     </button>
                 </div>
             </section>
@@ -172,13 +172,13 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
                                 onClick={() => handleSupprimer(key)}
                                 style={{ background: 'none', border: 'none', color: 'rgba(165,55,75,0.55)', cursor: 'pointer', fontFamily: FONT.mono, fontSize: '0.38rem', padding: '0.1rem 0.3rem' }}
                             >
-                                {isEn ? '✕ REMOVE' : '✕ SUPPRIMER'}
+                                {t('PRES_REMOVE', lang)}
                             </button>
                         )}
                     </div>
 
                     <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: 'rgba(90,110,150,0.42)', marginBottom: '0.15rem' }}>
-                        {isEn ? 'NAME' : 'NOM'}
+                        {t('PRES_NAME_LBL', lang)}
                     </div>
                     <input
                         style={{ ...INPUT_STYLE, fontSize: '0.46rem', marginBottom: '0.35rem' }}
@@ -199,7 +199,7 @@ export default function PresidencyDetail({ presidency, activePres, setActivePres
                     {p.role_long !== undefined && (
                         <>
                         <div style={{ fontFamily: FONT.mono, fontSize: '0.38rem', color: 'rgba(90,110,150,0.42)', margin: '0.28rem 0 0.15rem' }}>
-                            {isEn ? 'EXTENDED ROLE' : 'RÔLE ÉTENDU'}
+                            {t('PRES_EXTENDED_ROLE', lang)}
                         </div>
                         <textarea
                             style={{ ...INPUT_STYLE, width: '100%', minHeight: '48px', resize: 'vertical', fontSize: '0.41rem', fontFamily: FONT.mono, lineHeight: 1.5 }}

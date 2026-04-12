@@ -2,6 +2,7 @@
 // Onglet Destinée du monde de ConstitutionModal
 
 import { FONT, CARD_STYLE, INPUT_STYLE } from '../../../../shared/theme';
+import { t } from '../../../../ariaI18n';
 import { sauvegarderEmojiAgent } from '../../../../shared/utils/agentsOverrides';
 import { getAgentsEffectifs } from '../../../../shared/utils/agentsOverrides';
 import { getDestin } from '../../services/agentsManager';
@@ -45,7 +46,7 @@ export default function TabDestin({ isEn, constitution, selectedDestin, setSelec
             }}
             onResetAll={() => setActiveDestinAgents(destin?.agents || [])}
             onEditEmoji={(id, emoji) => { sauvegarderEmojiAgent('ministers', id, emoji); setEmojiVersion(v => v + 1); }}
-            countLabel={`${destAgents.length} ${isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}`}
+            countLabel={`${destAgents.length} ${t('CONSEIL_DESTINY_AGENTS', lang)}`}
             lang={lang}
         />
 
@@ -65,7 +66,7 @@ export default function TabDestin({ isEn, constitution, selectedDestin, setSelec
                         onChange={e => on && updateMinisterEssence && updateMinisterEssence(agent.id, e.target.value)}
                     />
                     <div style={{ fontFamily: FONT.mono, fontSize: '0.37rem', color: 'rgba(90,110,150,0.38)', marginBottom: '0.12rem' }}>
-                        {isEn ? 'COMMUNICATION STYLE' : 'STYLE DE COMMUNICATION'}
+                        {t('TAB_DESTIN_COMM', lang)}
                     </div>
                     <textarea
                         style={{ ...INPUT_STYLE, width: '100%', minHeight: '32px', resize: 'vertical', fontSize: '0.40rem', fontFamily: FONT.mono, lineHeight: 1.5 }}

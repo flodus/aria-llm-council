@@ -4,8 +4,10 @@
 import { BTN_SECONDARY } from '../../../../shared/theme';
 import { sauvegarderEmojiAgent } from '../../../../shared/utils/agentsOverrides';
 import { MinistersList, MinisterDetail, NewMinisterForm } from './index';
+import { t } from '../../../../ariaI18n';
 
 export default function TabMinistres({ isEn, constitution, selectedMinister, setSelectedMinister, toggleMinister, isMinisterActive, updateMinisterEssence, updateMinisterComm, updateMinisterAnnotation, addMinister, deleteMinister, setAllMinistersActive, setEmojiVersion, showNewMin, setShowNewMin, nMinD, setNMinD }) {
+    const lang = isEn ? 'en' : 'fr';
     return (
         <>
         <MinistersList
@@ -31,7 +33,7 @@ export default function TabMinistres({ isEn, constitution, selectedMinister, set
             />
         ) : (
             <button style={{ ...BTN_SECONDARY, alignSelf: 'center', color: 'rgba(100,200,120,0.55)', border: '1px solid rgba(100,200,120,0.22)' }} onClick={() => setShowNewMin(true)}>
-                + {isEn ? 'New minister' : 'Nouveau ministre'}
+                + {t('TAB_MINS_NEW', lang)}
             </button>
         )}
 

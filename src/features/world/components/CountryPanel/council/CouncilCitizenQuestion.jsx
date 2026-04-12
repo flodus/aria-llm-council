@@ -10,6 +10,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { FONT } from '../../../../../shared/theme';
+import { t } from '../../../../../ariaI18n';
 import { getSuggestion, getQuestionState } from '../../../../../shared/services/boardgame/questionService';
 import { useState, useEffect } from 'react';
 
@@ -106,7 +107,7 @@ export default function CitizenQuestion({
                 justifyContent: 'space-between',
                 alignItems: 'center'
             }}>
-            <span>{isEn ? 'CITIZEN QUESTION' : 'QUESTION DU PEUPLE'}</span>
+            <span>{t('Q_CITIZEN_HDR', lang)}</span>
 
             {/* Bouton Suggestion — toujours visible */}
             <button
@@ -125,9 +126,9 @@ export default function CitizenQuestion({
                              alignItems: 'center',
                              gap: '0.2rem',
                 }}
-                title={isEn ? 'Suggest a question' : 'Suggérer une question'}
+                title={t('Q_SUGGEST_TITLE', lang)}
                 >
-                💡 {isEn ? 'SUGGEST' : 'SUGGESTION'}
+                {t('Q_SUGGEST_BTN', lang)}
                 </button>
             </div>
 
@@ -136,7 +137,7 @@ export default function CitizenQuestion({
             <textarea
             value={customQ}
             onChange={e => setCustomQ(e.target.value)}
-            placeholder={`${isEn ? 'Question for' : 'Question pour'} ${'ce ministère'}…`}
+            placeholder={`${t('Q_CITIZEN_PH_PFX', lang)} ce ministère…`}
             rows={2}
             style={{
                 width: '100%',
@@ -197,7 +198,7 @@ export default function CitizenQuestion({
                     {/* Indicateur si c'est la question du cycle actuel */}
                     {isCurrentCycleQuestion && (
                         <span style={{ fontSize: '0.3rem', opacity: 0.7 }}>
-                        ({isEn ? 'current' : 'en cours'})
+                        ({t('Q_CURRENT', lang)})
                         </span>
                     )}
                     </div>
@@ -226,12 +227,12 @@ export default function CitizenQuestion({
             >
             {/* Texte du bouton selon l'état */}
             {submitting
-                ? (isEn ? '⏳ SUBMITTING…' : '⏳ ENVOI…')
+                ? t('Q_SUBMITTING', lang)
                 : isUsed
-                ? (isEn
+                ? (lang === 'en'
                 ? `✓ ASKED (C${questionState.cycle})`
                 : `✓ POSÉE (C${questionState.cycle})`)
-                : (isEn ? 'SUBMIT TO COUNCIL →' : 'SOUMETTRE AU CONSEIL →')}
+                : t('Q_SUBMIT_COUNCIL', lang)}
                 </button>
                 </div>
         );

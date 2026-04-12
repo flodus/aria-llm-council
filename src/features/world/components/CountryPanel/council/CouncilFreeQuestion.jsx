@@ -11,6 +11,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { FONT } from '../../../../../shared/theme';
+import { t } from '../../../../../ariaI18n';
 import { getRandomQuestion, getQuestionState } from '../../../../../shared/services/boardgame/questionService';
 import { useState, useEffect } from 'react';
 
@@ -105,7 +106,7 @@ cycleActuel
                 justifyContent: 'space-between',
                 alignItems: 'center'
             }}>
-            <span>{isEn ? 'FREE QUESTION' : 'QUESTION LIBRE'}</span>
+            <span>{t('Q_FREE_HDR', lang)}</span>
 
             {/* Bouton Suggestion — toujours visible */}
             <button
@@ -124,9 +125,9 @@ cycleActuel
                              alignItems: 'center',
                              gap: '0.2rem',
                 }}
-                title={isEn ? 'Suggest a question' : 'Suggérer une question'}
+                title={t('Q_SUGGEST_TITLE', lang)}
                 >
-                💡 {isEn ? 'SUGGEST' : 'SUGGESTION'}
+                {t('Q_SUGGEST_BTN', lang)}
                 </button>
             </div>
 
@@ -139,9 +140,7 @@ cycleActuel
                 marginBottom: '0.45rem',
                 fontStyle: 'italic'
             }}>
-            {isEn
-                ? 'The Council will automatically determine the competent ministry.'
-        : 'Le Conseil déterminera automatiquement le ministère compétent.'}
+            {t('Q_FREE_ROUTING_DESC', lang)}
         </div>
 
         {/* Zone de saisie avec indication visuelle si déjà posée */}
@@ -149,7 +148,7 @@ cycleActuel
         <textarea
         value={freeQ}
         onChange={e => setFreeQ(e.target.value)}
-        placeholder={isEn ? 'Ask any question…' : "Posez n'importe quelle question…"}
+        placeholder={t('Q_FREE_PH', lang)}
         rows={3}
         style={{
             width: '100%',
@@ -205,7 +204,7 @@ cycleActuel
                 {/* Indicateur si c'est la question du cycle actuel */}
                 {isCurrentCycleQuestion && (
                     <span style={{ fontSize: '0.3rem', opacity: 0.7 }}>
-                    ({isEn ? 'current' : 'en cours'})
+                    ({t('Q_CURRENT', lang)})
                     </span>
                 )}
                 </div>
@@ -234,12 +233,12 @@ cycleActuel
         >
         {/* Texte du bouton selon l'état */}
         {submitting
-            ? (isEn ? '⏳ ROUTING…' : '⏳ ROUTAGE EN COURS…')
+            ? t('Q_ROUTING', lang)
             : isUsed
-            ? (isEn
+            ? (lang === 'en'
             ? `✓ ASKED (C${questionState.cycle})`
             : `✓ POSÉE (C${questionState.cycle})`)
-            : (isEn ? 'SUBMIT TO COUNCIL →' : 'SOUMETTRE AU CONSEIL →')}
+            : t('Q_SUBMIT_COUNCIL', lang)}
             </button>
             </>
         );

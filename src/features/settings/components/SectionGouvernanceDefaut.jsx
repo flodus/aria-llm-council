@@ -2,7 +2,7 @@
 // Sous-composant : Gouvernance par défaut (ministères actifs, présidence, destinée)
 
 import { useState, useMemo } from 'react';
-import { useLocale } from '../../../ariaI18n';
+import { useLocale, t } from '../../../ariaI18n';
 import { getOptions } from '../../../shared/config/options';
 import { getAgentsEffectifs, sauvegarderEmojiAgent, getEmojiOverrides } from '../../../shared/utils/agentsOverrides';
 import { getDestin } from '../../council/services/agentsManager';
@@ -113,17 +113,17 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
 
         {/* ▸ PRÉSIDENCE */}
         <div className={`aria-accordion${openAcc==='pres' ? ' open' : ''}`}>
-        {HDR('pres', isEn ? 'DEFAULT PRESIDENCY' : 'PRÉSIDENCE PAR DÉFAUT')}
+        {HDR('pres', t('GOV_PRES_DEFAULT', lang))}
         {openAcc==='pres' && (
             <div className="aria-accordion__body">
             <div>
             <div style={{ fontSize:'0.75rem', color:'rgba(200,164,74,0.7)', letterSpacing:'0.10em', marginBottom:'0.6rem', textTransform:'uppercase' }}>
-            {isEn ? 'Presidency type' : 'Type de présidence'}
+            {t('GOV_PRES_TYPE', lang)}
             </div>
             <PresidencyTiles presType={gov.presidency || 'duale'} onSelect={v => setGov('presidency', v)} isEn={isEn}
                 presSymbols={presSymbols} onEditEmoji={handleEditEmojiPres} showTrinaire />
             <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.35)', marginTop:'0.5rem', letterSpacing:'0.06em' }}>
-            {isEn ? 'Applied to all new countries unless overridden' : 'Appliqué à tous les nouveaux pays sauf override'}
+            {t('GOV_FORM_APPLIED', lang)}
             </div>
             </div>
             </div>
@@ -132,7 +132,7 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
 
         {/* ▸ MINISTÈRES */}
         <div className={`aria-accordion${openAcc==='mins' ? ' open' : ''}`}>
-        {HDR('mins', isEn ? 'ACTIVE MINISTRIES BY DEFAULT' : 'MINISTÈRES ACTIFS PAR DÉFAUT',
+        {HDR('mins', t('GOV_MINS_DEFAULT', lang),
             `${(gov.ministries||getAllMinistryIds()).length}/${getAllMinistryIds().length}`)}
             {openAcc==='mins' && (
                 <div className="aria-accordion__body">
@@ -194,7 +194,7 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
 
             {/* ▸ MINISTRES */}
             <div className={`aria-accordion${openAcc==='ministers' ? ' open' : ''}`}>
-            {HDR('ministers', isEn ? 'ACTIVE MINISTERS BY DEFAULT' : 'MINISTRES ACTIFS PAR DÉFAUT', (() => {
+            {HDR('ministers', t('GOV_DEF_MINISTERS', lang), (() => {
                 const dIds = new Set(getDestin()?.agents || []);
                 const allIds = Object.entries(getAgentsEffectifs().ministers || {}).filter(([id]) => !dIds.has(id)).map(([id]) => id);
                 return `${(gov.active_ministers || allIds).length}/${allIds.length}`;
@@ -233,15 +233,13 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
 
             {/* ▸ CROYEZ-VOUS AU DESTIN ? */}
             <div className={`aria-accordion${openAcc==='destin' ? ' open' : ''}`}>
-            {HDR('destin', isEn ? 'DO YOU BELIEVE IN DESTINY?' : 'CROYEZ-VOUS AU DESTIN ?')}
+            {HDR('destin', t('GOV_DESTIN_HDR', lang))}
             {openAcc==='destin' && (
                 <div className="aria-accordion__body">
-                <Field label={isEn ? "Oracle & Wyrd" : "Oracle & Wyrd"}
-                hint={isEn
-                    ? "Oracle & Wyrd speak at every deliberation for countries with a religious/theocratic regime — before the presidential synthesis. Independent of crisis mode."
-                    : "Oracle & Wyrd s'expriment à chaque délibération pour les pays à régime religieux/théocratique — avant la synthèse présidentielle. Indépendant du mode crise."}>
+                <Field label="Oracle & Wyrd"
+                hint={t('GOV_DESTIN_ORACLE_HINT', lang)}>
                     <Toggle value={gov.destiny_mode === true} onChange={v => setGov('destiny_mode', v)}
-                    label={gov.destiny_mode === true ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
+                    label={gov.destiny_mode === true ? t('ENABLED', lang) : t('DISABLED', lang)} />
                     </Field>
                     </div>
             )}
@@ -249,15 +247,13 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
 
             {/* ▸ GESTION DE CRISE */}
             <div className={`aria-accordion${openAcc==='crise' ? ' open' : ''}`}>
-            {HDR('crise', isEn ? 'CRISIS MANAGEMENT' : 'GESTION DE CRISE')}
+            {HDR('crise', t('GOV_CRISIS_MODE', lang))}
             {openAcc==='crise' && (
                 <div className="aria-accordion__body">
-                <Field label={isEn ? "Crisis mode" : "Mode crise"}
-                hint={isEn
-                    ? "All ministries answer the question directly — no circle phase, no inter-ministerial annotations. Triggered manually or by automatic crisis detection."
-                    : "Tous les ministères répondent directement à la question — pas de phase cercle, pas d'annotations inter-ministérielles. Déclenché manuellement ou par détection automatique."}>
+                <Field label={t('GOV_CRISIS_FIELD_LBL', lang)}
+                hint={t('GOV_CRISIS_FIELD_HINT', lang)}>
                 <Toggle value={gov.crisis_mode !== false} onChange={v => setGov('crisis_mode', v)}
-                label={gov.crisis_mode !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
+                label={gov.crisis_mode !== false ? t('ENABLED', lang) : t('DISABLED', lang)} />
                 </Field>
                 </div>
             )}
@@ -265,12 +261,11 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
 
             {/* ▸ CONTEXTE PAYS */}
             <div className={`aria-accordion${openAcc==='ctx' ? ' open' : ''}`}>
-            {HDR('ctx', isEn ? 'COUNTRY CONTEXT IN DELIBERATIONS' : 'CONTEXTE PAYS DANS LES DÉLIBÉRATIONS')}
+            {HDR('ctx', t('GOV_CTX_HDR', lang))}
             {openAcc==='ctx' && (
                 <div className="aria-accordion__body">
                 <div style={{ fontSize:'0.44rem', color:'rgba(140,160,200,0.45)', lineHeight:1.5 }}>
-                {isEn ? "Controls what country info is injected into each deliberation prompt. Overridable per country in the Constitution."
-                    : "Contrôle quelles infos sur le pays sont injectées dans chaque prompt. Surchargeable par pays dans la Constitution."}
+                {t('GOV_CTX_DELIB_HINT', lang)}
                     </div>
                     <ContextModeSelector
                         value={opts.gameplay?.context_mode || 'auto'}

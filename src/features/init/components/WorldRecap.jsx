@@ -14,6 +14,7 @@
 import { getAgents } from '../../../shared/data/gameData';
 import { getDestin } from '../../council/services/agentsManager';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY } from '../../../shared/theme';
+import { t } from '../../../ariaI18n';
 
 const PROV_LABEL = { claude: 'Claude', gemini: 'Gemini', openai: 'GPT', grok: 'Grok', openrouter: 'OpenRouter' };
 
@@ -25,10 +26,10 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
     // Présidence
     const presType = gov.presidency || 'duale';
     const presInfo = {
-        solaire:    { icon: '☉',  label: isEn ? 'Phare — The Will'        : 'Phare — La Volonté' },
-        lunaire:    { icon: '☽',  label: isEn ? 'Boussole — The Soul'      : 'Boussole — L\'Âme' },
-        duale:      { icon: '☉☽', label: isEn ? 'Dual — ARIA mode'         : 'Duale — Mode ARIA' },
-        collegiale: { icon: '✡',  label: isEn ? 'Collegial — 12 ministers' : 'Collégiale — 12 ministres' },
+        solaire:    { icon: '☉',  label: t('RECAP_PRES_SOLAIRE', lang) },
+        lunaire:    { icon: '☽',  label: t('RECAP_PRES_LUNAIRE', lang) },
+        duale:      { icon: '☉☽', label: t('RECAP_PRES_DUALE', lang) },
+        collegiale: { icon: '✡',  label: t('RECAP_PRES_COLLEGIALE', lang) },
     }[presType] || { icon: '☉☽', label: 'Duale' };
 
     // Ministères
@@ -45,17 +46,17 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
 
     // Délibération
     const ctxLabel = {
-        auto:       isEn ? '🤖 Auto'          : '🤖 Auto',
-        rich:       isEn ? '📖 Enriched'      : '📖 Enrichi',
-        stats_only: isEn ? '📊 Stats only'    : '📊 Stats seules',
-        off:        isEn ? '🚫 Disabled'      : '🚫 Désactivé',
-    }[govOpts?.gameplay?.context_mode || 'auto'] || '🤖 Auto';
+        auto:       t('CTX_AUTO_LBL', lang),
+        rich:       t('CTX_RICH_LBL', lang),
+        stats_only: t('CTX_STATS_LBL', lang),
+        off:        t('CTX_OFF_LBL', lang),
+    }[govOpts?.gameplay?.context_mode || 'auto'] || t('CTX_AUTO_LBL', lang);
 
     // Mode IA
     const iaMode = iaConfig?.ariaMode || 'none';
     const iaOnline = iaMode !== 'none';
     let iaLabel = 'Board Game';
-    let iaTooltip = isEn ? 'No AI — hardcoded responses' : 'Sans IA — réponses prédéfinies';
+    let iaTooltip = t('RECAP_NO_AI', lang);
     if (iaMode === 'solo') {
         const prov = iaConfig.roles?.ministre_provider || iaConfig.availProviders?.[0] || '';
         iaLabel = `Solo — ${PROV_LABEL[prov] || prov}`;
@@ -65,7 +66,7 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
         const provs = [...new Set([r.ministre_provider, r.phare_provider, r.boussole_provider, r.synthese_pres_prov].filter(Boolean))];
         iaLabel = provs.map(p => PROV_LABEL[p] || p).join(' · ') || 'ARIA';
         iaTooltip = [
-            r.ministre_provider && `${isEn ? 'Ministers' : 'Ministres'}: ${PROV_LABEL[r.ministre_provider] || r.ministre_provider}`,
+            r.ministre_provider && `${t('RECAP_MINISTERS', lang)}: ${PROV_LABEL[r.ministre_provider] || r.ministre_provider}`,
             r.phare_provider    && `☉ Phare: ${PROV_LABEL[r.phare_provider] || r.phare_provider}`,
             r.boussole_provider && `☽ Boussole: ${PROV_LABEL[r.boussole_provider] || r.boussole_provider}`,
         ].filter(Boolean).join(' · ');
@@ -88,14 +89,14 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
             borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '0.75rem',
         }}>
             <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', letterSpacing: '0.18em', color: 'rgba(200,164,74,0.55)', textTransform: 'uppercase' }}>
-                {isEn ? 'Default world — ARIA' : 'Monde par défaut — ARIA'}
+                {t('RECAP_TITLE', lang)}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
 
                 {/* Présidence */}
                 <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-                    <span style={labelCol}>{isEn ? 'Presidency' : 'Présidence'}</span>
+                    <span style={labelCol}>{t('RECAP_PRESIDENCY', lang)}</span>
                     <span style={{
                         fontFamily: FONT.mono, fontSize: '0.50rem', letterSpacing: '0.06em',
                         color: 'rgba(200,164,74,0.90)',
@@ -109,7 +110,7 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
 
                 {/* Ministères */}
                 <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-                    <span style={labelCol}>{isEn ? 'Ministries' : 'Ministères'}</span>
+                    <span style={labelCol}>{t('GOV_MINISTRIES', lang)}</span>
                     <div style={emojiRow}>
                         {activeMins.map(m => <span key={m.id} title={m.name}>{m.emoji}</span>)}
                     </div>
@@ -117,7 +118,7 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
 
                 {/* Ministres */}
                 <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-                    <span style={labelCol}>{isEn ? 'Ministers' : 'Ministres'}</span>
+                    <span style={labelCol}>{t('GOV_MINISTERS', lang)}</span>
                     <div style={emojiRow}>
                         {allMinisters.map(([id, m]) => <span key={id} title={m.name}>{m.emoji}</span>)}
                     </div>
@@ -125,11 +126,11 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
 
                 {/* Destin — parent + enfants */}
                 <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                    <span style={labelCol}>{isEn ? 'Destiny' : 'Destin'}</span>
+                    <span style={labelCol}>{t('RECAP_DESTINY', lang)}</span>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                         <span
                             style={{ fontFamily: FONT.mono, fontSize: '0.60rem', lineHeight: 1 }}
-                            title={isEn ? 'Introduces external forces into deliberations' : 'Introduit des forces extérieures dans les délibérations'}
+                            title={t('RECAP_DESTINY_TIP', lang)}
                         >
                             🎲 {destinOn ? '✓' : '✗'}
                         </span>
@@ -138,8 +139,8 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
                             {destinAgents.map(([id, m]) => {
                                 const icon = id === 'oracle' ? '☯' : '📜';
                                 const tip = id === 'oracle'
-                                    ? (isEn ? 'Oracle: takes a position in deliberations' : 'Oracle : prend position dans les délibérations')
-                                    : (isEn ? 'Trame: shapes the global narrative over cycles' : 'Trame : oriente le récit global sur la durée des cycles');
+                                    ? t('RECAP_ORACLE_TIP', lang)
+                                    : t('RECAP_TRAME_TIP', lang);
                                 return (
                                     <span key={id} title={tip} style={{ opacity: destinOn ? 1 : 0.35 }}>
                                         {icon} {m.name} {destinOn ? '✓' : '✗'}
@@ -152,7 +153,7 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
 
                 {/* Délibération */}
                 <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-                    <span style={labelCol}>{isEn ? 'Deliberation' : 'Délibération'}</span>
+                    <span style={labelCol}>{t('RECAP_DELIBERATION', lang)}</span>
                     <span style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: 'rgba(180,200,230,0.60)' }}>
                         {ctxLabel}
                     </span>
@@ -160,7 +161,7 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
 
                 {/* Mode IA */}
                 <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-                    <span style={labelCol}>{isEn ? 'AI mode' : 'Mode IA'}</span>
+                    <span style={labelCol}>{t('RECAP_AI_MODE', lang)}</span>
                     <span
                         title={iaTooltip}
                         style={{ fontFamily: FONT.mono, fontSize: '0.43rem', color: iaOnline ? 'rgba(180,200,230,0.75)' : 'rgba(140,160,180,0.45)' }}
@@ -173,10 +174,10 @@ export default function WorldRecap({ govOpts, iaConfig, lang, onAccept, onModify
 
             <div style={{ display: 'flex', gap: '0.6rem' }}>
                 <button onClick={onAccept} style={{ ...BTN_PRIMARY, fontSize: '0.46rem', flex: 1 }}>
-                    {isEn ? 'This world suits me →' : 'Ce monde me convient →'}
+                    {t('RECAP_ACCEPT', lang)}
                 </button>
                 <button onClick={onModify} style={{ ...BTN_SECONDARY, fontSize: '0.46rem', flex: 1 }}>
-                    {isEn ? 'I want to modify it →' : 'Je veux le modifier →'}
+                    {t('RECAP_MODIFY', lang)}
                 </button>
             </div>
         </div>

@@ -2,6 +2,7 @@
 // Onglet Régime de ConstitutionModal — emoji, régime politique, chef d'état, destinée, contexte
 
 import { FONT, BTN_SECONDARY, INPUT_STYLE, SELECT_STYLE } from '../../../../shared/theme';
+import { t } from '../../../../ariaI18n';
 import { getStats } from '../../../../shared/data/gameData';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../../shared/data/ariaData';
 import EmojiPicker from '../../../../shared/components/EmojiPicker';
@@ -18,6 +19,7 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
         setCtxAccOpen, setCtxOverrideOpen, setDestinyMode, setChroniqueurEnabled,
     } = handlers;
 
+    const lang = isEn ? 'en' : 'fr';
     const rawReal = (isEn ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === country?.id);
     const ctxGeo  = rawReal?.triple_combo        || country?.geoContext  || '';
     const ctxSoc  = rawReal?.aria_sociology_logic || country?.description || '';
@@ -27,7 +29,7 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
         {/* Emoji pays */}
         <section style={{ display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
         <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: 0, textTransform: 'uppercase' }}>
-            {isEn ? 'COUNTRY EMOJI' : 'EMOJI DU PAYS'}
+            {t('TAB_REGIME_EMOJI', lang)}
         </h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.3rem' }}>
             <span style={{ fontSize: '2rem', lineHeight: 1 }}>{emoji}</span>
@@ -59,7 +61,7 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(200,164,74,0.18)', borderRadius: '2px', padding: '0.38rem 0.55rem', color: 'rgba(220,228,240,0.85)', fontFamily: FONT, fontSize: '0.50rem', outline: 'none' }}
             value={leader}
             onChange={e => setLeader(e.target.value)}
-            placeholder={isEn ? 'Head of state name…' : 'Nom du dirigeant…'}
+            placeholder={t('TAB_REGIME_LEADER_PH', lang)}
         />
         </section>
 
@@ -103,7 +105,7 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
             />
 
             <h3 style={{ fontSize: '0.50rem', letterSpacing: '0.20em', color: 'rgba(200,164,74,0.55)', margin: '0.35rem 0 0.20rem', textTransform: 'uppercase' }}>
-                {isEn ? 'CURRENT CONTEXT' : 'CONTEXTE ACTUEL'}
+                {t('TAB_REGIME_CTX_HDR', lang)}
             </h3>
             {(ctxGeo || ctxSoc)
                 ? <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
@@ -115,12 +117,12 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
             <ChroniqueurToggle value={chroniqueurEnabled} onChange={setChroniqueurEnabled} />
 
             <button style={{ ...BTN_SECONDARY, alignSelf: 'flex-start', fontSize: '0.42rem', padding: '0.22rem 0.55rem' }} onClick={() => setCtxOverrideOpen(v => !v)}>
-                {ctxOverrideOpen ? '▾' : '▸'} {isEn ? 'Custom context' : 'Contexte personnalisé'}{contextOverride ? ' ●' : ''}
+                {ctxOverrideOpen ? '▾' : '▸'} {t('TAB_REGIME_CUSTOM_CTX', lang)}{contextOverride ? ' ●' : ''}
             </button>
             {ctxOverrideOpen && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.32rem' }}>
                     <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: 0, lineHeight: 1.5 }}>
-                        {isEn ? 'Replaces the context above in all AI deliberations for this country.' : 'Remplace le contexte ci-dessus dans toutes les délibérations IA pour ce pays.'}
+                        {t('TAB_REGIME_CTX_HINT', lang)}
                     </p>
                     <textarea
                         style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${contextOverride ? 'rgba(200,164,74,0.30)' : 'rgba(200,164,74,0.18)'}`, borderRadius: '2px', padding: '0.38rem 0.55rem', color: 'rgba(220,228,240,0.85)', fontFamily: FONT, fontSize: '0.50rem', outline: 'none', minHeight: '80px', resize: 'vertical', lineHeight: 1.55 }}
@@ -130,7 +132,7 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
                     />
                     {contextOverride && (
                         <button style={{ ...BTN_SECONDARY, alignSelf: 'flex-end', fontSize: '0.42rem', color: 'rgba(200,80,80,0.50)', border: '1px solid rgba(200,80,80,0.20)' }} onClick={() => setContextOverride('')}>
-                            {isEn ? '✕ Clear' : '✕ Effacer'}
+                            {t('TAB_REGIME_CLEAR', lang)}
                         </button>
                     )}
                 </div>

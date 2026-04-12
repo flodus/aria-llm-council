@@ -13,6 +13,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { FONT, COLORS } from '../../../../../shared/theme';
+import { t } from '../../../../../ariaI18n';
 import { getQuestionState } from '../../../../../shared/services/boardgame/questionService';
 import QUESTIONS_FR from '../../../../../../templates/languages/fr/aria_questions.json';
 import QUESTIONS_EN from '../../../../../../templates/languages/en/aria_questions.json';
@@ -162,7 +163,7 @@ export default function MinistryQuestions({
                 display: 'flex',
                 alignItems: 'center',
             }}
-            title={isEn ? 'Refresh questions' : 'Actualiser les questions'}
+            title={t('Q_REFRESH_TIP', lang)}
         >
             <span className="mdi mdi-refresh" />
         </button>
@@ -247,7 +248,7 @@ export default function MinistryQuestions({
                         borderRadius: '2px',
                         whiteSpace: 'nowrap',
                     }}>
-                    {isEn ? 'this cycle' : 'ce cycle'}
+                    {t('Q_THIS_CYCLE', lang)}
                     </span>
                 )}
                 </button>

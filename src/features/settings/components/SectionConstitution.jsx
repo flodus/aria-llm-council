@@ -74,21 +74,18 @@ export default function SectionConstitution() {
     };
 
     const SYNTH_ENTRIES = [
-        { key: 'synthese_ministere',  label: t('SETTINGS_SYNTH_MIN_LABEL', lang),
-            hint: isEn?'Receives the 2 ministers of a ministry → produces the official ministry position':'Reçoit les 2 ministres d\'un ministère → produit la position officielle du ministère' },
-            { key: 'synthese_presidence', label: isEn?'Presidential synthesis':'Synthèse présidentielle',
-                hint: isEn?'Receives Lighthouse + Compass → detects convergence/divergence + formats citizen referendum':'Reçoit Phare + Boussole → détecte convergence/divergence + formate référendum citoyen' },
-                { key: 'factcheck_evenement', label: isEn?'Event fact-check':'Fact-check événements',
-                    hint: isEn?'Verifies narrative event consistency with real country statistics':'Vérifie la cohérence des événements narratifs avec les statistiques réelles du pays' },
+        { key: 'synthese_ministere',  label: t('SETTINGS_SYNTH_MIN_LABEL', lang),  hint: t('SECT_CONST_SYNTH_MIN_HINT', lang) },
+        { key: 'synthese_presidence', label: t('SECT_CONST_PRES_SYNTH', lang),      hint: t('SECT_CONST_PRES_SYNTH_HINT', lang) },
+        { key: 'factcheck_evenement', label: t('SECT_CONST_FACTCHECK_LBL', lang),   hint: t('SECT_CONST_FACTCHECK_HINT', lang) },
     ];
 
     return (
         <div className="settings-section-body">
-        <SectionTitle icon="📜" label={isEn?"CONSTITUTION":"CONSTITUTION"} sub={isEn?"Deliberation architecture · DNA · Synthesis prompts":"Architecture de délibération · ADN · Prompts de synthèse"} />
+        <SectionTitle icon="📜" label="CONSTITUTION" sub={t('SECT_CONST_SECTION_SUB', lang)} />
 
         {/* ▸ ARCHITECTURE DE DÉLIBÉRATION */}
         <div className={`aria-accordion${openAcc==='arch' ? ' open' : ''}`}>
-        {HDR('arch', isEn?'DELIBERATION ARCHITECTURE':'ARCHITECTURE DE DÉLIBÉRATION')}
+        {HDR('arch', t('SECT_CONST_ARCH_HDR', lang))}
         {openAcc==='arch' && (
             <div className="aria-accordion__body">
             <Field label="Mode IA">
@@ -97,17 +94,17 @@ export default function SectionConstitution() {
                     border:'1px solid rgba(200,164,74,0.12)', borderRadius:'2px',
                         fontFamily:"'JetBrains Mono',monospace", fontSize:'0.47rem',
                         color:'rgba(200,164,74,0.60)', lineHeight:1.7 }}>
-                        <div style={{ fontWeight:700, marginBottom:'0.3rem', letterSpacing:'0.12em' }}>{isEn?'ARIA MODE — OFFLINE':'MODE ARIA — HORS LIGNE'}</div>
-                        {isEn?"No API key configured. Add at least one key in System settings.":"Aucune clé API configurée. Ajoutez au moins une clé dans Système."}
+                        <div style={{ fontWeight:700, marginBottom:'0.3rem', letterSpacing:'0.12em' }}>{t('SECT_CONST_OFFLINE_TITLE', lang)}</div>
+                        {t('SECT_CONST_OFFLINE_DESC', lang)}
                         </div>
             ) : (
                 <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
                 <div className="settings-radio-group">
                 {[
-                    { value:'aria',   label:'ARIA',               desc:isEn?'Multi-LLM architecture (default)':'Architecture multi-LLM (défaut)' },
-                 { value:'solo',   label:'Solo',                desc:isEn?'All roles on a single LLM':'Tous les rôles sur un seul LLM' },
-                 { value:'custom', label:isEn?'Custom':'Personnalisé', desc:isEn?'Role-by-role assignment':'Assignation rôle par rôle' },
-                 { value:'none',   label:'🎲 Board Game',       desc:isEn?'Force local pre-written responses':'Force les réponses pré-écrites locales' },
+                    { value:'aria',   label:'ARIA',                              desc:t('SECT_CONST_MODE_ARIA_DESC', lang)   },
+                 { value:'solo',   label:'Solo',                              desc:t('SECT_CONST_MODE_SOLO_DESC', lang)   },
+                 { value:'custom', label:t('SECT_CONST_MODE_CUSTOM', lang),   desc:t('SECT_CONST_MODE_CUSTOM_DESC', lang) },
+                 { value:'none',   label:'🎲 Board Game',                     desc:t('SECT_CONST_MODE_BOARD_DESC', lang)  },
                 ].filter(m => {
                     if (availableProviders.length === 0) return m.value === 'none';
                     if (iaMode === 'none') return m.value === 'none';
@@ -126,12 +123,12 @@ export default function SectionConstitution() {
                     style={{ background:'none', border:'none', cursor:'pointer', padding:0,
                         fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
                         color:'rgba(140,160,200,0.45)', textDecoration:'underline', textAlign:'left' }}>
-                        {isEn ? '↺ Enable AI mode' : '↺ Activer le mode IA'}
+                        {t('SECT_CONST_ENABLE_AI', lang)}
                         </button>
                 )}
                 {iaMode === 'solo' && (
                     <div style={{ paddingLeft:'0.8rem' }}>
-                    <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"SOLO LLM":"LLM SOLO"}</div>
+                    <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{t('SECT_CONST_SOLO_HDR', lang)}</div>
                     {availableProviders.length === 1 ? (
                         <div style={{ display:'flex', flexDirection:'column', gap:'0.35rem' }}>
                         <span style={{ fontFamily:"'JetBrains Mono',monospace",
@@ -205,11 +202,11 @@ export default function SectionConstitution() {
                 )}
                 {iaMode === 'aria' && (
                     <div style={{ paddingLeft:'0.8rem' }}>
-                    <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"DELIBERATION":"DÉLIBÉRATION"}</div>
+                    <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{t('SECT_CONST_DELIB_HDR', lang)}</div>
                     {[
-                        { key:'ministre_model',    label:isEn?'Ministers think':'Ministres pensent' },
+                        { key:'ministre_model',    label:t('SECT_CONST_MINISTERS_THINK', lang) },
                         { key:'synthese_min',      label:t('SETTINGS_SYNTH_MIN_LABEL', lang) },
-                        { key:'chroniqueur_model', label:isEn?'Chronicler (memory)':'Chroniqueur (mémoire)' },
+                        { key:'chroniqueur_model', label:t('SECT_CONST_CHRONICLER', lang) },
                     ].map(r => (
                         <div key={r.key} className="settings-role-row">
                         <span className="settings-role-label">{r.label}</span>
@@ -221,16 +218,16 @@ export default function SectionConstitution() {
                 )}
                 {iaMode === 'custom' && (
                     <div style={{ paddingLeft:'0.8rem' }}>
-                    <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"ROLE ASSIGNMENT":"ASSIGNATION DES RÔLES"}</div>
+                    <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{t('SECT_CONST_ROLE_ASSIGN_HDR', lang)}</div>
                     {[
-                        { key:'ministre_model',  label:isEn?'Minister incarnation':'Incarnation des ministres' },
-                        { key:'synthese_min',    label:t('SETTINGS_SYNTH_MIN_LABEL', lang) },
-                                         { key:'phare_model',     label:isEn?'The Lighthouse (President)':'Le Phare (Président)' },
-                                         { key:'boussole_model',  label:isEn?'The Compass (Vice-President)':'La Boussole (Présidente)' },
-                                         { key:'synthese_pres',   label:isEn?'Presidential synthesis':'Synthèse présidentielle' },
-                                         { key:'evenement_model',    label:isEn?'Narrative events':'Événements narratifs' },
-                        { key:'factcheck_model',    label:isEn?'Fact-check':'Fact-check' },
-                        { key:'chroniqueur_model',  label:isEn?'Chronicler (memory)':'Chroniqueur (mémoire)' },
+                        { key:'ministre_model',     label:t('SECT_CONST_MINISTER_INCARN', lang) },
+                        { key:'synthese_min',        label:t('SETTINGS_SYNTH_MIN_LABEL', lang) },
+                        { key:'phare_model',         label:t('SECT_CONST_LIGHTHOUSE', lang) },
+                        { key:'boussole_model',      label:t('SECT_CONST_COMPASS', lang) },
+                        { key:'synthese_pres',       label:t('SECT_CONST_PRES_SYNTH', lang) },
+                        { key:'evenement_model',     label:t('SECT_CONST_NARRATIVE_EVT', lang) },
+                        { key:'factcheck_model',     label:'Fact-check' },
+                        { key:'chroniqueur_model',   label:t('SECT_CONST_CHRONICLER', lang) },
                     ].map(r => (
                         <div key={r.key} className="settings-role-row">
                         <span className="settings-role-label">{r.label}</span>
@@ -249,20 +246,20 @@ export default function SectionConstitution() {
 
         {/* ▸ ADN GLOBAL */}
         <div className={`aria-accordion${openAcc==='adn' ? ' open' : ''}`}>
-        {HDR('adn', isEn?'GLOBAL DNA':'ADN GLOBAL')}
+        {HDR('adn', t('SECT_CONST_ADN_HDR', lang))}
         {openAcc==='adn' && (
             <div className="aria-accordion__body">
-            <Field label={isEn?"Global system prompt":"Prompt système global"} hint={isEn?"Injected as preamble to every AI call — defines ARIA's mission":"Injecté en préambule de chaque appel IA — définit la mission d'ARIA"}>
+            <Field label={t('SECT_CONST_SYS_PROMPT_LBL', lang)} hint={t('SECT_CONST_SYS_PROMPT_HINT', lang)}>
             <TextArea value={prompts.global_system} onChange={v => update('global_system', v)} />
-            <button className="settings-btn-reset" onClick={() => reset('global_system')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
+            <button className="settings-btn-reset" onClick={() => reset('global_system')}>{t('SETTINGS_RESET', lang)}</button>
             </Field>
-            <Field label={isEn?"Synthesis tone":"Ton de synthèse"} hint={isEn?"Voice style for ministry and presidential syntheses":"Style de voix pour les synthèses ministérielles et présidentielles"}>
+            <Field label={t('SECT_CONST_SYNTH_TONE_LBL', lang)} hint={t('SECT_CONST_SYNTH_TONE_HINT', lang)}>
             <TextArea value={prompts.ton_synthese} onChange={v => update('ton_synthese', v)} />
-            <button className="settings-btn-reset" onClick={() => reset('ton_synthese')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
+            <button className="settings-btn-reset" onClick={() => reset('ton_synthese')}>{t('SETTINGS_RESET', lang)}</button>
             </Field>
-            <Field label={isEn?"Global geopolitical context":"Contexte géopolitique mondial"} hint={isEn?"World state description injected into each deliberation":"Description de l'état du monde injectée dans chaque délibération"}>
+            <Field label={t('SECT_CONST_GEOP_CTX_LBL', lang)} hint={t('SECT_CONST_GEOP_CTX_HINT', lang)}>
             <TextArea value={prompts.contexte_mondial} onChange={v => update('contexte_mondial', v)} />
-            <button className="settings-btn-reset" onClick={() => reset('contexte_mondial')}>{isEn?"↺ Reset":"↺ Réinitialiser"}</button>
+            <button className="settings-btn-reset" onClick={() => reset('contexte_mondial')}>{t('SETTINGS_RESET', lang)}</button>
             </Field>
             </div>
         )}
@@ -270,7 +267,7 @@ export default function SectionConstitution() {
 
         {/* ▸ PROMPTS ARIA — SYNTHÈSE */}
         <div className={`aria-accordion${openAcc==='prompts' ? ' open' : ''}`}>
-        {HDR('prompts', isEn?'ARIA PROMPTS — SYNTHESIS':'PROMPTS ARIA — SYNTHÈSE', isEn?'READ ONLY':'LECTURE SEULE')}
+        {HDR('prompts', t('SECT_CONST_PROMPTS_HDR', lang), t('SECT_CONST_READONLY_BADGE', lang))}
         {openAcc==='prompts' && (
             <div className="aria-accordion__body">
             {isEn && (
@@ -283,8 +280,8 @@ export default function SectionConstitution() {
             )}
             <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.43rem',
                 color:'rgba(140,160,200,0.45)', lineHeight:1.6 }}>
-                {isEn?"These prompts define the expected JSON response format for the ARIA engine.":"Ces prompts définissent le format de réponse JSON attendu par le moteur ARIA."}
-                {isEn?' Their structure is critical — displayed for reference only.':' Leur structure est critique — affichés ici à titre de référence.'}
+                {t('SECT_CONST_PROMPTS_DESC1', lang)}
+                {t('SECT_CONST_PROMPTS_DESC2', lang)}
                 </div>
                 {SYNTH_ENTRIES.map(({ key, label, hint }) => {
                     const { body, json } = parsePromptParts(DEFAULT_PROMPTS[key]);
@@ -307,7 +304,7 @@ export default function SectionConstitution() {
                                         padding:'0.1rem 0.4rem', borderRadius:'2px',
                                         background:'rgba(90,110,160,0.08)', border:'1px solid rgba(90,110,160,0.15)',
                             color:'rgba(90,110,160,0.50)', letterSpacing:'0.08em',
-                                    }}>{isEn?"🔒 read-only":"🔒 non-modifiable"}</span>
+                                    }}>{t('SECT_CONST_READONLY_LOCK', lang)}</span>
                                     </div>
 
                                     {/* Corps du prompt */}
@@ -327,7 +324,7 @@ export default function SectionConstitution() {
                                         }}>
                                         <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.38rem',
                                             letterSpacing:'0.12em', color:'rgba(200,164,74,0.40)', marginBottom:'0.3rem' }}>
-                                            {isEn?'◈ EXPECTED RESPONSE FORMAT':'◈ FORMAT DE RÉPONSE ATTENDU'}
+                                            {t('SECT_CONST_FORMAT_LBL', lang)}
                                             </div>
                                             <pre style={{
                                                 fontFamily:"'JetBrains Mono',monospace", fontSize:'0.42rem',
@@ -349,7 +346,7 @@ export default function SectionConstitution() {
         </div>
 
         <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
+        <button className="settings-save-btn" onClick={save}>{t('SETTINGS_SAVE', lang)}</button>
         <SaveBadge saved={saved} />
         </div>
         </div>

@@ -13,6 +13,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import EmojiPicker from './EmojiPicker';
+import { t } from '../../ariaI18n';
 
 // Helpers de traduction activePres (string[]) ↔ presType (string)
 export function activePresToType(activePres = []) {
@@ -48,6 +49,7 @@ function SymLunaire({ sym }) {
 }
 
 export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols, onEditEmoji, showTrinaire = false }) {
+  const lang = isEn ? 'en' : 'fr';
   const sel = presType || 'duale';
 
   const symPhare    = presSymbols?.phare    || '☉';
@@ -63,8 +65,8 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
             emojiStyle={{ color: 'rgba(200,164,74,0.90)', fontSize: '1.6rem' }} />
         </span>
       ) : <SymSolaire sym={symPhare} />,
-      label: isEn ? 'Phare' : 'Phare',
-      tooltip: isEn ? 'The Phare — The Will' : 'Le Phare — La Volonté',
+      label: 'Phare',
+      tooltip: t('PRES_TOOLTIP_PHARE', lang),
     },
     {
       value: 'lunaire',
@@ -74,8 +76,8 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
             emojiStyle={{ color: 'rgba(150,100,220,0.90)', fontSize: '1.6rem' }} />
         </span>
       ) : <SymLunaire sym={symBoussole} />,
-      label: isEn ? 'Boussole' : 'Boussole',
-      tooltip: isEn ? 'The Boussole — The Soul' : "La Boussole — L'Âme",
+      label: 'Boussole',
+      tooltip: t('PRES_TOOLTIP_BOUSSOLE', lang),
     },
     {
       value: 'duale',
@@ -85,8 +87,8 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
           <span style={{ color: 'rgba(150,100,220,0.90)' }}>{symBoussole}</span>
         </span>
       ),
-      label: isEn ? 'Dual' : 'Duale',
-      tooltip: isEn ? 'Phare + Boussole — ARIA mode' : 'Phare + Boussole — Mode ARIA',
+      label: t('PRES_TILES_DUALE', lang),
+      tooltip: t('PRES_TOOLTIP_DUALE', lang),
     },
     {
       value: 'trinaire',
@@ -103,8 +105,8 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
           <span style={{ color: 'rgba(60,200,140,0.90)' }}>{symTrinaire}</span>
         </span>
       ),
-      label: isEn ? 'Trinaire' : 'Trinaire',
-      tooltip: isEn ? '3 presidents — equal power' : '3 présidents — pouvoir égal',
+      label: 'Trinaire',
+      tooltip: t('PRES_TOOLTIP_TRINAIRE', lang),
     },
     {
       value: 'collegiale',
@@ -112,8 +114,8 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
         <span className="mdi mdi-hexagram-outline"
           style={{ fontSize: '1.6rem', lineHeight: 1, color: 'rgba(165,55,75,0.88)' }} />
       ),
-      label: isEn ? 'Collegial' : 'Collégiale',
-      tooltip: isEn ? 'Constitutional Synthesis' : 'Synthèse Constitutionnelle',
+      label: t('PRES_TILES_COLLEGIALE', lang),
+      tooltip: t('PRES_TOOLTIP_COLLEGIALE', lang),
     },
   ];
 
@@ -122,7 +124,7 @@ export default function PresidencyTiles({ presType, onSelect, isEn, presSymbols,
     lunaire:    isEn ? `${symBoussole} The Boussole\npresides alone\nThe Soul`                        : `${symBoussole} La Boussole\npréside seule\nL'Âme`,
     duale:      isEn ? `${symPhare}${symBoussole} Phare and Boussole\ndeliberate equally\nARIA mode`  : `${symPhare}${symBoussole} Le Phare et La Boussole\ndélibèrent à égalité\nMode ARIA`,
     trinaire:   isEn ? `${symPhare}${symBoussole}${symTrinaire} Three presidents\nequal authority`   : `${symPhare}${symBoussole}${symTrinaire} Trois présidents\nautorite égale`,
-    collegiale: isEn ? '✡ Vote of 12 ministers\nConstitutional Synthesis'                            : '✡ Vote des 12 ministres\nSynthèse Constitutionnelle',
+    collegiale: t('PRES_DESC_COLLEGIALE', lang),
   }[sel] || '';
 
   return (

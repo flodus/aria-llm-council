@@ -1,6 +1,6 @@
 // src/features/council/components/constitution/NewMinistryForm.jsx
 
-import { useLocale } from '../../../../ariaI18n';
+import { useLocale, t } from '../../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_PRIMARY, BTN_SECONDARY } from '../../../../shared/theme';
 import EmojiPicker from '../../../../shared/components/EmojiPicker';
 
@@ -11,7 +11,7 @@ export default function NewMinistryForm({ formData, setFormData, onCancel, onSub
     return (
         <section style={{ ...CARD_STYLE, border: '1px solid rgba(100,160,255,0.22)', padding: '0.7rem' }}>
         <h3 style={{ fontSize: '0.50rem', color: 'rgba(100,160,255,0.65)' }}>
-        + {isEn ? 'NEW MINISTRY' : 'NOUVEAU MINISTÈRE'}
+        + {t('FORM_NEW_MINISTRY', lang)}
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr', gap: '0.38rem', marginBottom: '0.32rem' }}>
         <details style={{ position: 'relative' }}>
@@ -26,7 +26,7 @@ export default function NewMinistryForm({ formData, setFormData, onCancel, onSub
         style={INPUT_STYLE}
         value={formData.name}
         onChange={e => setFormData({ ...formData, name: e.target.value })}
-        placeholder={isEn ? 'Ministry name' : 'Nom du ministère'}
+        placeholder={t('FORM_MINISTRY_NAME_PH', lang)}
         />
         <input
         style={INPUT_STYLE}
@@ -37,7 +37,7 @@ export default function NewMinistryForm({ formData, setFormData, onCancel, onSub
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.32rem' }}>
         <span style={{ fontFamily: FONT, fontSize: '0.43rem', color: 'rgba(140,160,200,0.48)' }}>
-        {isEn ? 'Color' : 'Couleur'}
+        {t('FORM_MINISTRY_COLOR', lang)}
         </span>
         <input
         type="color"
@@ -50,16 +50,16 @@ export default function NewMinistryForm({ formData, setFormData, onCancel, onSub
         style={{ ...INPUT_STYLE, minHeight: '34px', resize: 'vertical', lineHeight: 1.5, fontFamily: FONT, marginBottom: '0.38rem' }}
         value={formData.mission}
         onChange={e => setFormData({ ...formData, mission: e.target.value })}
-        placeholder={isEn ? 'Ministry mission…' : 'Mission du ministère…'}
+        placeholder={t('FORM_MINISTRY_MISSION_PH', lang)}
         />
         <div style={{ display: 'flex', gap: '0.38rem', justifyContent: 'flex-end' }}>
-        <button style={BTN_SECONDARY} onClick={onCancel}>{isEn ? 'Cancel' : 'Annuler'}</button>
+        <button style={BTN_SECONDARY} onClick={onCancel}>{t('TAB_PRES_CANCEL', lang)}</button>
         <button
         style={{ ...BTN_PRIMARY, opacity: formData.name && formData.id ? 1 : 0.35 }}
         disabled={!formData.name || !formData.id}
         onClick={onSubmit}
         >
-        {isEn ? 'Create' : 'Créer'}
+        {t('TAB_PRES_CREATE', lang)}
         </button>
         </div>
         </section>

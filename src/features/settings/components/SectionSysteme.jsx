@@ -122,13 +122,13 @@ export default function SectionSysteme({ onHardReset }) {
         try {
             const world    = JSON.parse(localStorage.getItem('aria_world')     || 'null');
             const countries = JSON.parse(localStorage.getItem('aria_countries') || 'null');
-            if (!world && !countries) { alert(isEn?'No active world.':'Aucun monde en cours.'); return; }
+            if (!world && !countries) { alert(t('SYS_NO_WORLD', lang)); return; }
             const blob = new Blob([JSON.stringify({ world, countries, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = `aria-world-${Date.now()}.json`;
             a.click();
-        } catch { alert(isEn?'World export error.':'Erreur export monde.'); }
+        } catch { alert(t('SYS_WORLD_EXPORT_ERR', lang)); }
     };
 
     const importConfig = (e) => {
@@ -142,8 +142,8 @@ export default function SectionSysteme({ onHardReset }) {
                 if (config.prompts)  savePrompts(config.prompts);
                 if (config.agents)   saveAgentOverrides(config.agents);
                 if (config.sim)      saveSimOverrides(config.sim);
-                alert(isEn?'Configuration imported. Reload page to apply.':'Configuration importée. Rechargez la page pour appliquer.');
-            } catch { alert(isEn?'Invalid file.':'Fichier invalide.'); }
+                alert(t('SYS_CONFIG_IMPORTED', lang));
+            } catch { alert(t('SYS_FILE_INVALID', lang)); }
         };
         reader.readAsText(file);
     };
@@ -259,18 +259,18 @@ export default function SectionSysteme({ onHardReset }) {
 
     return (
         <div className="settings-section-body">
-        <SectionTitle icon="⚙️" label={isEn?"SYSTEM":"SYSTÈME"} sub={isEn?"API Keys · Models · Deliberation architecture":"Clés API · Modèles · Architecture de délibération"} />
+        <SectionTitle icon="⚙️" label={t('SYS_SECTION_LABEL', lang)} sub={t('SYS_SECTION_SUB', lang)} />
 
         {/* ▸ CLÉS API + MODÈLES */}
         <div className={`aria-accordion${openAcc==='keys' ? ' open' : ''}`}>
-        {HDR('keys', isEn?'API KEYS & MODELS':'CLÉS API & MODÈLES',
-            `${PROVIDERS.filter(p => (sProvKeys[p.id]||[]).some(k=>k.key?.trim())).length}/4 ${isEn?'keys':'clés'}${Object.values(keyStatuses).some(s=>s==='ok') ? ' ✅' : ''}`
+        {HDR('keys', t('SYS_KEYS_HDR', lang),
+            `${PROVIDERS.filter(p => (sProvKeys[p.id]||[]).some(k=>k.key?.trim())).length}/4 ${t('SYS_KEYS_UNIT', lang)}${Object.values(keyStatuses).some(s=>s==='ok') ? ' ✅' : ''}`
         )}
         {openAcc==='keys' && (
             <div className="aria-accordion__body">
             <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.44rem',
                 color:'rgba(140,160,200,0.45)', margin:'0 0 0.8rem', lineHeight:1.6 }}>
-                {isEn?"Keys are stored locally (localStorage). Only your browser has access.":"Les clés sont stockées localement (localStorage). Seul votre navigateur y a accès."}
+                {t('SYS_KEYS_LOCAL', lang)}
                 </p>
 
                 {PROVIDERS.map(prov => {
@@ -308,7 +308,7 @@ export default function SectionSysteme({ onHardReset }) {
                                                         borderBottom:idx<keyArr.length-1?'1px solid rgba(255,255,255,0.05)':'none' }}>
                                                         <div className="settings-row">
                                                         <button onClick={()=>setSettingsDefault(prov.id, entry._id)}
-                                                        title={isEn?'Set as default':'Clé par défaut'}
+                                                        title={t('SYS_KEY_DEFAULT_TITLE', lang)}
                                                         style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem',
                                                             padding:'0 0.15rem', lineHeight:1, opacity:entry.default?1:0.40, flexShrink:0 }}>
                                                             {entry.default?'⭐':'☆'}
@@ -318,18 +318,18 @@ export default function SectionSysteme({ onHardReset }) {
                                                             placeholder={prov.placeholder} />
                                                             <button className="settings-btn-test"
                                                             disabled={iaStatus === 'offline'}
-                                                            title={iaStatus === 'offline' ? (isEn ? 'No network — test unavailable' : 'Pas de réseau — test indisponible') : undefined}
+                                                            title={iaStatus === 'offline' ? t('SYS_NO_NETWORK', lang) : undefined}
                                                             onClick={() => testSettingsKey(prov.id, entry._id, entry.key, entry.model)}>
-                                                            {isEn?'Test':'Tester'}
+                                                            {t('SYS_KEY_TEST_BTN', lang)}
                                                             </button>
                                                             {stLbl && (
                                                                 <span className={`settings-status`}
-                                                                title={st==='debug'?(isEn?'Debug key — correct format, no real API call':'Clé debug — format correct, aucun appel API réel'):undefined}
+                                                                title={st==='debug' ? t('SYS_KEY_DEBUG_TITLE', lang) : undefined}
                                                                 style={st==='debug'?{color:'rgba(200,160,60,0.85)',cursor:'help'}:undefined}>
                                                                 {stLbl}
                                                                 </span>
                                                             )}
-                                                            <button title={isEn?'Delete key':'Supprimer'}
+                                                            <button title={t('SYS_KEY_DELETE_TITLE', lang)}
                                                             onClick={() => removeSettingsKey(prov.id, entry._id)}
                                                             style={{ background:'none', border:'none', cursor:'pointer', fontSize:'0.85rem', opacity:0.45, padding:'0 0.2rem', lineHeight:1 }}>🗑</button>
                                                             </div>
@@ -355,7 +355,7 @@ export default function SectionSysteme({ onHardReset }) {
                                             style={{ background:'none', border:'1px dashed rgba(200,164,74,0.25)', cursor:'pointer',
                                                 color:'rgba(200,164,74,0.60)', fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem',
                                                 padding:'0.25rem 0.6rem', alignSelf:'flex-start' }}>
-                                                + {isEn?'Add a key':'Ajouter une clé'}
+                                                + {t('SYS_KEY_ADD', lang)}
                                                 </button>
                                                 </div>
                                     )}
@@ -434,16 +434,16 @@ export default function SectionSysteme({ onHardReset }) {
 
         {/* ▸ AFFICHAGE CARTE */}
         <div className={`aria-accordion${openAcc==='display' ? ' open' : ''}`}>
-        {HDR('display', isEn?'MAP DISPLAY':'AFFICHAGE CARTE')}
+        {HDR('display', t('SYS_MAP_DISPLAY_HDR', lang))}
         {openAcc==='display' && (
             <div className="aria-accordion__body">
-            <Field label={isEn?"Show EEZ (exclusive economic zones)":"Afficher les ZEE (zones économiques exclusives)"}>
+            <Field label={t('SYS_SHOW_ZEE', lang)}>
             <Toggle value={opts.gameplay?.show_zee} onChange={v => update('gameplay.show_zee', v)}
-            label={opts.gameplay?.show_zee ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
+            label={opts.gameplay?.show_zee ? 'Visible' : t('SYS_HIDDEN', lang)} />
             </Field>
-            <Field label={isEn?"Show legend":"Afficher la légende"}>
+            <Field label={t('SYS_SHOW_LEGEND', lang)}>
             <Toggle value={opts.gameplay?.show_legend} onChange={v => update('gameplay.show_legend', v)}
-            label={opts.gameplay?.show_legend ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
+            label={opts.gameplay?.show_legend ? 'Visible' : t('SYS_HIDDEN', lang)} />
             </Field>
             </div>
         )}
@@ -456,13 +456,13 @@ export default function SectionSysteme({ onHardReset }) {
             <div className="aria-accordion__body">
             <div className="settings-export-row">
             <button className="settings-export-btn" onClick={exportConfig}>
-            {isEn?'↓ Export configuration':'↓ Exporter la configuration'}
+            {t('SYS_EXPORT_CONFIG', lang)}
             </button>
             <button className="settings-export-btn" onClick={exportWorld}>
-            {isEn?'↓ Export current world':'↓ Exporter le monde actuel'}
+            {t('SYS_EXPORT_WORLD', lang)}
             </button>
             <label className="settings-export-btn import">
-            {isEn?'↑ Import configuration':'↑ Importer une configuration'}
+            {t('SYS_IMPORT_CONFIG', lang)}
             <input type="file" accept=".json" onChange={importConfig} style={{ display: 'none' }} />
             </label>
             </div>
@@ -472,22 +472,21 @@ export default function SectionSysteme({ onHardReset }) {
 
         {/* Hard Reset — toujours visible */}
         <div className="settings-group">
-        <div className="settings-group-title">{isEn?"RESET":"RÉINITIALISATION"}</div>
+        <div className="settings-group-title">{t('SYS_RESET_HDR', lang)}</div>
         <div className="settings-danger-zone">
         <div className="settings-danger-desc">
-        {isEn?"Hard Reset erases":"Le Hard Reset efface"} <strong>{isEn?"all":"toutes"}</strong> {isEn?"data: API keys, custom prompts,":"les données : clés API, prompts personnalisés,"}
-        {isEn?" modified coefficients, current world. Irreversible.":" coefficients modifiés, monde en cours. Irréversible."}
+        {t('SYS_HARD_RESET_DESC_1', lang)} <strong>{t('SYS_HARD_RESET_DESC_ALL', lang)}</strong> {t('SYS_HARD_RESET_DESC_2', lang)}
         </div>
         <DangerButton
-        label={isEn?"☢ Hard Reset — Erase everything":"☢ Hard Reset — Tout effacer"}
-        confirm={isEn?"Confirm total destruction?":"Confirmer la destruction totale ?"}
+        label={t('SYS_HARD_RESET_BTN', lang)}
+        confirm={t('SYS_HARD_RESET_CONFIRM', lang)}
         onClick={onHardReset}
         />
         </div>
         </div>
 
         <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
+        <button className="settings-save-btn" onClick={save}>{t('SETTINGS_SAVE', lang)}</button>
         <SaveBadge saved={saved} />
         </div>
         </div>

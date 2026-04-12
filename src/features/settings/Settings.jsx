@@ -4,7 +4,7 @@
 // Usage : <Settings onClose={() => setPage('dashboard')} />
 
 import { useState, useCallback, Component } from 'react';
-import { useLocale } from '../../ariaI18n';
+import { useLocale, t } from '../../ariaI18n';
 import SectionSysteme from './components/SectionSysteme';
 import SectionConstitution from './components/SectionConstitution';
 import SectionConseil from './components/SectionConseil';
@@ -36,14 +36,14 @@ class SectionErrorBoundary extends Component {
 //  CONSTANTES
 // ─────────────────────────────────────────────────────────────────────────────
 
-function getSections(isEn) {
+function getSections(lang) {
   return [
-    { id: 'conseil',      icon: '🏛️', label: isEn ? 'GOVERNMENT'   : 'GOUVERNEMENT' },
-    { id: 'constitution', icon: '📜',  label: isEn ? 'CONSTITUTION' : 'CONSTITUTION' },
-    { id: 'simulation',   icon: '🎲',  label: isEn ? 'SIMULATION'   : 'SIMULATION'   },
-    { id: 'systeme',      icon: '⚙️',  label: isEn ? 'SYSTEM'       : 'SYSTÈME'      },
-    { id: 'interface',    icon: '🎨',  label: 'INTERFACE'                            },
-    { id: 'apropos',      icon: '✦',   label: isEn ? 'ABOUT'        : 'À PROPOS'     },
+    { id: 'conseil',      icon: '🏛️', label: t('SETTINGS_SECTION_GOV', lang)  },
+    { id: 'constitution', icon: '📜',  label: t('CONSTITUTION', lang)           },
+    { id: 'simulation',   icon: '🎲',  label: 'SIMULATION'                      },
+    { id: 'systeme',      icon: '⚙️',  label: t('SETTINGS_SECTION_SYS', lang)  },
+    { id: 'interface',    icon: '🎨',  label: 'INTERFACE'                       },
+    { id: 'apropos',      icon: '✦',   label: t('SETTINGS_SECTION_ABOUT', lang) },
   ];
 }
 
@@ -54,7 +54,7 @@ function getSections(isEn) {
 export default function Settings({ onClose }) {
   const { lang } = useLocale();
   const isEn = lang === 'en';
-  const SECTIONS = getSections(isEn);
+  const SECTIONS = getSections(lang);
   const [activeSection, setActiveSection] = useState('conseil');
 
   const hardReset = useCallback(() => {
@@ -78,11 +78,11 @@ export default function Settings({ onClose }) {
     <div className="settings-header-left">
     <span className="settings-header-glyph">✦</span>
     <div>
-    <div className="settings-header-title">{isEn?"ARIA — CONFIGURATION":"ARIA — CONFIGURATION"}</div>
-    <div className="settings-header-sub">{isEn?"Institutional Reasoning Architecture":"Architecture de Raisonnement Institutionnel"}</div>
+    <div className="settings-header-title">ARIA — CONFIGURATION</div>
+    <div className="settings-header-sub">{t('SETTINGS_HEADER_SUB', lang)}</div>
     </div>
     </div>
-    <button className="settings-close-btn" onClick={onClose} title={isEn?"Back to Dashboard":"Retour au Dashboard"}>
+    <button className="settings-close-btn" onClick={onClose} title={t('SETTINGS_BACK_TIP', lang)}>
     ✕
     </button>
     </div>

@@ -1,7 +1,7 @@
 // src/features/world/components/CountryPanel/CountryPanelEmpty.jsx
 
 import { useState, useEffect } from 'react';
-import { loadLang } from '../../../../ariaI18n.js';
+import { loadLang, t } from '../../../../ariaI18n.js';
 import { getCountryEmoji } from '../../utils';
 
 export default function EmptyPanel({
@@ -9,7 +9,6 @@ export default function EmptyPanel({
     liveCountries,
     onSelectCountry
 }) {
-    // Validation des props obligatoires
     if (!liveCountries) {
     }
 
@@ -21,8 +20,6 @@ export default function EmptyPanel({
         return () => window.removeEventListener('aria-lang-change', onLangChange);
     }, []);
 
-    const isEn = lang === 'en';
-
     // Vue Council
     if (activeTab === 'council') {
         return (
@@ -30,16 +27,16 @@ export default function EmptyPanel({
             <div className="panel-header">
             <span className="panel-header-emoji">⚖</span>
             <div style={{ flex: 1 }}>
-            <div className="panel-header-title">{isEn ? 'LLM COUNCIL' : 'LLM CONSEIL'}</div>
+            <div className="panel-header-title">{t('PANEL_LLM_COUNCIL', lang)}</div>
             <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.40rem', color: 'rgba(140,160,200,0.75)', letterSpacing: '0.10em' }}>
-            {isEn ? 'SELECT A COUNTRY' : 'SÉLECTIONNEZ UN PAYS'}
+            {t('PANEL_SELECT_COUNTRY', lang)}
             </div>
             </div>
             </div>
             {liveCountries.length > 0 ? (
                 <div style={{ padding: '0.6rem 0.8rem', overflowY: 'auto', flex: 1 }}>
                 <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.38rem', letterSpacing: '0.14em', color: 'rgba(200,164,74,0.45)', marginBottom: '0.5rem' }}>
-                {isEn ? 'AVAILABLE NATIONS' : 'NATIONS DISPONIBLES'}
+                {t('PANEL_AVAIL_NATIONS', lang)}
                 </div>
                 {liveCountries.map(c => (
                     <button key={c.id} onClick={() => onSelectCountry?.(c)}
@@ -65,7 +62,7 @@ export default function EmptyPanel({
             ) : (
                 <div className="panel-empty">
                 <div className="panel-empty-icon" style={{ fontSize: '1.6rem', opacity: 0.15 }}>⚖️</div>
-                <div className="panel-empty-label">{isEn ? 'NO COUNTRY YET' : 'AUCUN PAYS'}</div>
+                <div className="panel-empty-label">{t('PANEL_NO_COUNTRY', lang)}</div>
                 </div>
             )}
             </div>
@@ -81,14 +78,14 @@ export default function EmptyPanel({
             <div style={{ flex: 1 }}>
             <div className="panel-header-title">CHRONOLOG</div>
             <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.40rem', color: 'rgba(140,160,200,0.75)', letterSpacing: '0.10em' }}>
-            {isEn ? 'SELECT A COUNTRY' : 'SÉLECTIONNEZ UN PAYS'}
+            {t('PANEL_SELECT_COUNTRY', lang)}
             </div>
             </div>
             </div>
             {liveCountries.length > 0 ? (
                 <div style={{ padding: '0.6rem 0.8rem', overflowY: 'auto', flex: 1 }}>
                 <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.38rem', letterSpacing: '0.14em', color: 'rgba(140,160,200,0.35)', marginBottom: '0.5rem' }}>
-                {isEn ? 'VIEW HISTORY FOR' : 'VOIR L’HISTORIQUE DE'}
+                {t('PANEL_VIEW_HISTORY', lang)}
                 </div>
                 {liveCountries.map(c => (
                     <button key={c.id} onClick={() => onSelectCountry?.(c)}
@@ -103,7 +100,7 @@ export default function EmptyPanel({
                     <div>
                     <div style={{ fontSize: '0.50rem', color: 'rgba(200,215,240,0.78)', letterSpacing: '0.06em' }}>{c.nom}</div>
                     <div style={{ fontSize: '0.40rem', color: 'rgba(100,120,160,0.45)', marginTop: '0.1rem' }}>
-                    {isEn ? `cycle ${c.cycleNum || 1}` : `cycle ${c.cycleNum || 1}`}
+                    cycle {c.cycleNum || 1}
                     </div>
                     </div>
                     </button>
@@ -112,7 +109,7 @@ export default function EmptyPanel({
             ) : (
                 <div className="panel-empty">
                 <div className="panel-empty-icon" style={{ fontSize: '1.6rem', opacity: 0.15 }}>📜</div>
-                <div className="panel-empty-label">{isEn ? 'NO HISTORY YET' : 'AUCUN HISTORIQUE'}</div>
+                <div className="panel-empty-label">{t('PANEL_NO_HISTORY', lang)}</div>
                 </div>
             )}
             </div>
@@ -125,16 +122,16 @@ export default function EmptyPanel({
         <div className="panel-header">
         <span className="panel-header-emoji">🗺</span>
         <div style={{ flex: 1 }}>
-        <div className="panel-header-title">{isEn ? 'WORLD MAP' : 'CARTE MONDE'}</div>
+        <div className="panel-header-title">{t('PANEL_WORLD_MAP', lang)}</div>
         <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.40rem', color: 'rgba(140,160,200,0.75)', letterSpacing: '0.10em' }}>
-        {isEn ? 'SELECT A COUNTRY' : 'SÉLECTIONNEZ UN PAYS'}
+        {t('PANEL_SELECT_COUNTRY', lang)}
         </div>
         </div>
         </div>
         {liveCountries.length > 0 ? (
             <div style={{ padding: '0.6rem 0.8rem', overflowY: 'auto', flex: 1 }}>
             <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.38rem', letterSpacing: '0.14em', color: 'rgba(58,191,122,0.45)', marginBottom: '0.5rem' }}>
-            {isEn ? 'NATIONS' : 'NATIONS'}
+            NATIONS
             </div>
             {liveCountries.map(c => (
                 <button key={c.id} onClick={() => onSelectCountry?.(c)}
@@ -160,7 +157,7 @@ export default function EmptyPanel({
         ) : (
             <div className="panel-empty">
             <div className="panel-empty-icon" style={{ fontSize: '1.6rem', opacity: 0.15 }}>🌍</div>
-            <div className="panel-empty-label">{isEn ? 'NO COUNTRY YET' : 'AUCUN PAYS'}</div>
+            <div className="panel-empty-label">{t('PANEL_NO_COUNTRY', lang)}</div>
             </div>
         )}
         </div>
