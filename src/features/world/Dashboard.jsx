@@ -286,7 +286,10 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
         if (aria.countries?.length > 0) setModalCycleConfirm(true);
       },
       resetWorld:       aria.resetWorld,
-      resetChronolog:   resetChronolog,
+      resetChronolog:   () => {
+        cycleNumRef.current = 1;
+        resetChronolog();
+      },
       getYear:          aria.getYear,
       getCountries:     aria.getCountries,
       getCycle:         aria.getCycle,
