@@ -5,7 +5,7 @@
 ```text
 ================================================================================
   ARIA STRATEGIC ROADMAP  —  v8.0
-  Last updated: 2026-04-11
+  Last updated: 2026-04-13
 ================================================================================
 
  ████████████████████████████████████████  SHIPPED  ████████████████████████████
@@ -130,6 +130,14 @@
         └─> Progressive AI or deterministic fallback (board game)
             Configurable: global → per-country init → ConstitutionModal
             Visible everywhere: cycle modal · country panel · chronolog · council
+            Polish (2026-04-13):
+            · EventRow redesigned (1.3rem icons, colour-coded cards by type)
+            · Full deliberation overlay on click (CountryPanel → central screen)
+            · Fix C.dimmed/C.teal missing from colors.js
+            · Fix "first cycle" fallback text when cycleNum > 1 with no prior memory
+            · Fix cycleNumRef not reset on new game (Dashboard always mounted)
+            · clearSession() now clears aria_cycle_num + aria_chroniqueur
+            · 🌐 World tile hidden when snapshot contains only one country
 
  [ PHASE G1 : GOVERNANCE COHERENCE ] ............................. STATUS: IN PROGRESS
  │  Spec validated (2026-03-26) — GovernanceForm exists, wiring to complete

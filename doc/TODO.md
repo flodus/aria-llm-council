@@ -1,12 +1,23 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-04-12_
+_Dernière mise à jour : 2026-04-13_
 
 ---
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
 _(aucun bug actif connu)_
+
+---
+
+## ✅ LIVRÉ cette session (2026-04-13) — Chronolog polish + fixes
+
+- [x] **Fix styles ChronologView** : `C.dimmed` + `C.teal` absents de `colors.js` → tous les styles basés sur ces tokens étaient invisibles. Ajoutés comme tokens réels.
+- [x] **EventRow CountryPanelTimeline redesign** : icônes 1.3rem, cards colorées par type (vote vert/rouge/or, sécession rouge, constitution violet, nouveau pays vert), labels majuscules, séparateurs nets.
+- [x] **Overlay délibération** : clic sur un vote avec délibération dans CountryPanelTimeline → overlay plein écran centré avec `EventDetail` complet (question + toutes les phases). `EventDetail` exporté depuis ChronologView.
+- [x] **Fix chroniqueur "premier cycle"** : le fallback déterministe écrivait toujours "entre dans son premier cycle" si pas de mémoire précédente, même au cycle 4+. Corrigé : texte "premier cycle" uniquement si `cycleNum === 1`.
+- [x] **Fix cycleNum après nouvelle partie sans hard reset** : `clearSession()` ne supprimait pas `aria_cycle_num` ni `aria_chroniqueur`. Ajoutés. + `cycleNumRef` remis à 1 dans `resetChronolog` (Dashboard toujours monté, ref jamais relue depuis localStorage).
+- [x] **Masquer tuile 🌐 Monde** dans ChronologView si snapshot contient 1 seul pays (redondant).
 
 ---
 

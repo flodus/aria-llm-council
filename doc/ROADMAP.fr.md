@@ -5,7 +5,7 @@
 ```text
 ================================================================================
   ARIA FEUILLE DE ROUTE STRATÉGIQUE  —  v8.0
-  Dernière mise à jour : 2026-04-11
+  Dernière mise à jour : 2026-04-13
 ================================================================================
 
  ████████████████████████████████████████  LIVRÉ  ████████████████████████████
@@ -130,6 +130,14 @@
         └─> IA progressive ou fallback déterministe (board game)
             Paramétrable : global → init pays → ConstitutionModal
             Visible partout : modal cycle · panel pays · chronolog · conseil
+            Polish (2026-04-13) :
+            · EventRow redesigné (icônes 1.3rem, cards colorées par type)
+            · Overlay délibération complète au clic (CountryPanel → écran central)
+            · Fix C.dimmed/C.teal manquants dans colors.js
+            · Fix "premier cycle" fallback si cycleNum > 1 sans mémoire
+            · Fix cycleNumRef non remis à 1 au reset (Dashboard toujours monté)
+            · clearSession() efface aria_cycle_num + aria_chroniqueur
+            · Tuile 🌐 Monde masquée si 1 seul pays dans le snapshot
 
  [ PHASE G1 : COHÉRENCE GOUVERNANCE ] ........................... STATUT: EN COURS
  │  Spec validée (2026-03-26) — GovernanceForm existe, wiring à compléter
