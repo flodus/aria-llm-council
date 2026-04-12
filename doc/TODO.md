@@ -1,12 +1,26 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-04-14_
+_Dernière mise à jour : 2026-04-12 (session soir)_
 
 ---
 
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
 _(aucun bug actif connu)_
+
+---
+
+## ✅ LIVRÉ cette session (2026-04-12) — Refactor STORAGE_KEYS + i18n V9
+
+- [x] **STORAGE_KEYS adoption complète** : migration de tous les `localStorage.getItem/setItem('aria_xxx')` string literals vers `STORAGE_KEYS.XXX` + fonctions nommées `loadOpts/saveOpts/loadKeys/loadAgentsOverride/...`
+  - 34 fichiers, 196 → 166 lignes (−30 net)
+  - `settingsStorage.js` : PROMPTS + SIM via STORAGE_KEYS
+  - `SectionSimulation` : fonctions locales dupliquées supprimées → import settingsStorage
+  - `aiService.js` : IIFEs `JSON.parse(localStorage.getItem(...))` → `loadKeys()` / `loadPreferredModels()`
+  - `Settings.hardReset` : tableau de clés littérales → constantes
+  - `App.jsx` / `Dashboard.jsx` / `useARIA.js` / tous les composants council migrés
+
+- [x] **V9 — i18n couverture complète** : ~120 nouvelles clés, 39 fichiers — chaînes inline éliminées
 
 ---
 
