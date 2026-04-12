@@ -222,27 +222,20 @@
  └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [██████████░░░░░░░░░░░░░░░░░░░░░░░░] ~30%
- BASE : Moteur + constitution par pays complets.
-        Init UX poli. Mode Board Game offline complet (pipeline 4 JSON).
-        Source unique de vérité. Destinée du Monde opérationnelle.
-        PresidencyTiles unifié. Mode collégial + crise opérationnels.
-        Interface : curseurs SVG or + RadioPlayer topbar.
-        Documentation : CONTRIBUTING complet + doc/ réorganisé.
-        Phase B1 terminée — tous les bugs B1→B15 corrigés.
-        Refactor qualité (2026-04-11) : arborescence src/ restructurée,
-        fichiers morts supprimés, responsabilités storage/options clarifiées.
-        XS qualité post-audit : models.js, storageKeys complet, FALLBACK_PHRASES i18n,
-        stubs V4 annotés, ARBORESCENCE.md nettoyée.
-        Chronolog phase 2 (2026-04-12) : Chroniqueur institutionnel (C1),
-        délibération complète 5 phases, CountryPanel Timeline réel,
-        mémoire visible partout (modal cycle · panel · chronolog · conseil).
-        Session 2026-04-14 : T1 OpenRouter (proxy multi-providers : DeepSeek,
-        Mistral, Llama, Gemini, GPT, Grok via clé unique sk-or-…),
-        V4 PresidencyTiles showTrinaire dans Settings, D1 descriptions
-        destiny_mode + crisis_mode corrigées, F1 CustomFlow.jsx supprimé.
-        D2 (2026-04-12) : événements diplomatie dans useChronolog · CountryPanel Timeline · ChronologView.
-        Prochain : N1 normalizeCountry.
+ PROGRESSION : [██████████████░░░░░░░░░░░░░░░░░░░░] ~40%
+ BASE COMPLÈTE (fondations solides) :
+        Moteur conseil multi-LLM, constitution par pays, destinée, collégial, crise.
+        Board Game offline complet (4 JSON : questions, réponses, synthèses, annotations).
+        Init UX poli · Chronolog complet (5 phases, Chroniqueur, Timeline, diplomatie D2).
+        Settings refactorisé · GovernanceForm unifié · PresidencyTiles partagé.
+        Multi-providers : Claude, Gemini, Grok, OpenAI, OpenRouter (T1).
+        i18n FR/EN couverture complète (V9 · ~120 clés) · STORAGE_KEYS 0 magic strings.
+        Interface : curseurs SVG or · RadioPlayer topbar · thème CSS tokens.
+        Qualité code : arborescence src/ structurée · storageKeys centralisé ·
+        storage/options clarifiés · fichiers morts supprimés.
+ RESTE (vision) :
+        V1 carte procédurale (refonte totale) · V2 crises systémiques ·
+        V3 infra LLM · N1 normalizeCountry · multijoueur · guerre & géopolitique.
 ================================================================================
 ```
 
