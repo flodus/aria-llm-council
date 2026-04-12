@@ -98,7 +98,7 @@ _(bloqué sur refonte carte V1)_
 - [ ] **N1 — normalizeCountry()** : harmoniser les structures d'objet pays — risque élevé, session dédiée
   - Base : ANALYSE_STRUCTURE_PAYS.md · fichiers : ariaData.js · countryEngine.js · InitScreen.jsx
 
-- [ ] **F1 — Minimum 2 pays en mode custom** : actuellement limité à 1 seul pays custom
+- [x] **F1 — Multi-pays mode fictif** : DefaultLocalFlow supporte déjà jusqu'à 6 pays (fictifs prédéfinis + créés à la main) — CustomFlow.jsx supprimé (fichier mort)
 - [x] **F2 — Bloquer doublons pays réels** : déjà implémenté (disabled + ✗ + repoussé en bas dans RealCountryLocalSection + duplicate status dans RealCountryAISection)
 - [ ] **F3 — Settings gouvernement multi-pays** : constitution commune vs par pays
 - [ ] **D2 — Diplomatie dans CountryPanel Timeline** : ajouter event type `diplomacy` dans `useChronolog` + pousser quand une alliance change → affiché dans le panel pays (côté droit) — à traiter lors du chantier diplomatie · prérequis : CountryPanel Timeline Phase 1 livrée
