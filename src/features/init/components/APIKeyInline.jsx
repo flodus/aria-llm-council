@@ -58,16 +58,27 @@ const PROVIDERS = [
     }); return r.ok;
   }
 },
+{ id: 'openrouter', label: 'OPENROUTER', sub: 'OpenRouter', ph: 'sk-or-…',
+  versions: ARIA_FALLBACK_MODELS.openrouter,
+  testUrl: async (k, model) => {
+    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}`,
+        'HTTP-Referer': 'https://flodus.github.io/aria-llm-council/', 'X-Title': 'ARIA' },
+      body: JSON.stringify({ model: model || 'google/gemini-2.0-flash', max_tokens: 10, messages: [{ role: 'user', content: 'Hi' }] }),
+    }); return r.ok;
+  }
+},
 ];
 
 // ── Helpers de validation de clé ─────────────────────────────────────────
 
 // Vérifie le préfixe attendu par provider (format superficiel, pas d'appel API)
 const isValidKeyFormat = (provider, key) => {
-  if (provider === 'claude') return key?.startsWith('sk-ant-');
-  if (provider === 'gemini') return key?.startsWith('AIza');
-  if (provider === 'grok') return key?.startsWith('xai-');
-  if (provider === 'openai') return key?.startsWith('sk-');
+  if (provider === 'claude')      return key?.startsWith('sk-ant-');
+  if (provider === 'gemini')      return key?.startsWith('AIza');
+  if (provider === 'grok')        return key?.startsWith('xai-');
+  if (provider === 'openrouter')  return key?.startsWith('sk-or-');
+  if (provider === 'openai')      return key?.startsWith('sk-') && !key?.startsWith('sk-ant-') && !key?.startsWith('sk-or-');
   return false;
 };
 

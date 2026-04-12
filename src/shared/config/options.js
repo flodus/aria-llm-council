@@ -6,7 +6,7 @@
 import { loadOpts, saveOpts, loadKeys } from '../services/storage';
 
 export const DEFAULT_OPTIONS = {
-  api_keys: { claude: '', gemini: '', grok: '', openai: '' },
+  api_keys: { claude: '', gemini: '', grok: '', openai: '', openrouter: '' },
   ia_mode: 'aria',
   solo_model: 'claude',
   ia_roles: {

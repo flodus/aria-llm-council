@@ -11,10 +11,11 @@ import { DEFAULT_MODELS } from '../../constants/models';
 // ── Validation clés ───────────────────────────────────────────────────────────
 
 const KEY_FORMAT = {
-  claude: k => k.startsWith('sk-ant-') && k.length >= 20,
-  gemini: k => k.startsWith('AIza') && k.length >= 15,
-  grok:   k => k.startsWith('xai-') && k.length >= 15,
-  openai: k => k.startsWith('sk-') && !k.startsWith('sk-ant-') && k.length >= 15,
+  claude:     k => k.startsWith('sk-ant-') && k.length >= 20,
+  gemini:     k => k.startsWith('AIza') && k.length >= 15,
+  grok:       k => k.startsWith('xai-') && k.length >= 15,
+  openai:     k => k.startsWith('sk-') && !k.startsWith('sk-ant-') && !k.startsWith('sk-or-') && k.length >= 15,
+  openrouter: k => k.startsWith('sk-or-') && k.length >= 15,
 };
 const FAKE_PATTERNS = ['-test', '-fake', '-debug', '-demo', '-mock'];
 
@@ -169,7 +170,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     const v = keys[p];
     return !!(v && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some(k => k.key?.trim()) : false));
   };
-  const KEY_PRIORITY = ['gemini', 'claude', 'grok', 'openai'];
+  const KEY_PRIORITY = ['openrouter', 'gemini', 'claude', 'grok', 'openai'];
   if (!hasKey(model)) model = KEY_PRIORITY.find(p => hasKey(p)) || model;
 
   const fullContent = systemPrompt
@@ -285,6 +286,30 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     return { error: true, msg: getRandomFallback() };
   }
 
+  if (model === 'openrouter') {
+    const orKeys = getProviderKeys('openrouter');
+    const prefModel = (() => { try { return JSON.parse(localStorage.getItem('aria_preferred_models') || '{}').openrouter || DEFAULT_MODELS.openrouter; } catch { return DEFAULT_MODELS.openrouter; } })();
+    for (const keyEntry of orKeys) {
+      if (isFakeKey('openrouter', keyEntry.key)) return { error: true, msg: getRandomFallback() };
+      if (!isValidKeyFormat('openrouter', keyEntry.key)) continue;
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keyEntry.key}`,
+            'HTTP-Referer': 'https://flodus.github.io/aria-llm-council/', 'X-Title': 'ARIA' },
+          body: JSON.stringify({ model: keyEntry.model || prefModel, max_tokens: 1000,
+            messages: [{ role: 'user', content: fullContent }] }),
+        });
+        if (res.status === 429) { console.warn('[ARIA] OpenRouter 429 — tentative clé suivante'); continue; }
+        if (!res.ok) { console.warn('[ARIA] OpenRouter erreur HTTP', res.status); continue; }
+        const data = await res.json();
+        const text = data?.choices?.[0]?.message?.content || '';
+        return JSON.parse(text.replace(/```json|```/g, '').trim());
+      } catch (e) { console.warn('[ARIA] OpenRouter error:', e.message); continue; }
+    }
+    return { error: true, msg: getRandomFallback() };
+  }
+
   return { error: true, msg: 'SYSTÈME : Aucune clé API valide détectée.' };
 }
 
@@ -296,7 +321,7 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   const keys       = opts.api_keys;
   const roles      = opts.ia_roles;
   const hasKeyForProv = (v) => !!(v && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some(k => k.key?.trim()) : false));
-  const hasKeys = hasKeyForProv(keys.claude) || hasKeyForProv(keys.gemini) || hasKeyForProv(keys.grok) || hasKeyForProv(keys.openai);
+  const hasKeys = hasKeyForProv(keys.claude) || hasKeyForProv(keys.gemini) || hasKeyForProv(keys.grok) || hasKeyForProv(keys.openai) || hasKeyForProv(keys.openrouter);
 
   if (!hasKeys || opts.force_local || opts.ia_mode === 'none') {
     return getLocalResponse(type, context);
