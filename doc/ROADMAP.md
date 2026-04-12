@@ -21,7 +21,14 @@
  [ CHRONOLOG ] ..................................................... STATUS: ✅ DONE
  ├─[✓] Typed Event History ...... [vote/secession/constitution] ..... ■ 100%
  ├─[✓] Cycle Snapshots .......... [SAT + ARIA deltas per cycle] ..... ■ 100%
- └─[✓] Auto-summarization ....... [Context pruning > 5 cycles] ...... ■ 100%
+ ├─[✓] Auto-summarization ....... [Context pruning > 5 cycles] ...... ■ 100%
+ ├─[✓] Full deliberation ........ [5 phases stored in chronolog] .... ■ 100%
+ ├─[✓] CountryPanel Timeline .... [Real history in right-side panel] . ■ 100%
+ └─[✓] Institutional Chronicler . [Narrative memory per country, AI+BG] ■ 100%
+        ├─> runChroniqueur(): progressive AI or deterministic fallback
+        ├─> Injected into buildCountryContext() — Council cannot forget
+        ├─> Visible: cycle modal · country panel · chronolog · council
+        └─> Configurable: global Settings → per-country init → ConstitutionModal
 
  [ INIT & CONFIGURATION ] ......................................... STATUS: ✅ DONE
  ├─[✓] 4-Provider Key Setup ..... [Inline test + validation] ........ ■ 100%
@@ -115,10 +122,14 @@
  ├─[U1] Regime icons ............ [Dropdowns in Init + in-game] ..... ✅ 100%
  ├─[U2] Tile harmonisation ...... [PresidencyTiles shared — 4 screens] ✅ 100%
  │      └─> Settings · GovernanceForm · ConstitutionModal · PreLaunchScreen
- └─[U3] Chronolog enriched ....... [Narrative summary, filters, pagination] ✅ 100%
-        └─> Narrative "3 votes · 1 secession — SAT +4 ARIA −2" per cycle
-            Type filter (vote/secession/constitution/new nation) AND country filter
-            ← → pagination for old cycles (_summary)
+ ├─[U3] Chronolog enriched ....... [Narrative summary, filters, pagination] ✅ 100%
+ │      └─> Narrative "3 votes · 1 secession — SAT +4 ARIA −2" per cycle
+ │          Type filter (vote/secession/constitution/new nation) AND country filter
+ │          ← → pagination for old cycles (_summary)
+ └─[C1] Institutional Chronicler  [Narrative memory per country] ....... ✅ 100%
+        └─> Progressive AI or deterministic fallback (board game)
+            Configurable: global → per-country init → ConstitutionModal
+            Visible everywhere: cycle modal · country panel · chronolog · council
 
  [ PHASE G1 : GOVERNANCE COHERENCE ] ............................. STATUS: IN PROGRESS
  │  Spec validated (2026-03-26) — GovernanceForm exists, wiring to complete
@@ -211,7 +222,10 @@
            dead files removed, storage/options responsibilities clarified.
            XS quality post-audit: models.js, storageKeys complete, FALLBACK_PHRASES i18n,
            V4 stubs annotated, ARBORESCENCE.md cleaned.
-           Next: U3 Chronolog enriched.
+           Chronolog phase 2 (2026-04-12): Institutional Chronicler (C1),
+           full 5-phase deliberation, CountryPanel real Timeline,
+           memory visible everywhere (cycle modal · panel · chronolog · council).
+           Next: T1 custom providers · D2 diplomacy CountryPanel.
 ================================================================================
 ```
 
