@@ -9,11 +9,11 @@ import EmojiPicker from '../../../../shared/components/EmojiPicker';
 export default function TabRegime({ country, isEn, tr, state, handlers }) {
     const {
         emoji, regime, leader, contextMode, contextOverride,
-        ctxAccOpen, ctxOverrideOpen, destinyMode,
+        ctxAccOpen, ctxOverrideOpen, destinyMode, chroniqueurEnabled,
     } = state;
     const {
         setEmoji, setRegime, setLeader, setContextMode, setContextOverride,
-        setCtxAccOpen, setCtxOverrideOpen, setDestinyMode,
+        setCtxAccOpen, setCtxOverrideOpen, setDestinyMode, setChroniqueurEnabled,
     } = handlers;
 
     const rawReal = (isEn ? REAL_COUNTRIES_DATA_EN : REAL_COUNTRIES_DATA).find(r => r.id === country?.id);
@@ -123,6 +123,33 @@ export default function TabRegime({ country, isEn, tr, state, handlers }) {
                   </div>
                 : <p style={{ fontSize: '0.40rem', color: 'rgba(140,160,200,0.28)', margin: 0 }}>—</p>
             }
+            {/* Chroniqueur — toggle par pays */}
+            <div style={{ display:'flex', alignItems:'center', gap:'0.5rem',
+              padding:'0.28rem 0.45rem', borderRadius:'2px',
+              background:'rgba(90,110,160,0.04)',
+              border:'1px solid rgba(90,110,160,0.12)' }}>
+              <span style={{ fontFamily: FONT, fontSize:'0.44rem', color:'rgba(140,160,200,0.55)', flex:1 }}>
+                📜 {isEn ? 'Chronicler' : 'Chroniqueur'}
+              </span>
+              {[
+                [null,  isEn ? '⚙ Global' : '⚙ Global'],
+                [true,  isEn ? '● On'     : '● Actif'],
+                [false, isEn ? '○ Off'    : '○ Inactif'],
+              ].map(([val, lbl]) => {
+                const on = chroniqueurEnabled === val;
+                return (
+                  <button key={String(val)} onClick={() => setChroniqueurEnabled(val)}
+                    style={{ fontFamily: FONT, fontSize:'0.38rem', padding:'0.10rem 0.35rem',
+                      borderRadius:'2px', cursor:'pointer',
+                      background: on ? 'rgba(200,164,74,0.10)' : 'transparent',
+                      border:`1px solid ${on ? 'rgba(200,164,74,0.35)' : 'rgba(140,160,200,0.12)'}`,
+                      color: on ? 'rgba(200,164,74,0.85)' : 'rgba(140,160,200,0.40)' }}>
+                    {lbl}
+                  </button>
+                );
+              })}
+            </div>
+
             <button style={{ ...BTN_SECONDARY, alignSelf: 'flex-start', fontSize: '0.42rem', padding: '0.22rem 0.55rem' }} onClick={() => setCtxOverrideOpen(v => !v)}>
                 {ctxOverrideOpen ? '▾' : '▸'} {isEn ? 'Custom context' : 'Contexte personnalisé'}{contextOverride ? ' ●' : ''}
             </button>

@@ -175,10 +175,10 @@ export default function SectionConseil() {
         <div className="settings-tabs">
         {[
             { id: 'gouvernance', label: isEn ? 'Governance' : 'Gouvernance' },
-            { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence' },
-            { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères' },
-            { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'  },
-            { id: 'destinee',    label: isEn ? 'Destiny'    : 'Destinée'   },
+            { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence'  },
+            { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères'  },
+            { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'   },
+            { id: 'destinee',    label: isEn ? 'Destiny'    : 'Destinée'    },
         ].map(t => (
             <button key={t.id}
             className={`settings-tab${tab === t.id ? ' active' : ''}`}
@@ -398,6 +398,7 @@ export default function SectionConseil() {
         {tab === 'gouvernance' && (
             <SectionGouvernanceDefaut opts={govOpts} setOpts={handleSetGovOpts} />
         )}
+
 
         <div className="settings-footer">
         <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>

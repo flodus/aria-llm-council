@@ -11,6 +11,8 @@
 import { useState, useEffect } from 'react';
 import { FONT, C } from '../../../../shared/theme';
 import { loadLang } from '../../../../ariaI18n';
+import { loadMemoire } from '../../../chronolog/useChroniqueur';
+import { EventDetail } from '../../../chronolog/ChronologView';
 
 const LS_CYCLES    = 'aria_chronolog_cycles';
 const LS_ALLIANCES = 'aria_session_alliances';
@@ -69,38 +71,76 @@ function DiplomacyRow({ rel }) {
   );
 }
 
+// ── Config icônes / couleurs par type ────────────────────────────────────────
+const TYPE_STYLE = {
+  vote:         { icon: '🗳',  bg: 'rgba(58,191,122,0.06)',  border: 'rgba(58,191,122,0.18)' },
+  secession:    { icon: '✂️', bg: 'rgba(200,80,80,0.06)',   border: 'rgba(200,80,80,0.18)'  },
+  constitution: { icon: '📜', bg: 'rgba(140,100,220,0.06)', border: 'rgba(140,100,220,0.18)'},
+  new_country:  { icon: '🌍', bg: 'rgba(58,191,122,0.06)',  border: 'rgba(58,191,122,0.18)' },
+  cycle_stats:  { icon: '📊', bg: 'rgba(90,110,160,0.04)',  border: 'rgba(90,110,160,0.12)' },
+};
+
 // ── Ligne événement ───────────────────────────────────────────────────────────
 
-function EventRow({ ev }) {
+function EventRow({ ev, onOpenEvent }) {
   const isEn = loadLang() === 'en';
+  const ts = TYPE_STYLE[ev.type] || { icon: '•', bg: 'transparent', border: C.border };
+  const clickable = ev.type === 'vote' && !!ev.deliberation;
 
   if (ev.type === 'vote') {
     const pos = ev.vote === 'oui';
+    const voteColor = ev.chosenOption === 'phare' ? C.gold
+      : ev.chosenOption === 'boussole' ? C.purple
+      : pos ? C.green : C.red;
+    const voteLabel = ev.chosenOption === 'phare' ? '☉ PHARE'
+      : ev.chosenOption === 'boussole' ? '☽ BOUSSOLE'
+      : pos ? (isEn ? 'YES' : 'OUI') : (isEn ? 'NO' : 'NON');
+
     return (
-      <div style={{ padding:'0.22rem 0', borderBottom:`1px solid ${C.border}22` }}>
-        <div style={{ display:'flex', alignItems:'center', gap:'0.35rem', flexWrap:'wrap' }}>
-          <span style={{ fontFamily:FONT.mono, fontSize:'0.37rem', color: pos ? C.green : C.red }}>
-            🗳 {pos ? (isEn?'YES':'OUI') : (isEn?'NO':'NON')}
-          </span>
-          {ev.isCrisis && (
-            <span style={{ fontFamily:FONT.mono, fontSize:'0.32rem', color:'rgba(255,140,0,0.85)',
-              border:'1px solid rgba(255,140,0,0.30)', borderRadius:'2px',
-              padding:'0.04rem 0.22rem', letterSpacing:'0.08em' }}>
-              {isEn?'CRISIS':'CRISE'}
+      <div
+        onClick={() => clickable && onOpenEvent?.(ev)}
+        style={{
+          display:'flex', gap:'0.55rem', alignItems:'flex-start',
+          padding:'0.45rem 0.55rem', marginBottom:'0.28rem',
+          background: ts.bg, border:`1px solid ${ts.border}`, borderRadius:'3px',
+          cursor: clickable ? 'pointer' : 'default',
+          transition:'background 0.12s',
+        }}
+      >
+        <span style={{ fontSize:'1.3rem', lineHeight:1, flexShrink:0, marginTop:'0.05rem' }}>{ts.icon}</span>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', flexWrap:'wrap', marginBottom:'0.12rem' }}>
+            <span style={{ fontFamily:FONT.mono, fontSize:'0.43rem', fontWeight:700,
+              letterSpacing:'0.10em', color: voteColor }}>
+              {voteLabel}
             </span>
+            {ev.isCrisis && (
+              <span style={{ fontFamily:FONT.mono, fontSize:'0.33rem', color:'rgba(255,140,0,0.90)',
+                border:'1px solid rgba(255,140,0,0.32)', borderRadius:'2px',
+                padding:'0.04rem 0.22rem', letterSpacing:'0.08em' }}>
+                {isEn ? 'CRISIS' : 'CRISE'}
+              </span>
+            )}
+            {ev.impacts?.satisfaction !== 0 && ev.impacts?.satisfaction !== undefined && (
+              <span style={{ fontFamily:FONT.mono, fontSize:'0.37rem',
+                color: ev.impacts.satisfaction > 0 ? C.green : C.red, marginLeft:'auto' }}>
+                {ev.impacts.satisfaction > 0 ? '+' : ''}{Math.round(ev.impacts.satisfaction)} SAT
+              </span>
+            )}
+          </div>
+          {ev.question && (
+            <p style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim,
+              margin:0, lineHeight:1.55 }}>
+              {ev.question}
+            </p>
           )}
-          {ev.impacts?.satisfaction !== 0 && (
-            <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:C.dimmed, marginLeft:'auto' }}>
-              {ev.impacts.satisfaction > 0 ? '+' : ''}{Math.round(ev.impacts.satisfaction)} SAT
-            </span>
+          {clickable && (
+            <div style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:C.dimmed,
+              marginTop:'0.20rem', letterSpacing:'0.08em', opacity:0.70 }}>
+              {isEn ? '▸ view deliberation' : '▸ voir la délibération'}
+            </div>
           )}
         </div>
-        {ev.question && (
-          <p style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.muted,
-            margin:'0.10rem 0 0 0.5rem', lineHeight:1.5 }}>
-            {ev.question}
-          </p>
-        )}
       </div>
     );
   }
@@ -108,9 +148,11 @@ function EventRow({ ev }) {
   if (ev.type === 'cycle_stats') {
     const s = ev._myStat;
     return (
-      <div style={{ display:'flex', gap:'0.5rem', padding:'0.16rem 0', opacity:0.60 }}>
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:C.dimmed }}>📊</span>
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:C.dimmed }}>
+      <div style={{ display:'flex', gap:'0.50rem', alignItems:'center',
+        padding:'0.30rem 0.55rem', marginBottom:'0.18rem',
+        background: ts.bg, border:`1px solid ${ts.border}`, borderRadius:'3px', opacity:0.70 }}>
+        <span style={{ fontSize:'1.1rem', lineHeight:1, flexShrink:0 }}>{ts.icon}</span>
+        <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:C.textDim }}>
           SAT {s.satDelta > 0 ? '+' : ''}{s.satDelta} · ARIA {s.ariaDelta > 0 ? '+' : ''}{s.ariaDelta}
         </span>
       </div>
@@ -119,33 +161,60 @@ function EventRow({ ev }) {
 
   if (ev.type === 'secession') {
     return (
-      <div style={{ padding:'0.20rem 0' }}>
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.red }}>
-          ✂️ {ev.childNom} {isEn ? 'secedes' : 'fait sécession'} — {ev.relation}
-        </span>
+      <div style={{ display:'flex', gap:'0.55rem', alignItems:'flex-start',
+        padding:'0.40rem 0.55rem', marginBottom:'0.28rem',
+        background: ts.bg, border:`1px solid ${ts.border}`, borderRadius:'3px' }}>
+        <span style={{ fontSize:'1.3rem', lineHeight:1, flexShrink:0 }}>{ts.icon}</span>
+        <div>
+          <div style={{ fontFamily:FONT.mono, fontSize:'0.43rem', fontWeight:700,
+            color: C.red, letterSpacing:'0.08em', marginBottom:'0.08rem' }}>
+            {isEn ? 'SECESSION' : 'SÉCESSION'}
+          </div>
+          <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim }}>
+            {ev.childNom} — {ev.relation}
+          </div>
+        </div>
       </div>
     );
   }
 
   if (ev.type === 'constitution') {
     const detail = ev.regimeAvant !== ev.regimeApres
-      ? ` — ${(ev.regimeApres || '').replace(/_/g,' ')}`
+      ? `${ev.regimeAvant} → ${(ev.regimeApres || '').replace(/_/g,' ')}`
       : '';
     return (
-      <div style={{ padding:'0.20rem 0' }}>
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.purple }}>
-          📜 {isEn ? 'Amendment' : 'Amendement'}{detail}
-        </span>
+      <div style={{ display:'flex', gap:'0.55rem', alignItems:'flex-start',
+        padding:'0.40rem 0.55rem', marginBottom:'0.28rem',
+        background: ts.bg, border:`1px solid ${ts.border}`, borderRadius:'3px' }}>
+        <span style={{ fontSize:'1.3rem', lineHeight:1, flexShrink:0 }}>{ts.icon}</span>
+        <div>
+          <div style={{ fontFamily:FONT.mono, fontSize:'0.43rem', fontWeight:700,
+            color: C.purple, letterSpacing:'0.08em', marginBottom:'0.08rem' }}>
+            {isEn ? 'AMENDMENT' : 'AMENDEMENT'}
+          </div>
+          {detail && (
+            <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim }}>{detail}</div>
+          )}
+        </div>
       </div>
     );
   }
 
   if (ev.type === 'new_country') {
     return (
-      <div style={{ padding:'0.20rem 0' }}>
-        <span style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:C.green }}>
-          🌍 {isEn ? 'New nation' : 'Nouveau pays'} : {ev.nom || ev.countryNom}
-        </span>
+      <div style={{ display:'flex', gap:'0.55rem', alignItems:'flex-start',
+        padding:'0.40rem 0.55rem', marginBottom:'0.28rem',
+        background: ts.bg, border:`1px solid ${ts.border}`, borderRadius:'3px' }}>
+        <span style={{ fontSize:'1.3rem', lineHeight:1, flexShrink:0 }}>{ts.icon}</span>
+        <div>
+          <div style={{ fontFamily:FONT.mono, fontSize:'0.43rem', fontWeight:700,
+            color: C.green, letterSpacing:'0.08em', marginBottom:'0.08rem' }}>
+            {isEn ? 'NEW NATION' : 'NOUVEAU PAYS'}
+          </div>
+          <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim }}>
+            {ev.nom || ev.countryNom}
+          </div>
+        </div>
       </div>
     );
   }
@@ -155,37 +224,39 @@ function EventRow({ ev }) {
 
 // ── Bloc cycle ────────────────────────────────────────────────────────────────
 
-function CycleItem({ cycle, defaultOpen, isEn }) {
+function CycleItem({ cycle, defaultOpen, isEn, onOpenEvent }) {
   const [open, setOpen] = useState(defaultOpen);
   const myStat = cycle.events.find(e => e.type === 'cycle_stats')?._myStat;
   const voteCount = cycle.events.filter(e => e.type === 'vote').length;
 
   return (
-    <div style={{ borderBottom:`1px solid ${C.border}22`, marginBottom:'0.20rem' }}>
+    <div style={{ marginBottom:'0.35rem' }}>
       <div
-        style={{ display:'flex', alignItems:'center', gap:'0.4rem', padding:'0.28rem 0', cursor:'pointer' }}
+        style={{ display:'flex', alignItems:'center', gap:'0.4rem',
+          padding:'0.30rem 0.40rem', cursor:'pointer',
+          borderBottom:`1px solid ${C.border}` }}
         onClick={() => setOpen(o => !o)}
       >
-        <span style={{ fontFamily:FONT.cinzel, fontSize:'0.43rem', letterSpacing:'0.12em', color:C.goldDim, flex:1 }}>
+        <span style={{ fontFamily:FONT.cinzel, fontSize:'0.46rem', letterSpacing:'0.14em', color:C.goldGlow, flex:1 }}>
           {isEn?'Cycle':'Cycle'} {cycle.cycleNum} — {isEn?'Year':'An'} {cycle.annee}
         </span>
         {voteCount > 0 && (
-          <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:C.dimmed }}>
+          <span style={{ fontFamily:FONT.mono, fontSize:'0.37rem', color:C.textDim }}>
             {voteCount} 🗳
           </span>
         )}
         {myStat && (myStat.satDelta !== 0 || myStat.ariaDelta !== 0) && (
-          <span style={{ fontFamily:FONT.mono, fontSize:'0.34rem',
+          <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem',
             color: myStat.satDelta >= 0 ? C.green : C.red }}>
             {myStat.satDelta > 0 ? '+' : ''}{myStat.satDelta}
           </span>
         )}
-        <span style={{ color:C.dimmed, fontSize:'0.38rem', flexShrink:0,
+        <span style={{ color:C.dimmed, fontSize:'0.40rem', flexShrink:0,
           transform: open ? 'rotate(90deg)' : 'none', transition:'transform 0.12s' }}>▶</span>
       </div>
       {open && (
-        <div style={{ paddingLeft:'0.4rem', paddingBottom:'0.3rem' }}>
-          {cycle.events.map((ev, i) => <EventRow key={i} ev={ev} />)}
+        <div style={{ paddingTop:'0.28rem', paddingBottom:'0.10rem' }}>
+          {cycle.events.map((ev, i) => <EventRow key={i} ev={ev} onOpenEvent={onOpenEvent} />)}
         </div>
       )}
     </div>
@@ -194,17 +265,20 @@ function CycleItem({ cycle, defaultOpen, isEn }) {
 
 // ── Composant principal ───────────────────────────────────────────────────────
 
-export default function TimelineView({ country, lang }) {
+export default function TimelineView({ country, lang, onOpenEvent }) {
   const [cycles,    setCycles]    = useState([]);
   const [diplomacy, setDiplomacy] = useState([]);
+  const [memoire,   setMemoire]   = useState(null);
   const isEn = lang === 'en';
 
   useEffect(() => {
     setCycles(loadCyclesForCountry(country.id));
     setDiplomacy(loadDiplomacy(country.id));
+    setMemoire(loadMemoire(country.id));
     const id = setInterval(() => {
       setCycles(loadCyclesForCountry(country.id));
       setDiplomacy(loadDiplomacy(country.id));
+      setMemoire(loadMemoire(country.id));
     }, 2000);
     return () => clearInterval(id);
   }, [country.id]);
@@ -236,6 +310,26 @@ export default function TimelineView({ country, lang }) {
     <div className="side-panel-scroll">
       <div style={{ padding:'0.55rem 0.75rem', display:'flex', flexDirection:'column', gap:'0.55rem' }}>
 
+        {/* Mémoire institutionnelle */}
+        {memoire?.memoire && (
+          <div style={{ padding:'0.55rem 0.70rem',
+            background:'rgba(90,110,160,0.05)',
+            border:'1px solid rgba(90,110,160,0.14)', borderRadius:'2px' }}>
+            <div style={{ fontFamily:FONT.mono, fontSize:'0.35rem', letterSpacing:'0.15em',
+              color:C.goldDim, marginBottom:'0.30rem' }}>
+              📜 {isEn ? 'INSTITUTIONAL MEMORY' : 'MÉMOIRE INSTITUTIONNELLE'}
+              <span style={{ marginLeft:'0.5rem', color:C.dimmed, fontWeight:'normal',
+                letterSpacing:'0.08em' }}>
+                — {isEn ? 'cycle' : 'cycle'} {memoire.cycle}
+              </span>
+            </div>
+            <p style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:'rgba(180,200,230,0.60)',
+              lineHeight:1.65, margin:0, fontStyle:'italic' }}>
+              {memoire.memoire}
+            </p>
+          </div>
+        )}
+
         {/* Relations diplomatiques actives */}
         {diplomacy.length > 0 && (
           <div>
@@ -260,6 +354,7 @@ export default function TimelineView({ country, lang }) {
                 cycle={cycle}
                 defaultOpen={!useAccordions || i === 0}
                 isEn={isEn}
+                onOpenEvent={onOpenEvent}
               />
             ))}
           </div>

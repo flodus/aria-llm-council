@@ -77,6 +77,10 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
         setOpts({ ...opts, gameplay: { ...(opts.gameplay || {}), context_mode: val } });
     };
 
+    const setChron = (val) => {
+        setOpts({ ...opts, chroniqueur: { ...(opts.chroniqueur || {}), enabled: val } });
+    };
+
     const toggleMinistry = (id) => {
         const current = new Set(gov.ministries || getAllMinistryIds());
         if (current.has(id)) { if (current.size <= 2) return; current.delete(id); }
@@ -286,6 +290,31 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
                                                          </div>
                                                          </label>
                     ))}
+
+                    {/* Chroniqueur — mémoire institutionnelle */}
+                    <div style={{ marginTop:'0.5rem', paddingTop:'0.5rem',
+                        borderTop:'1px solid rgba(90,110,160,0.12)',
+                        display:'flex', alignItems:'center', gap:'0.6rem' }}>
+                        <div style={{ flex:1 }}>
+                            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.50rem',
+                                color:'rgba(200,215,240,0.75)' }}>
+                                📜 {isEn ? 'Institutional Chronicler' : 'Chroniqueur institutionnel'}
+                            </div>
+                            <div style={{ fontSize:'0.42rem', color:'rgba(140,160,200,0.45)',
+                                marginTop:'0.08rem', lineHeight:1.4 }}>
+                                {isEn
+                                    ? 'Generates narrative memory at each cycle end — injected into future deliberations'
+                                    : 'Génère la mémoire narrative à chaque fin de cycle — injectée dans les délibérations futures'}
+                            </div>
+                        </div>
+                        <Toggle
+                            value={opts.chroniqueur?.enabled ?? true}
+                            onChange={setChron}
+                            label={opts.chroniqueur?.enabled ?? true
+                                ? (isEn ? 'Active' : 'Actif')
+                                : (isEn ? 'Off' : 'Inactif')}
+                        />
+                    </div>
                     </div>
             )}
             </div>

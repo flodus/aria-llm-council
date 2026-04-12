@@ -52,10 +52,11 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     const [emoji, setEmoji]                   = useState(country?.emoji || '🌍');
     const [regime, setRegime]                 = useState(country?.regime || 'democratie_liberale');
     const [leader, setLeader]                 = useState(typeof country?.leader === 'string' ? country.leader : (country?.leader?.nom || ''));
-    const [contextMode, setContextMode]       = useState(country?.context_mode || '');
-    const [contextOverride, setContextOverride] = useState(country?.contextOverride || '');
-    const [ctxOverrideOpen, setCtxOverrideOpen] = useState(!!country?.contextOverride);
-    const [ctxAccOpen, setCtxAccOpen]         = useState(country?.context_mode !== undefined || !!country?.contextOverride);
+    const [contextMode, setContextMode]           = useState(country?.context_mode || '');
+    const [contextOverride, setContextOverride]   = useState(country?.contextOverride || '');
+    const [ctxOverrideOpen, setCtxOverrideOpen]   = useState(!!country?.contextOverride);
+    const [ctxAccOpen, setCtxAccOpen]             = useState(country?.context_mode !== undefined || !!country?.contextOverride || country?.chroniqueur_enabled !== undefined);
+    const [chroniqueurEnabled, setChroniqueurEnabled] = useState(country?.chroniqueur_enabled ?? null); // null = hérite global
     const [destinyMode, setDestinyMode]       = useState(!!(country?.governanceOverride?.destiny_mode));
 
     // ── État onglet Destin ───────────────────────────────────────────────────
@@ -116,8 +117,9 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             regimeName:  regimeData.name  || regime,
             regimeEmoji: regimeData.emoji || '🏛️',
             leader: leader || null,
-            context_mode:      contextMode    || undefined,
-            contextOverride:   contextOverride || undefined,
+            context_mode:        contextMode    || undefined,
+            contextOverride:     contextOverride || undefined,
+            chroniqueur_enabled: chroniqueurEnabled !== null ? chroniqueurEnabled : undefined,
             governanceOverride: {
                 presidency:          presStr,
                 active_presidency:   constitution.activePres,
@@ -179,8 +181,8 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             <div style={{ overflowY:'auto', flex:1, padding:'0.80rem 1rem', display:'flex', flexDirection:'column', gap:'1.1rem' }}>
                 {activeTab === 'regime' && (
                     <TabRegime country={country} isEn={isEn} tr={tr}
-                        state={{ emoji, regime, leader, contextMode, contextOverride, ctxAccOpen, ctxOverrideOpen, destinyMode }}
-                        handlers={{ setEmoji, setRegime, setLeader, setContextMode, setContextOverride, setCtxAccOpen, setCtxOverrideOpen, setDestinyMode }}
+                        state={{ emoji, regime, leader, contextMode, contextOverride, ctxAccOpen, ctxOverrideOpen, destinyMode, chroniqueurEnabled }}
+                        handlers={{ setEmoji, setRegime, setLeader, setContextMode, setContextOverride, setCtxAccOpen, setCtxOverrideOpen, setDestinyMode, setChroniqueurEnabled }}
                     />
                 )}
                 {activeTab === 'presidency' && (

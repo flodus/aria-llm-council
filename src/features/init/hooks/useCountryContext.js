@@ -3,13 +3,15 @@
 import { useState } from 'react';
 
 export default function useCountryContext(pendingDefs) {
-    const [plCtxOpen, setPlCtxOpen] = useState(null);
-    const [plCtxModes, setPlCtxModes] = useState(() => (pendingDefs || []).map(d => d.context_mode || ''));
-    const [plCtxOvrs, setPlCtxOvrs] = useState(() => (pendingDefs || []).map(d => d.contextOverride || ''));
+    const [plCtxOpen,     setPlCtxOpen]     = useState(null);
+    const [plCtxModes,    setPlCtxModes]    = useState(() => (pendingDefs || []).map(d => d.context_mode || ''));
+    const [plCtxOvrs,     setPlCtxOvrs]     = useState(() => (pendingDefs || []).map(d => d.contextOverride || ''));
+    const [plChroniqueur, setPlChroniqueur] = useState(() => (pendingDefs || []).map(d => d.chroniqueur_enabled ?? null)); // null = hérite global
 
     return {
-        plCtxOpen, setPlCtxOpen,
-        plCtxModes, setPlCtxModes,
-        plCtxOvrs, setPlCtxOvrs
+        plCtxOpen,     setPlCtxOpen,
+        plCtxModes,    setPlCtxModes,
+        plCtxOvrs,     setPlCtxOvrs,
+        plChroniqueur, setPlChroniqueur,
     };
 }

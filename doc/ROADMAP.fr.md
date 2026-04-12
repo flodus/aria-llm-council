@@ -5,7 +5,7 @@
 ```text
 ================================================================================
   ARIA FEUILLE DE ROUTE STRATÉGIQUE  —  v8.0
-  Dernière mise à jour : 2026-04-11
+  Dernière mise à jour : 2026-04-13
 ================================================================================
 
  ████████████████████████████████████████  LIVRÉ  ████████████████████████████
@@ -21,7 +21,14 @@
  [ CHRONOLOG ] ..................................................... STATUT: ✅ FAIT
  ├─[✓] Historique typé .......... [vote/sécession/constitution] ..... ■ 100%
  ├─[✓] Snapshots de cycle ....... [Deltas SAT + ARIA par cycle] ..... ■ 100%
- └─[✓] Auto-résumé .............. [Élagage contexte > 5 cycles] ..... ■ 100%
+ ├─[✓] Auto-résumé .............. [Élagage contexte > 5 cycles] ..... ■ 100%
+ ├─[✓] Délibération complète .... [5 phases dans le chronolog] ....... ■ 100%
+ ├─[✓] CountryPanel Timeline .... [Historique dans panel pays droit] .. ■ 100%
+ └─[✓] Chroniqueur institutionnel [Mémoire narrative par pays, IA+BG] . ■ 100%
+        ├─> runChroniqueur() : IA progressive ou fallback déterministe
+        ├─> Injection buildCountryContext() — le Conseil ne peut pas oublier
+        ├─> Visible : CycleConfirmModal · CountryPanel · Chronolog · LLMCouncil
+        └─> Paramétrable : global Settings → init par pays → ConstitutionModal
 
  [ INIT & CONFIGURATION ] ......................................... STATUT: ✅ FAIT
  ├─[✓] Config 4 providers ....... [Test inline + validation] ........ ■ 100%
@@ -115,10 +122,22 @@
  ├─[U1] Icônes régimes ........... [Listes déroulantes Init + in-game] ✅ 100%
  ├─[U2] Harmonisation tuiles .... [PresidencyTiles partagé — 4 écrans] ✅ 100%
  │      └─> Settings · GovernanceForm · ConstitutionModal · PreLaunchScreen
- └─[U3] Chronolog enrichi ........ [Résumé narratif, filtres, pagination] ✅ 100%
-        └─> Résumé "3 votes · 1 sécession — SAT +4 ARIA −2" par cycle
-            Filtre type (vote/sécession/constitution/nouveau pays) ET filtre pays
-            Pagination ← → pour cycles anciens (_summary)
+ ├─[U3] Chronolog enrichi ........ [Résumé narratif, filtres, pagination] ✅ 100%
+ │      └─> Résumé "3 votes · 1 sécession — SAT +4 ARIA −2" par cycle
+ │          Filtre type (vote/sécession/constitution/nouveau pays) ET filtre pays
+ │          Pagination ← → pour cycles anciens (_summary)
+ └─[C1] Chroniqueur institutionnel [Mémoire narrative par pays] ......... ✅ 100%
+        └─> IA progressive ou fallback déterministe (board game)
+            Paramétrable : global → init pays → ConstitutionModal
+            Visible partout : modal cycle · panel pays · chronolog · conseil
+            Polish (2026-04-13) :
+            · EventRow redesigné (icônes 1.3rem, cards colorées par type)
+            · Overlay délibération complète au clic (CountryPanel → écran central)
+            · Fix C.dimmed/C.teal manquants dans colors.js
+            · Fix "premier cycle" fallback si cycleNum > 1 sans mémoire
+            · Fix cycleNumRef non remis à 1 au reset (Dashboard toujours monté)
+            · clearSession() efface aria_cycle_num + aria_chroniqueur
+            · Tuile 🌐 Monde masquée si 1 seul pays dans le snapshot
 
  [ PHASE G1 : COHÉRENCE GOUVERNANCE ] ........................... STATUT: EN COURS
  │  Spec validée (2026-03-26) — GovernanceForm existe, wiring à compléter
@@ -213,7 +232,10 @@
         fichiers morts supprimés, responsabilités storage/options clarifiées.
         XS qualité post-audit : models.js, storageKeys complet, FALLBACK_PHRASES i18n,
         stubs V4 annotés, ARBORESCENCE.md nettoyée.
-        Prochain : U3 Chronolog enrichi.
+        Chronolog phase 2 (2026-04-12) : Chroniqueur institutionnel (C1),
+        délibération complète 5 phases, CountryPanel Timeline réel,
+        mémoire visible partout (modal cycle · panel · chronolog · conseil).
+        Prochain : T1 providers custom · D2 diplomatie CountryPanel.
 ================================================================================
 ```
 

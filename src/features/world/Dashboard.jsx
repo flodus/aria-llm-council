@@ -15,6 +15,7 @@ import { loadLang, t } from '../../ariaI18n';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useChronolog } from '../chronolog/useChronolog';
+import { useChroniqueur } from '../chronolog/useChroniqueur';
 import ChronologView   from '../chronolog/ChronologView';
 import { useARIA } from './hooks/useARIA';
 import { MapSVG } from '../map/MapSVG';
@@ -48,6 +49,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     return () => window.removeEventListener('aria-lang-change', onLang);
   }, []);
   const { pushEvent, pushCycleStats, closeCycle, resetChronolog } = useChronolog();
+  const { runChroniqueur } = useChroniqueur();
 
   const _storedCycleNum = parseInt(localStorage.getItem(STORAGE_KEYS.CYCLE_NUM) || '1', 10);
   const cycleNumRef = useRef(isNaN(_storedCycleNum) ? 1 : _storedCycleNum);
@@ -284,7 +286,10 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
         if (aria.countries?.length > 0) setModalCycleConfirm(true);
       },
       resetWorld:       aria.resetWorld,
-      resetChronolog:   resetChronolog,
+      resetChronolog:   () => {
+        cycleNumRef.current = 1;
+        resetChronolog();
+      },
       getYear:          aria.getYear,
       getCountries:     aria.getCountries,
       getCycle:         aria.getCycle,
@@ -325,6 +330,7 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
             return [baseText, statsLine].filter(Boolean).join('\n\n');
           })()}
           countryNom={selectedCountry?.nom || ''}
+          countryId={selectedCountry?.id}
           ctxMode={(() => {
             const c = selectedCountry;
             if (!c) return null;
@@ -531,12 +537,31 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
             <CycleConfirmModal
               countries={aria.countries}
               councilHistory={cycleHistory}
-              onConfirm={() => {
-                pushCycleStats(
-                  cycleNumRef.current,
-                  aria.countries[0]?.annee || 2026,
-                  aria.countries,
+              onGenerate={async () => {
+                const cycleNum = cycleNumRef.current;
+                const annee    = aria.countries[0]?.annee || 2026;
+                // Pousser stats une seule fois (protection si modal rouverte)
+                try {
+                  const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHRONOLOG_CYCLES) || '[]');
+                  const hasStats = existing.find(c => c.cycleNum === cycleNum)?.events?.some(e => e.type === 'cycle_stats');
+                  if (!hasStats) pushCycleStats(cycleNum, annee, aria.countries);
+                } catch { pushCycleStats(cycleNum, annee, aria.countries); }
+                // Lire events après ajout des stats
+                let cycleEvs = [];
+                try {
+                  const all = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHRONOLOG_CYCLES) || '[]');
+                  cycleEvs = all.find(c => c.cycleNum === cycleNum)?.events || [];
+                } catch {}
+                // Chroniqueur : une narration par pays
+                const narratives = await Promise.all(
+                  aria.countries.map(async c => {
+                    const memoire = await runChroniqueur(c, cycleEvs, cycleNum);
+                    return { countryId: c.id, nom: c.nom, emoji: c.emoji, memoire };
+                  })
                 );
+                return narratives.filter(n => n.memoire);
+              }}
+              onConfirm={() => {
                 closeCycle(cycleNumRef.current);
                 cycleNumRef.current += 1;
                 localStorage.setItem(STORAGE_KEYS.CYCLE_NUM, String(cycleNumRef.current));

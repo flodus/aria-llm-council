@@ -6,6 +6,7 @@
 
 import { loadLang } from '../../../ariaI18n';
 import { getStats } from '../../../shared/data/gameData';
+import { loadMemoire } from '../../chronolog/useChroniqueur';
 
 // ============================================================
 // HELPER DE LANGUE
@@ -103,6 +104,22 @@ export function buildCountryContext(country) {
         ctx += en
         ? `\n\nContext: Fictional country — objective analysis based on the provided statistics.`
         : `\n\nContexte : Pays fictif — approche objective basée sur les statistiques fournies.`;
+    }
+
+    // Mémoire institutionnelle (Chroniqueur) — résolution pays > global
+    const chronEnabled = (() => {
+      if (country.chroniqueur_enabled !== undefined) return country.chroniqueur_enabled;
+      try {
+        const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+        return opts.chroniqueur?.enabled ?? true;
+      } catch { return true; }
+    })();
+    if (chronEnabled) {
+      const memoireEntry = loadMemoire(country.id);
+      if (memoireEntry?.memoire) {
+        const lbl = en ? 'Institutional memory' : 'Mémoire institutionnelle';
+        ctx += `\n\n[${lbl}]\n${memoireEntry.memoire}`;
+      }
     }
 
     return ctx;

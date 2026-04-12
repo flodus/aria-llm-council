@@ -9,7 +9,7 @@
 import { loadLang, t, useLocale } from '../../ariaI18n';
 import { useState, useEffect, useMemo } from 'react';
 import { C, FONT } from '../../shared/theme';
-
+import { loadMemoire } from './useChroniqueur';
 
 const TYPE_META = {
   vote:         { icon: '🗳',  label: 'Vote',          color: C.gold   },
@@ -87,7 +87,7 @@ function Pill({ label, delta }) {
 }
 
 // ── Bloc phase délibération ───────────────────────────────────────────────────
-function PhaseBlock({ borderColor, label, children }) {
+export function PhaseBlock({ borderColor, label, children }) {
   return (
     <div style={{ borderLeft:`2px solid ${borderColor}30`, paddingLeft:'0.55rem', marginTop:'0.25rem' }}>
       <div style={{ fontFamily:FONT.mono, fontSize:'0.34rem', letterSpacing:'0.14em',
@@ -114,7 +114,7 @@ function MinisteText({ who }) {
 }
 
 // ── Rendu détail par type ─────────────────────────────────────────────────────
-function EventDetail({ ev, isSummary }) {
+export function EventDetail({ ev, isSummary }) {
   const lang = loadLang();
   const isEn = lang === 'en';
 
@@ -534,9 +534,13 @@ function CycleBlock({ cycle, filterCountryId, filterType, defaultOpen, isCurrent
   for (const ev of cycle.events) {
     // cycle_stats : toujours inclus (stats techniques, non filtré par type)
     if (ev.type === 'cycle_stats') {
-      const key = '__monde__';
-      if (!groups[key]) groups[key] = { id: null, nom: 'Monde', emoji: '🌐', events: [] };
-      if (!filterCountryId) groups[key].events.push(ev);
+      // Tuile Monde uniquement si snapshot multi-pays (inutile avec 1 seul pays)
+      const snapshotCount = ev.snapshot?.length ?? 0;
+      if (!filterCountryId && snapshotCount > 1) {
+        const key = '__monde__';
+        if (!groups[key]) groups[key] = { id: null, nom: 'Monde', emoji: '🌐', events: [] };
+        groups[key].events.push(ev);
+      }
       continue;
     }
     // Filtre type
@@ -622,13 +626,18 @@ export default function ChronologView({
   const [filterType,     setFilterType]     = useState(null);
   const [summaryPage,    setSummaryPage]    = useState(0);
   const [cycles,         setCycles]         = useState([]);
+  const [memoire,        setMemoire]        = useState(null);
   const SUMMARY_PAGE_SIZE = 3;
 
   useEffect(() => {
     setCycles(loadCycles());
-    const id = setInterval(() => setCycles(loadCycles()), 2000);
+    setMemoire(filterCountry ? loadMemoire(filterCountry) : null);
+    const id = setInterval(() => {
+      setCycles(loadCycles());
+      setMemoire(filterCountry ? loadMemoire(filterCountry) : null);
+    }, 2000);
     return () => clearInterval(id);
-  }, []);
+  }, [filterCountry]);
 
   // Cycle live virtuel
   const liveCycle = currentEvents.length > 0 ? {
@@ -721,6 +730,28 @@ export default function ChronologView({
 
       {/* Liste cycles */}
       <div style={{ flex:1, overflowY:'auto', padding:'0.55rem 0.6rem' }}>
+
+        {/* Mémoire institutionnelle — vue pays uniquement */}
+        {view === 'country' && filterCountry && memoire?.memoire && (
+          <div style={{ marginBottom:'0.65rem', padding:'0.60rem 0.80rem',
+            background:'rgba(90,110,160,0.05)',
+            border:'1px solid rgba(90,110,160,0.18)', borderRadius:'2px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.35rem' }}>
+              <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', letterSpacing:'0.16em',
+                color:C.goldDim }}>
+                📜 {isEn ? 'INSTITUTIONAL MEMORY' : 'MÉMOIRE INSTITUTIONNELLE'}
+              </span>
+              <span style={{ fontFamily:FONT.mono, fontSize:'0.32rem',
+                color:C.dimmed, marginLeft:'auto' }}>
+                {isEn ? 'cycle' : 'cycle'} {memoire.cycle}
+              </span>
+            </div>
+            <p style={{ fontFamily:FONT.mono, fontSize:'0.41rem', color:'rgba(180,200,230,0.60)',
+              lineHeight:1.7, margin:0, fontStyle:'italic' }}>
+              {memoire.memoire}
+            </p>
+          </div>
+        )}
 
         {/* Cycles récents — détail complet */}
         {recentCycles.map((cycle, i) => (

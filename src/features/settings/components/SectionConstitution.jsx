@@ -195,8 +195,9 @@ export default function SectionConstitution() {
                     <div style={{ paddingLeft:'0.8rem' }}>
                     <div className="settings-group-title" style={{ fontSize:'0.42rem', marginBottom:'0.45rem' }}>{isEn?"DELIBERATION":"DÉLIBÉRATION"}</div>
                     {[
-                        { key:'ministre_model', label:isEn?'Ministers think':'Ministres pensent' },
-                        { key:'synthese_min',   label:t('SETTINGS_SYNTH_MIN_LABEL', lang) },
+                        { key:'ministre_model',    label:isEn?'Ministers think':'Ministres pensent' },
+                        { key:'synthese_min',      label:t('SETTINGS_SYNTH_MIN_LABEL', lang) },
+                        { key:'chroniqueur_model', label:isEn?'Chronicler (memory)':'Chroniqueur (mémoire)' },
                     ].map(r => (
                         <div key={r.key} className="settings-role-row">
                         <span className="settings-role-label">{r.label}</span>
@@ -215,8 +216,9 @@ export default function SectionConstitution() {
                                          { key:'phare_model',     label:isEn?'The Lighthouse (President)':'Le Phare (Président)' },
                                          { key:'boussole_model',  label:isEn?'The Compass (Vice-President)':'La Boussole (Présidente)' },
                                          { key:'synthese_pres',   label:isEn?'Presidential synthesis':'Synthèse présidentielle' },
-                                         { key:'evenement_model', label:isEn?'Narrative events':'Événements narratifs' },
-                                         { key:'factcheck_model', label:isEn?'Fact-check':'Fact-check' },
+                                         { key:'evenement_model',    label:isEn?'Narrative events':'Événements narratifs' },
+                        { key:'factcheck_model',    label:isEn?'Fact-check':'Fact-check' },
+                        { key:'chroniqueur_model',  label:isEn?'Chronicler (memory)':'Chroniqueur (mémoire)' },
                     ].map(r => (
                         <div key={r.key} className="settings-role-row">
                         <span className="settings-role-label">{r.label}</span>
