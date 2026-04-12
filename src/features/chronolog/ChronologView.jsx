@@ -17,6 +17,7 @@ const TYPE_META = {
   constitution: { icon: '📜',  label: 'Constitution',  color: C.purple },
   new_country:  { icon: '🌍',  label: 'Nouveau pays',  color: C.green  },
   cycle_stats:  { icon: '📊',  get label() { return loadLang()==='en'?'Cycle stats':'Stats cycle'; },   color: C.teal   },
+  diplomacy:    { icon: '🤝',  get label() { return t('TIMELINE_DIPLOMACY', loadLang()); },              color: C.blue   },
 };
 
 const LS_KEY = 'aria_chronolog_cycles';

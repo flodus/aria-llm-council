@@ -241,7 +241,8 @@
         Mistral, Llama, Gemini, GPT, Grok via clé unique sk-or-…),
         V4 PresidencyTiles showTrinaire dans Settings, D1 descriptions
         destiny_mode + crisis_mode corrigées, F1 CustomFlow.jsx supprimé.
-        Prochain : D2 diplomatie CountryPanel · N1 normalizeCountry.
+        D2 (2026-04-12) : événements diplomatie dans useChronolog · CountryPanel Timeline · ChronologView.
+        Prochain : N1 normalizeCountry.
 ================================================================================
 ```
 
