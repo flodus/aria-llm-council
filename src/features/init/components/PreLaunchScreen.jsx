@@ -47,7 +47,7 @@ import {
     useMinisterForms,
     useGameLaunch
 } from '../hooks';
-import { loadOpts, loadPreferredModels } from '../../../shared/services';
+import { loadOpts, loadPreferredModels, savePreferredModels, saveOpts } from '../../../shared/services';
 
 export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs, onBack, onLaunch }) {
     const { lang } = useLocale();
@@ -121,17 +121,17 @@ export default function PreLaunchScreen({ worldName, pendingPreset, pendingDefs,
                 opts.ia_models[iaConfig.roles.synthese_pres_prov] = iaConfig.roles.synthese_pres_model;
             }
 
-            localStorage.setItem('aria_options', JSON.stringify(opts));
-            localStorage.setItem('aria_preferred_models', JSON.stringify({
+            saveOpts(opts);
+            savePreferredModels({
                 ...loadPreferredModels(),
-                                                                         ...Object.fromEntries([
-                                                                             [iaConfig.roles.ministre_provider, iaConfig.roles.ministre_model],
-                                                                             [iaConfig.roles.synthese_min_prov, iaConfig.roles.synthese_min_model],
-                                                                             [iaConfig.roles.phare_provider, iaConfig.roles.phare_model],
-                                                                             [iaConfig.roles.boussole_provider, iaConfig.roles.boussole_model],
-                                                                             [iaConfig.roles.synthese_pres_prov, iaConfig.roles.synthese_pres_model]
-                                                                         ].filter(([k, v]) => k && v))
-            }));
+                ...Object.fromEntries([
+                    [iaConfig.roles.ministre_provider, iaConfig.roles.ministre_model],
+                    [iaConfig.roles.synthese_min_prov, iaConfig.roles.synthese_min_model],
+                    [iaConfig.roles.phare_provider, iaConfig.roles.phare_model],
+                    [iaConfig.roles.boussole_provider, iaConfig.roles.boussole_model],
+                    [iaConfig.roles.synthese_pres_prov, iaConfig.roles.synthese_pres_model]
+                ].filter(([k, v]) => k && v))
+            });
         } catch {}
 
         // Merge context_mode + contextOverride + governanceOverride dans chaque def pays

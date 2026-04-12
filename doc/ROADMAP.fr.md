@@ -200,7 +200,8 @@
  │           storageKeys.js inventaire complet (2026-04-11)
  │           models.js DEFAULT_MODELS centralisé (2026-04-11)
  │           ARBORESCENCE.md nettoyée + storage clarifiés (2026-04-11)
- │           Reste : normalizeCountry() · adoption STORAGE_KEYS dans 33 fichiers
+ │           STORAGE_KEYS adoption complète (2026-04-12) — 34 fichiers, 0 magic strings
+ │           Reste : normalizeCountry()
  └─[V8] Optimisation moteur ..... [Re-renders · useCallback · appels IA] ⬡ 0%
 
  [ PHASE V5 : MULTIJOUEUR ] ...................................... STATUT: DISTANT
@@ -237,10 +238,9 @@
         Chronolog phase 2 (2026-04-12) : Chroniqueur institutionnel (C1),
         délibération complète 5 phases, CountryPanel Timeline réel,
         mémoire visible partout (modal cycle · panel · chronolog · conseil).
-        Session 2026-04-14 : T1 OpenRouter (proxy multi-providers : DeepSeek,
-        Mistral, Llama, Gemini, GPT, Grok via clé unique sk-or-…),
-        V4 PresidencyTiles showTrinaire dans Settings, D1 descriptions
-        destiny_mode + crisis_mode corrigées, F1 CustomFlow.jsx supprimé.
+        Session 2026-04-14 : T1 OpenRouter, V4 PresidencyTiles, D1 fixes, F1 CustomFlow supprimé.
+        Session 2026-04-12 soir : V9 i18n complet (39 fichiers, ~120 clés),
+        STORAGE_KEYS adoption complète (34 fichiers, 0 magic strings localStorage).
         Prochain : D2 diplomatie CountryPanel · N1 normalizeCountry.
 ================================================================================
 ```

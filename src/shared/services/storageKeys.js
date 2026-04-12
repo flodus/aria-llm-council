@@ -31,6 +31,10 @@ export const STORAGE_KEYS = {
   CYCLE_NUM:         'aria_cycle_num',
   CHRONIQUEUR:       'aria_chroniqueur',
 
+  // Providers et modèles custom
+  CUSTOM_PROVIDERS:  'aria_custom_providers',
+  CUSTOM_MODELS:     'aria_custom_models',
+
   // Clés legacy — présentes dans SectionSysteme (possiblement obsolètes)
   WORLD_LEGACY:      'aria_world',
   COUNTRIES_LEGACY:  'aria_countries',

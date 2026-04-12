@@ -2,6 +2,8 @@
 // Primitives localStorage partagées — lecture/écriture avec gestion d'erreur centralisée
 // Utiliser ces fonctions plutôt que JSON.parse(localStorage.getItem(...)) directement
 
+import { STORAGE_KEYS } from '../services/storageKeys';
+
 /**
  * Lit une valeur depuis localStorage et la désérialise.
  * Retourne `fallback` en cas d'erreur ou de clé absente.
@@ -36,5 +38,5 @@ export function supprimerStorage(cle) {
 }
 
 // Helpers spécialisés — agents override (utilisés par ConstitutionModal)
-export function lireAgentsOverride()    { return lireStorage('aria_agents_override', null); }
-export function ecrireAgentsOverride(d) { ecrireStorage('aria_agents_override', d); }
+export function lireAgentsOverride()    { return lireStorage(STORAGE_KEYS.AGENTS_OVERRIDE, null); }
+export function ecrireAgentsOverride(d) { ecrireStorage(STORAGE_KEYS.AGENTS_OVERRIDE, d); }

@@ -2,12 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ARIA_FALLBACK_MODELS, ARIA_REGISTRY_URL } from '../../../shared/constants/llmRegistry';
-
-const loadOpts = () => { try { return JSON.parse(localStorage.getItem('aria_options')||'{}'); } catch { return {}; } };
-const loadPreferredModels = () => { try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); } catch { return {}; } };
-const loadIARoles = () => { try { const r = (JSON.parse(localStorage.getItem('aria_options')||'{}')).ia_roles || {}; return r; } catch { return {}; } };
-const loadKeys = () => { try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); } catch { return {}; } };
-const loadKeyStatus = () => { try { return JSON.parse(localStorage.getItem('aria_api_keys_status')||'{}'); } catch { return {}; } };
+import { loadOpts, loadPreferredModels, loadIARoles, loadKeys, loadKeyStatus } from '../../../shared/services/storage';
 
 export default function useIAConfig() {
     const [modelReg, setModelReg] = useState(ARIA_FALLBACK_MODELS);

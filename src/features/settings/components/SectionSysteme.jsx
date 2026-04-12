@@ -13,6 +13,9 @@ import { PING_MODELS } from '../../../shared/constants/models';
 import { SectionTitle, Field, TextInput, Toggle, NumberInput, Select, DangerButton, SaveBadge } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
 import { getPrompts, savePrompts, getAgentOverrides, saveAgentOverrides, getSimOverrides, saveSimOverrides } from '../utils/settingsStorage';
+import { loadKeyStatus, loadKeys, loadAgentsOverride, saveAgentsOverride } from '../../../shared/services/storage';
+import { lireStorage } from '../../../shared/utils/storage';
+import { STORAGE_KEYS } from '../../../shared/services/storageKeys';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTES
@@ -68,8 +71,8 @@ export default function SectionSysteme({ onHardReset }) {
 
     const [status, setStatus] = useState(() => {
         try {
-            const s = JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}');
-            const k = JSON.parse(localStorage.getItem('aria_api_keys') || '{}');
+            const s = loadKeyStatus();
+            const k = loadKeys();
             const st = (id) => s[id]==='ok' && k[id] ? 'ok' : s[id]==='error' && k[id] ? 'error' : null;
             return { claude: st('claude'), gemini: st('gemini'), grok: st('grok'), openai: st('openai') };
         } catch { return { claude:null, gemini:null, grok:null, openai:null }; }
@@ -120,8 +123,8 @@ export default function SectionSysteme({ onHardReset }) {
 
     const exportWorld = () => {
         try {
-            const world    = JSON.parse(localStorage.getItem('aria_world')     || 'null');
-            const countries = JSON.parse(localStorage.getItem('aria_countries') || 'null');
+            const world    = lireStorage(STORAGE_KEYS.WORLD_LEGACY, null);
+            const countries = lireStorage(STORAGE_KEYS.COUNTRIES_LEGACY, null);
             if (!world && !countries) { alert(t('SYS_NO_WORLD', lang)); return; }
             const blob = new Blob([JSON.stringify({ world, countries, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
@@ -378,7 +381,7 @@ export default function SectionSysteme({ onHardReset }) {
                     try {
                         const BASE_NEW = l === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
                         const BASE_OLD = l === 'en' ? BASE_AGENTS    : BASE_AGENTS_EN;
-                        const cur = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
+                        const cur = loadAgentsOverride();
                         const merged = JSON.parse(JSON.stringify(BASE_NEW));
                         if (cur) {
                             if (Array.isArray(merged.ministries) && Array.isArray(cur.ministries)) {
@@ -412,7 +415,7 @@ export default function SectionSysteme({ onHardReset }) {
                             merged.active_presidency = cur.active_presidency;
                             merged.active_ministers  = cur.active_ministers;
                         }
-                        localStorage.setItem('aria_agents_override', JSON.stringify(merged));
+                        saveAgentsOverride(merged);
                     } catch(e) { console.warn('lang switch override failed', e); }
                 }} style={{
                     background: lang===l ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.03)',

@@ -3,6 +3,7 @@
 // Utilise les primitives partagées de src/shared/utils/storage.js
 
 import { lireStorage, ecrireStorage } from '../../../shared/utils/storage';
+import { STORAGE_KEYS } from '../../../shared/services/storageKeys';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  PROMPTS PAR DÉFAUT (version complète)
@@ -22,11 +23,11 @@ export const DEFAULT_PROMPTS = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getPrompts() {
-  return { ...DEFAULT_PROMPTS, ...lireStorage('aria_prompts', {}) };
+  return { ...DEFAULT_PROMPTS, ...lireStorage(STORAGE_KEYS.PROMPTS, {}) };
 }
 
 export function savePrompts(prompts) {
-  ecrireStorage('aria_prompts', prompts);
+  ecrireStorage(STORAGE_KEYS.PROMPTS, prompts);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -46,9 +47,9 @@ export function saveAgentOverrides(overrides) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getSimOverrides() {
-  return lireStorage('aria_sim', {});
+  return lireStorage(STORAGE_KEYS.SIM, {});
 }
 
 export function saveSimOverrides(overrides) {
-  ecrireStorage('aria_sim', overrides);
+  ecrireStorage(STORAGE_KEYS.SIM, overrides);
 }

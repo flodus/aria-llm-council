@@ -7,6 +7,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { loadLang, t, useLocale } from '../../ariaI18n';
+import { STORAGE_KEYS } from '../../shared/services/storageKeys';
 import { useState, useEffect, useMemo } from 'react';
 import { C, FONT } from '../../shared/theme';
 import { loadMemoire } from './useChroniqueur';
@@ -19,7 +20,7 @@ const TYPE_META = {
   cycle_stats:  { icon: '📊',  get label() { return loadLang()==='en'?'Cycle stats':'Stats cycle'; },   color: C.teal   },
 };
 
-const LS_KEY = 'aria_chronolog_cycles';
+const LS_KEY = STORAGE_KEYS.CHRONOLOG_CYCLES;
 function loadCycles() {
   try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
   catch { return []; }

@@ -1,17 +1,17 @@
 // src/features/init/hooks/useGameLaunch.js
 
-import { loadOpts } from '../../../shared/services';
+import { loadOpts, saveAgentsOverride } from '../../../shared/services/storage';
 
 export default function useGameLaunch(constitution, iaConfig, countryContext, perGov, onLaunch) {
     const saveAndLaunch = (pendingPreset, pendingDefs) => {
         // Sauvegarde constitution
         if (constitution.commonAgents) {
-            localStorage.setItem('aria_agents_override', JSON.stringify({
+            saveAgentsOverride({
                 ...constitution.commonAgents,
                 active_ministries: constitution.commonMins,
                 active_presidency: constitution.commonPres,
                 active_ministers: constitution.commonMinsters,
-            }));
+            });
         }
 
         // Sauvegarde IA config

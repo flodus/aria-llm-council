@@ -16,6 +16,7 @@
 
 import { useState, lazy, Suspense } from 'react';
 import { useLocale, t } from '../../ariaI18n';
+import { loadOpts, saveOpts } from '../../shared/services/storage';
 import { PreLaunchScreen } from './components';
 import { DefaultLocalFlow, RealWorldFlow } from './components/flows';
 import { NameScreen, GeneratingScreen } from './components/screens';
@@ -45,8 +46,8 @@ export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaun
 
   const launch = (usePreset, customDefs = null) => {
     try {
-      const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
-      localStorage.setItem('aria_options', JSON.stringify(opts));
+      const opts = loadOpts();
+      saveOpts(opts);
     } catch {}
     setStep('generating');
     const MSGS = [
@@ -121,7 +122,7 @@ export function InitScreenInner({ worldName, setWorldName, onLaunchLocal, onLaun
     onSelectWorld={(selectedPreset) => {
       // Calcul du mode selon clés API et Board Game
       const boardGame = (() => {
-        try { return JSON.parse(localStorage.getItem('aria_options') || '{}').ia_mode === 'none'; } catch { return false; }
+        try { return loadOpts().ia_mode === 'none'; } catch { return false; }
       })();
       const computedMode = hasApiKeys && !boardGame && navigator.onLine ? 'ai' : 'local';
       setMode(computedMode);

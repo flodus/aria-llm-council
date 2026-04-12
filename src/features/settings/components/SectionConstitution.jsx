@@ -7,7 +7,7 @@ import { getOptions, saveOptions } from '../../../shared/config/options';
 import { SectionTitle, Field, TextArea, Select, Toggle, SaveBadge } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
 import { DEFAULT_PROMPTS, getPrompts, savePrompts } from '../utils/settingsStorage';
-import { loadCustomProviders, loadCustomModels } from '../../../shared/services';
+import { loadCustomProviders, loadCustomModels, loadKeyStatus } from '../../../shared/services';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTES
@@ -61,7 +61,7 @@ export default function SectionConstitution() {
     }));
     const anyKey = !!(opts.api_keys?.claude || opts.api_keys?.gemini || opts.api_keys?.grok || opts.api_keys?.openai || opts.api_keys?.openrouter || customProviders.length > 0);
     const iaMode = opts.ia_mode;
-    const keyStatusSaved = (() => { try { return JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}'); } catch { return {}; } })();
+    const keyStatusSaved = loadKeyStatus();
     const availableProviders = allProviders.filter(p => {
       if (customProviders.find(c => c.id === p.id)) return true; // custom = toujours disponible
       return !!opts.api_keys?.[p.id] && keyStatusSaved[p.id] !== 'error';
