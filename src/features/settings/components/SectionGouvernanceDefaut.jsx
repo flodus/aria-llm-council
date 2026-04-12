@@ -234,10 +234,10 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
             {HDR('destin', isEn ? 'DO YOU BELIEVE IN DESTINY?' : 'CROYEZ-VOUS AU DESTIN ?')}
             {openAcc==='destin' && (
                 <div className="aria-accordion__body">
-                <Field label={isEn ? "L'Oracle & THE TRAME" : "L'Oracle & LA TRAME"}
+                <Field label={isEn ? "Oracle & Wyrd" : "Oracle & Wyrd"}
                 hint={isEn
-                    ? "Activates the Oracle and La Trame agents for existential crises (pandemics, nuclear threats, systemic collapses, civilizational ruptures…)"
-                    : "Active les agents L'Oracle et La Trame pour les crises existentielles (pandémies, menaces nucléaires, effondrements systémiques, ruptures civilisationnelles…)"}>
+                    ? "Oracle & Wyrd speak at every deliberation for countries with a religious/theocratic regime — before the presidential synthesis. Independent of crisis mode."
+                    : "Oracle & Wyrd s'expriment à chaque délibération pour les pays à régime religieux/théocratique — avant la synthèse présidentielle. Indépendant du mode crise."}>
                     <Toggle value={gov.destiny_mode === true} onChange={v => setGov('destiny_mode', v)}
                     label={gov.destiny_mode === true ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
                     </Field>
@@ -251,7 +251,9 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
             {openAcc==='crise' && (
                 <div className="aria-accordion__body">
                 <Field label={isEn ? "Crisis mode" : "Mode crise"}
-                hint={isEn ? "Activates automatic crisis detection and adapted deliberation" : "Active la détection automatique des crises et la délibération adaptée"}>
+                hint={isEn
+                    ? "All ministries answer the question directly — no circle phase, no inter-ministerial annotations. Triggered manually or by automatic crisis detection."
+                    : "Tous les ministères répondent directement à la question — pas de phase cercle, pas d'annotations inter-ministérielles. Déclenché manuellement ou par détection automatique."}>
                 <Toggle value={gov.crisis_mode !== false} onChange={v => setGov('crisis_mode', v)}
                 label={gov.crisis_mode !== false ? (isEn ? 'Enabled' : 'Activé') : (isEn ? 'Disabled' : 'Désactivé')} />
                 </Field>
