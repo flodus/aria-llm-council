@@ -7,7 +7,7 @@ import { getOptions, saveOptions } from '../../../shared/config/options';
 import { SectionTitle, Field, TextArea, Select, Toggle, SaveBadge } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
 import { DEFAULT_PROMPTS, getPrompts, savePrompts } from '../utils/settingsStorage';
-import { loadCustomProviders } from '../../../shared/services';
+import { loadCustomProviders, loadCustomModels } from '../../../shared/services';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTES
@@ -54,7 +54,11 @@ export default function SectionConstitution() {
 
     const customProviders = loadCustomProviders().filter(p => p.endpoint?.trim());
     const customProvidersAsProviders = customProviders.map(p => ({ id: p.id, label: p.label, models: p.model ? [{ value: p.model, label: p.model }] : [] }));
-    const allProviders = [...PROVIDERS, ...customProvidersAsProviders];
+    const savedCustomModels = loadCustomModels();
+    const allProviders = [...PROVIDERS, ...customProvidersAsProviders].map(p => ({
+      ...p,
+      models: [...p.models, ...(savedCustomModels[p.id] || []).map(m => ({ value: m.id, label: m.label }))],
+    }));
     const anyKey = !!(opts.api_keys?.claude || opts.api_keys?.gemini || opts.api_keys?.grok || opts.api_keys?.openai || opts.api_keys?.openrouter || customProviders.length > 0);
     const iaMode = opts.ia_mode;
     const keyStatusSaved = (() => { try { return JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}'); } catch { return {}; } })();

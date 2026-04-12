@@ -70,3 +70,13 @@ export const saveCustomProviders = (providers) => {
     try { localStorage.setItem('aria_custom_providers', JSON.stringify(providers)); }
     catch {}
 };
+
+export const loadCustomModels = () => {
+    try { return JSON.parse(localStorage.getItem('aria_custom_models')||'{}'); }
+    catch { return {}; }
+};
+
+export const saveCustomModels = (models) => {
+    try { localStorage.setItem('aria_custom_models', JSON.stringify(models)); }
+    catch {}
+};

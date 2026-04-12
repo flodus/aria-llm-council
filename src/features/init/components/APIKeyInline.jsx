@@ -13,7 +13,7 @@
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
-import { loadKeys, saveKeys, loadKeyStatus, saveKeyStatus, loadCustomProviders, saveCustomProviders } from '../../../shared/services';
+import { loadKeys, saveKeys, loadKeyStatus, saveKeyStatus, loadCustomProviders, saveCustomProviders, loadCustomModels, saveCustomModels } from '../../../shared/services';
 import { ARIA_FALLBACK_MODELS } from '../../../shared/constants/llmRegistry';
 import { ProviderAccordion } from './api';
 
@@ -100,6 +100,11 @@ export default function APIKeyInline({ onClose }) {
 
   // ── État providers custom ──────────────────────────────────────────────────
   const [customProvs, setCustomProvs] = useState(() => loadCustomProviders());
+
+  // ── État modèles custom par provider ──────────────────────────────────────
+  const [customModels, setCustomModels] = useState(() => loadCustomModels());
+  const addCustomModel  = (provId, id, label) => setCustomModels(prev => ({ ...prev, [provId]: [...(prev[provId]||[]), { id: id.trim(), label: label.trim() || id.trim() }] }));
+  const removeCustomModel = (provId, modelId) => setCustomModels(prev => ({ ...prev, [provId]: (prev[provId]||[]).filter(m => m.id !== modelId) }));
   const [newProv, setNewProv] = useState({ label: '', endpoint: '', key: '', model: '' });
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -257,6 +262,7 @@ export default function APIKeyInline({ onClose }) {
     saveKeys({ ...existing, ...toSave });
     saveKeyStatus(statusToSave);
     saveCustomProviders(customProvs.filter(p => p.label.trim() && p.endpoint.trim()));
+    saveCustomModels(customModels);
     onClose();
   };
 
@@ -279,7 +285,7 @@ export default function APIKeyInline({ onClose }) {
   {PROVIDERS.map(prov => (
     <ProviderAccordion
     key={prov.id}
-    provider={prov}
+    provider={{ ...prov, versions: [...prov.versions, ...(customModels[prov.id] || [])] }}
     keys={provKeys[prov.id] || []}
     keyStatus={keyStatus}
     onUpdateEntry={updateEntry}
@@ -288,6 +294,9 @@ export default function APIKeyInline({ onClose }) {
     onClear={() => setHasCleared(true)}
     onSetDefault={setDefault}
     onAddKey={addKey}
+    customModels={customModels[prov.id] || []}
+    onAddModel={(id, label) => addCustomModel(prov.id, id, label)}
+    onRemoveModel={(modelId) => removeCustomModel(prov.id, modelId)}
     />
   ))}
 
