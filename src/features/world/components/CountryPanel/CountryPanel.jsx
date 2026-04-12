@@ -36,7 +36,8 @@ export default function CountryPanel({
   countryIndex,
   countryTotal,
   onPrevCountry,
-  onNextCountry
+  onNextCountry,
+  onOpenEvent,
 }) {
   const {
     lang,
@@ -104,6 +105,7 @@ export default function CountryPanel({
         <CountryPanelTimeline
           country={country}
           lang={lang}
+          onOpenEvent={onOpenEvent}
         />
       )}
     </div>

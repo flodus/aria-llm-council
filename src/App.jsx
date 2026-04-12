@@ -16,6 +16,7 @@ import Settings         from './features/settings';
 import InitScreen       from './features/init/InitScreen';
 import CountryPanel from './features/world/components/CountryPanel/CountryPanel';
 import EmptyPanel from './features/world/components/CountryPanel/CountryPanelEmpty';
+import { EventDetail } from './features/chronolog/ChronologView';
 import LegitimiteOverlay from './features/world/LegitimiteOverlay';
 import { FONT, COLOR }  from './shared/theme';
 import { applyThemeVars } from './shared/theme/applyTheme';
@@ -60,6 +61,7 @@ export default function App() {
     ? liveCountries.findIndex(c => c.id === selectedCountry.id)
     : -1;
   const [chronologKey,    setChronologKey]    = useState(0);
+  const [overlayEvent,    setOverlayEvent]    = useState(null);
   const [resetKey,        setResetKey]        = useState(0);
   const [confirmReset,    setConfirmReset]    = useState(false);
   const [hasApiKeys,      setHasApiKeys]      = useState(() => {
@@ -444,6 +446,9 @@ export default function App() {
         onGoToMap={() => setActiveTab('map')}
         onGoToTimeline={() => setActiveTab('timeline')}
 
+        // Overlay délibération
+        onOpenEvent={ev => setOverlayEvent(ev)}
+
         // Actions métier (via ref)
         onSecession={handleSecession}
         onNextCycle={handleNextCycle}
@@ -468,6 +473,67 @@ export default function App() {
         />
       )}
       </aside>
+
+      {/* ── Overlay délibération complète ────────────────────────────────── */}
+      {overlayEvent && (
+        <div
+          onClick={() => setOverlayEvent(null)}
+          style={{
+            position:'fixed', inset:0, zIndex:9999,
+            background:'rgba(3,6,12,0.82)',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            padding:'1.5rem',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background:'rgba(8,14,26,0.98)',
+              border:'1px solid rgba(200,164,74,0.22)',
+              borderRadius:'4px',
+              width:'min(720px, 92vw)',
+              maxHeight:'80vh',
+              display:'flex', flexDirection:'column',
+              overflow:'hidden',
+            }}
+          >
+            {/* Header overlay */}
+            <div style={{
+              display:'flex', alignItems:'flex-start', gap:'0.6rem',
+              padding:'0.70rem 0.90rem',
+              borderBottom:'1px solid rgba(200,164,74,0.12)',
+              flexShrink:0,
+            }}>
+              <div style={{ flex:1 }}>
+                <div style={{ fontFamily:FONT.mono, fontSize:'0.34rem', letterSpacing:'0.16em',
+                  color:'rgba(200,164,74,0.55)', marginBottom:'0.22rem' }}>
+                  📜 {lang==='en' ? 'DELIBERATION' : 'DÉLIBÉRATION'}
+                </div>
+                {overlayEvent.question && (
+                  <p style={{ fontFamily:FONT.mono, fontSize:'0.46rem',
+                    color:'rgba(200,215,240,0.88)', lineHeight:1.55, margin:0 }}>
+                    {overlayEvent.question}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => setOverlayEvent(null)}
+                style={{
+                  background:'transparent', border:'none', cursor:'pointer',
+                  fontFamily:FONT.mono, fontSize:'0.50rem',
+                  color:'rgba(140,160,200,0.55)', padding:'0 0.2rem', flexShrink:0,
+                  lineHeight:1,
+                }}
+              >✕</button>
+            </div>
+
+            {/* Corps délibération */}
+            <div style={{ flex:1, overflowY:'auto', padding:'0' }}>
+              <EventDetail ev={overlayEvent} isSummary={false} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

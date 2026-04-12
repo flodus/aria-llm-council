@@ -54,8 +54,12 @@ export const COLORS = {
     // Textes
     text:         'rgba(200,215,240,0.88)',
     textDim:      'rgba(140,160,200,0.55)',
+    dimmed:       'rgba(140,160,200,0.55)',  // alias textDim
     textFaint:    'rgba(90,110,160,0.38)',
     muted:        '#4A5A72',
+
+    // Teal
+    teal:         '#3ABFCF',
 
     // Bordures
     border:       'rgba(200,164,74,0.10)',

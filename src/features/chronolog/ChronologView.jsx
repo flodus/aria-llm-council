@@ -87,7 +87,7 @@ function Pill({ label, delta }) {
 }
 
 // ── Bloc phase délibération ───────────────────────────────────────────────────
-function PhaseBlock({ borderColor, label, children }) {
+export function PhaseBlock({ borderColor, label, children }) {
   return (
     <div style={{ borderLeft:`2px solid ${borderColor}30`, paddingLeft:'0.55rem', marginTop:'0.25rem' }}>
       <div style={{ fontFamily:FONT.mono, fontSize:'0.34rem', letterSpacing:'0.14em',
@@ -114,7 +114,7 @@ function MinisteText({ who }) {
 }
 
 // ── Rendu détail par type ─────────────────────────────────────────────────────
-function EventDetail({ ev, isSummary }) {
+export function EventDetail({ ev, isSummary }) {
   const lang = loadLang();
   const isEn = lang === 'en';
 
