@@ -118,9 +118,9 @@ _(bloqué sur refonte carte V1)_
 - [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
   - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
 - [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants
-- [ ] **V9 — i18n couverture complète** : ~300 strings inline restants
-  - G4 (Settings refactor) livré — strings i18n Settings non encore centralisées
-  - Audit des `isEn ? '…' : '…'` inline dans tout src/
+- [x] **V9 — i18n couverture complète** : migration complète livré (2026-04-12)
+  - ~120 nouvelles clés : SECT_CONST_*, SYS_*, APROPOS_*, IFACE_*, CONST_MODAL_*, PRES_*, FORM_*
+  - 39 fichiers modifiés — chaînes JSX complexes intentionnellement inline
 
 ---
 
