@@ -60,3 +60,23 @@ export const saveAgentsOverride = (agents) => {
     try { localStorage.setItem('aria_agents_override', JSON.stringify(agents)); }
     catch {}
 };
+
+export const loadCustomProviders = () => {
+    try { return JSON.parse(localStorage.getItem('aria_custom_providers')||'[]'); }
+    catch { return []; }
+};
+
+export const saveCustomProviders = (providers) => {
+    try { localStorage.setItem('aria_custom_providers', JSON.stringify(providers)); }
+    catch {}
+};
+
+export const loadCustomModels = () => {
+    try { return JSON.parse(localStorage.getItem('aria_custom_models')||'{}'); }
+    catch { return {}; }
+};
+
+export const saveCustomModels = (models) => {
+    try { localStorage.setItem('aria_custom_models', JSON.stringify(models)); }
+    catch {}
+};

@@ -7,16 +7,18 @@ import { getOptions, saveOptions } from '../../../shared/config/options';
 import { SectionTitle, Field, TextArea, Select, Toggle, SaveBadge } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
 import { DEFAULT_PROMPTS, getPrompts, savePrompts } from '../utils/settingsStorage';
+import { loadCustomProviders, loadCustomModels } from '../../../shared/services';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTES
 // ─────────────────────────────────────────────────────────────────────────────
 
 const PROVIDERS = [
-    { id:'claude', label:'Anthropic — Claude', models:[{value:'claude-opus-4-6',label:'opus-4-6'},{value:'claude-sonnet-4-6',label:'sonnet-4-6'},{value:'claude-haiku-4-5-20251001',label:'haiku-4-5'}] },
-{ id:'gemini', label:'Google — Gemini',    models:[{value:'gemini-2.5-pro-preview-05-06',label:'2.5-pro-preview'},{value:'gemini-2.0-flash',label:'2.0-flash'},{value:'gemini-1.5-pro',label:'1.5-pro'},{value:'gemini-1.5-flash',label:'1.5-flash'}] },
-{ id:'grok',   label:'xAI — Grok',         models:[{value:'grok-3',label:'grok-3'},{value:'grok-3-mini',label:'grok-3-mini'}] },
-{ id:'openai', label:'OpenAI — GPT',        models:[{value:'gpt-4.1',label:'gpt-4.1'},{value:'gpt-4.1-mini',label:'gpt-4.1-mini'},{value:'o4-mini',label:'o4-mini'}] },
+    { id:'claude',      label:'Anthropic — Claude',   models:[{value:'claude-opus-4-6',label:'opus-4-6'},{value:'claude-sonnet-4-6',label:'sonnet-4-6'},{value:'claude-haiku-4-5-20251001',label:'haiku-4-5'}] },
+    { id:'gemini',      label:'Google — Gemini',       models:[{value:'gemini-2.5-pro-preview-05-06',label:'2.5-pro-preview'},{value:'gemini-2.0-flash',label:'2.0-flash'},{value:'gemini-1.5-pro',label:'1.5-pro'},{value:'gemini-1.5-flash',label:'1.5-flash'}] },
+    { id:'grok',        label:'xAI — Grok',            models:[{value:'grok-3',label:'grok-3'},{value:'grok-3-mini',label:'grok-3-mini'}] },
+    { id:'openai',      label:'OpenAI — GPT',          models:[{value:'gpt-4.1',label:'gpt-4.1'},{value:'gpt-4.1-mini',label:'gpt-4.1-mini'},{value:'o4-mini',label:'o4-mini'}] },
+    { id:'openrouter',  label:'OpenRouter',            models:[{value:'anthropic/claude-sonnet-4-5',label:'Claude Sonnet 4.5'},{value:'google/gemini-2.0-flash',label:'Gemini 2.0 Flash'},{value:'x-ai/grok-3-mini',label:'Grok 3 Mini'},{value:'openai/gpt-4.1-mini',label:'GPT-4.1 Mini'},{value:'meta-llama/llama-4-scout',label:'Llama 4 Scout'},{value:'mistralai/mistral-small-3.1',label:'Mistral Small 3.1'}] },
 ];
 
 export default function SectionConstitution() {
@@ -50,10 +52,20 @@ export default function SectionConstitution() {
         </button>
     );
 
-    const anyKey = !!(opts.api_keys?.claude || opts.api_keys?.gemini || opts.api_keys?.grok || opts.api_keys?.openai);
+    const customProviders = loadCustomProviders().filter(p => p.endpoint?.trim());
+    const customProvidersAsProviders = customProviders.map(p => ({ id: p.id, label: p.label, models: p.model ? [{ value: p.model, label: p.model }] : [] }));
+    const savedCustomModels = loadCustomModels();
+    const allProviders = [...PROVIDERS, ...customProvidersAsProviders].map(p => ({
+      ...p,
+      models: [...p.models, ...(savedCustomModels[p.id] || []).map(m => ({ value: m.id, label: m.label }))],
+    }));
+    const anyKey = !!(opts.api_keys?.claude || opts.api_keys?.gemini || opts.api_keys?.grok || opts.api_keys?.openai || opts.api_keys?.openrouter || customProviders.length > 0);
     const iaMode = opts.ia_mode;
     const keyStatusSaved = (() => { try { return JSON.parse(localStorage.getItem('aria_api_keys_status') || '{}'); } catch { return {}; } })();
-    const availableProviders = PROVIDERS.filter(p => !!opts.api_keys?.[p.id] && keyStatusSaved[p.id] !== 'error').map(p => p.id);
+    const availableProviders = allProviders.filter(p => {
+      if (customProviders.find(c => c.id === p.id)) return true; // custom = toujours disponible
+      return !!opts.api_keys?.[p.id] && keyStatusSaved[p.id] !== 'error';
+    }).map(p => p.id);
 
     const parsePromptParts = (text) => {
         const jsonStart = text.indexOf('Format JSON');
@@ -126,11 +138,11 @@ export default function SectionConstitution() {
                             fontSize:'0.42rem', letterSpacing:'0.10em',
                             color:'rgba(200,164,74,0.70)', textTransform:'uppercase',
                                                         borderLeft:'2px solid rgba(200,164,74,0.35)', paddingLeft:'0.4rem' }}>
-                                                        {PROVIDERS.find(p => p.id === availableProviders[0])?.label.split('—')[1]?.trim() || availableProviders[0]}
+                                                        {allProviders.find(p => p.id === availableProviders[0])?.label.split('—')[1]?.trim() || availableProviders[0]}
                                                         </span>
                                                         <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
-                                                        {(PROVIDERS.find(p => p.id === availableProviders[0])?.models || []).map(m => {
-                                                            const soloModel = opts.ia_models?.[availableProviders[0]] || PROVIDERS.find(p => p.id === availableProviders[0])?.models[0]?.value;
+                                                        {(allProviders.find(p => p.id === availableProviders[0])?.models || []).map(m => {
+                                                            const soloModel = opts.ia_models?.[availableProviders[0]] || allProviders.find(p => p.id === availableProviders[0])?.models[0]?.value;
                                                             const chosen = soloModel === m.value;
                                                             return (
                                                                 <button key={m.value}
@@ -150,8 +162,8 @@ export default function SectionConstitution() {
                     ) : (
                         <div style={{ display:'flex', flexDirection:'column', gap:'0.45rem' }}>
                         <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
-                        {PROVIDERS.map(p => {
-                            const disabled = !opts.api_keys?.[p.id];
+                        {allProviders.map(p => {
+                            const disabled = !opts.api_keys?.[p.id] && !customProviders.find(c => c.id === p.id);
                             return (
                                 <label key={p.id} className={`settings-radio-card${opts.solo_model===p.id?' selected':''}${disabled?' disabled':''}`}
                                 style={{ opacity:disabled?0.30:1, cursor:disabled?'not-allowed':'pointer', flex:'0 0 auto', padding:'0.3rem 0.8rem' }}>
@@ -165,7 +177,7 @@ export default function SectionConstitution() {
                         </div>
                         {(() => {
                             const soloProvId = opts.solo_model || availableProviders[0];
-                            const soloProvDef = PROVIDERS.find(p => p.id === soloProvId);
+                            const soloProvDef = allProviders.find(p => p.id === soloProvId);
                             const soloModel = opts.ia_models?.[soloProvId] || soloProvDef?.models[0]?.value;
                             return (
                                 <div style={{ display:'flex', gap:'0.22rem', flexWrap:'wrap' }}>
@@ -202,7 +214,7 @@ export default function SectionConstitution() {
                         <div key={r.key} className="settings-role-row">
                         <span className="settings-role-label">{r.label}</span>
                         <Select value={opts.ia_roles?.[r.key] || 'claude'} onChange={v => updateOpts(`ia_roles.${r.key}`, v)}
-                        options={availableProviders.map(pid => ({ value:pid, label:PROVIDERS.find(p=>p.id===pid)?.label.split('—')[1]?.trim()||pid }))} />
+                        options={availableProviders.map(pid => ({ value:pid, label:allProviders.find(p=>p.id===pid)?.label.split('—')[1]?.trim()||allProviders.find(p=>p.id===pid)?.label||pid }))} />
                         </div>
                     ))}
                     </div>
@@ -223,7 +235,7 @@ export default function SectionConstitution() {
                         <div key={r.key} className="settings-role-row">
                         <span className="settings-role-label">{r.label}</span>
                         <Select value={opts.ia_roles?.[r.key] || 'claude'} onChange={v => updateOpts(`ia_roles.${r.key}`, v)}
-                        options={availableProviders.map(pid => ({ value:pid, label:PROVIDERS.find(p=>p.id===pid)?.label.split('—')[1]?.trim()||pid }))} />
+                        options={availableProviders.map(pid => ({ value:pid, label:allProviders.find(p=>p.id===pid)?.label.split('—')[1]?.trim()||allProviders.find(p=>p.id===pid)?.label||pid }))} />
                         </div>
                     ))}
                     </div>

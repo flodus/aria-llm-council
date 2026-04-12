@@ -119,7 +119,7 @@ export default function SectionGouvernanceDefaut({ opts, setOpts }) {
             {isEn ? 'Presidency type' : 'Type de présidence'}
             </div>
             <PresidencyTiles presType={gov.presidency || 'duale'} onSelect={v => setGov('presidency', v)} isEn={isEn}
-                presSymbols={presSymbols} onEditEmoji={handleEditEmojiPres} />
+                presSymbols={presSymbols} onEditEmoji={handleEditEmojiPres} showTrinaire />
             <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.40rem', color:'rgba(140,160,200,0.35)', marginTop:'0.5rem', letterSpacing:'0.06em' }}>
             {isEn ? 'Applied to all new countries unless overridden' : 'Appliqué à tous les nouveaux pays sauf override'}
             </div>

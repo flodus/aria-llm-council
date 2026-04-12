@@ -7,7 +7,6 @@ import { getStats } from '../../../shared/data/gameData';
 import { getOptions, saveOptions } from '../../../shared/config/options';
 import { getDestin } from '../../council/services/agentsManager';
 import AgentGrid from '../../../shared/components/AgentGrid';
-import PresidencyTiles from '../../../shared/components/PresidencyTiles';
 import { SectionTitle, Field, TextArea, SaveBadge } from '../ui/SettingsUI';
 import SectionGouvernanceDefaut from './SectionGouvernanceDefaut';
 import { getAgentOverrides, saveAgentOverrides } from '../utils/settingsStorage';
