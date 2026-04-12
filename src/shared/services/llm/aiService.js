@@ -7,6 +7,7 @@ import { loadLang, FALLBACK_PHRASES } from '../../../ariaI18n';
 import { setIaStatus } from '../iaStatusStore';
 import { getPrompts } from '../../../features/settings/utils/settingsStorage';
 import { DEFAULT_MODELS } from '../../constants/models';
+import { loadCustomProviders } from '../storage';
 
 // ── Validation clés ───────────────────────────────────────────────────────────
 
@@ -170,8 +171,9 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     const v = keys[p];
     return !!(v && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some(k => k.key?.trim()) : false));
   };
-  const KEY_PRIORITY = ['openrouter', 'gemini', 'claude', 'grok', 'openai'];
-  if (!hasKey(model)) model = KEY_PRIORITY.find(p => hasKey(p)) || model;
+  const customProvIds = loadCustomProviders().filter(p => p.endpoint?.trim()).map(p => p.id);
+  const KEY_PRIORITY = [...customProvIds, 'openrouter', 'gemini', 'claude', 'grok', 'openai'];
+  if (!hasKey(model) && !customProvIds.includes(model)) model = KEY_PRIORITY.find(p => hasKey(p) || customProvIds.includes(p)) || model;
 
   const fullContent = systemPrompt
     ? `${systemPrompt}\n\n---\n\nDONNÉES À TRAITER :\n${prompt}`
@@ -310,6 +312,31 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     return { error: true, msg: getRandomFallback() };
   }
 
+  // ── Providers custom (OpenAI-compatible) ─────────────────────────────────
+  const customProvs = loadCustomProviders();
+  const customProv = customProvs.find(p => p.id === model);
+  if (customProv) {
+    const { endpoint, key, model: customModel } = customProv;
+    if (!endpoint) return { error: true, msg: 'SYSTÈME : Endpoint manquant pour ce provider custom.' };
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (key?.trim()) headers['Authorization'] = `Bearer ${key.trim()}`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ model: customModel || 'default', max_tokens: 1000,
+          messages: [{ role: 'user', content: fullContent }] }),
+      });
+      if (!res.ok) { console.warn('[ARIA] Custom provider erreur HTTP', res.status); return { error: true, msg: getRandomFallback() }; }
+      const data = await res.json();
+      const text = data?.choices?.[0]?.message?.content || '';
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) {
+      console.warn('[ARIA] Custom provider error:', e.message);
+      return { error: true, msg: getRandomFallback() };
+    }
+  }
+
   return { error: true, msg: 'SYSTÈME : Aucune clé API valide détectée.' };
 }
 
@@ -321,7 +348,9 @@ export async function callAI(prompt, type = 'standard', context = {}) {
   const keys       = opts.api_keys;
   const roles      = opts.ia_roles;
   const hasKeyForProv = (v) => !!(v && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some(k => k.key?.trim()) : false));
-  const hasKeys = hasKeyForProv(keys.claude) || hasKeyForProv(keys.gemini) || hasKeyForProv(keys.grok) || hasKeyForProv(keys.openai) || hasKeyForProv(keys.openrouter);
+  const customProviders = loadCustomProviders();
+  const hasCustomProvider = customProviders.some(p => p.endpoint?.trim());
+  const hasKeys = hasKeyForProv(keys.claude) || hasKeyForProv(keys.gemini) || hasKeyForProv(keys.grok) || hasKeyForProv(keys.openai) || hasKeyForProv(keys.openrouter) || hasCustomProvider;
 
   if (!hasKeys || opts.force_local || opts.ia_mode === 'none') {
     return getLocalResponse(type, context);

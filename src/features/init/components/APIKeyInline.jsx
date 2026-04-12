@@ -13,7 +13,7 @@
 import { useState } from 'react';
 import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
-import { loadKeys, saveKeys, loadKeyStatus, saveKeyStatus } from '../../../shared/services';
+import { loadKeys, saveKeys, loadKeyStatus, saveKeyStatus, loadCustomProviders, saveCustomProviders } from '../../../shared/services';
 import { ARIA_FALLBACK_MODELS } from '../../../shared/constants/llmRegistry';
 import { ProviderAccordion } from './api';
 
@@ -87,8 +87,34 @@ const isFakeKey = (provider, key) => {
   return key.includes('-fake-') || key.includes('-test-') || key.includes('-debug-') || key.includes('-demo-');
 };
 
+// ── Styles partagés formulaire custom ────────────────────────────────────────
+const inputStyle = {
+  fontFamily: "'JetBrains Mono',monospace", fontSize: '0.44rem',
+  background: 'rgba(8,14,26,0.70)', border: '1px solid rgba(90,110,160,0.22)',
+  borderRadius: '2px', color: 'rgba(200,220,255,0.85)', padding: '0.28rem 0.5rem',
+  outline: 'none', width: '100%', boxSizing: 'border-box',
+};
+
 export default function APIKeyInline({ onClose }) {
   const { lang } = useLocale();
+
+  // ── État providers custom ──────────────────────────────────────────────────
+  const [customProvs, setCustomProvs] = useState(() => loadCustomProviders());
+  const [newProv, setNewProv] = useState({ label: '', endpoint: '', key: '', model: '' });
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  const slugify = (label) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'custom';
+
+  const addCustomProv = () => {
+    if (!newProv.label.trim() || !newProv.endpoint.trim()) return;
+    const id = slugify(newProv.label) + '-' + Math.random().toString(36).slice(2, 5);
+    setCustomProvs(prev => [...prev, { ...newProv, id, label: newProv.label.trim(), endpoint: newProv.endpoint.trim(), key: newProv.key.trim(), model: newProv.model.trim() }]);
+    setNewProv({ label: '', endpoint: '', key: '', model: '' });
+    setShowAddForm(false);
+  };
+
+  const removeCustomProv = (id) => setCustomProvs(prev => prev.filter(p => p.id !== id));
+  const updateCustomProv = (id, field, value) => setCustomProvs(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
 
   // État multi-clés
   const [keyState, setKeyState] = useState(() => {
@@ -192,7 +218,7 @@ export default function APIKeyInline({ onClose }) {
 
   const anyOk = Object.values(keyStatus).some(s => s === 'ok' || s === 'debug');
   const hasAnyKey = Object.values(provKeys).some(arr => arr.some(k => k.key?.trim()));
-  const canSave = anyOk || hasDeleted || hasCleared;
+  const canSave = anyOk || hasDeleted || hasCleared || customProvs.length > 0;
 
   // ── Sauvegarde ───────────────────────────────────────────────────────────
   // Persiste clés valides + statuts + modèle préféré par provider dans localStorage
@@ -230,6 +256,7 @@ export default function APIKeyInline({ onClose }) {
 
     saveKeys({ ...existing, ...toSave });
     saveKeyStatus(statusToSave);
+    saveCustomProviders(customProvs.filter(p => p.label.trim() && p.endpoint.trim()));
     onClose();
   };
 
@@ -263,6 +290,53 @@ export default function APIKeyInline({ onClose }) {
     onAddKey={addKey}
     />
   ))}
+
+  {/* ── Providers custom ── */}
+  <div style={{ borderTop: '1px solid rgba(90,110,160,0.12)', paddingTop: '0.6rem', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <span style={{ fontFamily: FONT.mono, fontSize: '0.42rem', letterSpacing: '0.12em', color: 'rgba(140,160,200,0.55)', textTransform: 'uppercase' }}>
+        {lang === 'en' ? 'Custom providers' : 'Providers custom'} <span style={{ color: 'rgba(140,160,200,0.30)' }}>— OpenAI-compatible</span>
+      </span>
+      {!showAddForm && (
+        <button onClick={() => setShowAddForm(true)} style={{ background: 'none', border: '1px solid rgba(90,110,160,0.25)', borderRadius: '2px', cursor: 'pointer', padding: '0.15rem 0.5rem', fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.60)', letterSpacing: '0.08em' }}>
+          + {lang === 'en' ? 'Add' : 'Ajouter'}
+        </button>
+      )}
+    </div>
+
+    {customProvs.map(p => (
+      <div key={p.id} style={{ background: 'rgba(8,14,26,0.60)', border: '1px solid rgba(90,110,160,0.18)', borderRadius: '2px', padding: '0.45rem 0.6rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(200,220,255,0.80)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{p.label}</span>
+          <button onClick={() => removeCustomProv(p.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: FONT.mono, fontSize: '0.42rem', color: 'rgba(200,80,80,0.55)', padding: '0 0.2rem' }}>✕</button>
+        </div>
+        <input style={inputStyle} value={p.endpoint} onChange={e => updateCustomProv(p.id, 'endpoint', e.target.value)} placeholder="https://…/v1/chat/completions" />
+        <div style={{ display: 'flex', gap: '0.4rem' }}>
+          <input style={{ ...inputStyle, flex: 1 }} value={p.key} onChange={e => updateCustomProv(p.id, 'key', e.target.value)} placeholder={lang === 'en' ? 'API key (optional)' : 'Clé API (optionnel)'} />
+          <input style={{ ...inputStyle, flex: 1 }} value={p.model} onChange={e => updateCustomProv(p.id, 'model', e.target.value)} placeholder={lang === 'en' ? 'Model ID' : 'ID modèle'} />
+        </div>
+      </div>
+    ))}
+
+    {showAddForm && (
+      <div style={{ background: 'rgba(8,14,26,0.60)', border: '1px solid rgba(90,110,160,0.25)', borderRadius: '2px', padding: '0.5rem 0.6rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+        <input style={inputStyle} value={newProv.label} onChange={e => setNewProv(p => ({ ...p, label: e.target.value }))} placeholder={lang === 'en' ? 'Provider name (e.g. Ollama)' : 'Nom du provider (ex: Ollama)'} />
+        <input style={inputStyle} value={newProv.endpoint} onChange={e => setNewProv(p => ({ ...p, endpoint: e.target.value }))} placeholder="https://…/v1/chat/completions" />
+        <div style={{ display: 'flex', gap: '0.4rem' }}>
+          <input style={{ ...inputStyle, flex: 1 }} value={newProv.key} onChange={e => setNewProv(p => ({ ...p, key: e.target.value }))} placeholder={lang === 'en' ? 'API key (optional)' : 'Clé API (optionnel)'} />
+          <input style={{ ...inputStyle, flex: 1 }} value={newProv.model} onChange={e => setNewProv(p => ({ ...p, model: e.target.value }))} placeholder={lang === 'en' ? 'Model ID' : 'ID modèle'} />
+        </div>
+        <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end', marginTop: '0.1rem' }}>
+          <button onClick={() => { setShowAddForm(false); setNewProv({ label: '', endpoint: '', key: '', model: '' }); }} style={{ background: 'none', border: '1px solid rgba(90,110,160,0.20)', borderRadius: '2px', cursor: 'pointer', padding: '0.18rem 0.6rem', fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.50)' }}>
+            {lang === 'en' ? 'Cancel' : 'Annuler'}
+          </button>
+          <button onClick={addCustomProv} disabled={!newProv.label.trim() || !newProv.endpoint.trim()} style={{ background: 'rgba(90,110,160,0.10)', border: '1px solid rgba(90,110,160,0.30)', borderRadius: '2px', cursor: newProv.label.trim() && newProv.endpoint.trim() ? 'pointer' : 'not-allowed', padding: '0.18rem 0.6rem', fontFamily: FONT.mono, fontSize: '0.40rem', color: 'rgba(140,160,200,0.75)', opacity: newProv.label.trim() && newProv.endpoint.trim() ? 1 : 0.40 }}>
+            {lang === 'en' ? 'Add' : 'Ajouter'}
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
 
   {!canSave && hasAnyKey && (
     <div style={{ fontSize: '0.42rem', color: 'rgba(200,164,74,0.45)', lineHeight: 1.5 }}>
