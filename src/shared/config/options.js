@@ -47,6 +47,7 @@ export function getOptions() {
       world:             { ...DEFAULT_OPTIONS.world,    ...saved.world    },
       solo_model:        saved.solo_model || DEFAULT_OPTIONS.solo_model,
       defaultGovernance: { ...DEFAULT_OPTIONS.defaultGovernance, ...(saved.defaultGovernance || {}) },
+      chroniqueur:       { ...DEFAULT_OPTIONS.chroniqueur,       ...(saved.chroniqueur       || {}) },
     };
   } catch { return { ...DEFAULT_OPTIONS }; }
 }
