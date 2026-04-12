@@ -9,6 +9,7 @@ import { calcAriaIRL, driftAria, calcRessources, buildCountryFromLocal, buildCou
 import { getHumeur, calcInfluenceRadius, doCycle, checkSeuils } from '../services/gameEngine';
 import { saveSession, loadSession, clearSession, buildDefaultAlliances } from '../services/sessionStore';
 import { loadLang } from '../../../ariaI18n';
+import { loadOpts, saveOpts } from '../../../shared/services/storage';
 import STATS from '../../../../templates/languages/fr/simulation.json';
 
 export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
@@ -64,9 +65,9 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
   // ── Démarrage local ────────────────────────────────────────────────────────
   const startLocal = useCallback((customDefs = null, W = 1400, H = 800) => {
     try {
-      const o = JSON.parse(localStorage.getItem('aria_options') || '{}');
+      const o = loadOpts();
       o.force_local = true;
-      localStorage.setItem('aria_options', JSON.stringify(o));
+      saveOpts(o);
     } catch {}
     const seed  = Math.floor(Math.random() * 999999);
     const world = initWorld(seed, W, H);
@@ -126,9 +127,9 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
   // ── Démarrage IA ───────────────────────────────────────────────────────────
   const startWithAI = useCallback(async (countryDefs, W = 1400, H = 800) => {
     try {
-      const o = JSON.parse(localStorage.getItem('aria_options') || '{}');
+      const o = loadOpts();
       o.force_local = false;
-      localStorage.setItem('aria_options', JSON.stringify(o));
+      saveOpts(o);
     } catch {}
     const seed  = Math.floor(Math.random() * 999999);
     const world = initWorld(seed, W, H);

@@ -11,12 +11,13 @@
 import { useState, useEffect } from 'react';
 import { FONT, C } from '../../../../shared/theme';
 import { loadLang, t } from '../../../../ariaI18n';
+import { STORAGE_KEYS } from '../../../../shared/services/storageKeys';
 import { loadMemoire } from '../../../chronolog/useChroniqueur';
 import { EventDetail } from '../../../chronolog/ChronologView';
 
-const LS_CYCLES    = 'aria_chronolog_cycles';
-const LS_ALLIANCES = 'aria_session_alliances';
-const LS_COUNTRIES = 'aria_session_countries';
+const LS_CYCLES    = STORAGE_KEYS.CHRONOLOG_CYCLES;
+const LS_ALLIANCES = STORAGE_KEYS.SESSION_ALLIANCES;
+const LS_COUNTRIES = STORAGE_KEYS.SESSION_COUNTRIES;
 
 // ── Lecture données ───────────────────────────────────────────────────────────
 

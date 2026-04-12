@@ -12,6 +12,7 @@
 import AGENTS_RAW    from '../../../../templates/languages/fr/governance.json';
 import AGENTS_RAW_EN from '../../../../templates/languages/en/governance.json';
 import { loadLang }  from '../../../ariaI18n';
+import { loadAgentsOverride } from '../../../shared/services/storage';
 
 // ============================================================
 // DONNÉES AGENTS — runtime override via localStorage
@@ -24,7 +25,7 @@ import { loadLang }  from '../../../ariaI18n';
 function getAgents() {
     const BASE = loadLang() === 'en' ? AGENTS_RAW_EN : AGENTS_RAW;
     try {
-        const ov = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
+        const ov = loadAgentsOverride();
         if (!ov) return BASE;
 
         // Les noms/labels viennent toujours du JSON localisé (BASE).

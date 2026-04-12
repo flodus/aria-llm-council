@@ -42,9 +42,9 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
   const aria = useARIA({ setSelectedCountry, isCrisis, onReset });
   const iaStatus = useIaStatus(aria.pushNotif);
 
-  const [uiLang, setUiLang] = useState(() => localStorage.getItem('aria_lang') || 'fr');
+  const [uiLang, setUiLang] = useState(() => loadLang());
   useEffect(() => {
-    const onLang = () => setUiLang(localStorage.getItem('aria_lang') || 'fr');
+    const onLang = () => setUiLang(loadLang());
     window.addEventListener('aria-lang-change', onLang);
     return () => window.removeEventListener('aria-lang-change', onLang);
   }, []);

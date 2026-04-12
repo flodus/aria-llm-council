@@ -5,6 +5,7 @@
 
 import { useState, useCallback, Component } from 'react';
 import { useLocale, t } from '../../ariaI18n';
+import { STORAGE_KEYS } from '../../shared/services/storageKeys';
 import SectionSysteme from './components/SectionSysteme';
 import SectionConstitution from './components/SectionConstitution';
 import SectionConseil from './components/SectionConseil';
@@ -59,13 +60,13 @@ export default function Settings({ onClose }) {
 
   const hardReset = useCallback(() => {
     [
-      'aria_options','aria_prompts','aria_agents','aria_sim',
-      'aria_world','aria_countries','aria_api_keys',
-      'aria_session_active','aria_session_world',
-      'aria_session_countries','aria_session_alliances',
-      'aria_api_keys_status',
-      'aria_agents_override','aria_chronolog_cycles',
-      'aria_lang','aria_preferred_models',
+      STORAGE_KEYS.OPTIONS, STORAGE_KEYS.PROMPTS, 'aria_agents', STORAGE_KEYS.SIM,
+      STORAGE_KEYS.WORLD_LEGACY, STORAGE_KEYS.COUNTRIES_LEGACY, STORAGE_KEYS.API_KEYS,
+      STORAGE_KEYS.SESSION_ACTIVE, STORAGE_KEYS.SESSION_WORLD,
+      STORAGE_KEYS.SESSION_COUNTRIES, STORAGE_KEYS.SESSION_ALLIANCES,
+      STORAGE_KEYS.API_KEYS_STATUS,
+      STORAGE_KEYS.AGENTS_OVERRIDE, STORAGE_KEYS.CHRONOLOG_CYCLES,
+      STORAGE_KEYS.LANG, STORAGE_KEYS.PREFERRED_MODELS,
     ].forEach(k => localStorage.removeItem(k));
     window.location.reload();
   }, []);

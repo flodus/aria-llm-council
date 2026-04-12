@@ -2,15 +2,17 @@
 // Persistance session localStorage + construction alliances par défaut
 
 import { getStats } from '../../../shared/data/gameData';
+import { STORAGE_KEYS } from '../../../shared/services/storageKeys';
+import { lireStorage, ecrireStorage, supprimerStorage } from '../../../shared/utils/storage';
 
 // ── Session ───────────────────────────────────────────────────────────────────
 
 export function saveSession(seed, W, H, countries, alliances) {
   try {
-    localStorage.setItem('aria_session_active', 'true');
-    localStorage.setItem('aria_session_world',     JSON.stringify({ seed, W, H }));
-    localStorage.setItem('aria_session_countries', JSON.stringify(countries));
-    localStorage.setItem('aria_session_alliances', JSON.stringify(alliances));
+    localStorage.setItem(STORAGE_KEYS.SESSION_ACTIVE, 'true');
+    ecrireStorage(STORAGE_KEYS.SESSION_WORLD,     { seed, W, H });
+    ecrireStorage(STORAGE_KEYS.SESSION_COUNTRIES, countries);
+    ecrireStorage(STORAGE_KEYS.SESSION_ALLIANCES, alliances);
   } catch (e) {
     console.warn('[ARIA] saveSession failed:', e);
   }
@@ -18,15 +20,13 @@ export function saveSession(seed, W, H, countries, alliances) {
 
 export function loadSession() {
   try {
-    const active = localStorage.getItem('aria_session_active');
+    const active = localStorage.getItem(STORAGE_KEYS.SESSION_ACTIVE);
     if (!active) return null;
-    const worldRaw     = localStorage.getItem('aria_session_world');
-    const countriesRaw = localStorage.getItem('aria_session_countries');
-    const alliancesRaw = localStorage.getItem('aria_session_alliances');
-    if (!worldRaw || !countriesRaw) return null;
-    const { seed, W, H } = JSON.parse(worldRaw);
-    const countries       = JSON.parse(countriesRaw);
-    const alliances       = JSON.parse(alliancesRaw || '[]');
+    const world     = lireStorage(STORAGE_KEYS.SESSION_WORLD, null);
+    const countries = lireStorage(STORAGE_KEYS.SESSION_COUNTRIES, null);
+    const alliances = lireStorage(STORAGE_KEYS.SESSION_ALLIANCES, []);
+    if (!world || !countries) return null;
+    const { seed, W, H } = world;
     if (!countries?.length) return null;
     return { seed, W: W || 1400, H: H || 800, countries, alliances };
   } catch { return null; }
@@ -34,15 +34,15 @@ export function loadSession() {
 
 export function clearSession() {
   try {
-    localStorage.removeItem('aria_session_active');
-    localStorage.removeItem('aria_session_world');
-    localStorage.removeItem('aria_session_countries');
-    localStorage.removeItem('aria_session_alliances');
-    localStorage.removeItem('aria_chronolog_cycles');
-    localStorage.removeItem('aria_cycle_num');
-    localStorage.removeItem('aria_chroniqueur');
-    const _o = JSON.parse(localStorage.getItem('aria_options') || '{}');
-    if (_o.gameplay) { _o.gameplay.context_mode = 'auto'; localStorage.setItem('aria_options', JSON.stringify(_o)); }
+    supprimerStorage(STORAGE_KEYS.SESSION_ACTIVE);
+    supprimerStorage(STORAGE_KEYS.SESSION_WORLD);
+    supprimerStorage(STORAGE_KEYS.SESSION_COUNTRIES);
+    supprimerStorage(STORAGE_KEYS.SESSION_ALLIANCES);
+    supprimerStorage(STORAGE_KEYS.CHRONOLOG_CYCLES);
+    supprimerStorage(STORAGE_KEYS.CYCLE_NUM);
+    supprimerStorage(STORAGE_KEYS.CHRONIQUEUR);
+    const _o = lireStorage(STORAGE_KEYS.OPTIONS, {});
+    if (_o.gameplay) { _o.gameplay.context_mode = 'auto'; ecrireStorage(STORAGE_KEYS.OPTIONS, _o); }
   } catch {}
 }
 

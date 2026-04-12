@@ -8,18 +8,7 @@ import { getStats, REGIMES, TERRAINS, CYCLES_CFG } from '../../../shared/data/ga
 import { getOptions, saveOptions } from '../../../shared/config/options';
 import { SectionTitle, Field, NumberInput, Toggle, SaveBadge } from '../ui/SettingsUI';
 import { useAccordion } from '../../../shared/hooks/useAccordion';
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  UTILITAIRES LOCAUX
-// ─────────────────────────────────────────────────────────────────────────────
-
-function getSimOverrides() {
-    try { return JSON.parse(localStorage.getItem('aria_sim') || '{}'); } catch { return {}; }
-}
-
-function saveSimOverrides(s) {
-    try { localStorage.setItem('aria_sim', JSON.stringify(s)); } catch {}
-}
+import { getSimOverrides, saveSimOverrides } from '../utils/settingsStorage';
 
 export default function SectionSimulation() {
     const { lang } = useLocale();

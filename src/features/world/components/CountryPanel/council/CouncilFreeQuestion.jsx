@@ -13,6 +13,7 @@
 import { FONT } from '../../../../../shared/theme';
 import { t } from '../../../../../ariaI18n';
 import { getRandomQuestion, getQuestionState } from '../../../../../shared/services/boardgame/questionService';
+import { loadOpts } from '../../../../../shared/services/storage';
 import { useState, useEffect } from 'react';
 
 export default function FreeQuestion({
@@ -51,7 +52,7 @@ cycleActuel
     // ============================================================
     const isBoardGame = (() => {
         try {
-            const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+            const opts = loadOpts();
             return opts.ia_mode === 'none' || opts.force_local;
         } catch {
             return false;

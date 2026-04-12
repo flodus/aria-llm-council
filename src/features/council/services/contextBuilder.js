@@ -7,6 +7,7 @@
 import { loadLang } from '../../../ariaI18n';
 import { getStats } from '../../../shared/data/gameData';
 import { loadMemoire } from '../../chronolog/useChroniqueur';
+import { loadOpts } from '../../../shared/services/storage';
 
 // ============================================================
 // HELPER DE LANGUE
@@ -32,7 +33,7 @@ export function buildCountryContext(country) {
     // 2. Mode effectif (pays > global)
     let mode = 'auto';
     try {
-        const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+        const opts = loadOpts();
         mode = opts.gameplay?.context_mode || 'auto';
     } catch {}
     if (country.context_mode) mode = country.context_mode;
@@ -110,7 +111,7 @@ export function buildCountryContext(country) {
     const chronEnabled = (() => {
       if (country.chroniqueur_enabled !== undefined) return country.chroniqueur_enabled;
       try {
-        const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+        const opts = loadOpts();
         return opts.chroniqueur?.enabled ?? true;
       } catch { return true; }
     })();

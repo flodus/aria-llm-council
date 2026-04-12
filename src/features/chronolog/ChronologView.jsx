@@ -7,6 +7,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { loadLang, t, useLocale } from '../../ariaI18n';
+import { STORAGE_KEYS } from '../../shared/services/storageKeys';
 import { useState, useEffect, useMemo } from 'react';
 import { C, FONT } from '../../shared/theme';
 import { loadMemoire } from './useChroniqueur';
@@ -20,7 +21,7 @@ const TYPE_META = {
   diplomacy:    { icon: '🤝',  get label() { return t('TIMELINE_DIPLOMACY', loadLang()); },              color: C.blue   },
 };
 
-const LS_KEY = 'aria_chronolog_cycles';
+const LS_KEY = STORAGE_KEYS.CHRONOLOG_CYCLES;
 function loadCycles() {
   try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
   catch { return []; }

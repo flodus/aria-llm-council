@@ -200,7 +200,8 @@
  │           storageKeys.js inventaire complet (2026-04-11)
  │           models.js DEFAULT_MODELS centralisé (2026-04-11)
  │           ARBORESCENCE.md nettoyée + storage clarifiés (2026-04-11)
- │           Reste : normalizeCountry() · adoption STORAGE_KEYS dans 33 fichiers
+ │           STORAGE_KEYS adoption complète (2026-04-12) — 34 fichiers, 0 magic strings
+ │           Reste : normalizeCountry()
  └─[V8] Optimisation moteur ..... [Re-renders · useCallback · appels IA] ⬡ 0%
 
  [ PHASE V5 : MULTIJOUEUR ] ...................................... STATUT: DISTANT

@@ -4,79 +4,33 @@
 // Aucune logique métier ici — pas de merge, pas de valeurs par défaut.
 // Pour la logique options (merge + defaults) → shared/config/options.js
 
-export const loadOpts = () => {
-    try { return JSON.parse(localStorage.getItem('aria_options')||'{}'); }
-    catch { return {}; }
-};
+import { STORAGE_KEYS } from './storageKeys';
 
-export const saveOpts = (opts) => {
-    try { localStorage.setItem('aria_options', JSON.stringify(opts)); }
-    catch {}
-};
+const lire = (cle, fb) => { try { return JSON.parse(localStorage.getItem(cle) || JSON.stringify(fb)); } catch { return fb; } };
+const ecrire = (cle, val) => { try { localStorage.setItem(cle, JSON.stringify(val)); } catch {} };
 
-export const loadPreferredModels = () => {
-    try { return JSON.parse(localStorage.getItem('aria_preferred_models')||'{}'); }
-    catch { return {}; }
-};
+export const loadOpts           = () => lire(STORAGE_KEYS.OPTIONS, {});
+export const saveOpts           = (opts) => ecrire(STORAGE_KEYS.OPTIONS, opts);
 
-export const savePreferredModels = (models) => {
-    try { localStorage.setItem('aria_preferred_models', JSON.stringify(models)); }
-    catch {}
-};
+export const loadPreferredModels = () => lire(STORAGE_KEYS.PREFERRED_MODELS, {});
+export const savePreferredModels = (models) => ecrire(STORAGE_KEYS.PREFERRED_MODELS, models);
 
 export const loadIARoles = () => {
-    try {
-        const r = (JSON.parse(localStorage.getItem('aria_options')||'{}')).ia_roles || {};
-        return r;
-    } catch { return {}; }
-};
-
-export const loadKeys = () => {
-    try { return JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); }
+    try { return (JSON.parse(localStorage.getItem(STORAGE_KEYS.OPTIONS) || '{}')).ia_roles || {}; }
     catch { return {}; }
 };
 
-export const saveKeys = (keys) => {
-    try { localStorage.setItem('aria_api_keys', JSON.stringify(keys)); }
-    catch {}
-};
+export const loadKeys    = () => lire(STORAGE_KEYS.API_KEYS, {});
+export const saveKeys    = (keys) => ecrire(STORAGE_KEYS.API_KEYS, keys);
 
-export const loadKeyStatus = () => {
-    try { return JSON.parse(localStorage.getItem('aria_api_keys_status')||'{}'); }
-    catch { return {}; }
-};
+export const loadKeyStatus  = () => lire(STORAGE_KEYS.API_KEYS_STATUS, {});
+export const saveKeyStatus  = (status) => ecrire(STORAGE_KEYS.API_KEYS_STATUS, status);
 
-export const saveKeyStatus = (status) => {
-    try { localStorage.setItem('aria_api_keys_status', JSON.stringify(status)); }
-    catch {}
-};
+export const loadAgentsOverride = () => lire(STORAGE_KEYS.AGENTS_OVERRIDE, null);
+export const saveAgentsOverride = (agents) => ecrire(STORAGE_KEYS.AGENTS_OVERRIDE, agents);
 
-export const loadAgentsOverride = () => {
-    try { return JSON.parse(localStorage.getItem('aria_agents_override')||'null'); }
-    catch { return null; }
-};
+export const loadCustomProviders = () => lire(STORAGE_KEYS.CUSTOM_PROVIDERS, []);
+export const saveCustomProviders = (providers) => ecrire(STORAGE_KEYS.CUSTOM_PROVIDERS, providers);
 
-export const saveAgentsOverride = (agents) => {
-    try { localStorage.setItem('aria_agents_override', JSON.stringify(agents)); }
-    catch {}
-};
-
-export const loadCustomProviders = () => {
-    try { return JSON.parse(localStorage.getItem('aria_custom_providers')||'[]'); }
-    catch { return []; }
-};
-
-export const saveCustomProviders = (providers) => {
-    try { localStorage.setItem('aria_custom_providers', JSON.stringify(providers)); }
-    catch {}
-};
-
-export const loadCustomModels = () => {
-    try { return JSON.parse(localStorage.getItem('aria_custom_models')||'{}'); }
-    catch { return {}; }
-};
-
-export const saveCustomModels = (models) => {
-    try { localStorage.setItem('aria_custom_models', JSON.stringify(models)); }
-    catch {}
-};
+export const loadCustomModels = () => lire(STORAGE_KEYS.CUSTOM_MODELS, {});
+export const saveCustomModels = (models) => ecrire(STORAGE_KEYS.CUSTOM_MODELS, models);

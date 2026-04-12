@@ -24,6 +24,9 @@ applyThemeVars();
 import { loadLang, t, useLocale } from './ariaI18n';
 import { CURSEUR_DEFAUT, CURSEUR_POINTER } from './shared/utils/curseurs';
 import { clearSession } from './features/world/services/sessionStore';
+import { loadOpts, loadKeys, loadAgentsOverride, saveAgentsOverride } from './shared/services/storage';
+import { lireStorage, ecrireStorage } from './shared/utils/storage';
+import { STORAGE_KEYS } from './shared/services/storageKeys';
 import RadioPlayer from './shared/components/RadioPlayer';
 
 function getTabs() {
@@ -41,9 +44,9 @@ export default function App() {
   const { lang } = useLocale();
   const [worldGenerated,  setWorldGenerated]  = useState(() => {
     try {
-      const active = localStorage.getItem('aria_session_active');
+      const active = lireStorage(STORAGE_KEYS.SESSION_ACTIVE, null);
       if (!active) return false;
-      const countries = JSON.parse(localStorage.getItem('aria_session_countries') || '[]');
+      const countries = lireStorage(STORAGE_KEYS.SESSION_COUNTRIES, []);
       return Array.isArray(countries) && countries.length > 0;
     }
     catch { return false; }
@@ -65,7 +68,7 @@ export default function App() {
   const [resetKey,        setResetKey]        = useState(0);
   const [confirmReset,    setConfirmReset]    = useState(false);
   const [hasApiKeys,      setHasApiKeys]      = useState(() => {
-    try { const k = JSON.parse(localStorage.getItem('aria_api_keys')||'{}'); return !!(k.claude||k.gemini); }
+    try { const k = loadKeys(); return !!(k.claude||k.gemini); }
     catch { return false; }
   });
 
@@ -81,7 +84,7 @@ export default function App() {
   // ── Options interface (curseurs + radio) ──────────────────────────────
   const lireInterface = () => {
     try {
-      const opts = JSON.parse(localStorage.getItem('aria_options') || '{}');
+      const opts = loadOpts();
       return {
         custom_cursors: opts.interface?.custom_cursors !== false,
         radio_visible:  opts.interface?.radio_visible  !== false,
@@ -96,13 +99,12 @@ export default function App() {
   }, [page]);
 
   const [audioMuted, setAudioMuted] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('aria_audio_muted') ?? 'true'); }
-    catch { return true; }
+    return lireStorage(STORAGE_KEYS.AUDIO_MUTED, true);
   });
   const toggleAudio = useCallback(() => {
     setAudioMuted(prev => {
       const next = !prev;
-      localStorage.setItem('aria_audio_muted', JSON.stringify(next));
+      ecrireStorage(STORAGE_KEYS.AUDIO_MUTED, next);
       if (next) {
         ambientRef.current?.pause();
         crisisRef.current?.pause();
@@ -217,14 +219,14 @@ export default function App() {
     // Réécrire aria_agents_override avec la langue courante
     try {
       const BASE = loadLang() === 'en' ? BASE_AGENTS_EN : BASE_AGENTS;
-      const cur = JSON.parse(localStorage.getItem('aria_agents_override') || 'null');
+      const cur = loadAgentsOverride();
       const merged = JSON.parse(JSON.stringify(BASE));
       if (cur) {
         merged.active_ministries = cur.active_ministries;
         merged.active_presidency = cur.active_presidency;
         merged.active_ministers  = cur.active_ministers;
       }
-      localStorage.setItem('aria_agents_override', JSON.stringify(merged));
+      saveAgentsOverride(merged);
     } catch {}
     ariaRef.current?.resetChronolog?.();
     setWorldGenerated(false);
@@ -242,7 +244,7 @@ export default function App() {
   // ── Rafraîchir hasApiKeys après saisie dans InitScreen ────────────────
   const refreshKeys = useCallback(() => {
     try {
-      const k = JSON.parse(localStorage.getItem('aria_api_keys')||'{}');
+      const k = loadKeys();
       const nowHasKeys = !!(k.claude||k.gemini||k.grok||k.openai);
       const hadKeys = hasApiKeys;
       setHasApiKeys(nowHasKeys);
