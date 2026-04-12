@@ -1,6 +1,6 @@
 // src/features/council/components/constitution/PresidentDetail.jsx
 
-import { useLocale } from '../../../../ariaI18n';
+import { useLocale, t } from '../../../../ariaI18n';
 import { FONT, CARD_STYLE, INPUT_STYLE, BTN_SECONDARY, labelStyle } from '../../../../shared/theme';
 import EmojiPicker from '../../../../shared/components/EmojiPicker';
 
@@ -49,7 +49,7 @@ export default function PresidentDetail({
                     <button
                         style={{ ...BTN_SECONDARY, padding: '0.1rem 0.3rem', fontSize: '0.38rem', color: 'rgba(165,55,75,0.55)', border: '1px solid rgba(165,55,75,0.22)' }}
                         onClick={onDelete}
-                        title={isEn ? 'Remove president' : 'Supprimer le président'}
+                        title={t('PRES_REMOVE_TITLE', lang)}
                     >
                         🗑
                     </button>
@@ -59,7 +59,7 @@ export default function PresidentDetail({
 
             {/* Emoji / symbole */}
             <div style={labelStyle('0.38rem', 'rgba(90,110,150,0.42)', '0.15rem')}>
-                {isEn ? 'SYMBOL / EMOJI' : 'SYMBOLE / EMOJI'}
+                {t('PRES_SYMBOL_EMOJI', lang)}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
                 <details style={{ position: 'relative' }}>
@@ -76,7 +76,7 @@ export default function PresidentDetail({
             </div>
 
             {/* Nom */}
-            <div style={labelStyle('0.38rem', 'rgba(90,110,150,0.42)', '0.15rem')}>{isEn ? 'NAME' : 'NOM'}</div>
+            <div style={labelStyle('0.38rem', 'rgba(90,110,150,0.42)', '0.15rem')}>{t('PRES_NAME_LBL', lang)}</div>
             <input
                 style={{ ...INPUT_STYLE, fontSize: '0.46rem', marginBottom: '0.35rem' }}
                 value={president.name}
@@ -94,7 +94,7 @@ export default function PresidentDetail({
             {/* Rôle étendu (seulement si le champ existe) */}
             {president.role_long !== undefined && (
                 <>
-                <div style={labelStyle('0.38rem', 'rgba(90,110,150,0.42)', '0.15rem')}>{isEn ? 'EXTENDED ROLE' : 'RÔLE ÉTENDU'}</div>
+                <div style={labelStyle('0.38rem', 'rgba(90,110,150,0.42)', '0.15rem')}>{t('PRES_EXTENDED_ROLE', lang)}</div>
                 <textarea
                     style={{ ...INPUT_STYLE, width: '100%', minHeight: '48px', resize: 'vertical', fontSize: '0.41rem', fontFamily: FONT.mono, lineHeight: 1.5 }}
                     value={president.role_long || ''}

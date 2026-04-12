@@ -2,7 +2,7 @@
 // SECTION SIMULATION — Régimes, seuils critiques, terrains, ressources
 
 import { useState } from 'react';
-import { useLocale } from '../../../ariaI18n';
+import { useLocale, t } from '../../../ariaI18n';
 import { getRegimeLabel, getTerrainLabel } from '../../../shared/data/worldLabels';
 import { getStats, REGIMES, TERRAINS, CYCLES_CFG } from '../../../shared/data/gameData';
 import { getOptions, saveOptions } from '../../../shared/config/options';
@@ -70,33 +70,29 @@ export default function SectionSimulation() {
 
     return (
         <div className="settings-section-body">
-        <SectionTitle icon="🎲" label={isEn?"SIMULATION":"SIMULATION"} sub={isEn?"Regimes, critical thresholds, cycle speed, resources":"Régimes, seuils critiques, vitesse des cycles, ressources"} />
+        <SectionTitle icon="🎲" label="SIMULATION" sub={t('SIM_SUB', lang)} />
 
         {/* ▸ SEUILS CRITIQUES */}
         <div className={`aria-accordion${openAcc==='seuils' ? ' open' : ''}`}>
-        {HDR('seuils', isEn?'CRITICAL THRESHOLDS':'SEUILS CRITIQUES')}
+        {HDR('seuils', t('SIM_SEUILS', lang))}
         {openAcc==='seuils' && (
             <div className="aria-accordion__body">
-            <Field label={isEn?"Revolt threshold (satisfaction %)":"Seuil de révolte (satisfaction %)"}
-            hint={isEn?"Below this threshold, a revolt is triggered":"En dessous de ce seuil, une révolte est déclenchée"}>
+            <Field label={t('SIM_REVOLTE_LABEL', lang)} hint={t('SIM_REVOLTE_HINT', lang)}>
             <NumberInput value={getSeuil('seuil_revolte')}
             onChange={v => updateSim('seuils.seuil_revolte', v)} min={5} max={40} />
             </Field>
-            <Field label={isEn?"Demographic explosion threshold (×%)":"Seuil explosion démographique (×%)"}
-            hint={isEn?"If population × factor / 100 in a cycle, crisis triggered":"Si la population × ce facteur / 100 en un cycle, crise déclenchée"}>
+            <Field label={t('SIM_DEMO_EXP_LABEL', lang)} hint={t('SIM_DEMO_EXP_HINT', lang)}>
             <NumberInput value={getSeuil('seuil_crise_demo')}
             onChange={v => updateSim('seuils.seuil_crise_demo', v)} min={110} max={300} step={10} />
             </Field>
-            <Field label={isEn?"Max random noise (satisfaction ±)":"Bruit aléatoire max (satisfaction ±)"}
-            hint={isEn?"Random amplitude in each cycle":"Amplitude du hasard dans chaque cycle"}>
+            <Field label={t('SIM_BRUIT_LABEL', lang)} hint={t('SIM_BRUIT_HINT', lang)}>
             <NumberInput value={getSeuil('bruit_max')}
             onChange={v => updateSim('seuils.bruit_max', v)} min={0} max={10} />
             </Field>
-            <Field label={isEn?"AI narrative events":"Événements narratifs IA"}
-            hint={isEn?"AI narrates each critical threshold breach":"L'IA génère un récit à chaque événement critique"}>
+            <Field label={t('SIM_EVENTS_LABEL', lang)} hint={t('SIM_EVENTS_HINT', lang)}>
             <Toggle value={opts.gameplay.events_ia}
             onChange={v => updateOpts('events_ia', v)}
-            label={opts.gameplay.events_ia ? (isEn?'Enabled':'Activés') : (isEn?'Disabled':'Désactivés')} />
+            label={opts.gameplay.events_ia ? t('SIM_EVENTS_ON', lang) : t('SIM_EVENTS_OFF', lang)} />
             </Field>
             </div>
         )}
@@ -104,7 +100,7 @@ export default function SectionSimulation() {
 
         {/* ▸ COEFFICIENTS DES RÉGIMES */}
         <div className={`aria-accordion${openAcc==='regimes' ? ' open' : ''}`}>
-        {HDR('regimes', isEn?'REGIME COEFFICIENTS':'COEFFICIENTS DES RÉGIMES', `${Object.keys(getStats().regimes || {}).length}`)}
+        {HDR('regimes', t('SIM_REGIMES_HDR', lang), `${Object.keys(getStats().regimes || {}).length}`)}
         {openAcc==='regimes' && (
             <div className="aria-accordion__body">
             {Object.keys(getStats().regimes || {}).map(rk => {
@@ -136,14 +132,10 @@ export default function SectionSimulation() {
                     {/* Séparateur */}
                     <div style={{ padding: '0.55rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                     {[
-                        { key: 'coeff_satisfaction', label: isEn?'SATISFACTION':'SATISFACTION', val: coeff_sat,
-                            hint: isEn?'Satisfaction drift per cycle':'Dérive de satisfaction par cycle' },
-                            { key: 'coeff_croissance',   label: isEn?'GROWTH':'CROISSANCE',   val: coeff_cro,
-                                hint: isEn?'Demographic and economic yield':'Rendement démographique et économique' },
-                                { key: 'taux_natalite',      label: isEn?'BIRTH RATE':'NATALITÉ',     val: natalite,
-                                    hint: isEn?'Base birth rate (‰)':'Taux de natalité de base (‰)' },
-                        { key: 'taux_mortalite',     label: isEn?'DEATH RATE':'MORTALITÉ',    val: mortalite,
-                            hint: isEn?'Base death rate (‰)':'Taux de mortalité de base (‰)' },
+                        { key: 'coeff_satisfaction', label: t('SATISFACTION', lang), val: coeff_sat,  hint: t('SIM_SAT_HINT', lang)    },
+                        { key: 'coeff_croissance',   label: t('SIM_GROWTH', lang),   val: coeff_cro,  hint: t('SIM_GROWTH_HINT', lang) },
+                        { key: 'taux_natalite',      label: t('SIM_BIRTH', lang),    val: natalite,   hint: t('SIM_BIRTH_HINT', lang)  },
+                        { key: 'taux_mortalite',     label: t('SIM_DEATH', lang),    val: mortalite,  hint: t('SIM_DEATH_HINT', lang)  },
                     ].map(({ key, label, val, hint }) => (
                         <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <span style={{
@@ -181,20 +173,20 @@ export default function SectionSimulation() {
 
         {/* ▸ RESSOURCES PAR TERRAIN */}
         <div className={`aria-accordion${openAcc==='terrains' ? ' open' : ''}`}>
-        {HDR('terrains', isEn?'RESOURCES BY TERRAIN':'RESSOURCES PAR TERRAIN',
+        {HDR('terrains', t('SIM_TERRAINS_HDR', lang),
             `${Object.keys(dynTerrains || TERRAINS || {}).length}`)}
             {openAcc==='terrains' && (
                 <div className="aria-accordion__body">
                 {Object.entries(dynTerrains || TERRAINS || {}).map(([tk, tv]) => (
                     <div key={tk} className="settings-terrain-block">
                     <div className="settings-terrain-name">{getTerrainLabel(tk, lang)}</div>
-                    <Field label={isEn?"Population modifier":"Modificateur population"}>
+                    <Field label={t('SIM_POP_MOD', lang)}>
                     <NumberInput step={0.05}
                     value={getTerrain(tk, 'modificateur_pop')}
                     onChange={v => updateSim(`terrains.${tk}.modificateur_pop`, v)}
                     min={0.5} max={2.0} />
                     </Field>
-                    <Field label={isEn?"Economy modifier":"Modificateur économie"}>
+                    <Field label={t('SIM_ECO_MOD', lang)}>
                     <NumberInput step={0.05}
                     value={getTerrain(tk, 'modificateur_eco')}
                     onChange={v => updateSim(`terrains.${tk}.modificateur_eco`, v)}
@@ -207,13 +199,13 @@ export default function SectionSimulation() {
             </div>
 
             <div className="settings-footer">
-            <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
+            <button className="settings-save-btn" onClick={save}>{t('SAVE_BTN', lang)}</button>
             <SaveBadge saved={saved} />
             <div style={{ flex:1 }} />
             <span style={{ fontFamily:"'JetBrains Mono',monospace", display:'flex', flexDirection:'column', alignItems:'center', gap:'0.05rem' }}>
             <span style={{ fontSize:'0.52rem', letterSpacing:'0.10em', color:'rgba(200,164,74,0.68)', textTransform:'uppercase' }}>DÉMO</span>
             <span style={{ fontSize:'0.46rem', color:'rgba(140,160,200,0.65)', fontWeight:'normal', letterSpacing:'0.04em' }}>
-            {isEn ? "autonomous mode" : "mode autonome d'ARIA"}
+            {t('SIM_DEMO_MODE', lang)}
             </span>
             </span>
             <Toggle value={opts.gameplay.cycles_auto}
@@ -221,14 +213,14 @@ export default function SectionSimulation() {
             <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem',
                 color:'rgba(160,180,220,0.55)', letterSpacing:'0.06em',
             minWidth:'5rem', display:'inline-block' }}>
-            {opts.gameplay.cycles_auto ? (isEn?'Enabled':'Activé') : (isEn?'Disabled':'Désactivé')}
+            {opts.gameplay.cycles_auto ? t('ENABLED', lang) : t('DISABLED', lang)}
             </span>
             </div>
             {opts.gameplay.cycles_auto && (
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'flex-end', gap:'0.5rem', padding:'0.3rem 0.65rem 0.5rem' }}>
                 <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'0.46rem',
                     color:'rgba(140,160,200,0.65)', letterSpacing:'0.06em' }}>
-                    {isEn ? "Interval between cycles (s)" : "Intervalle entre les cycles (s)"}
+                    {t('SIM_INTERVAL', lang)}
                     </span>
                     <NumberInput value={opts.gameplay.cycles_interval}
                     onChange={v => updateOpts('cycles_interval', v)} min={5} max={300} step={5}

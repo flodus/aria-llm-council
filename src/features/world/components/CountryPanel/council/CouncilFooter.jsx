@@ -1,15 +1,18 @@
 // src/features/world/components/CountryPanel/council/CouncilFooter.jsx
 
+import { t } from '../../../../../ariaI18n';
+
 export default function CouncilFooter({
     isEn,
     onNextCycle,
     onConstitution,
     onSecession
 }) {
+    const lang = isEn ? 'en' : 'fr';
     const actions = [
-        { icon: '⏭', label: isEn ? 'Cycle +5 yrs' : 'Cycle +5 ans', fn: onNextCycle, color: 'rgba(200,164,74,1.0)' },
+        { icon: '⏭', label: t('FOOTER_CYCLE_BTN', lang), fn: onNextCycle, color: 'rgba(200,164,74,1.0)' },
         { icon: '🏛️', label: 'Gouvernement', fn: onConstitution, color: 'rgba(140,100,220,0.70)' },
-        { icon: '✂️', label: isEn ? 'Secession' : 'Sécession', fn: onSecession, color: 'rgba(200,80,80,0.70)' },
+        { icon: '✂️', label: t('CHRON_SECESSION', lang), fn: onSecession, color: 'rgba(200,80,80,0.70)' },
     ];
 
     return (

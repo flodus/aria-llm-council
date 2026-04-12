@@ -143,10 +143,10 @@ export function EventDetail({ ev, isSummary }) {
         {ev.voteCounts && (
           <div style={{ display:'flex', gap:'0.8rem' }}>
             <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(58,191,122,0.50)' }}>
-              {isEn?'YES':'OUI'} {Math.round((ev.voteCounts.oui||0)/1000)} k
+              {t('YES', lang)} {Math.round((ev.voteCounts.oui||0)/1000)} k
             </span>
             <span style={{ fontFamily:FONT.mono, fontSize:'0.38rem', color:'rgba(200,80,80,0.50)' }}>
-              {isEn?'NO':'NON'} {Math.round((ev.voteCounts.non||0)/1000)} k
+              {t('NO', lang)} {Math.round((ev.voteCounts.non||0)/1000)} k
             </span>
           </div>
         )}
@@ -158,7 +158,7 @@ export function EventDetail({ ev, isSummary }) {
             {/* Phase Ministère */}
             {d.ministere && (
               <PhaseBlock borderColor={C.blue}
-                label={`${isEn?'MINISTRY':'MINISTÈRE'} — ${d.ministere.ministryEmoji} ${d.ministere.ministryName}`}>
+                label={`${t('CHRON_MINISTRY_CAP', lang)} — ${d.ministere.ministryEmoji} ${d.ministere.ministryName}`}>
                 <MinisteText who={d.ministere.ministerA} />
                 <MinisteText who={d.ministere.ministerB} />
                 {d.ministere.synthese?.synthese && (
@@ -178,7 +178,7 @@ export function EventDetail({ ev, isSummary }) {
 
             {/* Phase Cercle */}
             {d.cercle?.length > 0 && (
-              <PhaseBlock borderColor={C.teal} label={isEn?'CIRCLE':'CERCLE'}>
+              <PhaseBlock borderColor={C.teal} label={t('CHRON_CIRCLE', lang)}>
                 {d.cercle.map((a, i) => (
                   <div key={i} style={{ display:'flex', gap:'0.3rem', marginBottom:'0.18rem' }}>
                     <span style={{ fontFamily:FONT.mono, fontSize:'0.36rem', color:C.dimmed, flexShrink:0 }}>
@@ -194,7 +194,7 @@ export function EventDetail({ ev, isSummary }) {
 
             {/* Phase Destin */}
             {d.destin && (
-              <PhaseBlock borderColor={C.purple} label={isEn?'DESTINY':'DESTIN'}>
+              <PhaseBlock borderColor={C.purple} label={t('CHRON_DESTINY_CAP', lang)}>
                 {d.destin.oracle?.position && (
                   <div style={{ marginBottom:'0.20rem' }}>
                     <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', color:C.dimmed }}>
@@ -221,7 +221,7 @@ export function EventDetail({ ev, isSummary }) {
             {/* Phase Présidence */}
             {d.presidence && (
               <PhaseBlock borderColor={C.gold}
-                label={d.presidence.collegial ? (isEn?'COLLEGIAL':'COLLÉGIAL') : (isEn?'PRESIDENCY':'PRÉSIDENCE')}>
+                label={d.presidence.collegial ? t('CHRON_COLLEGIAL', lang) : t('CHRON_PRESIDENCE', lang)}>
                 {d.presidence.presidents && Object.entries(d.presidence.presidents).map(([id, p]) => (
                   p?.position && (
                     <div key={id} style={{ marginBottom:'0.22rem' }}>
@@ -251,7 +251,7 @@ export function EventDetail({ ev, isSummary }) {
 
             {/* Mode Crise : toutes les synthèses ministérielles */}
             {d.crisis && (
-              <PhaseBlock borderColor='rgba(255,140,0,0.7)' label={isEn?'CRISIS MODE':'MODE CRISE'}>
+              <PhaseBlock borderColor='rgba(255,140,0,0.7)' label={t('CHRON_CRISIS_MODE', lang)}>
                 {d.crisis.map((m, i) => m.synthese && (
                   <div key={i} style={{ marginBottom:'0.18rem' }}>
                     <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', color:C.dimmed }}>
@@ -273,7 +273,7 @@ export function EventDetail({ ev, isSummary }) {
           <div style={{ display:'flex', flexDirection:'column', gap:'0.35rem', marginTop:'0.2rem' }}>
             {ev.syntheseMinistere && (
               <PhaseBlock borderColor={C.blue}
-                label={`${isEn?'MINISTRY':'MINISTÈRE'} — ${ev.ministereNom||ev.ministereId}`}>
+                label={`${t('CHRON_MINISTRY_CAP', lang)} — ${ev.ministereNom||ev.ministereId}`}>
                 <p style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:C.muted, lineHeight:1.65, margin:0 }}>
                   {ev.syntheseMinistere}
                 </p>
@@ -322,12 +322,12 @@ export function EventDetail({ ev, isSummary }) {
         <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap' }}>
           {ev.regimeAvant !== ev.regimeApres && (
             <span style={{ fontFamily: FONT.mono, fontSize:'0.38rem', color:C.purple }}>
-              {loadLang()==='en'?'Regime':'Régime'} : {ev.regimeAvant} → {ev.regimeApres}
+              {t('CHRON_REGIME', loadLang())} : {ev.regimeAvant} → {ev.regimeApres}
             </span>
           )}
           {ev.presidenceAvant !== ev.presidenceApres && (
             <span style={{ fontFamily: FONT.mono, fontSize:'0.38rem', color:C.purple }}>
-              {loadLang()==='en'?'Presidency':'Présidence'} : {ev.presidenceAvant} → {ev.presidenceApres}
+              {t('GOV_PRESIDENCY', loadLang())} : {ev.presidenceAvant} → {ev.presidenceApres}
             </span>
           )}
           {ev.ministresDiff?.ajoutes?.length > 0 && (
@@ -359,7 +359,7 @@ export function EventDetail({ ev, isSummary }) {
     return (
       <div style={{ padding:'0.45rem 0.7rem 0.55rem' }}>
         <span style={{ fontFamily: FONT.mono, fontSize:'0.40rem', color:C.muted }}>
-          {ev.emoji} {ev.nom} · {ev.terrain} · {ev.regime?.replace(/_/g,' ')} · {loadLang()==='en'?'Year':'An'} {ev.annee}
+          {ev.emoji} {ev.nom} · {ev.terrain} · {ev.regime?.replace(/_/g,' ')} · {t('TIMELINE_YEAR', loadLang())} {ev.annee}
         </span>
       </div>
     );
@@ -399,7 +399,7 @@ function EventRow({ ev, isSummary, defaultOpen = false }) {
     if (ev.type === 'vote') return ev.question?.slice(0,80) + (ev.question?.length>80?'…':'');
     if (ev.type === 'secession')    return `${ev.parentNom} → ${ev.childNom}`;
     if (ev.type === 'constitution') return `${ev.countryNom} — amendement`;
-    if (ev.type === 'new_country')  return `${ev.emoji} ${ev.nom} ${loadLang()==='en'?'founded':'fondée'}`;
+    if (ev.type === 'new_country')  return `${ev.emoji} ${ev.nom} ${t('CHRON_FOUNDED', loadLang())}`;
     if (ev.type === 'cycle_stats')  return `${(ev.snapshot||[]).length} pays — snapshot`;
     return '';
   })();
@@ -577,7 +577,7 @@ function CycleBlock({ cycle, filterCountryId, filterType, defaultOpen, isCurrent
             )}
             <span style={{ fontFamily: FONT.cinzel, fontSize:'0.52rem', letterSpacing:'0.18em',
               color: isCurrent ? C.green : C.gold }}>
-              CYCLE {cycle.cycleNum} — {isEn?'Year':'An'} {cycle.annee}
+              CYCLE {cycle.cycleNum} — {t('TIMELINE_YEAR', lang)} {cycle.annee}
             </span>
           </div>
           {narratif && (
@@ -664,7 +664,7 @@ export default function ChronologView({
   if (allCycles.length === 0) return (
     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flex:1, gap:'0.6rem', opacity:0.35 }}>
       <div style={{ fontSize:'2rem' }}>📜</div>
-      <div style={{ fontFamily: FONT.mono, fontSize:'0.45rem', letterSpacing:'0.16em', color:C.muted }}>{loadLang()==='en'?'CHRONOLOG EMPTY':'CHRONOLOG VIDE'}</div>
+      <div style={{ fontFamily: FONT.mono, fontSize:'0.45rem', letterSpacing:'0.16em', color:C.muted }}>{t('CHRON_EMPTY', loadLang())}</div>
       <p style={{ fontFamily: FONT.mono, fontSize:'0.40rem', color:C.dimmed, textAlign:'center', maxWidth:'240px', lineHeight:1.7 }}>
         Soumettez une question au Conseil et votez pour commencer l'historique.
       </p>
@@ -716,15 +716,15 @@ export default function ChronologView({
           value={filterType || ''}
           onChange={e => { setFilterType(e.target.value || null); setSummaryPage(0); }}
         >
-          <option value="">{isEn ? 'All types' : 'Tous types'}</option>
-          <option value="vote">🗳 {isEn ? 'Vote' : 'Vote'}</option>
-          <option value="secession">✂️ {isEn ? 'Secession' : 'Sécession'}</option>
-          <option value="constitution">📜 {isEn ? 'Constitution' : 'Constitution'}</option>
-          <option value="new_country">🌍 {isEn ? 'New nation' : 'Nouveau pays'}</option>
+          <option value="">{t('CHRON_ALL_TYPES', lang)}</option>
+          <option value="vote">🗳 Vote</option>
+          <option value="secession">✂️ {t('CHRON_SECESSION', lang)}</option>
+          <option value="constitution">📜 Constitution</option>
+          <option value="new_country">🌍 {t('CHRON_NEW_NATION_LC', lang)}</option>
         </select>
 
         <div style={{ marginLeft:'auto', fontFamily: FONT.mono, fontSize:'0.37rem', color:C.dimmed }}>
-          {allCycles.length} cycle{allCycles.length>1?'s':''} · {totalEvs} {isEn?'events':'événements'}
+          {allCycles.length} cycle{allCycles.length>1?'s':''} · {totalEvs} {t('CHRON_EVENTS_LBL', lang)}
         </div>
       </div>
 
@@ -739,11 +739,11 @@ export default function ChronologView({
             <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.35rem' }}>
               <span style={{ fontFamily:FONT.mono, fontSize:'0.35rem', letterSpacing:'0.16em',
                 color:C.goldDim }}>
-                📜 {isEn ? 'INSTITUTIONAL MEMORY' : 'MÉMOIRE INSTITUTIONNELLE'}
+                📜 {t('TIMELINE_MEMORY', lang)}
               </span>
               <span style={{ fontFamily:FONT.mono, fontSize:'0.32rem',
                 color:C.dimmed, marginLeft:'auto' }}>
-                {isEn ? 'cycle' : 'cycle'} {memoire.cycle}
+                cycle {memoire.cycle}
               </span>
             </div>
             <p style={{ fontFamily:FONT.mono, fontSize:'0.41rem', color:'rgba(180,200,230,0.60)',
@@ -781,7 +781,7 @@ export default function ChronologView({
         {recentCycles.length === 0 && summarySlice.length === 0 && allCycles.length > 0 && (
           <div style={{ display:'flex', justifyContent:'center', padding:'1.5rem',
             fontFamily: FONT.mono, fontSize:'0.40rem', color:C.dimmed, opacity:0.5 }}>
-            {isEn ? 'No events matching the selected filters.' : 'Aucun événement correspondant aux filtres.'}
+            {t('CHRON_NO_EVENTS_FILTER', lang)}
           </div>
         )}
 
@@ -798,7 +798,7 @@ export default function ChronologView({
                 fontFamily: FONT.mono, fontSize:'0.38rem', letterSpacing:'0.08em',
                 color: summaryPage === 0 ? C.dimmed : C.gold, opacity: summaryPage === 0 ? 0.35 : 1,
               }}>
-              ← {isEn ? 'Previous' : 'Précédent'}
+              ← {t('CHRON_PREV', lang)}
             </button>
             <span style={{ fontFamily: FONT.mono, fontSize:'0.37rem', color:C.dimmed }}>
               {summaryPage + 1} / {Math.ceil(summaryTotal / SUMMARY_PAGE_SIZE)}
@@ -814,7 +814,7 @@ export default function ChronologView({
                 color: summaryStart + SUMMARY_PAGE_SIZE >= summaryTotal ? C.dimmed : C.gold,
                 opacity: summaryStart + SUMMARY_PAGE_SIZE >= summaryTotal ? 0.35 : 1,
               }}>
-              {isEn ? 'Next' : 'Suivant'} →
+              {t('CHRON_NEXT', lang)} →
             </button>
           </div>
         )}

@@ -2,7 +2,7 @@
 // SECTION INTERFACE — Préférences visuelles (curseurs, lecteur radio)
 
 import { useState } from 'react';
-import { useLocale } from '../../../ariaI18n';
+import { useLocale, t } from '../../../ariaI18n';
 import { getOptions, saveOptions } from '../../../shared/config/options';
 import { SectionTitle, Field, Toggle } from '../ui/SettingsUI';
 
@@ -29,27 +29,27 @@ export default function SectionInterface() {
 
     return (
         <div className="settings-section-body">
-        <SectionTitle icon="🎨" label="INTERFACE" sub={isEn?"Visual preferences — cursors, radio player":"Préférences visuelles — curseurs, lecteur radio"} />
+        <SectionTitle icon="🎨" label="INTERFACE" sub={t('IFACE_SUB', lang)} />
 
         <div className="settings-group">
-        <div className="settings-group-title">{isEn?"VISUAL":"VISUEL"}</div>
-        <Field label={isEn?"Custom cursors (gold SVG)":"Curseurs personnalisés (or SVG)"}>
+        <div className="settings-group-title">{t('IFACE_VISUAL_HDR', lang)}</div>
+        <Field label={t('IFACE_CURSORS', lang)}>
         <Toggle value={curseurs} onChange={v => update('custom_cursors', v)}
-        label={curseurs ? (isEn?'Enabled':'Activés') : (isEn?'Disabled':'Désactivés')} />
+        label={curseurs ? t('IFACE_ENABLED', lang) : t('IFACE_DISABLED', lang)} />
         </Field>
         </div>
 
         <div className="settings-group">
-        <div className="settings-group-title">{isEn?"AUDIO":"AUDIO"}</div>
-        <Field label={isEn?"Show radio player in topbar":"Afficher le lecteur radio dans la topbar"}>
+        <div className="settings-group-title">AUDIO</div>
+        <Field label={t('IFACE_RADIO', lang)}>
         <Toggle value={radio} onChange={v => update('radio_visible', v)}
-        label={radio ? (isEn?'Visible':'Visible') : (isEn?'Hidden':'Masqué')} />
+        label={radio ? 'Visible' : t('SYS_HIDDEN', lang)} />
         </Field>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
         <button className="settings-save-btn" onClick={save}>
-        {saved ? (isEn?'✓ Saved':'✓ Sauvegardé') : (isEn?'Save':'Sauvegarder')}
+        {saved ? t('SETTINGS_SAVED', lang) : t('SETTINGS_SAVE', lang)}
         </button>
         </div>
 
@@ -58,9 +58,7 @@ export default function SectionInterface() {
             background: 'rgba(198,162,76,0.05)', border: '1px solid rgba(198,162,76,0.15)',
             borderRadius: 4, fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', fontStyle: 'italic',
         }}>
-        {isEn
-            ? 'Changes take effect after closing Settings.'
-    : 'Les modifications prennent effet à la fermeture de Settings.'}
+        {t('IFACE_CHANGES_EFFECT', lang)}
     </div>
     </div>
     );

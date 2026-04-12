@@ -11,7 +11,7 @@
 //   compact   : bool    — mode toggle (défaut false)
 
 import { useState } from 'react';
-import { useLocale } from '../../ariaI18n';
+import { useLocale, t } from '../../ariaI18n';
 import { COLORS } from '../theme/colors';
 
 const CATEGORIES = [
@@ -124,7 +124,7 @@ function PickerContenu({ value, onChange, lang, onClose }) {
         ))}
       </div>
       <div style={STYLE.champLibre}>
-        <span style={STYLE.label}>{isEn ? 'OR TYPE DIRECTLY:' : 'OU SAISIR DIRECTEMENT :'}</span>
+        <span style={STYLE.label}>{t('EMOJI_TYPE_DIRECT', lang)}</span>
         <input style={STYLE.input} value={saisie} onChange={handleSaisie}
           placeholder={value} maxLength={4} />
       </div>

@@ -2,7 +2,7 @@
 // SECTION CONSEIL — Gouvernement, ministres, présidence, destinée
 
 import { useState, useMemo } from 'react';
-import { useLocale } from '../../../ariaI18n';
+import { useLocale, t } from '../../../ariaI18n';
 import { getStats } from '../../../shared/data/gameData';
 import { getOptions, saveOptions } from '../../../shared/config/options';
 import { getDestin } from '../../council/services/agentsManager';
@@ -148,41 +148,35 @@ export default function SectionConseil() {
 
     // Traductions SectionConseil
     const trC = {
-        essence_hint:   isEn ? "Deep philosophy — what drives their positions"
-        : "Philosophie profonde — ce qui motive ses positions",
-        comm_hint:      isEn ? "Voice, tone, way of arguing"
-        : "Voix, ton, façon d'argumenter",
-        annot_label:    isEn ? "Universal annotation angle"
-        : "Angle universel en annotation",
-        annot_hint:     isEn ? "The question they systematically ask on other ministries' syntheses"
-        : "La question qu'il pose systématiquement sur les synthèses des autres ministères",
-        selMin:         isEn ? "Select a ministry"    : "Sélectionner un ministère",
-        missionLabel:   isEn ? "Ministry mission"     : "Mission du ministère",
-        missionHint:    isEn ? "Defines the ministry's objective and values"
-        : "Définit l'objectif et les valeurs du ministère",
-        roleHint:       isEn ? "How this minister speaks from this ministry's angle"
-        : "Comment ce ministre parle depuis l'angle de ce ministère",
-        rolePrefix:     isEn ? "Specific role"        : "Rôle spécifique",
+        essence_hint:  t('CONSEIL_ESSENCE_HINT', lang),
+        comm_hint:     t('SETTINGS_VOICE_HINT', lang),
+        annot_label:   t('GOV_ANNOT', lang),
+        annot_hint:    t('SETTINGS_ANNOT_QUESTION', lang),
+        selMin:        t('GOV_SEL_MINISTRY', lang),
+        missionLabel:  t('GOV_MISSION', lang),
+        missionHint:   t('SETTINGS_MISSION_HINT', lang),
+        roleHint:      t('SETTINGS_COMM_HINT', lang),
+        rolePrefix:    t('GOV_SPECIFIC_ROLE', lang),
     };
 
     const togglePresAcc = (key) => setPresOpenAcc(p => p === key ? null : key);
 
     return (
         <div className="settings-section-body">
-        <SectionTitle icon="🏛️" label="GOUVERNEMENT" sub={isEn ? "Deliberating agents — ministers, presidency" : "Agents délibérants — ministres, présidence"} />
+        <SectionTitle icon="🏛️" label="GOUVERNEMENT" sub={t('CONSEIL_GOVT_SUB', lang)} />
 
         <div className="settings-tabs">
         {[
-            { id: 'gouvernance', label: isEn ? 'Governance' : 'Gouvernance' },
-            { id: 'presidence',  label: isEn ? 'Presidency' : 'Présidence'  },
-            { id: 'ministeres',  label: isEn ? 'Ministries' : 'Ministères'  },
-            { id: 'ministres',   label: isEn ? 'Ministers'  : 'Ministres'   },
-            { id: 'destinee',    label: isEn ? 'Destiny'    : 'Destinée'    },
-        ].map(t => (
-            <button key={t.id}
-            className={`settings-tab${tab === t.id ? ' active' : ''}`}
-            onClick={() => setTab(t.id)}
-            >{t.label}</button>
+            { id: 'gouvernance', label: t('CONSEIL_TAB_GOVERNANCE', lang) },
+            { id: 'presidence',  label: t('RECAP_PRESIDENCY', lang)       },
+            { id: 'ministeres',  label: t('GOV_MINISTRIES', lang)         },
+            { id: 'ministres',   label: t('GOV_MINISTERS', lang)          },
+            { id: 'destinee',    label: t('CONSEIL_TAB_DESTINY', lang)    },
+        ].map(tb => (
+            <button key={tb.id}
+            className={`settings-tab${tab === tb.id ? ' active' : ''}`}
+            onClick={() => setTab(tb.id)}
+            >{tb.label}</button>
         ))}
         </div>
 
@@ -195,7 +189,7 @@ export default function SectionConseil() {
             onAgentClick={setSelectedMin}
             onResetAll={null}
             onEditEmoji={(id, emoji) => handleEditEmoji('ministers', id, emoji)}
-            countLabel={isEn ? 'SELECT A MINISTER' : 'SÉLECTIONNER UN MINISTRE'}
+            countLabel={t('CONSEIL_SEL_MIN_CAP', lang)}
             lang={lang}
             />
 
@@ -241,7 +235,7 @@ export default function SectionConseil() {
             onAgentClick={setSelectedMin2}
             onResetAll={null}
             onEditEmoji={(id, emoji) => handleEditEmoji('ministries', id, emoji)}
-            countLabel={isEn ? 'SELECT A MINISTRY' : 'SÉLECTIONNER UN MINISTÈRE'}
+            countLabel={t('CONSEIL_SEL_MINY_CAP', lang)}
             lang={lang}
             />
 
@@ -253,7 +247,7 @@ export default function SectionConseil() {
                 onAgentClick={toggleMinistre}
                 onResetAll={() => updateAgent(`ministries.${selectedMin2}.ministers`, ministryData.ministers || [])}
                 onEditEmoji={(id, emoji) => handleEditEmoji('ministers', id, emoji)}
-                countLabel={isEn ? `${ministresAssignes.length} MINISTRES ASSIGNÉS — clic pour toggle` : `${ministresAssignes.length} ASSIGNED MINISTERS — click to toggle`}
+                countLabel={`${ministresAssignes.length} ${t('CONSEIL_ASSIGNED_N', lang)}`}
                 lang={lang}
                 />
             )}
@@ -309,7 +303,7 @@ export default function SectionConseil() {
                         </button>
                         {isOpen && (
                             <div style={{ border: `1px solid ${bd}`, borderTop: 'none', borderRadius: '0 0 2px 2px', padding: '0.6rem 0.68rem', background: bg, display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-                            <Field label={isEn ? 'Role' : 'Rôle'} hint={agent.subtitle || ''}>
+                            <Field label={lang === 'en' ? 'Role' : 'Rôle'} hint={agent.subtitle || ''}>
                             <TextArea value={getVal(`presidency.${key}.role`, agent.role_long || '')}
                             onChange={v => updateAgent(`presidency.${key}.role`, v)}
                             />
@@ -339,9 +333,7 @@ export default function SectionConseil() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', padding: '0.4rem 0.55rem', background: 'rgba(140,100,220,0.06)', border: '1px solid rgba(140,100,220,0.15)', borderRadius: '2px' }}>
                 <span style={{ fontSize: '1.0rem' }}>👁️</span>
                 <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '0.40rem', color: 'rgba(140,160,200,0.45)', margin: 0, lineHeight: 1.5 }}>
-                {isEn
-                    ? 'Oracle and Wyrd — existential crisis agents. Edit their essence and communication style.'
-            : 'Oracle et Trame — agents des crises existentielles. Modifiez leur essence et style de communication.'}
+                {t('CONSEIL_DESTINY_DESC', lang)}
             </p>
             </div>
             <AgentGrid
@@ -365,14 +357,14 @@ export default function SectionConseil() {
                 }
             }}
             onResetAll={() => { setActiveDestinSettings(null); syncGovDestiny(null); }}
-            countLabel={isEn ? 'DESTINY AGENTS' : 'AGENTS DESTIN'}
+            countLabel={t('CONSEIL_DESTINY_AGENTS', lang)}
             lang={lang}
             />
             {destAgents.map(agent => {
                 if (selectedMin && selectedMin !== agent.id) return null;
                 return (
                     <div key={agent.id}>
-                    <Field label="Essence" hint={isEn ? 'Deep philosophy — what drives their visions' : 'Philosophie profonde — ce qui guide leurs visions'}>
+                    <Field label="Essence" hint={t('CONSEIL_DESTINY_ESS_HINT', lang)}>
                     <TextArea value={getVal(`ministers.${agent.id}.essence`, agent.essence || '')}
                     onChange={v => updateAgent(`ministers.${agent.id}.essence`, v)}
                     />
@@ -400,7 +392,7 @@ export default function SectionConseil() {
 
 
         <div className="settings-footer">
-        <button className="settings-save-btn" onClick={save}>{isEn?"Save":"Sauvegarder"}</button>
+        <button className="settings-save-btn" onClick={save}>{t('SAVE_BTN', lang)}</button>
         <SaveBadge saved={saved} />
         </div>
         </div>

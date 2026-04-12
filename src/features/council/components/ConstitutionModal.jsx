@@ -2,7 +2,7 @@
 // Hub d'état — orchestre les 5 onglets de constitution
 
 import { useState } from 'react';
-import { useLocale } from '../../../ariaI18n';
+import { useLocale, t } from '../../../ariaI18n';
 import { FONT, BTN_PRIMARY, BTN_SECONDARY } from '../../../shared/theme';
 import { getStats } from '../../../shared/data/gameData';
 import { getOptions } from '../../../shared/config/options';
@@ -18,25 +18,21 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
     const isEn = lang === 'en';
 
     const tr = {
-        title:        isEn ? '🏛️ Government'           : '🏛️ Gouvernement',
-        tabRegime:    isEn ? 'REGIME'                   : 'RÉGIME',
-        tabPres:      isEn ? 'PRESIDENCY'               : 'PRÉSIDENCE',
-        tabMins:      isEn ? 'MINISTRIES'               : 'MINISTÈRES',
-        tabMinisters: isEn ? 'MINISTERS'                : 'MINISTRES',
-        secRegime:    isEn ? 'POLITICAL REGIME'         : 'RÉGIME POLITIQUE',
-        secLeader:    isEn ? 'HEAD OF STATE'            : 'CHEF D\'ÉTAT',
-        secContext:   isEn ? 'CONTEXT IN DELIBERATIONS' : 'CONTEXTE DANS LES DÉLIBÉRATIONS',
-        contextHint:  isEn
-            ? 'Controls which info about this country is injected into AI prompts. Leave "Inherit" to follow global setting.'
-            : 'Contrôle quelles infos sur ce pays sont injectées dans les prompts IA. Laissez "Hérite du global" pour suivre le réglage général.',
-        ctxInheritH:  isEn ? 'Follows the Settings rule': 'Suit le réglage de Settings',
-        destinyTitle: isEn ? 'DESTINY OF THE WORLD'     : 'DESTINÉE DU MONDE',
-        destinyLabel: isEn ? '👁️ Oracle & Wyrd'          : '👁️ Oracle & Wyrd',
-        destinyDesc:  isEn
-            ? 'Oracle & Wyrd speak at every deliberation for this country — independently of crisis mode.'
-            : 'Oracle & Wyrd s\'expriment à chaque délibération pour ce pays — indépendamment du mode crise.',
-        cancel:       isEn ? 'Cancel'                   : 'Annuler',
-        apply:        isEn ? '✓ Apply Configuration'    : '✓ Appliquer la Configuration',
+        title:        t('CONST_MODAL_TITLE', lang),
+        tabRegime:    t('CONST_MODAL_TAB_REGIME', lang),
+        tabPres:      t('CONST_MODAL_TAB_PRES', lang),
+        tabMins:      t('CONST_MODAL_TAB_MINS', lang),
+        tabMinisters: t('CONST_MODAL_TAB_MINISTERS', lang),
+        secRegime:    t('CONST_MODAL_SEC_REGIME', lang),
+        secLeader:    t('CONST_MODAL_SEC_LEADER', lang),
+        secContext:   t('CONST_MODAL_SEC_CONTEXT', lang),
+        contextHint:  t('CONST_MODAL_CTX_HINT', lang),
+        ctxInheritH:  t('CONST_MODAL_CTX_INHERIT', lang),
+        destinyTitle: t('CONST_MODAL_DESTINY_TITLE', lang),
+        destinyLabel: '👁️ Oracle & Wyrd',
+        destinyDesc:  t('CONST_MODAL_DESTINY_DESC', lang),
+        cancel:       t('TAB_PRES_CANCEL', lang),
+        apply:        t('CONST_MODAL_APPLY', lang),
     };
 
     // ── État onglet ──────────────────────────────────────────────────────────
@@ -146,7 +142,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
             {/* Header */}
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0.68rem 1rem', borderBottom:'1px solid rgba(200,164,74,0.14)', background:'rgba(200,164,74,0.04)' }}>
                 <span style={{ fontSize:'0.60rem', letterSpacing:'0.18em', color:'rgba(200,164,74,0.85)', textTransform:'uppercase' }}>
-                    {tr.title} — {country?.nom || (isEn ? 'this country' : 'ce pays')}
+                    {tr.title} — {country?.nom || t('CONST_MODAL_THIS_COUNTRY', lang)}
                 </span>
                 <button onClick={handleClose} style={{ background:'none', border:'none', cursor:'pointer', color:'rgba(200,164,74,0.40)', fontSize:'0.80rem', lineHeight:1, padding:'0.1rem 0.3rem' }}>✕</button>
             </div>
@@ -167,7 +163,7 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                 {destinyMode && (
                     <button style={{ ...tabStyle('destin'), color: activeTab === 'destin' ? 'rgba(140,100,220,0.90)' : 'rgba(140,100,220,0.40)', borderBottom: activeTab === 'destin' ? '2px solid rgba(140,100,220,0.70)' : '2px solid transparent' }}
                         onClick={() => setActiveTab('destin')}>
-                        {isEn ? 'DESTINY' : 'DESTIN'}
+                        {t('CONST_MODAL_TAB_DESTIN', lang)}
                     </button>
                 )}
             </div>
@@ -232,19 +228,19 @@ export default function ConstitutionModal({ country, onSave, onClose }) {
                     confirmReset
                     ? <>
                         <span style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(200,80,80,0.60)' }}>
-                            {isEn ? 'Confirm reset?' : 'Confirmer ?'}
+                            {t('CONST_MODAL_CONFIRM_RESET', lang)}
                         </span>
                         <button style={{ ...BTN_SECONDARY, fontSize:'0.42rem' }} onClick={() => setConfirmReset(false)}>
-                            {isEn ? 'No' : 'Non'}
+                            {t('CONST_MODAL_NO', lang)}
                         </button>
                         <button style={{ ...BTN_SECONDARY, fontSize:'0.42rem', color:'rgba(200,80,80,0.55)', border:'1px solid rgba(200,80,80,0.30)' }}
                             onClick={() => { onSave({ ...country, governanceOverride: null }); onClose(); }}>
-                            {isEn ? '↺ Yes' : '↺ Oui'}
+                            {t('CONST_MODAL_YES', lang)}
                         </button>
                       </>
                     : <button style={{ ...BTN_SECONDARY, fontSize:'0.42rem', color:'rgba(200,80,80,0.50)', border:'1px solid rgba(200,80,80,0.20)' }}
                         onClick={() => setConfirmReset(true)}>
-                        {isEn ? '↺ Revert to world model' : '↺ Revenir au modèle monde'}
+                        {t('CONST_MODAL_REVERT', lang)}
                       </button>
                 )}
                 <div style={{ display:'flex', gap:'0.6rem', marginLeft:'auto' }}>

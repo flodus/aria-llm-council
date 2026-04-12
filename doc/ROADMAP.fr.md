@@ -180,9 +180,10 @@
  │           perd en Diplomatie. Propagé dans le contexte du conseil."
  ├─[V7] Protocole de crise ....... [Référendums d'urgence] ........... ⬡ 0%
  ├─[V8] Hub de scénarios ......... [Présets historiques & sandbox] ... ⬡ 0%
- └─[V9] i18n couverture complète .. [Audit → centraliser → traduire] . ⬡ 0%
+ └─[V9] i18n couverture complète .. [Audit → centraliser → traduire] . ✅ 100%
         ├─> FALLBACK_PHRASES externalisées vers ariaI18n.js FR+EN (2026-04-11)
-        ├─> Audit des chaînes franglais inline (isEn ? '…' : '…')
+        ├─> ~120 clés ajoutées (SECT_CONST_*, SYS_*, APROPOS_*, IFACE_*, CONST_MODAL_*, PRES_*…)
+        └─> 39 fichiers migrés — migration complète (2026-04-12)
         ├─> Centralisation ~300 chaînes restantes + prompts IA vers ariaI18n.js
         ├─> Traduction complète FR/EN de toute l'interface
         ├─> Sync base_agents_en.json ↔ base_agents.json

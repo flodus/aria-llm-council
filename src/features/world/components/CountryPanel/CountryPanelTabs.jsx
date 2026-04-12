@@ -1,7 +1,7 @@
 // src/features/world/components/CountryPanel/CountryPanelTabs.jsx
 
 import { useState, useEffect } from 'react';
-import { loadLang } from '../../../../ariaI18n';
+import { loadLang, t } from '../../../../ariaI18n';
 
 export default function TabNavigation({ activeTab, onGoToMap, onGoToCouncil, onGoToTimeline }) {
     const [lang, setLang] = useState(() => loadLang());
@@ -12,10 +12,8 @@ export default function TabNavigation({ activeTab, onGoToMap, onGoToCouncil, onG
         return () => window.removeEventListener('aria-lang-change', onLangChange);
     }, []);
 
-    const isEn = lang === 'en';
-
     const tabs = [
-        { id: 'map', icon: '🗺', label: isEn ? 'MAP' : 'CARTE', action: onGoToMap },
+        { id: 'map', icon: '🗺', label: t('PANEL_TAB_MAP', lang), action: onGoToMap },
         { id: 'council', icon: '⚖', label: 'COUNCIL', action: onGoToCouncil },
         { id: 'timeline', icon: '📜', label: 'CHRON.', action: onGoToTimeline },
     ];

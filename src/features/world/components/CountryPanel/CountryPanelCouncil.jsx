@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { FONT } from '../../../../shared/theme';
+import { t } from '../../../../ariaI18n';
 import { getMinistriesList } from '../../../council/services/councilEngine';
 import MinistryList from './council/CouncilMinistryList';
 import FreeQuestion from './council/CouncilFreeQuestion';
@@ -131,7 +132,7 @@ export default function CountryPanelCouncil({
             color: 'rgba(200,164,74,0.45)',
             marginBottom: '0.55rem'
         }}>
-        {isEn ? 'MINISTRIES' : 'MINISTÈRES'}
+        {t('GOV_TAB_MINS', lang)}
         </div>
 
         <MinistryList {...ministryListProps} />

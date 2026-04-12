@@ -1,6 +1,7 @@
 // src/features/world/components/CountryPanel/map/MapResources.jsx
 
 import { getResourceLabel, getResourceIcon, RESOURCE_DEFS } from '../../../../../shared/data/worldLabels';
+import { t } from '../../../../../ariaI18n';
 
 export default function ResourcesList({ country, isEn }) {
     const { ressources = {} } = country;
@@ -8,7 +9,7 @@ export default function ResourcesList({ country, isEn }) {
 
     return (
         <section>
-        <div className="section-title">{isEn ? "RESOURCES" : "RESSOURCES"}</div>
+        <div className="section-title">{t('MAP_RESOURCES_TITLE', lang)}</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.30rem' }}>
         {RESOURCE_DEFS.map(({ key, icon }) => {
             const present = !!ressources[key];
@@ -18,7 +19,7 @@ export default function ResourcesList({ country, isEn }) {
                 key={key}
                 className={`resource-badge ${key}`}
                 style={{ opacity: present ? 1 : 0.22 }}
-                title={present ? label : `${label} — ${isEn ? 'absent' : 'absent'}`}
+                title={present ? label : `${label} — absent`}
                 >
                 <span className="r-icon">{icon}</span>
                 <span className="r-name">{label}</span>

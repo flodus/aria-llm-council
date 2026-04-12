@@ -1,5 +1,7 @@
 // src/features/world/components/CountryPanel/map/MapActions.jsx
 
+import { t } from '../../../../../ariaI18n';
+
 export default function MapActions({
     isEn,
     isCrisis,
@@ -9,10 +11,11 @@ export default function MapActions({
     onNextCycle,
     onCrisisToggle
 }) {
+    const lang = isEn ? 'en' : 'fr';
     return (
         <div className="side-panel-footer">
         <div className="section-title" style={{ marginBottom: '0.08rem' }}>
-        {isEn ? "ACTIONS" : "ACTIONS"}
+        ACTIONS
         </div>
 
         <button
@@ -24,9 +27,9 @@ export default function MapActions({
             background: 'rgba(200,164,74,0.06)',
             marginBottom: '0.3rem'
         }}
-        title={isEn ? 'Open the Deliberation Council' : 'Ouvrir le Conseil de délibération'}
+        title={t('MAP_OPEN_COUNCIL_TIP', lang)}
         >
-        {isEn ? '⚖️ COUNCIL' : '⚖️ CONSEIL'}
+        {t('MAP_COUNCIL_BTN', lang)}
         </button>
 
         <button
@@ -37,17 +40,17 @@ export default function MapActions({
             color: 'rgba(140,100,220,0.70)',
             marginBottom: '0.3rem'
         }}
-        title={isEn ? 'Government configuration' : 'Configuration du gouvernement'}
+        title={t('MAP_GOV_TIP', lang)}
         >
-        {isEn ? '🏛️ GOVERNMENT' : '🏛️ GOUVERNEMENT'}
+        {t('MAP_GOV_BTN', lang)}
         </button>
 
         <button className="cp-act-btn purple btn-full" onClick={onSecession}>
-        {isEn ? '✂️ SECESSION' : '✂️ SÉCESSION'}
+        {t('MAP_SECESSION_BTN', lang)}
         </button>
 
         <button className="cp-act-btn muted btn-full" onClick={onNextCycle}>
-        {isEn ? '⏭ CYCLE +5 YRS' : '⏭ CYCLE +5 ANS'}
+        {t('MAP_CYCLE_BTN', lang)}
         </button>
 
         <button
@@ -58,10 +61,7 @@ export default function MapActions({
             : { borderColor: 'rgba(200,164,74,0.18)', color: '#4A5A72' }
         }
         >
-        {isCrisis
-            ? (isEn ? '🔴 DISABLE CRISIS' : '🔴 DÉSACTIVER LA CRISE')
-            : (isEn ? '⚠️ SIMULATE CRISIS' : '⚠️ SIMULER UNE CRISE')
-        }
+        {isCrisis ? t('MAP_CRISIS_DISABLE', lang) : t('MAP_CRISIS_SIMULATE', lang)}
         </button>
         </div>
     );

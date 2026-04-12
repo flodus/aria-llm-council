@@ -10,7 +10,7 @@
 
 import { useState, useEffect } from 'react';
 import { FONT, C } from '../../../../shared/theme';
-import { loadLang } from '../../../../ariaI18n';
+import { loadLang, t } from '../../../../ariaI18n';
 import { loadMemoire } from '../../../chronolog/useChroniqueur';
 import { EventDetail } from '../../../chronolog/ChronologView';
 
@@ -83,7 +83,7 @@ const TYPE_STYLE = {
 // ── Ligne événement ───────────────────────────────────────────────────────────
 
 function EventRow({ ev, onOpenEvent }) {
-  const isEn = loadLang() === 'en';
+  const lang = loadLang();
   const ts = TYPE_STYLE[ev.type] || { icon: '•', bg: 'transparent', border: C.border };
   const clickable = ev.type === 'vote' && !!ev.deliberation;
 
@@ -94,7 +94,7 @@ function EventRow({ ev, onOpenEvent }) {
       : pos ? C.green : C.red;
     const voteLabel = ev.chosenOption === 'phare' ? '☉ PHARE'
       : ev.chosenOption === 'boussole' ? '☽ BOUSSOLE'
-      : pos ? (isEn ? 'YES' : 'OUI') : (isEn ? 'NO' : 'NON');
+      : pos ? t('YES', lang) : t('NO', lang);
 
     return (
       <div
@@ -118,7 +118,7 @@ function EventRow({ ev, onOpenEvent }) {
               <span style={{ fontFamily:FONT.mono, fontSize:'0.33rem', color:'rgba(255,140,0,0.90)',
                 border:'1px solid rgba(255,140,0,0.32)', borderRadius:'2px',
                 padding:'0.04rem 0.22rem', letterSpacing:'0.08em' }}>
-                {isEn ? 'CRISIS' : 'CRISE'}
+                {t('TIMELINE_CRISIS', lang)}
               </span>
             )}
             {ev.impacts?.satisfaction !== 0 && ev.impacts?.satisfaction !== undefined && (
@@ -137,7 +137,7 @@ function EventRow({ ev, onOpenEvent }) {
           {clickable && (
             <div style={{ fontFamily:FONT.mono, fontSize:'0.34rem', color:C.dimmed,
               marginTop:'0.20rem', letterSpacing:'0.08em', opacity:0.70 }}>
-              {isEn ? '▸ view deliberation' : '▸ voir la délibération'}
+              {t('TIMELINE_VIEW_DELIB', lang)}
             </div>
           )}
         </div>
@@ -168,7 +168,7 @@ function EventRow({ ev, onOpenEvent }) {
         <div>
           <div style={{ fontFamily:FONT.mono, fontSize:'0.43rem', fontWeight:700,
             color: C.red, letterSpacing:'0.08em', marginBottom:'0.08rem' }}>
-            {isEn ? 'SECESSION' : 'SÉCESSION'}
+            {t('TIMELINE_SECESSION', lang)}
           </div>
           <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim }}>
             {ev.childNom} — {ev.relation}
@@ -190,7 +190,7 @@ function EventRow({ ev, onOpenEvent }) {
         <div>
           <div style={{ fontFamily:FONT.mono, fontSize:'0.43rem', fontWeight:700,
             color: C.purple, letterSpacing:'0.08em', marginBottom:'0.08rem' }}>
-            {isEn ? 'AMENDMENT' : 'AMENDEMENT'}
+            {t('TIMELINE_AMENDMENT', lang)}
           </div>
           {detail && (
             <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim }}>{detail}</div>
@@ -209,7 +209,7 @@ function EventRow({ ev, onOpenEvent }) {
         <div>
           <div style={{ fontFamily:FONT.mono, fontSize:'0.43rem', fontWeight:700,
             color: C.green, letterSpacing:'0.08em', marginBottom:'0.08rem' }}>
-            {isEn ? 'NEW NATION' : 'NOUVEAU PAYS'}
+            {t('TIMELINE_NEW_NATION', lang)}
           </div>
           <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.textDim }}>
             {ev.nom || ev.countryNom}
@@ -238,7 +238,7 @@ function CycleItem({ cycle, defaultOpen, isEn, onOpenEvent }) {
         onClick={() => setOpen(o => !o)}
       >
         <span style={{ fontFamily:FONT.cinzel, fontSize:'0.46rem', letterSpacing:'0.14em', color:C.goldGlow, flex:1 }}>
-          {isEn?'Cycle':'Cycle'} {cycle.cycleNum} — {isEn?'Year':'An'} {cycle.annee}
+          Cycle {cycle.cycleNum} — {t('TIMELINE_YEAR', isEn ? 'en' : 'fr')} {cycle.annee}
         </span>
         {voteCount > 0 && (
           <span style={{ fontFamily:FONT.mono, fontSize:'0.37rem', color:C.textDim }}>
@@ -289,13 +289,11 @@ export default function TimelineView({ country, lang, onOpenEvent }) {
         flex:1, padding:'2rem', textAlign:'center', gap:'0.5rem' }}>
         <div style={{ fontSize:'2rem', opacity:0.15 }}>📜</div>
         <div style={{ fontFamily:FONT.mono, fontSize:'0.42rem', color:C.dimmed, letterSpacing:'0.16em' }}>
-          {isEn ? 'NO HISTORY YET' : 'AUCUN HISTORIQUE'}
+          {t('PANEL_NO_HISTORY', lang)}
         </div>
         <p style={{ fontFamily:FONT.mono, fontSize:'0.40rem', color:'rgba(100,120,160,0.4)',
           maxWidth:'220px', lineHeight:1.6, margin:0 }}>
-          {isEn
-            ? 'Events appear here as the world evolves.'
-            : 'Les événements apparaissent ici au fil du monde.'}
+          {t('TIMELINE_NO_HIST_DESC', lang)}
         </p>
       </div>
     );
@@ -317,10 +315,10 @@ export default function TimelineView({ country, lang, onOpenEvent }) {
             border:'1px solid rgba(90,110,160,0.14)', borderRadius:'2px' }}>
             <div style={{ fontFamily:FONT.mono, fontSize:'0.35rem', letterSpacing:'0.15em',
               color:C.goldDim, marginBottom:'0.30rem' }}>
-              📜 {isEn ? 'INSTITUTIONAL MEMORY' : 'MÉMOIRE INSTITUTIONNELLE'}
+              📜 {t('TIMELINE_MEMORY', lang)}
               <span style={{ marginLeft:'0.5rem', color:C.dimmed, fontWeight:'normal',
                 letterSpacing:'0.08em' }}>
-                — {isEn ? 'cycle' : 'cycle'} {memoire.cycle}
+                — cycle {memoire.cycle}
               </span>
             </div>
             <p style={{ fontFamily:FONT.mono, fontSize:'0.39rem', color:'rgba(180,200,230,0.60)',
@@ -335,7 +333,7 @@ export default function TimelineView({ country, lang, onOpenEvent }) {
           <div>
             <div style={{ fontFamily:FONT.mono, fontSize:'0.35rem', letterSpacing:'0.15em',
               color:C.dimmed, marginBottom:'0.25rem' }}>
-              {isEn ? 'DIPLOMACY' : 'DIPLOMATIE'}
+              {t('TIMELINE_DIPLOMACY', lang)}
             </div>
             {diplomacy.map(rel => <DiplomacyRow key={rel.pid} rel={rel} />)}
           </div>
@@ -346,7 +344,7 @@ export default function TimelineView({ country, lang, onOpenEvent }) {
           <div>
             <div style={{ fontFamily:FONT.mono, fontSize:'0.35rem', letterSpacing:'0.15em',
               color:C.dimmed, marginBottom:'0.28rem' }}>
-              {isEn ? 'HISTORY' : 'HISTORIQUE'}
+              {t('TIMELINE_HISTORY_LBL', lang)}
             </div>
             {cycles.map((cycle, i) => (
               <CycleItem
