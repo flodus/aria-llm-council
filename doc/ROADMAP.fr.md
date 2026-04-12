@@ -236,7 +236,11 @@
         Chronolog phase 2 (2026-04-12) : Chroniqueur institutionnel (C1),
         délibération complète 5 phases, CountryPanel Timeline réel,
         mémoire visible partout (modal cycle · panel · chronolog · conseil).
-        Prochain : T1 providers custom · D2 diplomatie CountryPanel.
+        Session 2026-04-14 : T1 OpenRouter (proxy multi-providers : DeepSeek,
+        Mistral, Llama, Gemini, GPT, Grok via clé unique sk-or-…),
+        V4 PresidencyTiles showTrinaire dans Settings, D1 descriptions
+        destiny_mode + crisis_mode corrigées, F1 CustomFlow.jsx supprimé.
+        Prochain : D2 diplomatie CountryPanel · N1 normalizeCountry.
 ================================================================================
 ```
 

@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-04-13_
+_Dernière mise à jour : 2026-04-14_
 
 ---
 
@@ -75,9 +75,13 @@ _(aucun bug actif connu)_
 
 - [x] **G4 — Settings : brancher GovernanceForm sur sections Gouvernement+Constitution**
 
-- [ ] **T1 — Ajout de provider + modèle custom** : DeepSeek, Mistral, Ollama local…
-  - UI : bouton "+ Ajouter un provider" dans Init + Settings · nom, endpoint, clé API, modèle
-  - Impacte `callAI()` · `aria_api_keys` · InitScreen · Settings — session dédiée
+- [x] **T1 — OpenRouter** : proxy OpenAI-compatible couvrant DeepSeek, Mistral, Llama, Grok, GPT, Gemini
+  - `aiService.js` : bloc openrouter (endpoint openrouter.ai), KEY_FORMAT sk-or-, KEY_PRIORITY, hasKeys
+  - `models.js` : DEFAULT_MODELS.openrouter = 'google/gemini-2.0-flash'
+  - `options.js` : api_keys.openrouter dans DEFAULT_OPTIONS
+  - `APIKeyInline` : provider openrouter + isValidKeyFormat openai exclut sk-or-
+  - `SectionConstitution` : PROVIDERS + anyKey incluent openrouter
+  - Ollama local : déféré session dédiée (pas de proxy public)
 
 - [x] **U3 — Chronolog enrichi** : livré (résumé narratif, filtres, pagination, CountryPanel Timeline, délibération complète, B7 fix)
 
@@ -85,10 +89,7 @@ _(aucun bug actif connu)_
 
 - [x] **U7 — Emoji picker pays** : choisir l'emoji à la création (InitScreen) et in-game (ConstitutionModal)
 
-- [ ] **D1 — Clarté Destinée vs Mode crise** : les deux features sont distinctes et doivent être bien séparées dans l'UI et la doc
-  - **Destinée** (`destiny_mode: true`) = Oracle + Wyrd participent à chaque délibération pour les pays concernés (régimes religieux/théocratiques) — ils s'expriment avant la synthèse présidentielle, systématiquement. La religion a toujours son mot à dire.
-  - **Mode crise** = tous les ministères + Destinée répondent directement à la question de base, sans phase de cercle (pas d'annotations inter-ministérielles). Déclenché manuellement ou par détection de crise.
-  - Vérifier que l'UI (Settings + ConstitutionModal) présente bien ces deux toggles comme indépendants avec des descriptions claires
+- [x] **D1 — Clarté Destinée vs Mode crise** : descriptions corrigées dans Settings (SectionGouvernanceDefaut) et ConstitutionModal — wording précis, indépendance des deux toggles explicitée
 
 ---
 
@@ -112,8 +113,7 @@ _(bloqué sur refonte carte V1)_
 - [ ] **V1 — Refonte génération procédurale** : toute la carte est à reconstruire
 - [ ] **V2 — Crises aléatoires** : protocole 6.2 (3 ministres validateurs · 3 ministres de sortie)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
-- [~] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal + tuile Trinaire ✓ — reste :
-  - Settings (SectionConseil + SectionGouvernanceDefaut) ne passent pas encore `showTrinaire` à PresidencyTiles
+- [x] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal + tuile Trinaire + Settings (showTrinaire passé, import mort supprimé)
 - [ ] **V5 — Refactor arborescence** : réorganiser src/ en components/ · engine/ · lib/ — session dédiée
 - [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
   - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
