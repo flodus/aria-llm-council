@@ -193,12 +193,11 @@
  └─[V12] Open-source prompts .... [Public agent prompt library] ..... ⬡ 0%
 
  [ PHASE V4 : QUALITY & MAINTAINABILITY ] ........................ STATUS: QUEUED
- ├─[V5] Src refactor ............ [src/components · engine · lib] .... ⬡ 0%
- │      └─> Partially done — Dashboard_p1 extracted into 9 modules (2026-04-11)
- │           storageKeys.js inventory complete (2026-04-11)
- │           models.js DEFAULT_MODELS centralised (2026-04-11)
- │           ARBORESCENCE.md cleaned + storage roles clarified (2026-04-11)
- │           Remaining: normalizeCountry() · STORAGE_KEYS adoption in 33 files
+ ├─[V5] Src refactor ............ [src/features · src/shared] ........ ✓ 100%
+ │      └─> features/ (chronolog · council · game · init · map · settings · world)
+ │           shared/ (components · config · constants · data · hooks · services · theme · utils)
+ │           STORAGE_KEYS full adoption (34 files, 0 magic strings)
+ │           normalizeCountry() (shared/utils/) · storageKeys.js centralised
  └─[V8] Engine optimisation ..... [Re-renders · useCallback · AI calls] ⬡ 0%
 
  [ PHASE V5 : MULTIPLAYER ] ...................................... STATUS: DISTANT
@@ -219,22 +218,20 @@
  └─[V20] Resource depletion ..... [Territory-based yields] .......... ⬡ 0%
 
 ================================================================================
- PROGRESS: [██████████░░░░░░░░░░░░░░░░░░░░░░░░] ~30%
- BASELINE: Core engine + per-country constitution complete.
-           Init UX polished. Board Game offline mode complete (4-JSON pipeline).
-           Single source of truth. Destiny of the World operational.
-           PresidencyTiles unified. Collegial + crisis modes operational.
-           Interface: SVG gold cursors + RadioPlayer topbar.
-           Documentation: CONTRIBUTING complete + doc/ reorganised.
-           Phase B1 done — all bugs B1→B15 fixed.
-           Quality refactor (2026-04-11): src/ restructured,
-           dead files removed, storage/options responsibilities clarified.
-           XS quality post-audit: models.js, storageKeys complete, FALLBACK_PHRASES i18n,
-           V4 stubs annotated, ARBORESCENCE.md cleaned.
-           Chronolog phase 2 (2026-04-12): Institutional Chronicler (C1),
-           full 5-phase deliberation, CountryPanel real Timeline,
-           memory visible everywhere (cycle modal · panel · chronolog · council).
-           Next: T1 custom providers · D2 diplomacy CountryPanel.
+ PROGRESS: [████████████████░░░░░░░░░░░░░░░░░░] ~45%
+ SOLID BASELINE:
+           Multi-LLM council engine, per-country constitution, destiny, collegial, crisis.
+           Board Game offline complete (4-JSON pipeline).
+           Init UX polished · Chronolog complete (5 phases, Chronicler, Timeline, D2 diplomacy).
+           Settings refactored · GovernanceForm unified · PresidencyTiles shared.
+           Multi-providers: Claude, Gemini, Grok, OpenAI, OpenRouter (T1).
+           i18n FR/EN full coverage (V9 · ~120 keys) · STORAGE_KEYS 0 magic strings.
+           Interface: SVG gold cursors · RadioPlayer topbar · CSS token theme.
+           Code quality: src/ restructured (features/ + shared/) · storageKeys centralised ·
+           storage/options clarified · dead files removed · normalizeCountry() done (V5 ✓).
+ REMAINING:
+           V1 procedural map (full rebuild) · V2 systemic crises ·
+           V3 LLM infra · multiplayer · war & geopolitics.
 ================================================================================
 ```
 
