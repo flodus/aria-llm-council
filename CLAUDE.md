@@ -47,6 +47,7 @@ Pas de code sans confirmation. Pas d'exception.
 3. **Suggestions** — lister séparément, ne pas appliquer
 4. **Validation** — `npm run build` doit passer avant de déclarer terminé
 5. **Git** — `git add + commit + push` automatiquement après chaque validation
+6. **TODO + ROADMAP** — mettre à jour `doc/TODO.md` et `doc/ROADMAP.fr.md` dans le même commit que chaque chantier livré. Jamais après coup. Si un item est déjà fait (ex: découvert en cours de session), le cocher immédiatement.
 
 ## Workflow Git — Branches
 
