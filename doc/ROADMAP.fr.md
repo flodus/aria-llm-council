@@ -150,19 +150,19 @@
  ├─[G3] AddCountryModal + SecessionModal : choix hériter/personnaliser ✅ 100%
  └─[G4] Settings : brancher GovernanceForm context='settings' ........ ✅ 100%
 
- [ PHASE V1 : CARTE DU MONDE — REFONTE COMPLÈTE ] ................ STATUT: PLANIFIÉ
+ [ PHASE V1 : CARTE DU MONDE — INTÉGRATION GLOBE 3D ] ............ STATUT: EN COURS
  │
- │  ⚠ REFONTE TOTALE : toute la génération procédurale est à reconstruire.
- │  L'approche hex-grid est abandonnée. La nouvelle direction est définie
- │  par l'architecte du projet. Le moteur de conseil et le modèle de données
- │  pays sont agnostiques à la carte et ne seront pas impactés.
+ │  Direction actée : intégration du globe 3D ma-planete (three.js + r3f)
+ │  GeoJSON real-world + morphing mercator + warroom néons pulsants.
+ │  Moteur conseil agnostique à la carte — pas d'impact sur llmCouncilEngine.
  │
- ├─[01] Nouveau moteur procédural  [Architecture à définir] ......... ⬡ 0%
- ├─[02] Assignation polygones .... [Pool territoires → formes pays] .. ⬡ 0%
- ├─[03] Projection globe ......... [Planisphère / sphère WebGL] ...... ⬡ 0%
- ├─[04] Zoom dynamique ........... [Niveaux de détail x1-x5] ......... ⬡ 0%
- ├─[05] Zones maritimes .......... [Superposition adjacence navale] ... ⬡ 0%
- └─[06] Biomes de terrain ........ [Élévation style paper-craft] ..... ⬡ 0%
+ ├─[MP1] Dépendances ............. [three/r3f/drei ✓ · turf manquant] . ◑ 50%
+ ├─[MP2] GeoJSON ................. [110m ✓ · 50m ✓ (2026-04-13)] ...... ✓ 100%
+ ├─[MP3] Assets partagés ......... [globe.js · geo.js · pays.json] .... ⬡ 0%
+ ├─[MP4] Composants scène ........ [globe · mercator · warroom → map/] . ⬡ 0%
+ ├─[MP5] Intégration Dashboard ... [ExplorateurMonde dans flux ARIA] ... ⬡ 0%
+ ├─[MP6] Settings ................ [Lien téléchargement ne_10m] ........ ⬡ 0%
+ └─[MP7] Monde fictif ............ [Globe hex procédural — décision] ... ⬡ 0%
 
  [ PHASE F1 : FONCTIONNALITÉS MULTI-PAYS ] ....................... STATUT: EN FILE
  │
