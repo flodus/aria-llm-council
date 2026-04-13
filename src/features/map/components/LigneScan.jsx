@@ -8,7 +8,7 @@ export default function LigneScan({ couleur = '#00e5ff' }) {
     let raf;
     const depart = performance.now();
     const animer = () => {
-      const t = (performance.now() - depart) % 4000 / 4000;
+      const t = (performance.now() - depart) % 7000 / 7000;
       if (ligneRef.current) ligneRef.current.style.top = `${t * 100}%`;
       raf = requestAnimationFrame(animer);
     };
@@ -17,7 +17,7 @@ export default function LigneScan({ couleur = '#00e5ff' }) {
   }, []);
 
   return (
-    <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 50, overflow: 'hidden' }}>
+    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 50, overflow: 'hidden' }}>
       <div ref={ligneRef} style={{
         position: 'absolute', left: 0, right: 0, height: '1px',
         background: `linear-gradient(90deg, transparent 0%, ${couleur} 30%, ${couleur} 70%, transparent 100%)`,
