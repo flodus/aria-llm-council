@@ -45,6 +45,8 @@ export function ExplorateurMonde({
 }) {
   const [vue, setVue] = useState(initialVue)
   const [paysSurvolé, setPaysSurvolé] = useState(null)
+  // Pays en focus local — set immédiatement au double-clic, sans attendre la prop parent
+  const [paysFocusLocal, setPaysFocusLocal] = useState(null)
   const [geo110, setGeo110] = useState(null)
   const [geo50,  setGeo50]  = useState(null)
   const [geo10,  setGeo10]  = useState(null)
@@ -57,10 +59,18 @@ export function ExplorateurMonde({
     fetch(`${base}countries-10m.geo.json`).then(r => r.json()).then(setGeo10).catch(() => setGeo10(null))
   }, [])
 
-  // Pays en focus = selectedCountry ARIA → NAME GeoJSON
+  // Pays en focus : local (double-clic direct) en priorité, sinon selectedCountry prop
   const paysFocus = useMemo(() => {
+    if (paysFocusLocal) return paysFocusLocal
     if (!selectedCountry?.realData?.id) return null
     return ID_VERS_GEONAME[selectedCountry.realData.id] ?? null
+  }, [paysFocusLocal, selectedCountry])
+
+  // Sync : si selectedCountry change depuis CountryPanel, on met à jour paysFocusLocal
+  useEffect(() => {
+    if (!selectedCountry?.realData?.id) return
+    const geoName = ID_VERS_GEONAME[selectedCountry.realData.id]
+    if (geoName) setPaysFocusLocal(geoName)
   }, [selectedCountry])
 
   const changerVue = useCallback((v) => {
@@ -74,13 +84,14 @@ export function ExplorateurMonde({
     setPaysSurvolé(nomGeo)
   }, [])
 
-  // Double-clic / entrée mercator → sélectionner dans ARIA
+  // Double-clic / entrée mercator → set local immédiat + sélection ARIA async
   const handleEntrerMercator = useCallback((nomGeo) => {
     if (!nomGeo) return
+    setPaysFocusLocal(nomGeo)
     const ariaId = GEONAME_VERS_ID[nomGeo]
     const ariaCountry = ariaId
       ? countries.find(c => c.realData?.id === ariaId)
-      : countries.find(c => c.nom === nomGeo) // fallback nom direct
+      : countries.find(c => c.nom === nomGeo)
     if (ariaCountry && onSelectCountry) onSelectCountry(ariaCountry)
     setVue('warroom')
     setPaysSurvolé(null)
