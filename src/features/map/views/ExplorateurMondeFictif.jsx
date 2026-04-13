@@ -18,7 +18,7 @@ const btnStyle = {
 
 const DUREE_MORPH = 700 // ms
 
-export default function ExplorateurMondeFictif({ seed = 42, onMondeReel }) {
+export default function ExplorateurMondeFictif({ seed = 42, countries = [], onMondeReel }) {
   const [vue, setVue]              = useState('globe')
   const [isPlanar, setIsPlanar]    = useState(false)
   const [paysSelectionne, setPays] = useState(null)
@@ -70,6 +70,7 @@ export default function ExplorateurMondeFictif({ seed = 42, onMondeReel }) {
       {vue !== 'globe' && (
         <MondeFictif
           seed={localSeed}
+          nomsOverride={countries.map(c => c.nom)}
           paysSelectionne={vue === 'warroom' ? paysSelectionne : null}
           onRetour={vue === 'warroom'
             ? () => allerVers('mercator')

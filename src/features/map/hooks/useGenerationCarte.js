@@ -26,7 +26,7 @@ function biomeParHauteur(h) {
   return 'Hauts sommets'
 }
 
-export function useGenerationCarte(localSeed) {
+export function useGenerationCarte(localSeed, nomsOverride = []) {
   return useMemo(() => {
 
     // ─── Heightmap ────────────────────────────────────────────────────────────
@@ -200,7 +200,7 @@ export function useGenerationCarte(localSeed) {
     const nomsPays   = {}
     const biomesPays = {}
     for (let i = 0; i < nbPays; i++) {
-      nomsPays[i]   = genererNom(rngNoms)
+      nomsPays[i]   = nomsOverride[i] ?? genererNom(rngNoms)
       if (paysCentres[i])
         biomesPays[i] = biomeParHauteur(paysCentres[i].sumH / paysCentres[i].n)
     }
@@ -212,5 +212,5 @@ export function useGenerationCarte(localSeed) {
       particules, nRoyaumes: nbPays, paysCentres,
       nomsPays, biomesPays, nHexTerre,
     }
-  }, [localSeed])
+  }, [localSeed, nomsOverride])
 }

@@ -14,7 +14,7 @@ const btnStyle = {
   fontSize: '0.88rem', fontFamily: 'monospace', letterSpacing: '0.06em',
 }
 
-export default function MondeFictif({ seed, onMondeReel, onRetour, onPaysDoubleClick, paysSelectionne = null }) {
+export default function MondeFictif({ seed, nomsOverride = [], onMondeReel, onRetour, onPaysDoubleClick, paysSelectionne = null }) {
   const [localSeed, setLocalSeed]     = useState(seed)
   const [hoveredPays, setHoveredPays] = useState(null)
   const [cloudOffset, setCloudOffset] = useState(0)
@@ -84,7 +84,7 @@ export default function MondeFictif({ seed, onMondeReel, onRetour, onPaysDoubleC
   }
   const onPtrUp = () => { ptrDown.current = false }
 
-  const svgData = useGenerationCarte(localSeed)
+  const svgData = useGenerationCarte(localSeed, nomsOverride)
   const { nRoyaumes, paysCentres, nomsPays, biomesPays, nHexTerre } = svgData
 
   useEffect(() => {

@@ -20,6 +20,7 @@ import ChronologView   from '../chronolog/ChronologView';
 import { useARIA } from './hooks/useARIA';
 import { ExplorateurMonde } from '../map/views/ExplorateurMonde';
 import ExplorateurMondeFictif from '../map/views/ExplorateurMondeFictif';
+import PAYS_REELS from '../../shared/data/pays.json';
 import ConstitutionModal from '../council/components/ConstitutionModal';
 import CountryPanelCouncil from './components/CountryPanel/CountryPanelCouncil';
 import LLMCouncil from '../council/components/LLMCouncil';
@@ -354,8 +355,9 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       );
     }
 
-    // Monde réel → globe GeoJSON 3D
-    const estMondeReel = aria.countries.length > 0 && aria.countries.every(c => c.realData?.id);
+    // Monde réel = tous les pays ont un id dans pays.json (les 10 pays réels GeoJSON)
+    const REAL_IDS = new Set(Object.keys(PAYS_REELS));
+    const estMondeReel = aria.countries.length > 0 && aria.countries.every(c => c.realData?.id && REAL_IDS.has(c.realData.id));
     if (estMondeReel) {
       return (
         <ExplorateurMonde
@@ -366,10 +368,11 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       );
     }
 
-    // Monde fictif → globe hexagonal procédural
+    // Monde fictif → globe hexagonal procédural avec noms des pays ARIA
     return (
       <ExplorateurMondeFictif
         seed={aria.worldData?.seed ?? 42}
+        countries={aria.countries}
       />
     );
   };
