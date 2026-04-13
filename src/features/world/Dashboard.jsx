@@ -19,6 +19,7 @@ import { useChroniqueur } from '../chronolog/useChroniqueur';
 import ChronologView   from '../chronolog/ChronologView';
 import { useARIA } from './hooks/useARIA';
 import { MapSVG } from '../map/MapSVG';
+import { ExplorateurMonde } from '../map/views/ExplorateurMonde';
 import ConstitutionModal from '../council/components/ConstitutionModal';
 import CountryPanelCouncil from './components/CountryPanel/CountryPanelCouncil';
 import LLMCouncil from '../council/components/LLMCouncil';
@@ -353,6 +354,19 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       );
     }
 
+    // Monde réel → globe GeoJSON 3D
+    const estMondeReel = aria.countries.length > 0 && aria.countries.every(c => c.realData?.id);
+    if (estMondeReel) {
+      return (
+        <ExplorateurMonde
+          countries={aria.countries}
+          selectedCountry={selectedCountry}
+          onSelectCountry={(c) => setSelectedCountry(prev => prev?.id === c.id ? null : c)}
+        />
+      );
+    }
+
+    // Monde fictif → carte SVG (temporaire, remplacé par ExplorateurMondeFictif — MP7)
     return (
       <MapSVG
         worldData={aria.worldData}

@@ -109,12 +109,11 @@ _(aucun bug actif connu)_
 
 ## 🗺️ INTÉGRATION MA-PLANETE (globe 3D)
 
-- [x] **MP1 — Dépendances** : three + @react-three/fiber + @react-three/drei déjà dans package.json · turf manquant
-- [x] **MP2 — GeoJSON** : `public/countries-110m.geo.json` ✓ · `public/countries-50m.geo.json` ✓ (copié 2026-04-13)
-- [ ] **MP1b — turf** : `npm install @turf/turf` — fusion pays (mercator)
-- [ ] **MP3 — Assets partagés** : copier `shaders/globe.js` + `utils/geo.js` + `data/pays.json` depuis ma-planete → `src/shared/`
-- [ ] **MP4 — Composants scène** : porter composants globe/mercator/warroom + hooks → `src/features/map/`
-- [ ] **MP5 — Intégration Dashboard** : ExplorateurMonde dans le flux ARIA (Dashboard_p2 remplacé ou parallèle — à décider)
+- [x] **MP1 — Dépendances** : three + @react-three/fiber + @react-three/drei + @turf/turf dans package.json
+- [x] **MP2 — GeoJSON** : `public/countries-110m.geo.json` ✓ · `public/countries-50m.geo.json` ✓
+- [x] **MP3 — Assets partagés** : `src/shared/shaders/globe.js` · `src/shared/utils/geo.js` · `src/shared/data/pays.json` · `src/shared/utils/curseurs.js`
+- [x] **MP4 — Composants scène** : `src/features/map/components/scene/` (SceneGlobeMercator, SceneWarRoom, SphereBase) · `Etoiles` · `LigneScan` · hooks `useGlobeOrbit` + `useMercatorZoom`
+- [x] **MP5 — Intégration Dashboard** : `ExplorateurMonde` remplace `MapSVG` en mode monde réel · détection `countries.every(c => c.realData?.id)` · props `countries/selectedCountry/onSelectCountry`
 - [ ] **MP6 — Settings** : lien téléchargement ne_10m pour warroom haute résolution
 - [ ] **MP7 — Monde fictif** : globe hexagonal procédural — standalone ou intégré ARIA (décision à prendre)
 

@@ -156,11 +156,11 @@
  │  GeoJSON real-world + morphing mercator + warroom néons pulsants.
  │  Moteur conseil agnostique à la carte — pas d'impact sur llmCouncilEngine.
  │
- ├─[MP1] Dépendances ............. [three/r3f/drei ✓ · turf manquant] . ◑ 50%
- ├─[MP2] GeoJSON ................. [110m ✓ · 50m ✓ (2026-04-13)] ...... ✓ 100%
- ├─[MP3] Assets partagés ......... [globe.js · geo.js · pays.json] .... ⬡ 0%
- ├─[MP4] Composants scène ........ [globe · mercator · warroom → map/] . ⬡ 0%
- ├─[MP5] Intégration Dashboard ... [ExplorateurMonde dans flux ARIA] ... ⬡ 0%
+ ├─[MP1] Dépendances ............. [three/r3f/drei/turf ✓] ............ ✓ 100%
+ ├─[MP2] GeoJSON ................. [110m ✓ · 50m ✓] .................. ✓ 100%
+ ├─[MP3] Assets partagés ......... [shared/shaders · utils · data] .... ✓ 100%
+ ├─[MP4] Composants scène ........ [SceneGlobeMercator · WarRoom · hooks] ✓ 100%
+ ├─[MP5] Intégration Dashboard ... [ExplorateurMonde remplace MapSVG] .. ✓ 100%
  ├─[MP6] Settings ................ [Lien téléchargement ne_10m] ........ ⬡ 0%
  └─[MP7] Monde fictif ............ [Globe hex procédural — décision] ... ⬡ 0%
 
