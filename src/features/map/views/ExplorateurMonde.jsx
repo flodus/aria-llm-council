@@ -2,7 +2,7 @@
 // Globe GeoJSON → Mercator → WarRoom — intégré à ARIA
 // Props ARIA : countries, selectedCountry, onSelectCountry
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import Etoiles from '../components/Etoiles.jsx'
 import { CURSEUR_POINTER } from '../../../shared/utils/curseurs.js'
@@ -47,6 +47,8 @@ export function ExplorateurMonde({
   const [paysSurvolé, setPaysSurvolé] = useState(null)
   // Pays en focus local — set immédiatement au double-clic, sans attendre la prop parent
   const [paysFocusLocal, setPaysFocusLocal] = useState(null)
+  // Ref pour éviter double-switch quand handleEntrerMercator set déjà la vue
+  const vueSetParInterne = useRef(false)
   const [geo110, setGeo110] = useState(null)
   const [geo50,  setGeo50]  = useState(null)
   const [geo10,  setGeo10]  = useState(null)
@@ -66,11 +68,17 @@ export function ExplorateurMonde({
     return ID_VERS_GEONAME[selectedCountry.realData.id] ?? null
   }, [paysFocusLocal, selectedCountry])
 
-  // Sync : si selectedCountry change depuis CountryPanel, on met à jour paysFocusLocal
+  // Sync : si selectedCountry change depuis CountryPanel → warroom directement
   useEffect(() => {
     if (!selectedCountry?.realData?.id) return
     const geoName = ID_VERS_GEONAME[selectedCountry.realData.id]
-    if (geoName) setPaysFocusLocal(geoName)
+    if (!geoName) return
+    setPaysFocusLocal(geoName)
+    if (vueSetParInterne.current) {
+      vueSetParInterne.current = false // consommé
+    } else {
+      setVue('warroom')
+    }
   }, [selectedCountry])
 
   const changerVue = useCallback((v) => {
@@ -88,13 +96,14 @@ export function ExplorateurMonde({
   const handleEntrerMercator = useCallback((nomGeo) => {
     if (!nomGeo) return
     setPaysFocusLocal(nomGeo)
+    vueSetParInterne.current = true // signale que la vue est déjà gérée ici
+    setVue('warroom')
+    setPaysSurvolé(null)
     const ariaId = GEONAME_VERS_ID[nomGeo]
     const ariaCountry = ariaId
       ? countries.find(c => c.realData?.id === ariaId)
       : countries.find(c => c.nom === nomGeo)
     if (ariaCountry && onSelectCountry) onSelectCountry(ariaCountry)
-    setVue('warroom')
-    setPaysSurvolé(null)
   }, [countries, onSelectCountry])
 
   const estGlobe    = vue === 'globe'
