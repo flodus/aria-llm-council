@@ -1,4 +1,4 @@
-// src/shared/utils/curseurs.js — curseurs SVG or (#c6a24c) 32×32
+// src/utils/curseurs.js — curseurs SVG or (#c6a24c) 32×32
 const _uri = svg => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 
 // viewBox = bbox du path pour que le dessin remplisse les 32px
