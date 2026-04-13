@@ -150,19 +150,19 @@
  ├─[G3] AddCountryModal + SecessionModal : inherit/customise choice ... ✅ 100%
  └─[G4] Settings : wire GovernanceForm context='settings' ............ ✅ 100%
 
- [ PHASE V1 : WORLD MAP — FULL REWORK ] .......................... STATUS: PLANNED
+ [ PHASE V1 : WORLD MAP — 3D GLOBE INTEGRATION ] ................. STATUS: IN PROGRESS
  │
- │  ⚠ FULL REWORK: The entire procedural generation is being rebuilt.
- │  Current hex-grid approach is superseded. New direction TBD by owner.
- │  The council engine and country data model are map-agnostic and will
- │  survive the rework unchanged.
+ │  Direction set: integrating ma-planete 3D globe (three.js + r3f)
+ │  Real-world GeoJSON + mercator morphing + warroom neon pulses.
+ │  Council engine is map-agnostic — no impact on llmCouncilEngine.
  │
- ├─[01] New procedural engine ... [Architecture TBD] ................ ⬡ 0%
- ├─[02] Country polygon assign .. [Territory pool → nation shapes] ... ⬡ 0%
- ├─[03] Globe projection ........ [Flat / WebGL sphere toggle] ....... ⬡ 0%
- ├─[04] Dynamic zoom ............ [Detail level scaling x1-x5] ....... ⬡ 0%
- ├─[05] Maritime zones .......... [Naval adjacency overlay] .......... ⬡ 0%
- └─[06] Terrain biomes .......... [Papercraft-layered elevation] ..... ⬡ 0%
+ ├─[MP1] Dependencies ........... [three/r3f/drei ✓ · turf missing] .. ◑ 50%
+ ├─[MP2] GeoJSON ................ [110m ✓ · 50m ✓ (2026-04-13)] ...... ✓ 100%
+ ├─[MP3] Shared assets .......... [globe.js · geo.js · pays.json] .... ⬡ 0%
+ ├─[MP4] Scene components ....... [globe · mercator · warroom → map/] . ⬡ 0%
+ ├─[MP5] Dashboard integration .. [ExplorateurMonde in ARIA flow] .... ⬡ 0%
+ ├─[MP6] Settings ............... [ne_10m download link] ............. ⬡ 0%
+ └─[MP7] Fictional world ........ [Hex procedural globe — TBD] ....... ⬡ 0%
 
  [ PHASE F1 : MULTI-COUNTRY FEATURES ] ........................... STATUS: QUEUED
  │
