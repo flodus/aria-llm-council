@@ -110,8 +110,7 @@ _(aucun bug actif connu)_
 ## 🟠 FONCTIONNEL MOYEN TERME
 _(bloqué sur refonte carte V1)_
 
-- [ ] **N1 — normalizeCountry()** : harmoniser les structures d'objet pays — risque élevé, session dédiée
-  - Base : ANALYSE_STRUCTURE_PAYS.md · fichiers : ariaData.js · countryEngine.js · InitScreen.jsx
+- [x] **N1 — normalizeCountry()** : `shared/utils/normalizeCountry.js` — emoji/flag unifié, leader normalisé en objet · branché dans `countryEngine.js` (buildCountryFromLocal + buildCountryFromAI)
 
 - [x] **F1 — Multi-pays mode fictif** : DefaultLocalFlow supporte déjà jusqu'à 6 pays (fictifs prédéfinis + créés à la main) — CustomFlow.jsx supprimé (fichier mort)
 - [x] **F2 — Bloquer doublons pays réels** : déjà implémenté (disabled + ✗ + repoussé en bas dans RealCountryLocalSection + duplicate status dans RealCountryAISection)
