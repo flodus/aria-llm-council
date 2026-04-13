@@ -115,7 +115,7 @@ _(aucun bug actif connu)_
 - [x] **MP4 — Composants scène** : `src/features/map/components/scene/` (SceneGlobeMercator, SceneWarRoom, SphereBase) · `Etoiles` · `LigneScan` · hooks `useGlobeOrbit` + `useMercatorZoom`
 - [x] **MP5 — Intégration Dashboard** : `ExplorateurMonde` remplace `MapSVG` en mode monde réel · détection `countries.every(c => c.realData?.id)` · props `countries/selectedCountry/onSelectCountry`
 - [ ] **MP6 — Settings** : lien téléchargement ne_10m pour warroom haute résolution
-- [ ] **MP7 — Monde fictif** : globe hexagonal procédural — standalone ou intégré ARIA (décision à prendre)
+- [x] **MP7 — Monde fictif** : `ExplorateurMondeFictif` branché dans Dashboard — globe hexagonal procédural remplace MapSVG en mode fictif
 
 ---
 

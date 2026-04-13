@@ -18,8 +18,8 @@ import { useChronolog } from '../chronolog/useChronolog';
 import { useChroniqueur } from '../chronolog/useChroniqueur';
 import ChronologView   from '../chronolog/ChronologView';
 import { useARIA } from './hooks/useARIA';
-import { MapSVG } from '../map/MapSVG';
 import { ExplorateurMonde } from '../map/views/ExplorateurMonde';
+import ExplorateurMondeFictif from '../map/views/ExplorateurMondeFictif';
 import ConstitutionModal from '../council/components/ConstitutionModal';
 import CountryPanelCouncil from './components/CountryPanel/CountryPanelCouncil';
 import LLMCouncil from '../council/components/LLMCouncil';
@@ -366,15 +366,10 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
       );
     }
 
-    // Monde fictif → carte SVG (temporaire, remplacé par ExplorateurMondeFictif — MP7)
+    // Monde fictif → globe hexagonal procédural
     return (
-      <MapSVG
-        worldData={aria.worldData}
-        countries={aria.countries}
-        alliances={aria.alliances}
-        selectedCountry={selectedCountry}
-        onCountryClick={(c) => setSelectedCountry(prev => prev?.id === c.id ? null : c)}
-        onCountryHover={() => {}}
+      <ExplorateurMondeFictif
+        seed={aria.worldData?.seed ?? 42}
       />
     );
   };

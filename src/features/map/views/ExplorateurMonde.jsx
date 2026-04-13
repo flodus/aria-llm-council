@@ -95,7 +95,7 @@ export function ExplorateurMonde({
   const hexScan = paysFocus ? `#${couleurScan(paysFocus).getHexString()}` : '#00e5ff'
 
   return (
-    <div style={{ position:'fixed', inset:0, overflow:'hidden', backgroundColor:'#000' }}>
+    <div style={{ position:'absolute', inset:0, overflow:'hidden', backgroundColor:'#000' }}>
       {!estWarRoom && (
         <div style={{ width:'100%', height:'100%' }}
           onDoubleClick={estGlobe ? () => changerVue('mercator') : undefined}>

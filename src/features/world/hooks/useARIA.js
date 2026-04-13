@@ -108,6 +108,7 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
       return {
         ...c,
         aria_irl: irl, aria_current: irl,
+        ...(def?.realData           ? { realData:           def.realData           } : {}),
         ...(def?.context_mode       ? { context_mode:       def.context_mode       } : {}),
         ...(def?.contextOverride    ? { contextOverride:    def.contextOverride    } : {}),
         ...(def?.governanceOverride ? { governanceOverride: def.governanceOverride } : {}),

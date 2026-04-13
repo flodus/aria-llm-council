@@ -162,7 +162,7 @@
  ├─[MP4] Scene components ....... [SceneGlobeMercator · WarRoom · hooks] ✓ 100%
  ├─[MP5] Dashboard integration .. [ExplorateurMonde replaces MapSVG] .. ✓ 100%
  ├─[MP6] Settings ............... [ne_10m download link] ............. ⬡ 0%
- └─[MP7] Fictional world ........ [Hex procedural globe — TBD] ....... ⬡ 0%
+ └─[MP7] Fictional world ........ [ExplorateurMondeFictif wired in] ... ✓ 100%
 
  [ PHASE F1 : MULTI-COUNTRY FEATURES ] ........................... STATUS: QUEUED
  │
