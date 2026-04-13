@@ -412,8 +412,9 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
 
     presEntries.forEach(([id, data], i) => {
         if (aiResults[i]) return;
-        // Décalage déterministe par index pour varier les fallbacks
-        const r = (random + i * 0.33) % 1;
+        // Chaque président tire sa propre valeur — pas de décalage systématique
+        // qui forcerait toujours des positions opposées
+        const r = (random * 7 + i * 137 + question.length * 3) % 100 / 100;
         if (r < 0.5) {
             // Action
             aiResults[i] = {
@@ -558,7 +559,8 @@ function buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, countr
     const nbAction  = votes.filter(v => v === 'action').length;
     const nbPrudence = votes.filter(v => v === 'prudence').length;
     const majorite  = Math.ceil(N / 2);
-    const convergence = nbAction >= majorite || nbPrudence >= majorite;
+    // Majorité stricte : pour N=2, les deux doivent s'accorder (sinon divergence)
+    const convergence = nbAction > N / 2 || nbPrudence > N / 2;
 
     const decisionMajoritaire = aiResults[0]?.decision || 'Action prioritaire.';
     const decisionMinoritaire = N > 1 ? (aiResults[1]?.decision || null) : null;
