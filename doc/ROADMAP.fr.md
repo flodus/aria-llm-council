@@ -195,13 +195,11 @@
  └─[V12] Prompts open-source ..... [Bibliothèque publique d'agents] .. ⬡ 0%
 
  [ PHASE V4 : QUALITÉ & MAINTENABILITÉ ] ......................... STATUT: EN FILE
- ├─[V5] Refactor arborescence ... [src/components · engine · lib] .... ⬡ 0%
- │      └─> Partiellement fait — Dashboard_p1 extrait en 9 modules (2026-04-11)
- │           storageKeys.js inventaire complet (2026-04-11)
- │           models.js DEFAULT_MODELS centralisé (2026-04-11)
- │           ARBORESCENCE.md nettoyée + storage clarifiés (2026-04-11)
- │           STORAGE_KEYS adoption complète (2026-04-12) — 34 fichiers, 0 magic strings
- │           Reste : normalizeCountry()
+ ├─[V5] Refactor arborescence ... [src/features · src/shared] ........ ✓ 100%
+ │      └─> features/ (chronolog · council · game · init · map · settings · world)
+ │           shared/ (components · config · constants · data · hooks · services · theme · utils)
+ │           STORAGE_KEYS adoption complète (34 fichiers, 0 magic strings)
+ │           normalizeCountry() (shared/utils/) · storageKeys.js centralisé
  └─[V8] Optimisation moteur ..... [Re-renders · useCallback · appels IA] ⬡ 0%
 
  [ PHASE V5 : MULTIJOUEUR ] ...................................... STATUT: DISTANT
@@ -223,7 +221,7 @@
  └─[V20] Épuisement ressources ... [Rendements par territoire] ........ ⬡ 0%
 
 ================================================================================
- PROGRESSION : [██████████████░░░░░░░░░░░░░░░░░░░░] ~40%
+ PROGRESSION : [████████████████░░░░░░░░░░░░░░░░░░] ~45%
  BASE COMPLÈTE (fondations solides) :
         Moteur conseil multi-LLM, constitution par pays, destinée, collégial, crise.
         Board Game offline complet (4 JSON : questions, réponses, synthèses, annotations).

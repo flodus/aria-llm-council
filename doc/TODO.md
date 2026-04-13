@@ -127,7 +127,7 @@ _(bloqué sur refonte carte V1)_
 - [ ] **V2 — Crises aléatoires** : protocole 6.2 (3 ministres validateurs · 3 ministres de sortie)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
 - [x] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal + tuile Trinaire + Settings (showTrinaire passé, import mort supprimé)
-- [ ] **V5 — Refactor arborescence** : réorganiser src/ en components/ · engine/ · lib/ — session dédiée
+- [x] **V5 — Refactor arborescence** : src/ restructuré en `features/` + `shared/` (components · config · constants · data · hooks · services · theme · utils) — Dashboard_p1 extrait en 9 modules, Settings déplacé, storageKeys centralisé, STORAGE_KEYS adoption complète
 - [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
   - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
 - [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants
