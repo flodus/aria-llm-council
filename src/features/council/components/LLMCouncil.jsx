@@ -426,29 +426,39 @@ export default function LLMCouncil({ session, onVote, isRunning, countryContext,
             phase="RESULT"
             label={t('COUNCIL_PHASE_RESULT', loadLang())}
             icon="✦"
-            accentColor={voteResult.vote === 'oui' ? C.green : C.red}
+            accentColor={(() => {
+              const div = presidence?.synthese?.convergence === false;
+              if (div) return voteResult.vote === 'oui' ? C.gold : C.purple;
+              return voteResult.vote === 'oui' ? C.green : C.red;
+            })()}
             style={{ animation: 'fadeSlideIn 0.5s ease both' }}
           >
-            <div style={bubble(
-              voteResult.vote === 'oui' ? C.green : C.red,
-              { marginBottom: '0.7rem' }
-            )}>
-              <div style={{
-                fontFamily: FONT.mono, fontSize: '0.40rem',
-                color: voteResult.vote === 'oui' ? C.green : C.red,
-                letterSpacing: '0.14em', marginBottom: '0.5rem',
-              }}>
-                DÉCISION DU PEUPLE — {voteResult.vote === 'oui' ? '✓ OUI' : '✕ NON'}
-              </div>
-              <p style={{ fontFamily: FONT.mono, fontSize: '0.50rem', color: C.text, lineHeight: 1.6, margin: 0 }}>
-                {voteResult.label}
-              </p>
-            </div>
+            {(() => {
+              const div = presidence?.synthese?.convergence === false;
+              const rc = div
+                ? (voteResult.vote === 'oui' ? C.gold : C.purple)
+                : (voteResult.vote === 'oui' ? C.green : C.red);
+              const rl = div
+                ? (voteResult.vote === 'oui' ? '☉ PHARE' : '☽ BOUSSOLE')
+                : (voteResult.vote === 'oui' ? '✓ OUI'   : '✕ NON');
+              return (
+                <div style={bubble(rc, { marginBottom: '0.7rem' })}>
+                  <div style={{ fontFamily: FONT.mono, fontSize: '0.40rem', color: rc, letterSpacing: '0.14em', marginBottom: '0.5rem' }}>
+                    DÉCISION DU PEUPLE — {rl}
+                  </div>
+                  <p style={{ fontFamily: FONT.mono, fontSize: '0.50rem', color: C.text, lineHeight: 1.6, margin: 0 }}>
+                    {voteResult.label}
+                  </p>
+                </div>
+              );
+            })()}
 
             <VoteJauge
-              type="referendum"
+              type={presidence?.synthese?.convergence === false ? 'binary' : 'referendum'}
               oui={voteResult.oui}
               non={voteResult.non}
+              phare={voteResult.phare}
+              boussole={voteResult.boussole}
             />
 
             {isRunning && (

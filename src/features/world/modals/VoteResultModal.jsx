@@ -27,12 +27,13 @@ export default function VoteResultModal({ session, onClose }) {
   if (!voteResult) return null;
 
   const isBinary = voteResult.voteType === 'binary';
-  const isPhare = voteResult.vote === 'phare';
+  const isDivergence = presidence?.synthese?.convergence === false;
+  const isPhare = voteResult.vote === 'phare' || (isDivergence && voteResult.vote === 'oui');
   const isOui = voteResult.vote === 'oui';
 
   let vColor, vIcon, vLabel, vOptionLabel;
 
-  if (isBinary) {
+  if (isBinary || isDivergence) {
     vColor = isPhare ? C.gold : C.purple;
     vIcon = isPhare ? '☉' : '☽';
     vLabel = isPhare ? 'PHARE' : 'BOUSSOLE';
@@ -46,7 +47,7 @@ export default function VoteResultModal({ session, onClose }) {
 
   let total, pct1, pct2, label1, label2, color1, color2, grad1, grad2, val1, val2;
 
-  if (isBinary) {
+  if (isBinary || isDivergence) {
     val1 = voteResult.phare || 0;
     val2 = voteResult.boussole || 0;
     total = val1 + val2;
@@ -137,7 +138,7 @@ export default function VoteResultModal({ session, onClose }) {
       transition: 'width 0.8s ease',
       fontFamily: FONT.mono, fontSize: '0.44rem', color: 'rgba(255,255,255,0.90)', fontWeight: 700,
     }}>
-    {pct2 >= 12 && `${isBinary ? (isPhare ? '☽' : '☉') : '✕'} ${pct2}%`}
+    {pct2 >= 12 && `${(isBinary || isDivergence) ? (isPhare ? '☽' : '☉') : '✕'} ${pct2}%`}
     </div>
     </div>
     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
