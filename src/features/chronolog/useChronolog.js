@@ -85,8 +85,11 @@ export function useChronolog() {
     ? (() => {
       let events = existing.events;
       if (ev.type === 'vote') {
+        // Dédup uniquement si même pays + même ministère + même question (protection double-clic)
+        // Des questions différentes sur le même ministère doivent toutes être conservées
         events = events.filter(e =>
-        !(e.type === 'vote' && e.countryId === ev.countryId && e.ministereId === ev.ministereId)
+          !(e.type === 'vote' && e.countryId === ev.countryId
+            && e.ministereId === ev.ministereId && e.question === ev.question)
         );
       }
       return { ...existing, events: [...events, ev] };

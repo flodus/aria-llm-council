@@ -24,14 +24,16 @@ export function computeVoteImpact(vote, presidence, country) {
                       || presidence.synthese?.position_boussole_resume
                       || null;
 
+    const isDivergence = convergence === false;
+
     if (vote === 'oui') {
         return {
             satisfaction: +Math.min(5, Math.round((100 - country.satisfaction) * 0.09)),
             aria_current: Math.min(ariaCurrent + 3, 95),
-            label: convergence
-                ? 'Le peuple adopte la proposition du Conseil. La légitimité du gouvernement ARIA progresse.'
-                : `Le peuple tranche en faveur de la position majoritaire : ${positionOui}`,
-            chosenOption: 'oui',
+            label: isDivergence
+                ? `Le peuple choisit la voie du Phare ☉ — ${positionOui}`
+                : 'Le peuple adopte la proposition du Conseil. La légitimité du gouvernement ARIA progresse.',
+            chosenOption: isDivergence ? 'phare' : 'oui',
             chosenLabel: positionOui,
             voteType: 'referendum',
             vote: 'oui',
@@ -44,12 +46,14 @@ export function computeVoteImpact(vote, presidence, country) {
             aria_current: convergence
                 ? Math.max(ariaCurrent - 4, 5)
                 : Math.min(ariaCurrent + 1, 95),
-            label: convergence
-                ? 'Le peuple rejette la proposition. Le Conseil doit reconsidérer sa position.'
-                : positionNon
-                    ? `Le peuple préfère la position alternative : ${positionNon}`
-                    : 'Le peuple rejette la proposition présidentielle.',
-            chosenOption: 'non',
+            label: isDivergence
+                ? `Le peuple choisit la voie de la Boussole ☽ — ${positionNon || 'Prudence et consultation.'}`
+                : (convergence
+                    ? 'Le peuple rejette la proposition. Le Conseil doit reconsidérer sa position.'
+                    : positionNon
+                        ? `Le peuple préfère la position alternative : ${positionNon}`
+                        : 'Le peuple rejette la proposition présidentielle.'),
+            chosenOption: isDivergence ? 'boussole' : 'non',
             chosenLabel: positionNon || null,
             voteType: 'referendum',
             vote: 'non',
