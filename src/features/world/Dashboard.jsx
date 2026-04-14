@@ -251,7 +251,8 @@ export default function Dashboard({ selectedCountry, setSelectedCountry, isCrisi
     }));
 
     setCycleHistory(prev => [
-      ...prev.filter(h => !(h.type === 'vote' && h.countryId === selectedCountry.id && h.ministereId === entryBase.ministereId)),
+      ...prev.filter(h => !(h.type === 'vote' && h.countryId === selectedCountry.id
+        && h.ministereId === entryBase.ministereId && h.question === entryBase.question)),
       entryBase,
     ]);
 
