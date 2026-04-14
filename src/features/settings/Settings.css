@@ -78,7 +78,7 @@
 
 /* ── NAVIGATION LATÉRALE ── */
 .settings-nav {
-    width: 172px;
+    width: 188px;
     flex-shrink: 0;
     border-right: 1px solid rgba(200, 164, 74, 0.1);
     background: rgba(6, 8, 13, 0.6);

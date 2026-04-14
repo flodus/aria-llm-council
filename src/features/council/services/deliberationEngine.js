@@ -535,7 +535,7 @@ function normaliseSyntheseAI(synthese, presidentsResult, presEntries, aiResults)
         },
         non: {
             label: `${presEntries[1]?.[1]?.symbol || '☽'} ${presEntries[1]?.[1]?.name || 'La Boussole'} — ${aiResults[1]?.decision || minorite || 'Prudence et consultation.'}`,
-            color: '#7A9ECC',
+            color: COLORS.purpleHex,
             icon: presEntries[1]?.[1]?.symbol || '☽',
         },
     };
@@ -594,7 +594,7 @@ function buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, countr
         },
         non: {
             label: `${presEntries[1]?.[1]?.symbol || '☽'} ${presEntries[1]?.[1]?.name || 'La Boussole'} — ${decisionMinoritaire || 'Prudence et consultation.'}`,
-            color: COLORS.blueLight?.replace('rgba(','').replace(')','') ? '#7A9ECC' : '#7A9ECC',
+            color: COLORS.purpleHex,
             icon: presEntries[1]?.[1]?.symbol || '☽',
         },
     };
