@@ -523,13 +523,26 @@ function normaliseSyntheseAI(synthese, presidentsResult, presEntries, aiResults)
         id, name: data.name, symbol: data.symbol || data.emoji || '★',
         resume: aiResults[i]?.decision || '',
     }));
+    const convergenceAI = synthese.convergence !== false; // par défaut convergent si non spécifié
+    const voteOptionsAI = convergenceAI ? {
+        oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
+        non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' },
+    } : {
+        oui: {
+            label: `${presEntries[0]?.[1]?.symbol || '☉'} ${presEntries[0]?.[1]?.name || 'Le Phare'} — ${aiResults[0]?.decision || majorite}`,
+            color: COLORS.goldHex,
+            icon: presEntries[0]?.[1]?.symbol || '☉',
+        },
+        non: {
+            label: `${presEntries[1]?.[1]?.symbol || '☽'} ${presEntries[1]?.[1]?.name || 'La Boussole'} — ${aiResults[1]?.decision || minorite || 'Prudence et consultation.'}`,
+            color: '#7A9ECC',
+            icon: presEntries[1]?.[1]?.symbol || '☽',
+        },
+    };
     return {
         ...synthese,
         voteType: 'referendum',
-        voteOptions: {
-            oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
-            non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' },
-        },
+        voteOptions: voteOptionsAI,
         voteQuestion: synthese.question_referendum || synthese.voteQuestion || '',
         // Compat backward : LLMCouncil.jsx utilise encore ces clés
         position_phare_resume:    synthese.position_majority_resume || majorite,
@@ -567,7 +580,24 @@ function buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, countr
 
     const voteQuestion = convergence
         ? `Approuvez-vous la proposition suivante : "${decisionMajoritaire}" ?`
-        : `Le gouvernement doit-il adopter la position de ${presEntries[0][1].name} ?`;
+        : `Quelle direction le gouvernement doit-il suivre ?`;
+
+    // En cas de divergence : options Phare vs Boussole avec leurs couleurs
+    const voteOptions = convergence ? {
+        oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
+        non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' },
+    } : {
+        oui: {
+            label: `${presEntries[0]?.[1]?.symbol || '☉'} ${presEntries[0]?.[1]?.name || 'Le Phare'} — ${decisionMajoritaire}`,
+            color: COLORS.goldHex,
+            icon: presEntries[0]?.[1]?.symbol || '☉',
+        },
+        non: {
+            label: `${presEntries[1]?.[1]?.symbol || '☽'} ${presEntries[1]?.[1]?.name || 'La Boussole'} — ${decisionMinoritaire || 'Prudence et consultation.'}`,
+            color: COLORS.blueLight?.replace('rgba(','').replace(')','') ? '#7A9ECC' : '#7A9ECC',
+            icon: presEntries[1]?.[1]?.symbol || '☽',
+        },
+    };
 
     const enjeu = country.satisfaction < 40
         ? `Cette décision intervient dans un contexte de tension sociale élevée (satisfaction : ${country.satisfaction}%). Son impact sera immédiatement ressenti par les ${Math.round(country.population/1e6*10)/10} M de citoyens.`
@@ -579,10 +609,7 @@ function buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, countr
         voteType: 'referendum',
         voteQuestion,
         question_referendum: voteQuestion,
-        voteOptions: {
-            oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
-            non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' },
-        },
+        voteOptions,
         // Compat backward
         position_phare_resume:    decisionMajoritaire,
         position_boussole_resume: decisionMinoritaire,
