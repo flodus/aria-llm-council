@@ -156,8 +156,6 @@ Les signalements et les pull requests sont bienvenus. Voir [CONTRIBUTING.fr.md](
 
 La logique d'orchestration d'agents d'ARIA prolonge **[llm-council d'Andrej Karpathy](https://github.com/karpathy/llm-council)**. Merci à Andrej pour ce projet.
 
-La méthode de gouvernance s'appuie sur le cadre Assess, Decide, Do de Dragos Roua.
-
 Le code est le produit d'une collaboration entre un auteur humain, qui a défini la vision, la logique constitutionnelle et l'expérience, et des agents d'IA : Gemini pour le raisonnement stratégique et la structure, Claude pour l'implémentation.
 
 ---

@@ -156,8 +156,6 @@ Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for
 
 ARIA's agent orchestration extends **[Andrej Karpathy's llm-council](https://github.com/karpathy/llm-council)**. Thank you to Andrej for that project.
 
-The governance method draws on the Assess, Decide, Do framework by Dragos Roua.
-
 The source code is the product of collaboration between a human author, who defined the vision, constitutional logic and experience, and AI agents: Gemini for strategic reasoning and structure, Claude for implementation.
 
 ---
