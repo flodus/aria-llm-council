@@ -119,7 +119,6 @@ _Liste complète : `src/shared/services/storageKeys.js`. Encore hors de ce fichi
 - doc/TODO.md — backlog quotidien
 - doc/ROADMAP.fr.md — vision globale
 - doc/REFLEXIONS.md — idées de fond (Assess requis)
-- doc/MIGRATION_NOTES.md — notes de migration ministères / prompts
 
 ---
 
