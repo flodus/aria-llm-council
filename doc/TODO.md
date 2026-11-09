@@ -4,6 +4,20 @@ _Dernière mise à jour : 2026-11-09 (remise à niveau après pause · audit de 
 
 ---
 
+## 🎯 PRIORITÉ 1 — Une seule source de vérité (principe directeur de CLAUDE.md)
+
+Objectif : changer un élément une seule fois pour qu'il s'applique partout. Détail et preuves : `doc/INVENTAIRE_UI.md`.
+
+Ordre de travail, un chantier = une branche, validé en local avant fusion :
+
+- [ ] **1. Composant `Modal`** → branche `refactor/modal-shared` · remplace les overlays en ligne (20 fichiers) et `modalStyles.js`
+- [ ] **2. Champs** → déplacer le kit de `features/settings/ui/SettingsUI.jsx` vers `shared/components/` · supprimer le `Toggle` en double de `GovernanceForm.jsx`
+- [ ] **3. Boutons** → composant `Button` (primary / secondary / danger) à partir de `BTN_PRIMARY` et `BTN_SECONDARY`
+- [ ] **4. Présidence** → `PresidencyTiles` seul affichage (10 fichiers à vérifier)
+- [ ] **5. Styles** → fusionner `Settings.css` dans `App.css` · migrer les styles en ligne composant par composant
+
+---
+
 ## 🔴 BUGS ACTIFS — À traiter en priorité
 
 _(aucun bug actif connu)_
