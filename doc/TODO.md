@@ -189,11 +189,12 @@ _(bloqué sur refonte carte V1)_
 
 _Constats issus de la comparaison code ↔ TODO/ROADMAP/CLAUDE.md. Non traités : à décider puis à faire._
 
-- [ ] **Settings.css → inline** : `src/features/settings/Settings.css` (584 lignes) encore importé par `Settings.jsx`. CLAUDE.md prévoit la migration.
+- [ ] **Fusionner `Settings.css` dans `App.css`** : `src/features/settings/Settings.css` (584 lignes, 21 règles `:hover`/`:focus`/`@media`/`@keyframes`) encore importé par `Settings.jsx`. Source unique = `App.css`.
+- [ ] **Styles inline → `App.css`** : 1497 occurrences de `style={{` dans 118 fichiers de `src/`. Chantier long, à découper par dossier. Aucun nouveau style inline.
 - [ ] **Clés localStorage en dur** : `'aria_agents'` (`settingsStorage.js`, lignes 38 et 42) et `'aria_emoji_overrides'` (`shared/utils/agentsOverrides.js`, ligne 8) ne passent pas par `STORAGE_KEYS`.
 - [x] **`llmCouncilEngine.js` n'existe plus** : éclaté en `features/council/services/councilEngine.js` + modules (commit `6ce936e`). Règle protégée mise à jour dans CLAUDE.md et ARIA_CONTEXT.md (2026-11-09).
 - [ ] **V9 — points retirés du ROADMAP** (contradictoires avec ✅) à vérifier : centraliser ~300 chaînes restantes et prompts IA vers `ariaI18n.js` · sync `base_agents_en.json` ↔ `base_agents.json` · `ariaQA_en.json` (quand ariaQA existera).
-- [ ] **Identifiants V6 / V8 en double** : le TODO et le ROADMAP n'utilisent pas les mêmes sens. TODO : V6 = prompts ADD, V8 = optimisation moteur. ROADMAP phase systémique : V6 = répercussions mondiales, V7 = protocole de crise, V8 = hub de scénarios. → Décision : renuméroter l'un des deux.
+- [x] **Identifiants V6 / V8 en double** : les items systémiques du ROADMAP passent en S1 (répercussions mondiales), S2 (protocole de crise) et S3 (hub de scénarios). Le numéro V reste propre au TODO.
 
 ---
 

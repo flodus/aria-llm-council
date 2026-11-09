@@ -7,7 +7,7 @@ Session courante : Claude.ai (Assess/Decide) + Claude Code terminal (Do)
 ## Stack technique
 
 - React 19 + Vite, SPA client-side, pas de backend
-- App.css = source de vérité (tokens + classes globales) · Inline = styles ponctuels non réutilisables · Jamais de CSS modules
+- App.css = source de vérité unique (tokens + toutes les classes) · Pas de styles inline · Jamais de CSS modules
 - MDI icons (Material Design Icons via CDN)
 - Mulberry32 PRNG — generateWorld() 100% déterministe
 - localStorage comme couche de persistance principale
@@ -39,13 +39,14 @@ _Chemins vérifiés le 2026-11-09. Anciens fichiers `Dashboard_p1/p2/p3` éclat�
 | src/shared/theme/ariaTheme.js | Design tokens ⚠️ idem |
 | src/ariaI18n.js | i18n FR/EN : t(), useLocale(), loadLang() ⚠️ idem |
 | src/shared/services/storageKeys.js | Source de vérité des clés localStorage (`STORAGE_KEYS`) |
+| src/App.css | Source de vérité unique des styles (tokens + classes) |
 
 ---
 
 ## Conventions de code
 
 - Commentaires et noms de variables en français
-- Styles inline uniquement — jamais de CSS modules
+- Styles : `App.css` uniquement (source unique) — pas de style inline, jamais de CSS modules
 - Pas de TypeScript
 - Composants fonctionnels React uniquement
 - Hooks : useCallback/useMemo sur les fonctions passées en props
@@ -112,6 +113,7 @@ _Liste complète : `src/shared/services/storageKeys.js`. Encore hors de ce fichi
 ---
 
 ## Décisions d'architecture actées
+- Source unique des styles = `App.css`, sans style inline (2026-11-09) — la migration des inline existants est au TODO
 - server.js conservé — base V4 multijoueur + proxy RSS futur
 - Prompts JSON synthèse en français intentionnel — moteur parse un format strict
 - Hard Reset inline dans Système — pas en accordéon

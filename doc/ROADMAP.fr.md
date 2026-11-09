@@ -175,11 +175,11 @@
  └─[F3] Settings multi-pays ...... [Global · init · in-game — 3 niveaux] ✅ 100%
 
  [ PHASE V2 : DÉCLENCHEURS SYSTÉMIQUES ] ......................... STATUT: EN FILE
- ├─[V6] Répercussions mondiales .. [Effets croisés entre pays] ....... ⬡ 0%
+ ├─[S1] Répercussions mondiales .. [Effets croisés entre pays] ....... ⬡ 0%
  │      └─> "Si le Pays A taxe l'IA → le Pays B gagne en Commerce,
  │           perd en Diplomatie. Propagé dans le contexte du conseil."
- ├─[V7] Protocole de crise ....... [Référendums d'urgence] ........... ⬡ 0%
- ├─[V8] Hub de scénarios ......... [Présets historiques & sandbox] ... ⬡ 0%
+ ├─[S2] Protocole de crise ....... [Référendums d'urgence] ........... ⬡ 0%
+ ├─[S3] Hub de scénarios ......... [Présets historiques & sandbox] ... ⬡ 0%
  └─[V9] i18n couverture complète .. [Audit → centraliser → traduire] . ✅ 100%
         ├─> FALLBACK_PHRASES externalisées vers ariaI18n.js FR+EN (2026-04-11)
         ├─> ~120 clés ajoutées (SECT_CONST_*, SYS_*, APROPOS_*, IFACE_*, CONST_MODAL_*, PRES_*…)

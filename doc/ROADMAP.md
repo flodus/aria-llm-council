@@ -174,11 +174,11 @@
  └─[F3] Settings multi-country .. [Global · init · in-game — 3 levels] ✅ 100%
 
  [ PHASE V2 : SYSTEMIC TRIGGERS ] ................................ STATUS: QUEUED
- ├─[V6] Global repercussions .... [Cross-country policy effects] .... ⬡ 0%
+ ├─[S1] Global repercussions .... [Cross-country policy effects] .... ⬡ 0%
  │      └─> "If Country A taxes AI → Country B gains Trade,
  │           loses Diplomacy. Propagated through council context."
- ├─[V7] Crisis protocol ......... [Emergency referendums] ........... ⬡ 0%
- ├─[V8] Scenarios hub ........... [Historical & Sandbox presets] .... ⬡ 0%
+ ├─[S2] Crisis protocol ......... [Emergency referendums] ........... ⬡ 0%
+ ├─[S3] Scenarios hub ........... [Historical & Sandbox presets] .... ⬡ 0%
  └─[V9] i18n full coverage ....... [Audit → centralise → translate] .. ✓ 100%
         ├─> FALLBACK_PHRASES externalised to ariaI18n.js FR+EN (2026-04-11)
         ├─> ~120 keys added (SECT_CONST_*, SYS_*, APROPOS_*, IFACE_*, CONST_MODAL_*, PRES_*…)
