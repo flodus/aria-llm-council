@@ -191,6 +191,7 @@ _Constats issus de la comparaison code ↔ TODO/ROADMAP/CLAUDE.md. Non traités 
 
 - [ ] **Fusionner `Settings.css` dans `App.css`** : `src/features/settings/Settings.css` (584 lignes, 21 règles `:hover`/`:focus`/`@media`/`@keyframes`) encore importé par `Settings.jsx`. Source unique = `App.css`.
 - [ ] **Styles inline → `App.css`** : 1497 occurrences de `style={{` dans 118 fichiers de `src/`. Chantier long, à découper par dossier. Aucun nouveau style inline.
+- [ ] **Éléments d'interface dupliqués → composants partagés** (principe directeur de CLAUDE.md) : 20 fichiers mentionnent « Modal ». L'inventaire des doublons (modales, boutons, tuiles, champs) n'est pas encore fait. Faire l'inventaire d'abord, puis un composant par type dans `shared/components/`.
 - [ ] **Clés localStorage en dur** : `'aria_agents'` (`settingsStorage.js`, lignes 38 et 42) et `'aria_emoji_overrides'` (`shared/utils/agentsOverrides.js`, ligne 8) ne passent pas par `STORAGE_KEYS`.
 - [x] **`llmCouncilEngine.js` n'existe plus** : éclaté en `features/council/services/councilEngine.js` + modules (commit `6ce936e`). Règle protégée mise à jour dans CLAUDE.md et ARIA_CONTEXT.md (2026-11-09).
 - [ ] **V9 — points retirés du ROADMAP** (contradictoires avec ✅) à vérifier : centraliser ~300 chaînes restantes et prompts IA vers `ariaI18n.js` · sync `base_agents_en.json` ↔ `base_agents.json` · `ariaQA_en.json` (quand ariaQA existera).

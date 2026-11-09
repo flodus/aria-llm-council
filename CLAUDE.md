@@ -3,6 +3,19 @@
 > Langue de travail : français. Toutes les réponses et commentaires en français.
 > Contexte technique complet : lire doc/ARIA_CONTEXT.md
 
+## Principe directeur — une seule source de vérité
+
+Tout le site est construit à partir d'éléments partagés : pages, réglages à chaque niveau (global, pays, in-game), écrans de création et de jeu, modales, boutons, tuiles, champs.
+
+- **Composants** : un seul composant par type d'élément, dans `src/shared/components/`.
+- **Styles** : un seul endroit, `src/App.css`.
+- **Textes** : un seul endroit, `src/ariaI18n.js`.
+- **Clés de stockage** : un seul endroit, `STORAGE_KEYS`.
+
+Conséquence : un changement se fait à un seul endroit et s'applique partout. Avant de créer un élément, vérifier qu'il n'existe pas déjà dans `shared/components/`. Un élément présent à deux endroits doit devenir un composant partagé. Ne jamais dupliquer un élément d'interface dans une page.
+
+Ce principe vaut pour les nouveaux développements. La dette existante est listée dans `doc/TODO.md`.
+
 @doc/ARIA_CONTEXT.md
 
 ## Commandes

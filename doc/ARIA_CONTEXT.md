@@ -2,6 +2,17 @@
 Simulation de gouvernance multi-LLM — React 19 + Vite + GitHub Pages
 Session courante : Claude.ai (Assess/Decide) + Claude Code terminal (Do)
 
+## Principe directeur — une seule source de vérité
+
+Tout le site (pages, réglages à chaque niveau, création, jeu, modales, boutons, tuiles, champs) doit être construit à partir d'éléments partagés, pour qu'un changement se fasse à un seul endroit :
+
+- **Composants** : un seul par type d'élément, dans `src/shared/components/`
+- **Styles** : `src/App.css` uniquement
+- **Textes** : `src/ariaI18n.js` uniquement
+- **Clés de stockage** : `STORAGE_KEYS` uniquement
+
+Un élément dupliqué dans plusieurs pages devient un composant partagé. La dette existante est listée dans `doc/TODO.md`.
+
 ---
 
 ## Stack technique
