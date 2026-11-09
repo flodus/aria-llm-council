@@ -33,7 +33,7 @@ const PROVIDERS = [
 { id: 'gemini', label: 'GEMINI', sub: 'Google', ph: 'AIza…',
   versions: ARIA_FALLBACK_MODELS.gemini,
   testUrl: async (k, model) => {
-    const m = model || 'gemini-2.0-flash';
+    const m = model || 'gemini-2.5-flash';
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: [{ parts: [{ text: 'Hi' }] }], generationConfig: { maxOutputTokens: 10 } }),
