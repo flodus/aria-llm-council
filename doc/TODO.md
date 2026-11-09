@@ -10,7 +10,7 @@ Objectif : changer un élément une seule fois pour qu'il s'applique partout. D�
 
 Ordre de travail, un chantier = une branche, validé en local avant fusion :
 
-- [ ] **1. Composant `Modal`** → branche `refactor/modal-shared` · remplace les overlays en ligne (20 fichiers) et `modalStyles.js`
+- [x] **1. Composant `Modal`** → branche `refactor/modal-shared` · `src/shared/components/Modal.jsx` + classes `.aria-modal-*` dans App.css · 5 modales du monde migrées (AddCountry, Secession, Diplomacy, CycleConfirm, VoteResult) · cadre retiré de `modalStyles.js` · **reste** : AIErrorModal, CouncilModals, ConfirmLaunchDialog, ConstitutionModal (aspect différent : décision visuelle à prendre avant migration)
 - [ ] **2. Champs** → déplacer le kit de `features/settings/ui/SettingsUI.jsx` vers `shared/components/` · supprimer le `Toggle` en double de `GovernanceForm.jsx`
 - [ ] **3. Boutons** → composant `Button` (primary / secondary / danger) à partir de `BTN_PRIMARY` et `BTN_SECONDARY`
 - [ ] **4. Présidence** → `PresidencyTiles` seul affichage (10 fichiers à vérifier)
