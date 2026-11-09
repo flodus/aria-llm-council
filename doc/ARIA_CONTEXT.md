@@ -18,20 +18,27 @@ Session courante : Claude.ai (Assess/Decide) + Claude Code terminal (Do)
 
 ## Architecture src/
 
+_Chemins vérifiés le 2026-11-09. Anciens fichiers `Dashboard_p1/p2/p3` éclatés (V5)._
+
 | Fichier | Rôle |
 |---------|------|
-| Dashboard_p1.jsx | Moteur core : useARIA, callAI(), generateWorld(), doCycle() |
-| Dashboard_p2.jsx | Rendu SVG carte |
-| Dashboard_p3.jsx | Composant principal : modales, FAB, assemblage |
-| App.jsx | Shell global, ariaRef (API impérative p3) |
-| InitScreen.jsx | Écran démarrage : config monde, clés API |
-| Settings.jsx | Configuration (5 sections : Gouvernement/Constitution/Simulation/Système/À Propos) |
-| ConstitutionModal.jsx | Modale constitution par pays (in-game) |
-| CountryPanel.jsx | Panneau latéral pays sélectionné |
-| llmCouncilEngine.js | Pipeline délibération 6 phases ⚠️ ne pas modifier sans demande explicite |
-| ariaData.js | Données statiques + FALLBACK_RESPONSES ⚠️ idem |
-| ariaTheme.js | Design tokens ⚠️ idem |
-| ariaI18n.js | i18n FR/EN : t(), useLocale(), loadLang() |
+| src/App.jsx | Shell global |
+| src/features/world/Dashboard.jsx | Assemblage du monde : modales, FAB, boucle de cycle |
+| src/features/world/hooks/useARIA.js | Hook central : useARIA, doCycle() |
+| src/features/world/services/WorldEngine.js | generateWorld() |
+| src/features/world/services/gameEngine.js | Logique de cycle |
+| src/features/map/views/ExplorateurMonde.jsx | Globe 3D (monde réel) |
+| src/features/map/views/ExplorateurMondeFictif.jsx | Globe hexagonal procédural (monde fictif) |
+| src/features/init/InitScreen.jsx | Écran démarrage : config monde, clés API |
+| src/features/settings/Settings.jsx | Configuration (5 sections : Gouvernement/Constitution/Simulation/Système/À Propos) |
+| src/features/council/components/ConstitutionModal.jsx | Modale constitution par pays (in-game) |
+| src/features/world/components/CountryPanel/CountryPanel.jsx | Panneau latéral pays sélectionné |
+| src/features/council/services/councilEngine.js | Pipeline délibération (remplace l'ancien `llmCouncilEngine.js`) ⚠️ ne pas modifier sans demande explicite |
+| src/shared/services/llm/aiService.js | Appels IA : callAI(), callModel() par provider |
+| src/shared/data/ariaData.js | Données statiques + FALLBACK_RESPONSES ⚠️ ne pas modifier sans demande explicite |
+| src/shared/theme/ariaTheme.js | Design tokens ⚠️ idem |
+| src/ariaI18n.js | i18n FR/EN : t(), useLocale(), loadLang() ⚠️ idem |
+| src/shared/services/storageKeys.js | Source de vérité des clés localStorage (`STORAGE_KEYS`) |
 
 ---
 
@@ -51,17 +58,17 @@ Session courante : Claude.ai (Assess/Decide) + Claude Code terminal (Do)
 ```js
 perGov[i] = null  // null = hérite constitution commune
 // Flux : InitScreen.saveAndLaunch → defs[i].governanceOverride
-//        → Dashboard_p1 → llmCouncilEngine.getAgentsFor(country)
+//        → Dashboard.jsx / useARIA → councilEngine.getAgentsFor(country)
 ```
 
 ### Country Context
 - Contrôlé par `aria_options.gameplay.context_mode` ('auto'|'rich'|'stats_only'|'off')
 - Hiérarchie : Settings global → Constitution par pays → contextOverride (remplace tout)
-- `buildCountryContext()` dans llmCouncilEngine.js
+- `buildCountryContext()` dans `features/council/services/contextBuilder.js` (ré-exporté via councilEngine.js)
 
 ### Providers IA
-- Claude + Gemini : implémentés dans callModel()
-- Grok + OpenAI : déclarés dans les sélecteurs, pas encore implémentés dans callModel()
+- Claude, Gemini, Grok, OpenAI : implémentés dans `callModel()` (`shared/services/llm/aiService.js`)
+- OpenRouter : proxy OpenAI-compatible (T1), clé `sk-or-`
 - Clés debug : préfixe valide + contient -fake/-test/-debug/-demo → statut ⏳, pas d'appel API
 
 ### Présidence
@@ -72,7 +79,7 @@ perGov[i] = null  // null = hérite constitution commune
 
 ### Ministères actifs (v2026-03)
 justice · economie · defense · sante · education · ecologie · industrie
-(Industrie remplace Chance — pas encore implémenté dans le moteur)
+(Industrie remplace Chance — présent dans `fallbacks.js` et `questionService.js` ; ROADMAP le marque livré)
 
 ---
 
@@ -87,6 +94,12 @@ justice · economie · defense · sante · education · ecologie · industrie
 | aria_session_countries | État pays en cours |
 | aria_session_alliances | Alliances en cours |
 | aria_preferred_models | Modèle préféré par provider |
+| aria_chronolog_cycles | Historique des cycles (Chronolog) |
+| aria_chroniqueur | Mémoire narrative par pays (C1) |
+| aria_cycle_num | Numéro du cycle en cours |
+| aria_agents_override | Overrides des agents (constitution) |
+
+_Liste complète : `src/shared/services/storageKeys.js`. Encore hors de ce fichier : `aria_agents`, `aria_emoji_overrides` (voir TODO, section Dette)._
 
 ---
 

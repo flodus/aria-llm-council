@@ -1,6 +1,6 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-04-12 (session soir)_
+_Dernière mise à jour : 2026-11-09 (remise à niveau après pause · audit de cohérence)_
 
 ---
 
@@ -139,13 +139,14 @@ _(bloqué sur refonte carte V1)_
 - [ ] **V2 — Crises aléatoires** : protocole 6.2 (3 ministres validateurs · 3 ministres de sortie)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
 - [x] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal + tuile Trinaire + Settings (showTrinaire passé, import mort supprimé)
-- [x] **V5 — Refactor arborescence** : src/ restructuré en `features/` + `shared/` (components · config · constants · data · hooks · services · theme · utils) — Dashboard_p1 extrait en 9 modules, Settings déplacé, storageKeys centralisé, STORAGE_KEYS adoption complète
+- [x] **V5 — Refactor arborescence** : src/ restructuré en `features/` + `shared/` (components · config · constants · data · hooks · services · theme · utils) — Dashboard_p1 extrait en 9 modules, Settings déplacé, storageKeys centralisé, STORAGE_KEYS adoption (2 clés restantes → section Dette)
 - [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
   - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
-- [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants
+- [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants · bundle principal ~1 MB au build (code-splitting)
 - [x] **V9 — i18n couverture complète** : migration complète livré (2026-04-12)
   - ~120 nouvelles clés : SECT_CONST_*, SYS_*, APROPOS_*, IFACE_*, CONST_MODAL_*, PRES_*, FORM_*
   - 39 fichiers modifiés — chaînes JSX complexes intentionnellement inline
+  - Reste à vérifier : voir section Dette ci-dessous
 
 ---
 
@@ -184,5 +185,25 @@ _(bloqué sur refonte carte V1)_
 
 ---
 
-## 📁 Fichiers actifs
-`src/features/settings/` · `src/features/world/` · `App.jsx`
+## 🧹 DETTE & COHÉRENCE — audit 2026-11-09
+
+_Constats issus de la comparaison code ↔ TODO/ROADMAP/CLAUDE.md. Non traités : à décider puis à faire._
+
+- [ ] **Settings.css → inline** : `src/features/settings/Settings.css` (584 lignes) encore importé par `Settings.jsx`. CLAUDE.md prévoit la migration.
+- [ ] **Clés localStorage en dur** : `'aria_agents'` (`settingsStorage.js`, lignes 38 et 42) et `'aria_emoji_overrides'` (`shared/utils/agentsOverrides.js`, ligne 8) ne passent pas par `STORAGE_KEYS`.
+- [ ] **`llmCouncilEngine.js` n'existe plus** : éclaté en `features/council/services/councilEngine.js` + modules (commit `6ce936e`). CLAUDE.md et `ARIA_CONTEXT.md` le citent encore comme fichier protégé. → Décision : mettre la règle à jour sur `councilEngine.js`.
+- [ ] **CLAUDE.md — providers obsolète** : indique Grok et OpenAI non implémentés dans `callModel()`. Faux : `shared/services/llm/aiService.js` gère Claude, Gemini, Grok, OpenAI et OpenRouter. → Décision : corriger CLAUDE.md.
+- [ ] **V9 — points retirés du ROADMAP** (contradictoires avec ✅) à vérifier : centraliser ~300 chaînes restantes et prompts IA vers `ariaI18n.js` · sync `base_agents_en.json` ↔ `base_agents.json` · `ariaQA_en.json` (quand ariaQA existera).
+- [ ] **Identifiants V6 / V8 en double** : le TODO et le ROADMAP n'utilisent pas les mêmes sens. TODO : V6 = prompts ADD, V8 = optimisation moteur. ROADMAP phase systémique : V6 = répercussions mondiales, V7 = protocole de crise, V8 = hub de scénarios. → Décision : renuméroter l'un des deux.
+
+---
+
+## 📁 Fichiers actifs (chemins vérifiés 2026-11-09)
+- Moteur conseil : `src/features/council/services/councilEngine.js` (+ `agentsManager.js`, `deliberationEngine.js`, `contextBuilder.js`)
+- Appels IA : `src/shared/services/llm/aiService.js`
+- Monde / boucle de jeu : `src/features/world/Dashboard.jsx`, `hooks/useARIA.js`, `services/gameEngine.js`
+- Carte : `src/features/map/views/ExplorateurMonde.jsx`, `ExplorateurMondeFictif.jsx`
+- Clés localStorage : `src/shared/services/storageKeys.js`
+- Constantes de jeu : `src/shared/constants/gameBalance.js`
+- Settings : `src/features/settings/Settings.jsx`
+- Constitution in-game : `src/features/council/components/ConstitutionModal.jsx`
