@@ -17,3 +17,6 @@ export const PING_MODELS = {
   grok:   'grok-3-mini',
   openai: 'gpt-4.1-mini',
 };
+
+// Délai maximal d'un test de clé : au-delà, le test est considéré comme échoué
+export const DELAI_TEST_MS = 20000;
