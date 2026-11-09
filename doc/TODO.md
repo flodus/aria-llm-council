@@ -1,6 +1,20 @@
 # ARIA — TODO.md
 _Outil de travail quotidien — mis à jour à chaque fin d'étape_
-_Dernière mise à jour : 2026-04-12 (session soir)_
+_Dernière mise à jour : 2026-11-09 (remise à niveau après pause · audit de cohérence)_
+
+---
+
+## 🎯 PRIORITÉ 1 — Une seule source de vérité (principe directeur de CLAUDE.md)
+
+Objectif : changer un élément une seule fois pour qu'il s'applique partout. Détail et preuves : `doc/INVENTAIRE_UI.md`.
+
+Ordre de travail, un chantier = une branche, validé en local avant fusion :
+
+- [x] **1. Composant `Modal`** → branche `refactor/modal-shared` · `src/shared/components/Modal.jsx` + classes `.aria-modal-*` dans App.css · 5 modales du monde migrées (AddCountry, Secession, Diplomacy, CycleConfirm, VoteResult) · cadre retiré de `modalStyles.js` · **reste** : AIErrorModal, CouncilModals, ConfirmLaunchDialog, ConstitutionModal (aspect différent : décision visuelle à prendre avant migration)
+- [ ] **2. Champs** → déplacer le kit de `features/settings/ui/SettingsUI.jsx` vers `shared/components/` · supprimer le `Toggle` en double de `GovernanceForm.jsx`
+- [ ] **3. Boutons** → composant `Button` (primary / secondary / danger) à partir de `BTN_PRIMARY` et `BTN_SECONDARY`
+- [ ] **4. Présidence** → `PresidencyTiles` seul affichage (10 fichiers à vérifier)
+- [ ] **5. Styles** → fusionner `Settings.css` dans `App.css` · migrer les styles en ligne composant par composant
 
 ---
 
@@ -139,13 +153,14 @@ _(bloqué sur refonte carte V1)_
 - [ ] **V2 — Crises aléatoires** : protocole 6.2 (3 ministres validateurs · 3 ministres de sortie)
 - [ ] **V3 — Sécession assistée** : délai négociation (3-12 cycles) + traité non-agression
 - [x] **V4 — Présidence 0 à 3 présidents** : engine + Init + ConstitutionModal + tuile Trinaire + Settings (showTrinaire passé, import mort supprimé)
-- [x] **V5 — Refactor arborescence** : src/ restructuré en `features/` + `shared/` (components · config · constants · data · hooks · services · theme · utils) — Dashboard_p1 extrait en 9 modules, Settings déplacé, storageKeys centralisé, STORAGE_KEYS adoption complète
+- [x] **V5 — Refactor arborescence** : src/ restructuré en `features/` + `shared/` (components · config · constants · data · hooks · services · theme · utils) — Dashboard_p1 extrait en 9 modules, Settings déplacé, storageKeys centralisé, STORAGE_KEYS adoption (2 clés restantes → section Dette)
 - [ ] **V6 — Enrichir les prompts avec la philosophie ADD** — session dédiée
   - Phare → Assess/Decide · Boussole → Do/mémoire · Synthèse → transition Decide→Do
-- [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants
+- [ ] **V8 — Optimisation moteur** : profiler re-renders, useCallback/useMemo, appels IA redondants · bundle principal ~1 MB au build (code-splitting)
 - [x] **V9 — i18n couverture complète** : migration complète livré (2026-04-12)
   - ~120 nouvelles clés : SECT_CONST_*, SYS_*, APROPOS_*, IFACE_*, CONST_MODAL_*, PRES_*, FORM_*
   - 39 fichiers modifiés — chaînes JSX complexes intentionnellement inline
+  - Reste à vérifier : voir section Dette ci-dessous
 
 ---
 
@@ -184,5 +199,26 @@ _(bloqué sur refonte carte V1)_
 
 ---
 
-## 📁 Fichiers actifs
-`src/features/settings/` · `src/features/world/` · `App.jsx`
+## 🧹 DETTE & COHÉRENCE — audit 2026-11-09
+
+_Constats issus de la comparaison code ↔ TODO/ROADMAP/CLAUDE.md. Non traités : à décider puis à faire._
+
+- [ ] **Fusionner `Settings.css` dans `App.css`** : `src/features/settings/Settings.css` (584 lignes, 21 règles `:hover`/`:focus`/`@media`/`@keyframes`) encore importé par `Settings.jsx`. Source unique = `App.css`.
+- [ ] **Styles inline → `App.css`** : 1497 occurrences de `style={{` dans 118 fichiers de `src/`. Chantier long, à découper par dossier. Aucun nouveau style inline.
+- [ ] **Éléments d'interface dupliqués → composants partagés** (principe directeur de CLAUDE.md) : 20 fichiers mentionnent « Modal ». Inventaire fait : voir `doc/INVENTAIRE_UI.md` (ordre de travail proposé en section 6). Prochaine étape : le composant `Modal`.
+- [ ] **Clés localStorage en dur** : `'aria_agents'` (`settingsStorage.js`, lignes 38 et 42) et `'aria_emoji_overrides'` (`shared/utils/agentsOverrides.js`, ligne 8) ne passent pas par `STORAGE_KEYS`.
+- [x] **`llmCouncilEngine.js` n'existe plus** : éclaté en `features/council/services/councilEngine.js` + modules (commit `6ce936e`). Règle protégée mise à jour dans CLAUDE.md et ARIA_CONTEXT.md (2026-11-09).
+- [ ] **V9 — points retirés du ROADMAP** (contradictoires avec ✅) à vérifier : centraliser ~300 chaînes restantes et prompts IA vers `ariaI18n.js` · sync `base_agents_en.json` ↔ `base_agents.json` · `ariaQA_en.json` (quand ariaQA existera).
+- [x] **Identifiants V6 / V8 en double** : les items systémiques du ROADMAP passent en S1 (répercussions mondiales), S2 (protocole de crise) et S3 (hub de scénarios). Le numéro V reste propre au TODO.
+
+---
+
+## 📁 Fichiers actifs (chemins vérifiés 2026-11-09)
+- Moteur conseil : `src/features/council/services/councilEngine.js` (+ `agentsManager.js`, `deliberationEngine.js`, `contextBuilder.js`)
+- Appels IA : `src/shared/services/llm/aiService.js`
+- Monde / boucle de jeu : `src/features/world/Dashboard.jsx`, `hooks/useARIA.js`, `services/gameEngine.js`
+- Carte : `src/features/map/views/ExplorateurMonde.jsx`, `ExplorateurMondeFictif.jsx`
+- Clés localStorage : `src/shared/services/storageKeys.js`
+- Constantes de jeu : `src/shared/constants/gameBalance.js`
+- Settings : `src/features/settings/Settings.jsx`
+- Constitution in-game : `src/features/council/components/ConstitutionModal.jsx`

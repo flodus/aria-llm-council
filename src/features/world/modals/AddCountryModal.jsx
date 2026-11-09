@@ -5,6 +5,7 @@ import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../shared/dat
 import { getTerrainLabel, getRegimeLabel } from '../../../shared/data/worldLabels';
 import { getStats } from '../../../shared/data/gameData';
 import { getApiKeys } from '../../../shared/services/llm/aiService';
+import Modal from '../../../shared/components/Modal';
 import { S } from './modalStyles';
 
 // ── Helpers fuzzy-match pays réels ────────────────────────────────────────────
@@ -241,13 +242,7 @@ export default function AddCountryModal({ onConfirm, onClose }) {
     : (uiLang==='en'?'ADD A FICTIONAL NATION':'NOUVELLE NATION FICTIVE');
 
   return (
-    <div style={S.overlay} onClick={onClose}>
-      <div style={{ ...S.modal, width:'440px', maxHeight:'85vh', overflowY:'auto' }} onClick={e => e.stopPropagation()}>
-
-        <div style={S.modalHeader}>
-          <span style={{ ...S.modalTitle, color:titleColor }}>{titleIcon} {titleLabel}</span>
-          <button style={S.closeBtn} onClick={onClose}>✕</button>
-        </div>
+    <Modal titre={`${titleIcon} ${titleLabel}`} onClose={onClose} taille="sm" hauteurLimitee couleur={type === 'reel' ? 'bleu' : 'vert'}>
 
         <div style={{ padding:'0.85rem 1rem', display:'flex', flexDirection:'column', gap:'0.75rem' }}>
 
@@ -436,7 +431,6 @@ export default function AddCountryModal({ onConfirm, onClose }) {
             </div>
           );
         })()}
-      </div>
-    </div>
+    </Modal>
   );
 }

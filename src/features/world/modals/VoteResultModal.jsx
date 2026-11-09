@@ -1,6 +1,7 @@
 // src/features/world/modals/VoteResultModal.jsx
 import { useLocale, t } from '../../../ariaI18n';
 import { C, FONT } from '../../../shared/theme';
+import Modal from '../../../shared/components/Modal';
 import { S } from './modalStyles';
 
 // Pastille colorée affichant un delta (+N / -N) pour les impacts de vote
@@ -32,13 +33,16 @@ export default function VoteResultModal({ session, onClose }) {
   const isOui = voteResult.vote === 'oui';
 
   let vColor, vIcon, vLabel, vOptionLabel;
+  let couleurTitre;
 
   if (isBinary || isDivergence) {
+    couleurTitre = isPhare ? 'or' : 'violet';
     vColor = isPhare ? C.gold : C.purple;
     vIcon = isPhare ? '☉' : '☽';
     vLabel = isPhare ? 'PHARE' : 'BOUSSOLE';
     vOptionLabel = isPhare ? '☉ PHARE' : '☽ BOUSSOLE';
   } else {
+    couleurTitre = isOui ? 'vert' : 'rouge';
     vColor = isOui ? C.green : C.red;
     vIcon = isOui ? '✓' : '✕';
     vLabel = isOui ? 'OUI' : 'NON';
@@ -78,16 +82,7 @@ export default function VoteResultModal({ session, onClose }) {
     : n >= 1_000 ? (n/1_000).toFixed(0)+'k' : String(n);
 
   return (
-    <div style={S.overlay} onClick={onClose}>
-    <div style={{ ...S.modal, width: '500px', maxHeight: '88vh', overflowY: 'auto' }}
-    onClick={e => e.stopPropagation()}>
-
-    <div style={{ ...S.modalHeader, borderBottomColor: `${vColor}28` }}>
-    <span style={{ ...S.modalTitle, color: vColor }}>
-    ✦ RÉSULTAT DU CONSEIL
-    </span>
-    <button style={S.closeBtn} onClick={onClose}>✕</button>
-    </div>
+    <Modal titre="✦ RÉSULTAT DU CONSEIL" onClose={onClose} taille="xl" hauteurLimitee couleur={couleurTitre}>
 
     <div style={{ padding: '0.9rem 1.1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
 
@@ -191,7 +186,6 @@ export default function VoteResultModal({ session, onClose }) {
     <div style={S.modalFooter}>
     <button style={S.saveBtn} onClick={onClose}>OK — CONTINUER</button>
     </div>
-    </div>
-    </div>
+    </Modal>
   );
 }

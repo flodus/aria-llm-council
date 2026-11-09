@@ -1,37 +1,8 @@
 // src/features/world/modals/modalStyles.js
 // Objet S partagé par toutes les modales Dashboard_p3
+// Le cadre des modales (fond, boîte, en-tête, fermer) est dans src/shared/components/Modal.jsx
 
 export const S = {
-  overlay: {
-    position: 'fixed', inset: 0, zIndex: 9000,
-    background: 'rgba(0,0,0,0.72)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    backdropFilter: 'blur(3px)',
-  },
-  modal: {
-    width: '460px', maxWidth: '95vw',
-    background: '#0D1117',
-    border: '1px solid rgba(200,164,74,0.22)',
-    borderRadius: '2px',
-    display: 'flex', flexDirection: 'column',
-    fontFamily: "'JetBrains Mono', monospace",
-    overflow: 'hidden',
-  },
-  modalHeader: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    padding: '0.65rem 1rem',
-    borderBottom: '1px solid rgba(200,164,74,0.12)',
-    background: 'rgba(200,164,74,0.04)',
-  },
-  modalTitle: {
-    fontSize: '0.58rem', letterSpacing: '0.16em',
-    color: 'rgba(200,164,74,0.80)', textTransform: 'uppercase',
-  },
-  closeBtn: {
-    background: 'none', border: 'none', cursor: 'pointer',
-    color: 'rgba(200,164,74,0.40)', fontSize: '0.75rem',
-    padding: '0.1rem 0.3rem',
-  },
   modalHint: {
     fontSize: '0.50rem', color: 'rgba(140,160,200,0.50)',
     margin: 0, lineHeight: 1.6,
