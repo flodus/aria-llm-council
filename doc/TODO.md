@@ -191,8 +191,7 @@ _Constats issus de la comparaison code ↔ TODO/ROADMAP/CLAUDE.md. Non traités 
 
 - [ ] **Settings.css → inline** : `src/features/settings/Settings.css` (584 lignes) encore importé par `Settings.jsx`. CLAUDE.md prévoit la migration.
 - [ ] **Clés localStorage en dur** : `'aria_agents'` (`settingsStorage.js`, lignes 38 et 42) et `'aria_emoji_overrides'` (`shared/utils/agentsOverrides.js`, ligne 8) ne passent pas par `STORAGE_KEYS`.
-- [ ] **`llmCouncilEngine.js` n'existe plus** : éclaté en `features/council/services/councilEngine.js` + modules (commit `6ce936e`). CLAUDE.md et `ARIA_CONTEXT.md` le citent encore comme fichier protégé. → Décision : mettre la règle à jour sur `councilEngine.js`.
-- [ ] **CLAUDE.md — providers obsolète** : indique Grok et OpenAI non implémentés dans `callModel()`. Faux : `shared/services/llm/aiService.js` gère Claude, Gemini, Grok, OpenAI et OpenRouter. → Décision : corriger CLAUDE.md.
+- [x] **`llmCouncilEngine.js` n'existe plus** : éclaté en `features/council/services/councilEngine.js` + modules (commit `6ce936e`). Règle protégée mise à jour dans CLAUDE.md et ARIA_CONTEXT.md (2026-11-09).
 - [ ] **V9 — points retirés du ROADMAP** (contradictoires avec ✅) à vérifier : centraliser ~300 chaînes restantes et prompts IA vers `ariaI18n.js` · sync `base_agents_en.json` ↔ `base_agents.json` · `ariaQA_en.json` (quand ariaQA existera).
 - [ ] **Identifiants V6 / V8 en double** : le TODO et le ROADMAP n'utilisent pas les mêmes sens. TODO : V6 = prompts ADD, V8 = optimisation moteur. ROADMAP phase systémique : V6 = répercussions mondiales, V7 = protocole de crise, V8 = hub de scénarios. → Décision : renuméroter l'un des deux.
 

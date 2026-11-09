@@ -86,7 +86,7 @@ La PR est créée manuellement sur GitHub par Flo après validation du chantier.
 
 ## Règles absolues
 
-- Ne jamais modifier `llmCouncilEngine.js`, `ariaData.js`, `ariaTheme.js` sans demande explicite
+- Ne jamais modifier `councilEngine.js` (`src/features/council/services/`), `ariaData.js`, `ariaTheme.js` sans demande explicite
 - Pas de CSS modules, pas de TypeScript
 - `perGov[i] = null` = héritage commun, ne jamais initialiser autrement
 - Commentaires et noms de variables en français
