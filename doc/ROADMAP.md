@@ -5,7 +5,7 @@
 ```text
 ================================================================================
   ARIA STRATEGIC ROADMAP  —  v8.0
-  Last updated: 2026-04-13
+  Last updated: 2026-11-09
 ================================================================================
 
  ████████████████████████████████████████  SHIPPED  ████████████████████████████
@@ -174,18 +174,15 @@
  └─[F3] Settings multi-country .. [Global · init · in-game — 3 levels] ✅ 100%
 
  [ PHASE V2 : SYSTEMIC TRIGGERS ] ................................ STATUS: QUEUED
- ├─[V6] Global repercussions .... [Cross-country policy effects] .... ⬡ 0%
+ ├─[S1] Global repercussions .... [Cross-country policy effects] .... ⬡ 0%
  │      └─> "If Country A taxes AI → Country B gains Trade,
  │           loses Diplomacy. Propagated through council context."
- ├─[V7] Crisis protocol ......... [Emergency referendums] ........... ⬡ 0%
- ├─[V8] Scenarios hub ........... [Historical & Sandbox presets] .... ⬡ 0%
- └─[V9] i18n full coverage ....... [Audit → centralise → translate] .. ⬡ 0%
+ ├─[S2] Crisis protocol ......... [Emergency referendums] ........... ⬡ 0%
+ ├─[S3] Scenarios hub ........... [Historical & Sandbox presets] .... ⬡ 0%
+ └─[V9] i18n full coverage ....... [Audit → centralise → translate] .. ✓ 100%
         ├─> FALLBACK_PHRASES externalised to ariaI18n.js FR+EN (2026-04-11)
-        ├─> Audit all inline franglais strings (isEn ? '…' : '…')
-        ├─> Centralise ~300 remaining strings + AI prompts to ariaI18n.js
-        ├─> Full FR/EN UI translation (all components)
-        ├─> Sync base_agents_en.json ↔ base_agents.json
-        └─> ariaQA_en.json (when ariaQA is created)
+        ├─> ~120 keys added (SECT_CONST_*, SYS_*, APROPOS_*, IFACE_*, CONST_MODAL_*, PRES_*…)
+        └─> 39 files migrated — full migration done (2026-04-12)
 
  [ PHASE V3 : LLM INFRASTRUCTURE ] .............................. STATUS: QUEUED
  ├─[V10] Dynamic model discovery  [Post-key API enumeration] ........ ⬡ 0%
@@ -196,7 +193,7 @@
  ├─[V5] Src refactor ............ [src/features · src/shared] ........ ✓ 100%
  │      └─> features/ (chronolog · council · game · init · map · settings · world)
  │           shared/ (components · config · constants · data · hooks · services · theme · utils)
- │           STORAGE_KEYS full adoption (34 files, 0 magic strings)
+ │           STORAGE_KEYS adoption (34 files) · 2 keys still hardcoded (see TODO)
  │           normalizeCountry() (shared/utils/) · storageKeys.js centralised
  └─[V8] Engine optimisation ..... [Re-renders · useCallback · AI calls] ⬡ 0%
 
@@ -225,7 +222,7 @@
            Init UX polished · Chronolog complete (5 phases, Chronicler, Timeline, D2 diplomacy).
            Settings refactored · GovernanceForm unified · PresidencyTiles shared.
            Multi-providers: Claude, Gemini, Grok, OpenAI, OpenRouter (T1).
-           i18n FR/EN full coverage (V9 · ~120 keys) · STORAGE_KEYS 0 magic strings.
+           i18n FR/EN full coverage (V9 · ~120 keys) · STORAGE_KEYS adoption (2 keys left).
            Interface: SVG gold cursors · RadioPlayer topbar · CSS token theme.
            Code quality: src/ restructured (features/ + shared/) · storageKeys centralised ·
            storage/options clarified · dead files removed · normalizeCountry() done (V5 ✓).

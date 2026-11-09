@@ -5,7 +5,7 @@
 ```text
 ================================================================================
   ARIA FEUILLE DE ROUTE STRATÉGIQUE  —  v8.0
-  Dernière mise à jour : 2026-04-13
+  Dernière mise à jour : 2026-11-09
 ================================================================================
 
  ████████████████████████████████████████  LIVRÉ  ████████████████████████████
@@ -175,19 +175,15 @@
  └─[F3] Settings multi-pays ...... [Global · init · in-game — 3 niveaux] ✅ 100%
 
  [ PHASE V2 : DÉCLENCHEURS SYSTÉMIQUES ] ......................... STATUT: EN FILE
- ├─[V6] Répercussions mondiales .. [Effets croisés entre pays] ....... ⬡ 0%
+ ├─[S1] Répercussions mondiales .. [Effets croisés entre pays] ....... ⬡ 0%
  │      └─> "Si le Pays A taxe l'IA → le Pays B gagne en Commerce,
  │           perd en Diplomatie. Propagé dans le contexte du conseil."
- ├─[V7] Protocole de crise ....... [Référendums d'urgence] ........... ⬡ 0%
- ├─[V8] Hub de scénarios ......... [Présets historiques & sandbox] ... ⬡ 0%
+ ├─[S2] Protocole de crise ....... [Référendums d'urgence] ........... ⬡ 0%
+ ├─[S3] Hub de scénarios ......... [Présets historiques & sandbox] ... ⬡ 0%
  └─[V9] i18n couverture complète .. [Audit → centraliser → traduire] . ✅ 100%
         ├─> FALLBACK_PHRASES externalisées vers ariaI18n.js FR+EN (2026-04-11)
         ├─> ~120 clés ajoutées (SECT_CONST_*, SYS_*, APROPOS_*, IFACE_*, CONST_MODAL_*, PRES_*…)
         └─> 39 fichiers migrés — migration complète (2026-04-12)
-        ├─> Centralisation ~300 chaînes restantes + prompts IA vers ariaI18n.js
-        ├─> Traduction complète FR/EN de toute l'interface
-        ├─> Sync base_agents_en.json ↔ base_agents.json
-        └─> ariaQA_en.json (quand ariaQA sera créé)
 
  [ PHASE V3 : INFRASTRUCTURE LLM ] ............................... STATUT: EN FILE
  ├─[V10] Découverte dynamique .... [Énumération API après clé] ....... ⬡ 0%
@@ -198,7 +194,7 @@
  ├─[V5] Refactor arborescence ... [src/features · src/shared] ........ ✓ 100%
  │      └─> features/ (chronolog · council · game · init · map · settings · world)
  │           shared/ (components · config · constants · data · hooks · services · theme · utils)
- │           STORAGE_KEYS adoption complète (34 fichiers, 0 magic strings)
+ │           STORAGE_KEYS adoption (34 fichiers) · 2 clés encore en dur (voir TODO)
  │           normalizeCountry() (shared/utils/) · storageKeys.js centralisé
  └─[V8] Optimisation moteur ..... [Re-renders · useCallback · appels IA] ⬡ 0%
 
@@ -228,7 +224,7 @@
         Init UX poli · Chronolog complet (5 phases, Chroniqueur, Timeline, diplomatie D2).
         Settings refactorisé · GovernanceForm unifié · PresidencyTiles partagé.
         Multi-providers : Claude, Gemini, Grok, OpenAI, OpenRouter (T1).
-        i18n FR/EN couverture complète (V9 · ~120 clés) · STORAGE_KEYS 0 magic strings.
+        i18n FR/EN couverture complète (V9 · ~120 clés) · STORAGE_KEYS (2 clés restantes).
         Interface : curseurs SVG or · RadioPlayer topbar · thème CSS tokens.
         Qualité code : arborescence src/ structurée · storageKeys centralisé ·
         storage/options clarifiés · fichiers morts supprimés.

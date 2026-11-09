@@ -1,152 +1,96 @@
 <div align="center">
 
-```
- ██████╗    ██████╗   ██╗   ██████╗
-██╔══██╗   ██╔══██╗  ██║   ██╔══██╗
-███████║   ██████╔╝  ██║   ███████║
-██╔══██║   ██╔══██╗  ██║   ██╔══██║
-██║  ██║   ██║  ██║  ██║   ██║  ██║
-╚═╝  ╚═╝   ╚═╝  ╚═╝  ╚═╝   ╚═╝  ╚═╝
-```
+# ARIA
 
 **Institutional Reasoning Architecture via AI**
 
-*"What if a nation's policies were submitted to the people<br>through an AI-powered Council of Ministers?"*
+*What if a nation's policies were submitted to the people through an AI-powered Council of Ministers?*
 
-[![Version](https://img.shields.io/badge/version-7.5-C8A44A?style=flat-square)](https://github.com/flodus/aria-llm-council)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev)
-[![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite)](https://vitejs.dev)
-[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-3ABF7A?style=flat-square)](https://flodus.github.io/aria-llm-council)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite)](https://vite.dev)
+[![Licence MIT](https://img.shields.io/badge/licence-MIT-green?style=flat-square)](LICENSE)
+[![Demo](https://img.shields.io/badge/demo-live-3ABF7A?style=flat-square)](https://flodus.github.io/aria-llm-council)
 
-**[🚀 Launch Demo](https://flodus.github.io/aria-llm-council)** &nbsp;·&nbsp; **[📄 Vision Document](https://github.com/flodus/aria-llm-council/blob/main/doc/ARIA_Document_EN.pdf)** &nbsp;·&nbsp; **[🇫🇷 Version Française](README.fr.md)**
+**[🚀 Launch the demo](https://flodus.github.io/aria-llm-council)** · **[🇫🇷 Version française](README.fr.md)**
 
 </div>
 
 ---
 
-## Overview
+## What ARIA is
 
-ARIA is a **systemic governance simulation**. You play as the sovereign people, facing a Council of Ministers embodied by different Large Language Models. Each cycle, your question travels through a full deliberative chain — from ministerial debate to presidential synthesis — before your citizens vote.
+ARIA is a **systemic governance simulation**. You play the sovereign people. A Council of Ministers, embodied by language models, deliberates on each question you submit. Ministries debate, a presidency arbitrates, and the people vote. Every decision is recorded and feeds the next cycle.
 
-It is a **political sandbox** and an interactive thought experiment on algorithmic governance and human-AI co-decision making.
+It is a political sandbox and a thought experiment on algorithmic governance and human-AI co-decision. It also runs fully offline, with no AI at all, in **Board Game** mode.
 
-![Deliberation Flow](doc/images/flow.png)
+![Deliberation flow](doc/images/flow.png)
 
-
-| Constitutional Setup | Council Deliberation | Geopolitical Map |
+| Constitutional setup | Council deliberation | Geopolitical map |
 | :---: | :---: | :---: |
 | ![Setup](doc/images/aria_constitution-ministries-setup.png) | ![Council](doc/images/aria_llm-answer-council.png) | ![Map](doc/images/aria_map-grid.png) |
 
-*[View full screenshot gallery →](doc/screenshots/)*
+*[Full screenshot gallery →](doc/screenshots/)*
 
 ---
 
-## Inspiration
+## Documentation
 
-> ARIA's agent orchestration is a geopolitical and interactive extension of **[Andrej Karpathy's llm-council](https://github.com/karpathy/llm-council)**. Where the original project explores multi-agent deliberation for logical problem-solving, ARIA applies this architecture to nation-scale simulation and political crisis management — turning the council chamber into a playable world.
+A guide to the simulation, in French and English, as a web page and as a PDF.
 
----
+| Document | Web | PDF |
+| --- | --- | --- |
+| **The Simulation** | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-simulation.html) | [FR](doc/pdf/ARIA-simulation-FR.pdf) · [EN](doc/pdf/ARIA-simulation-EN.pdf) |
 
-## 🏛️ Methodology & Architecture
-> ARIA is a hybrid architectural project. As the system architect, I have defined the 
-> core vision, constitutional logic, and user experience. The source code is the 
-> product of a synergy between human intention and specialized AI agents (Gemini for 
-> strategic reasoning and structural design, Claude for code implementation and 
-> development). This collaboration explores a new paradigm in building complex systems, 
-> where human intent drives algorithmic execution.
+The original vision text remains available: [Manifesto (FR, PDF)](doc/ARIA_Manifeste_FR.pdf) · [Manifesto (EN, PDF)](doc/ARIA_Manifesto_EN.pdf).
 
 ---
 
-## How It Works
+## How a decision is made
 
-![Feature Overview](doc/images/features.png)
+| Stage | Who | Powered by |
+|---|---|---|
+| **Question** | The people submit a question | Human |
+| **Ministry deliberation** | Two ministers per ministry argue from their prompts | Language model (configurable) |
+| **Cross-annotation** | Each ministry annotates the others' syntheses | Language model (configurable) |
+| **Presidential synthesis** | The Lighthouse and the Compass arbitrate | Language model (configurable) |
+| **Vote** | The people decide; satisfaction and the ARIA score move | Simulation engine |
 
-Each governance cycle follows a fixed deliberative pipeline:
-
-| Stage | Role | Powered by |
-|-------|------|------------|
-| **Question** | The player submits a policy question | Human |
-| **Ministry Deliberation** | Each minister argues from their archetype | LLM (configurable) |
-| **Council Synthesis** | Ministerial positions are summarized | LLM (configurable) |
-| **Phare / Boussole** | Two presidential figures arbitrate | LLM (configurable) |
-| **Presidential Decision** | A final recommendation is drafted | LLM (configurable) |
-| **Popular Vote** | Citizens vote — satisfaction shifts | Simulation engine |
+In **crisis mode**, all ministries deliberate in parallel and the presidency is bypassed. Destiny (the Oracle and the Weave) can add philosophical voices to the final synthesis.
 
 ---
 
-## Multi-Provider Architecture
+## Modes and providers
 
-![Architecture](doc/images/architecture.png)
+ARIA runs in one of three AI modes, chosen at startup:
 
-ARIA ships with **three AI operating modes**, configurable at startup:
+| Mode | What it does |
+|---|---|
+| **ARIA** | Several providers orchestrated, one per role |
+| **SOLO** | One provider for every role, for a single coherent voice |
+| **CUSTOM** | Role-by-role assignment |
 
-| Mode | Description |
-|------|-------------|
-| **ARIA** | Multi-provider orchestration — assign different LLMs per deliberation stage |
-| **SOLO** | Single provider handles all roles — simpler, more coherent voice |
-| **CUSTOM** | Full role-by-role assignment across 7 council functions |
+**Board Game** mode needs no AI and no API key: all content is in JSON files, with a full English mirror.
 
-### Supported Providers
-
-| Provider | Models |
-|----------|--------|
-| **Claude** (Anthropic) | `claude-opus-4-6` · `claude-sonnet-4-6` · `claude-haiku-4-5` |
-| **Gemini** (Google) | `gemini-2.0-flash` · `gemini-1.5-pro` · `gemini-1.5-flash` |
-| **Grok** (xAI) | `grok-3` · `grok-3-mini` |
-| **GPT** (OpenAI) | `gpt-4.1` · `gpt-4.1-mini` |
-
-All keys are stored **locally** in `localStorage`. No backend, no data collection.
+Supported providers: **Claude** (Anthropic), **Gemini** (Google), **Grok** (xAI), **OpenAI**, and **OpenRouter** (a gateway to many models). Default models are set in [`src/shared/constants/models.js`](src/shared/constants/models.js). Your keys are stored only in your browser.
 
 ---
 
-## Key Features
+## Features
 
-<table>
-<tr>
-<td width="50%">
-
-### 🌍 Procedural World Engine
-- SVG low-poly globe with custom PRNG
-- 1–6 simultaneous nations
-- Real countries (with 2025–2026 geopolitical data) or fully fictional
-- Terrain types: coastal · inland · highland · island · archipelago
-
-### 🏛 AI Council of Ministers
-- 12 ministers across 7 ministries
-- Each minister has an archetype prompt shaping their worldview
-- Phare (vision) and Boussole (memory) as presidential figures
-- Constitutional editor — change regime, leader, ministry prompts mid-game
-
-</td>
-<td width="50%">
-
-### 📜 Chronolog Journal
-- Full typed event history: votes · secessions · constitutions · new nations
-- Cycle snapshots with satisfaction and ARIA acceptance deltas
-- Auto-summarization of older cycles to manage context
-- Persistent across sessions via localStorage
-
-### ⚖️ World Events
-- **Secession**: split a nation in two, with population transfer
-- **New country**: add nations mid-simulation
-- **Constitutional reform**: overhaul regime and leadership
-- **Satisfaction / ARIA score**: dynamic per-nation metrics
-
-</td>
-</tr>
-</table>
+- **Council of ministers**: 12 ministers, 7 ministries, two presidents on equal footing (the number can be changed).
+- **Constitutions**: change a country's regime, presidency, ministries and prompts, during play.
+- **Twelve political regimes**, each with its own tone and satisfaction multiplier.
+- **Worlds**: real countries or fictional nations, up to six at once, on a 3D globe.
+- **Chronolog**: a public record of votes, secessions, constitutional changes and diplomacy, with a narrative memory per country.
+- **Secession**: a group can leave and found a new nation with its own prompts.
+- **Destiny of the World**: Oracle and Weave intervene in existential crises.
+- **Bilingual interface**: French and English.
 
 ---
 
-## Getting Started
+## Getting started
 
-### Prerequisites
-
-- Node.js ≥ 18
-- At least one API key (Claude, Gemini, Grok, or OpenAI)
-
-### Installation
+**Requirements:** Node.js 18 or later, and at least one API key if you use LLM mode.
 
 ```bash
 git clone https://github.com/flodus/aria-llm-council.git
@@ -155,106 +99,71 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173` — the init screen will guide you through world setup and API configuration.
+Open **http://localhost:5173/aria-llm-council/** (the path prefix matches the production base). The start screen guides you through world setup and API configuration.
 
-### First Session
-
-![Init Screen](doc/images/initscreen.png)
-
-1. **Name your world** — this is the simulation container
-2. **Enter your API keys** — test them inline, only validated keys are saved
-3. **Choose your AI mode** — ARIA / Solo / Custom, assign LLMs per role
-4. **Configure your nation(s)** — real country or fictional, 1–6 nations
-5. **Govern** — submit questions, watch the council deliberate, vote
+Other scripts: `npm run build` (production build in `dist/`), `npm run preview`, `npm run lint`.
 
 ---
 
-## Project Structure
+## Project structure
 
 ```
 aria-llm-council/
 ├── src/
-│   ├── App.jsx                 # Root — routing between screens
-│   ├── InitScreen.jsx          # Onboarding — world setup & API config
-│   ├── Dashboard_p1.jsx        # Core engine — LLM calls, game state
-│   ├── Dashboard_p3.jsx        # Event handlers — votes, secession, constitution
-│   ├── LLMCouncil.jsx          # Council deliberation UI
-│   ├── llmCouncilEngine.js     # Deliberation pipeline logic
-│   ├── ChronologView.jsx       # History journal
-│   ├── useChronolog.js         # Chronolog hook — event storage
-│   ├── ConstitutionModal.jsx   # Constitutional editor
-│   ├── CountryPanel.jsx        # Per-nation stats panel
-│   ├── ariaData.js             # Real countries dataset
-│   └── ariaTheme.js            # Design system tokens
-├── templates/
-│   ├── base_agents.json        # Minister archetypes & prompts
-│   └── base_stats.json         # Nation initialization templates
-└── doc/                        # README assets
+│   ├── App.jsx                 # Application shell
+│   ├── ariaI18n.js             # FR / EN translations
+│   ├── features/
+│   │   ├── init/               # Start screen: world setup, API keys
+│   │   ├── world/              # Game loop, country panel, modals
+│   │   ├── council/            # Deliberation engine and council UI
+│   │   ├── map/                # 3D globe (real and fictional worlds)
+│   │   ├── chronolog/          # History journal and Chroniqueur
+│   │   └── settings/           # Settings
+│   └── shared/
+│       ├── services/           # LLM clients, storage keys
+│       ├── data/               # Countries, regimes, static data
+│       ├── theme/              # Design tokens
+│       └── constants/          # Models, game balance
+├── templates/languages/        # Editorial content (JSON), FR and EN
+├── public/docs/                # Web versions of the documentation
+├── doc/                        # Vision, roadmap, backlog, PDFs
+└── server.js                   # Dormant: base for future multiplayer
 ```
 
 ---
 
-## Architecture Notes
+## Architecture notes
 
-**Local-first by design.** Every API call is made directly from the browser to the LLM provider. No proxy, no server, no account. Your API keys never leave your machine.
+**Local-first.** Each API call goes from the browser directly to the provider. There is no account and no data collection.
 
-**Stateless sessions.** The simulation state lives in React memory and is serialized to `localStorage` for persistence. Each LLM call receives the full relevant context — there is no session memory on the provider side.
+**Persistent state in the browser.** The simulation state is kept in memory and saved in `localStorage`. Each model call receives the context it needs.
 
-**Modular deliberation.** The council pipeline in `llmCouncilEngine.js` is fully composable. Adding a new deliberation stage or swapping a provider requires only a new entry in the engine config and an option in `Settings.jsx`.
-
----
-
-### 📚 Documentation & Vision
-For an in-depth analysis of the deliberation pipeline, ministerial archetypes, and the philosophy behind "Holistic Democracy," you can consult our technical whitepaper:
-
-📄 [**ARIA — Vision & System Architecture (PDF)**](doc/ARIA_Document_EN.pdf)
+**Editorial content in JSON.** Questions, minister answers, syntheses and annotations are data, not code. Board Game mode uses them directly; LLM mode uses them as a base.
 
 ---
 
 ## Roadmap
 
-See [ROADMAP.md](ROADMAP.md) for the full roadmap.
-
-**Upcoming:**
-- [ ] Interactive world map (WebGL low-poly globe)
-- [ ] i18n support (FR/EN switch at startup)
-- [ ] Multiplayer mode (shared world, each player governs one nation)
-- [ ] Export / import world saves
-- [ ] Dynamic model registry (fetch available models from remote JSON)
-
----
-
-## 🌍 Localization Status
-Codebase is in French — variable names, comments, JSON keys. All content files (`aria_questions`, `aria_reponses`, `aria_syntheses`…) have a full EN mirror under `templates/languages/en/`. French codebase, bilingual content. English contributors are welcome; the architecture docs and issue tracker are fully bilingual.
-
----
-
-## 🛠️ Join the Council
-We are actively looking for contributors to help refine the ARIA simulation engine and its visual interface. 
-
-**Interested in building this holistic democracy?**
-Check out our [CONTRIBUTING.md](CONTRIBUTING.md) to see current priority missions (Globe deployment, Mercator UI, and more).
+The full roadmap is in [doc/ROADMAP.md](doc/ROADMAP.md). The day-to-day backlog is in [doc/TODO.md](doc/TODO.md). Current priorities include a procedural world map, the random crisis protocol, assisted secession, and the multiplayer foundation.
 
 ---
 
 ## Contributing
 
-Issues and PRs are welcome. If you fork or build on ARIA, a mention is appreciated.
-
-If you're **Andrej Karpathy** — thank you for llm-council. This project wouldn't exist without it. I'd love to hear your thoughts.
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the rules, and [CONTRIBUTING.fr.md](CONTRIBUTING.fr.md) in French.
 
 ---
 
-## License
+## Acknowledgements
 
-MIT — see [LICENSE](LICENSE)
+ARIA's agent orchestration extends **[Andrej Karpathy's llm-council](https://github.com/karpathy/llm-council)**. Thank you to Andrej for that project.
+
+The governance method draws on the Assess, Decide, Do framework by Dragos Roua.
+
+The source code is the product of collaboration between a human author, who defined the vision, constitutional logic and experience, and AI agents: Gemini for strategic reasoning and structure, Claude for implementation.
 
 ---
 
-<div align="center">
+## Licence
 
-*Built with Claude Sonnet · Gemini Flash · Grok-3 · GPT-4.1*
-
-*and a lot of constitutional crises*
-
-</div>
+MIT, see [LICENSE](LICENSE).
