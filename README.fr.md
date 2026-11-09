@@ -41,8 +41,6 @@ Un guide de la simulation, en français et en anglais, en page web et en PDF.
 | --- | --- | --- |
 | **La Simulation** | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-simulation.html) | [FR](doc/pdf/ARIA-simulation-FR.pdf) · [EN](doc/pdf/ARIA-simulation-EN.pdf) |
 
-Le texte de vision d'origine reste disponible : [Manifeste (FR, PDF)](doc/ARIA_Manifeste_FR.pdf) · [Manifesto (EN, PDF)](doc/ARIA_Manifesto_EN.pdf).
-
 ---
 
 ## Comment une décision se prend

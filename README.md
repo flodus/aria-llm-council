@@ -41,8 +41,6 @@ A guide to the simulation, in French and English, as a web page and as a PDF.
 | --- | --- | --- |
 | **The Simulation** | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-simulation.html) | [FR](doc/pdf/ARIA-simulation-FR.pdf) · [EN](doc/pdf/ARIA-simulation-EN.pdf) |
 
-The original vision text remains available: [Manifesto (FR, PDF)](doc/ARIA_Manifeste_FR.pdf) · [Manifesto (EN, PDF)](doc/ARIA_Manifesto_EN.pdf).
-
 ---
 
 ## How a decision is made
