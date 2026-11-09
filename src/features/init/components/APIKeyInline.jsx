@@ -15,6 +15,7 @@ import { useLocale } from '../../../ariaI18n';
 import { FONT, CARD_STYLE, BTN_PRIMARY, BTN_SECONDARY, labelStyle } from '../../../shared/theme';
 import { loadKeys, saveKeys, loadKeyStatus, saveKeyStatus, loadCustomProviders, saveCustomProviders, loadCustomModels, saveCustomModels, loadPreferredModels, savePreferredModels } from '../../../shared/services';
 import { ARIA_FALLBACK_MODELS } from '../../../shared/constants/llmRegistry';
+import { DELAI_TEST_MS } from '../../../shared/constants/models';
 import { ProviderAccordion } from './api';
 
 const PROVIDERS = [
@@ -22,7 +23,7 @@ const PROVIDERS = [
     versions: ARIA_FALLBACK_MODELS.claude,
     testUrl: async (k, model) => {
       const r = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST', headers: {
+        method: 'POST', signal: AbortSignal.timeout(DELAI_TEST_MS), headers: {
           'Content-Type': 'application/json', 'x-api-key': k,
           'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true'
         },
@@ -35,7 +36,7 @@ const PROVIDERS = [
   testUrl: async (k, model) => {
     const m = model || 'gemini-3.8-flash';
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', signal: AbortSignal.timeout(DELAI_TEST_MS), headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: [{ parts: [{ text: 'Hi' }] }], generationConfig: { maxOutputTokens: 10 } }),
     }); return r.ok || r.status === 429;
   }
@@ -44,7 +45,7 @@ const PROVIDERS = [
   versions: ARIA_FALLBACK_MODELS.grok,
   testUrl: async (k, model) => {
     const r = await fetch('https://api.x.ai/v1/chat/completions', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}` },
+      method: 'POST', signal: AbortSignal.timeout(DELAI_TEST_MS), headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}` },
       body: JSON.stringify({ model: model || 'grok-3-mini', max_tokens: 10, messages: [{ role: 'user', content: 'Hi' }] }),
     }); return r.ok;
   }
@@ -53,7 +54,7 @@ const PROVIDERS = [
   versions: ARIA_FALLBACK_MODELS.openai,
   testUrl: async (k, model) => {
     const r = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}` },
+      method: 'POST', signal: AbortSignal.timeout(DELAI_TEST_MS), headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}` },
       body: JSON.stringify({ model: model || 'gpt-4.1-mini', max_tokens: 10, messages: [{ role: 'user', content: 'Hi' }] }),
     }); return r.ok;
   }
@@ -62,7 +63,7 @@ const PROVIDERS = [
   versions: ARIA_FALLBACK_MODELS.openrouter,
   testUrl: async (k, model) => {
     const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}`,
+      method: 'POST', signal: AbortSignal.timeout(DELAI_TEST_MS), headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}`,
         'HTTP-Referer': 'https://flodus.github.io/aria-llm-council/', 'X-Title': 'ARIA' },
       body: JSON.stringify({ model: model || 'google/gemini-2.0-flash', max_tokens: 10, messages: [{ role: 'user', content: 'Hi' }] }),
     }); return r.ok;
