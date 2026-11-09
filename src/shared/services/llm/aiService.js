@@ -13,7 +13,7 @@ import { loadCustomProviders, loadKeys, loadPreferredModels } from '../storage';
 
 const KEY_FORMAT = {
   claude:     k => k.startsWith('sk-ant-') && k.length >= 20,
-  gemini:     k => k.startsWith('AIza') && k.length >= 15,
+  gemini:     k => (k.startsWith('AIza') || k.startsWith('AQ.')) && k.length >= 15,
   grok:       k => k.startsWith('xai-') && k.length >= 15,
   openai:     k => k.startsWith('sk-') && !k.startsWith('sk-ant-') && !k.startsWith('sk-or-') && k.length >= 15,
   openrouter: k => k.startsWith('sk-or-') && k.length >= 15,

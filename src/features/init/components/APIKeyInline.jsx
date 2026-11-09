@@ -75,7 +75,7 @@ const PROVIDERS = [
 // Vérifie le préfixe attendu par provider (format superficiel, pas d'appel API)
 const isValidKeyFormat = (provider, key) => {
   if (provider === 'claude')      return key?.startsWith('sk-ant-');
-  if (provider === 'gemini')      return key?.startsWith('AIza');
+  if (provider === 'gemini')      return key?.startsWith('AIza') || key?.startsWith('AQ.');
   if (provider === 'grok')        return key?.startsWith('xai-');
   if (provider === 'openrouter')  return key?.startsWith('sk-or-');
   if (provider === 'openai')      return key?.startsWith('sk-') && !key?.startsWith('sk-ant-') && !key?.startsWith('sk-or-');
