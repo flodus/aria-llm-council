@@ -36,9 +36,9 @@ const PROVIDERS = [
     hint: 'Synthèse ministérielle · Synthèse présidentielle',
     models: [
         { value:'gemini-2.5-pro-preview-05-06', label:'gemini-2.5-pro-preview — Puissant' },
-        { value:'gemini-2.5-flash',             label:'gemini-2.5-flash — Défaut ARIA' },
+        { value:'gemini-3.8-flash',             label:'gemini-3.8-flash — Défaut ARIA' },
         { value:'gemini-2.5-pro',               label:'gemini-2.5-pro — Équilibré' },
-        { value:'gemini-2.5-flash-lite',        label:'gemini-2.5-flash-lite — Rapide' },
+        { value:'gemini-3.5-flash-lite',        label:'gemini-3.5-flash-lite — Rapide' },
     ],
 },
 {
