@@ -207,7 +207,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     const geminiKeys = getProviderKeys('gemini');
     const prefModel = loadPreferredModels().gemini || null;
     for (const keyEntry of geminiKeys) {
-      const GEMINI_MODELS = [keyEntry.model || prefModel, DEFAULT_MODELS.gemini, 'gemini-2.5-flash-lite'].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
+      const GEMINI_MODELS = [keyEntry.model || prefModel, DEFAULT_MODELS.gemini, 'gemini-3.5-flash-lite'].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
       let lastWas429 = false;
       for (const gModel of GEMINI_MODELS) {
         if (lastWas429) await new Promise(r => setTimeout(r, 1500));

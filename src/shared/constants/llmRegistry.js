@@ -27,9 +27,9 @@ export const ARIA_FALLBACK_MODELS = {
     { id:'claude-opus-4-6',                 label:'Opus 4.6' },
   ],
   gemini: [
-    { id:'gemini-2.5-flash',               label:'2.5 Flash ★' },
+    { id:'gemini-3.8-flash',               label:'3.8 Flash ★' },
     { id:'gemini-2.5-pro-preview-05-06',   label:'2.5 Pro Preview' },
-    { id:'gemini-2.5-flash-lite',          label:'2.5 Flash-Lite' },
+    { id:'gemini-3.5-flash-lite',          label:'3.5 Flash-Lite' },
   ],
   grok: [
     { id:'grok-3-mini', label:'Grok 3 Mini ★' },
