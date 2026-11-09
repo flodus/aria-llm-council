@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useLocale, loadLang } from '../../../ariaI18n';
 import { REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
 import { getStats } from '../../../shared/data/gameData';
+import Modal from '../../../shared/components/Modal';
 import { S } from './modalStyles';
 
 function getLocalizedNom(country) {
@@ -63,14 +64,7 @@ export default function CycleConfirmModal({ countries, councilHistory, onConfirm
   const caseB = !isSingle && uncounselled.length > 0;
 
   return (
-    <div style={S.overlay} onClick={onClose}>
-      <div style={{ ...S.modal, width: '480px', maxHeight: '85vh', overflowY: 'auto' }}
-           onClick={e => e.stopPropagation()}>
-
-        <div style={S.modalHeader}>
-          <span style={S.modalTitle}>⏭ CHANGEMENT DE CYCLE</span>
-          <button style={S.closeBtn} onClick={onClose}>✕</button>
-        </div>
+    <Modal titre="⏭ CHANGEMENT DE CYCLE" onClose={onClose} taille="lg" hauteurLimitee>
 
         <div style={{ padding: '0.9rem 1.1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
 
@@ -290,7 +284,6 @@ export default function CycleConfirmModal({ countries, councilHistory, onConfirm
             {uiLang==='en'?'CONFIRM CYCLE ⏭':'CONFIRMER LE CYCLE ⏭'}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

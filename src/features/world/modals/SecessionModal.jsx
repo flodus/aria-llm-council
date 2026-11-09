@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useLocale, t } from '../../../ariaI18n';
 import { getRegimeLabel } from '../../../shared/data/worldLabels';
+import Modal from '../../../shared/components/Modal';
 import { S } from './modalStyles';
 
 export default function SecessionModal({ parent, onConfirm, onClose }) {
@@ -18,12 +19,7 @@ export default function SecessionModal({ parent, onConfirm, onClose }) {
   ].map(k => ({ value: k, label: getRegimeLabel(k, uiLang) }));
 
   return (
-    <div style={S.overlay} onClick={onClose}>
-      <div style={S.modal} onClick={e => e.stopPropagation()}>
-        <div style={S.modalHeader}>
-          <span style={S.modalTitle}>{uiLang==='en'?`✂️ SECESSION — ${parent?.nom}`:`✂️ SÉCESSION — ${parent?.nom}`}</span>
-          <button style={S.closeBtn} onClick={onClose}>✕</button>
-        </div>
+    <Modal titre={uiLang==='en'?`✂️ SECESSION — ${parent?.nom}`:`✂️ SÉCESSION — ${parent?.nom}`} onClose={onClose}>
 
         {/* ── Étape 1 : formulaire ── */}
         {step === 1 && (
@@ -108,7 +104,6 @@ export default function SecessionModal({ parent, onConfirm, onClose }) {
             <button style={{ ...S.cancelBtn, alignSelf: 'center' }} onClick={() => setStep(1)}>← {uiLang==='en'?'Back':'Retour'}</button>
           </div>
         )}
-      </div>
-    </div>
+    </Modal>
   );
 }

@@ -1,4 +1,5 @@
 // src/features/world/modals/DiplomacyModal.jsx
+import Modal from '../../../shared/components/Modal';
 import { S } from './modalStyles';
 
 export default function DiplomacyModal({ sourceCountry, allCountries, alliances, onSetRelation, onClose }) {
@@ -13,12 +14,7 @@ export default function DiplomacyModal({ sourceCountry, allCountries, alliances,
   };
 
   return (
-    <div style={S.overlay} onClick={onClose}>
-      <div style={{ ...S.modal, width: '460px' }} onClick={e => e.stopPropagation()}>
-        <div style={S.modalHeader}>
-          <span style={S.modalTitle}>🤝 DIPLOMATIE — {sourceCountry?.nom}</span>
-          <button style={S.closeBtn} onClick={onClose}>✕</button>
-        </div>
+    <Modal titre={<>🤝 DIPLOMATIE — {sourceCountry?.nom}</>} onClose={onClose}>
         <div style={{ padding: '0.75rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '55vh', overflowY: 'auto' }}>
           {others.length === 0 && (
             <p style={S.modalHint}>Aucun autre pays dans le monde.</p>
@@ -51,7 +47,6 @@ export default function DiplomacyModal({ sourceCountry, allCountries, alliances,
         <div style={S.modalFooter}>
           <button style={S.saveBtn} onClick={onClose}>Fermer</button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

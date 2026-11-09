@@ -305,3 +305,46 @@ html, body, #root {
   }
   .side-panel { max-height:42vh; border-left:none; border-top:1px solid var(--border); }
 }
+
+/* ── Modale unique (src/shared/components/Modal.jsx) ── */
+.aria-modal-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.72);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.aria-modal {
+  width: 460px; max-width: 95vw;
+  background: #0D1117;
+  border: 1px solid rgba(200,164,74,0.22);
+  border-radius: 2px;
+  display: flex; flex-direction: column;
+  font-family: 'JetBrains Mono', monospace;
+  overflow-y: auto; overflow-x: hidden;
+}
+.aria-modal--sm { width: 440px; }
+.aria-modal--md { width: 460px; }
+.aria-modal--lg { width: 480px; }
+.aria-modal--xl { width: 500px; }
+.aria-modal--haute { max-height: 85vh; }
+.aria-modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(200,164,74,0.12);
+  background: rgba(200,164,74,0.04);
+}
+.aria-modal-titre {
+  font-size: 0.58rem; letter-spacing: 0.16em;
+  color: rgba(200,164,74,0.80);
+  text-transform: uppercase;
+}
+.aria-modal-titre--or    { color: var(--gold); }
+.aria-modal-titre--violet { color: var(--purple); }
+.aria-modal-titre--vert  { color: var(--green); }
+.aria-modal-titre--rouge { color: var(--red); }
+.aria-modal-titre--bleu  { color: var(--blue); }
+.aria-modal-fermer {
+  background: none; border: none; cursor: pointer;
+  color: rgba(200,164,74,0.40); font-size: 0.75rem;
+  padding: 0.1rem 0.3rem;
+}
