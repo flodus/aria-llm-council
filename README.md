@@ -35,12 +35,11 @@ It is a political sandbox and a thought experiment on algorithmic governance and
 
 ## Documentation
 
-Two presentations of the project, in French and English. Each is available as a web page and as a PDF.
+A guide to the simulation, in French and English, as a web page and as a PDF.
 
-| Edition | Emphasis | Web | PDF |
-| --- | --- | --- | --- |
-| **The Game and the Myth** | Play, figures, symbols, destiny | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-jeu-mythe.html) | [FR](doc/pdf/ARIA-jeu-mythe-FR.pdf) · [EN](doc/pdf/ARIA-jeu-mythe-EN.pdf) |
-| **AI and Governance** | Deliberation, safeguards, transparency | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-ia-gouvernance.html) | [FR](doc/pdf/ARIA-ia-gouvernance-FR.pdf) · [EN](doc/pdf/ARIA-ia-gouvernance-EN.pdf) |
+| Document | Web | PDF |
+| --- | --- | --- |
+| **The Simulation** | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-simulation.html) | [FR](doc/pdf/ARIA-simulation-FR.pdf) · [EN](doc/pdf/ARIA-simulation-EN.pdf) |
 
 The original vision text remains available: [Manifesto (FR, PDF)](doc/ARIA_Manifeste_FR.pdf) · [Manifesto (EN, PDF)](doc/ARIA_Manifesto_EN.pdf).
 

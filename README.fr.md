@@ -35,12 +35,11 @@ C'est un bac à sable politique et une expérience de pensée sur la gouvernance
 
 ## Documentation
 
-Deux présentations du projet, en français et en anglais. Chacune existe en page web et en PDF.
+Un guide de la simulation, en français et en anglais, en page web et en PDF.
 
-| Édition | Accent | Web | PDF |
-| --- | --- | --- | --- |
-| **Le Jeu et le Mythe** | Le jeu, les figures, les symboles, le destin | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-jeu-mythe.html) | [FR](doc/pdf/ARIA-jeu-mythe-FR.pdf) · [EN](doc/pdf/ARIA-jeu-mythe-EN.pdf) |
-| **L'IA et la Gouvernance** | La délibération, les garde-fous, la transparence | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-ia-gouvernance.html) | [FR](doc/pdf/ARIA-ia-gouvernance-FR.pdf) · [EN](doc/pdf/ARIA-ia-gouvernance-EN.pdf) |
+| Document | Web | PDF |
+| --- | --- | --- |
+| **La Simulation** | [FR / EN](https://flodus.github.io/aria-llm-council/docs/aria-simulation.html) | [FR](doc/pdf/ARIA-simulation-FR.pdf) · [EN](doc/pdf/ARIA-simulation-EN.pdf) |
 
 Le texte de vision d'origine reste disponible : [Manifeste (FR, PDF)](doc/ARIA_Manifeste_FR.pdf) · [Manifesto (EN, PDF)](doc/ARIA_Manifesto_EN.pdf).
 
