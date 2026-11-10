@@ -5,6 +5,7 @@ import { FONT, CARD_STYLE, labelStyle } from '../../../../shared/theme';
 import ARIAHeader from '../ARIAHeader';
 import APIKeyInline from '../APIKeyInline';
 import { loadOpts, saveOpts } from '../../../../shared/services/storage';
+import { MONDE_FICTIF_DISPONIBLE } from '../../../../shared/config/disponibilite';
 
 export default function NameScreen({
     lang,
@@ -93,9 +94,23 @@ export default function NameScreen({
                         </div>
                     </button>
 
-                    <button style={{ ...cardBase, border: '1px solid rgba(58,191,122,0.28)' }}
-                        onClick={() => onSelectWorld('custom')}>
+                    <button
+                        disabled={!MONDE_FICTIF_DISPONIBLE}
+                        title={MONDE_FICTIF_DISPONIBLE ? undefined : (lang === 'en'
+                            ? 'Coming soon: the fictional world is under construction. Choose Real Earth for now.'
+                            : 'Bientôt : le monde fictif est en construction. Choisissez la Terre réelle pour le moment.')}
+                        style={{
+                            ...cardBase,
+                            border: '1px solid rgba(58,191,122,0.28)',
+                            ...(MONDE_FICTIF_DISPONIBLE ? {} : { opacity: 0.4, filter: 'grayscale(1)', cursor: 'not-allowed' }),
+                        }}
+                        onClick={() => { if (MONDE_FICTIF_DISPONIBLE) onSelectWorld('custom'); }}>
                         <div style={{ fontSize: '1.8rem', color: 'rgba(200,164,74,0.88)' }}>✦</div>
+                        {!MONDE_FICTIF_DISPONIBLE && (
+                            <div style={{ fontFamily: FONT.mono, fontSize: '0.36rem', letterSpacing: '0.12em', color: 'rgba(220,120,120,0.90)' }}>
+                                {lang === 'en' ? 'UNDER CONSTRUCTION' : 'EN CONSTRUCTION'}
+                            </div>
+                        )}
                         <div style={{ fontFamily: FONT.cinzel, fontSize: '0.54rem', letterSpacing: '0.12em', color: 'rgba(58,191,122,0.80)' }}>
                             {lang === 'en' ? 'New World' : 'Nouveau monde'}
                         </div>
