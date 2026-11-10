@@ -148,6 +148,8 @@ export function useARIA({ setSelectedCountry, isCrisis, onReset }) {
           const irl    = irlAI ?? calcAriaIRL(c);
           const finalNom = def.nom || c.nom;
           built.push({ ...c, nom: finalNom, aria_irl: irl, aria_current: irl, _fallback: false,
+            // Pays réel choisi dans la liste : on garde son identifiant (carte réelle, GeoJSON)
+            ...(def.realData ? { realData: def.realData } : {}),
             ...(def.context_mode       ? { context_mode:       def.context_mode       } : {}),
             ...(def.contextOverride    ? { contextOverride:    def.contextOverride    } : {}),
             ...(def.governanceOverride ? { governanceOverride: def.governanceOverride } : {}),
