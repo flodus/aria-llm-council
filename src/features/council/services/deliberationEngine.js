@@ -15,6 +15,20 @@ import { COLORS } from '../../../shared/theme';
 import { synthetiserPresidence } from './presidenceVote';
 
 /**
+ * Appel IA pour le conseil. callAI renvoie { error: true, msg } au lieu de lancer une erreur :
+ * on traite ce cas comme une absence de réponse, pour que le repli local prenne le relais.
+ */
+function appelIA(prompt, type) {
+    return callAI(prompt, type)
+        .then(r => {
+            if (r && r.error) { console.warn('[ARIA] IA indisponible, repli local :', type, r.msg); return null; }
+            return r || null;
+        })
+        .catch(() => null);
+}
+
+
+/**
  * Phase MINISTERE : délibération des 2 ministres + synthèse
  * Si ministry === null → question orpheline → retourne FALLBACK_RESPONSES bureaucratique
  * @param {object|null} ministry  — objet ministère complet depuis base_agents.json, ou null
@@ -71,8 +85,8 @@ export async function runMinisterePhase(ministry, question, country) {
     let resA = null, resB = null;
     if (_useAI) {
         [resA, resB] = await Promise.all([
-            callAI(pA, 'council_ministre').catch(() => null),
-                                         callAI(pB, 'council_ministre').catch(() => null),
+            appelIA(pA, 'council_ministre'),
+                                         appelIA(pB, 'council_ministre'),
         ]);
     }
 
@@ -84,7 +98,7 @@ export async function runMinisterePhase(ministry, question, country) {
     let synthese = null;
     if (_useAI) {
         const pSynth = buildSyntheseMinisterePrompt(ministry, resA, resB, question, ctx);
-        synthese = await callAI(pSynth, 'council_synthese_min').catch(() => null);
+        synthese = await appelIA(pSynth, 'council_synthese_min');
     }
     if (!synthese) synthese = localSyntheseFallback(ministry, resA, resB, country?.regime);
 
@@ -162,7 +176,7 @@ export async function runCerclePhase(targetMinistryId, question, synthese, count
                 Synthèse du ministère principal : "${syntheseText}"
                 ${annotation}
                 Réponds UNIQUEMENT en JSON : { "annotation": "1-2 phrases, ton sobre, angle spécifique à ton ministère" }`;
-                result = await callAI(p, 'council_annotation').catch(() => null);
+                result = await appelIA(p, 'council_annotation');
             }
 
             return {
@@ -212,8 +226,8 @@ export async function runDestinPhase(question, country, crisisPrompts = false) {
         Réponds UNIQUEMENT en JSON : { "position": "2-3 phrases — vision du destin, radicale et inéluctable" }`;
 
         [oracleRes, wyrdRes] = await Promise.all([
-            callAI(pOracle, 'council_oracle').catch(() => null),
-            callAI(pWyrd,   'council_wyrd'  ).catch(() => null),
+            appelIA(pOracle, 'council_oracle'),
+            appelIA(pWyrd,   'council_wyrd'  ),
         ]);
     }
 
@@ -265,7 +279,7 @@ async function _runCollegialPhase(question, ministereResult, cercleAnnotations, 
     Réponds UNIQUEMENT en JSON :
     { "convergence": true, "synthese": "2-3 phrases — synthèse collective du Conseil", "question_referendum": "Proposition claire soumise au vote du peuple", "enjeu_principal": "1 phrase — enjeu principal pour les citoyens" }`;
 
-        synthese = await callAI(prompt, 'council_collegial').catch(() => null);
+        synthese = await appelIA(prompt, 'council_collegial');
     }
 
     if (!synthese) {
@@ -383,7 +397,7 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
     let aiResults = presEntries.map(() => null);
     if (keys.claude || keys.gemini) {
         const appels = prompts.map((p, i) =>
-            callAI(p, `council_pres_${presEntries[i][0]}`).catch(() => null)
+            appelIA(p, `council_pres_${presEntries[i][0]}`)
         );
         aiResults = await Promise.all(appels);
     }
@@ -449,7 +463,7 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
     let synthese = null;
     if (keys.claude || keys.gemini) {
         const pSynth = buildSynthesePresidencePrompt(presidentsResult, question, country);
-        synthese = await callAI(pSynth, 'council_synthese_pres').catch(() => null);
+        synthese = await appelIA(pSynth, 'council_synthese_pres');
         // Normaliser la réponse AI : ajouter les champs dynamiques manquants
         if (synthese) {
             synthese = normaliseSyntheseAI(synthese, presidentsResult, presEntries, aiResults);
