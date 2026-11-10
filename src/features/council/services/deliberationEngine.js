@@ -334,6 +334,8 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         const pres = synthetiserPresidence(presEntries.map(([id, data], i) => ({
             id, name: data.name, symbol: data.symbol || data.emoji || '★',
             decision: i === 0 ? fb.synthese.position_phare_resume : fb.synthese.position_boussole_resume,
+            // Présidence bureaucratique : réponse de procédure, donc prudente pour les deux
+            stance: 'prudence',
         })));
         return {
             ...presidents,
@@ -374,7 +376,8 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         `${langPrefix()}Tu es ${data.name} (${data.symbol || data.emoji || '★'}) du gouvernement ARIA.
     ${data.essence}
     ${context}
-    Réponds UNIQUEMENT en JSON : { "position": "${ANGLES[i] || ANGLES[ANGLES.length - 1]}", "decision": "1 phrase — quelle décision tu recommandes" }`
+    Réponds UNIQUEMENT en JSON : { "position": "${ANGLES[i] || ANGLES[ANGLES.length - 1]}", "decision": "1 phrase — quelle décision tu recommandes", "stance": "action" | "prudence" | "mixte" }
+    stance = "action" si tu recommandes d'agir maintenant, "prudence" si tu recommandes d'étudier, de consulter ou de reporter, "mixte" si ta position combine les deux.`
     );
 
     let aiResults = presEntries.map(() => null);
@@ -415,6 +418,7 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         if (r < 0.5) {
             // Action
             aiResults[i] = {
+                stance: 'action',
                 position: i === 0
                     ? `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », ${data.name} identifie un enjeu ${angle} de premier ordre. ${tension} Une action immédiate est nécessaire.`
                     : `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » nécessite une réponse. ${memoire} ${data.name} soutient une action mesurée mais déterminée.`,
@@ -425,6 +429,7 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
         } else {
             // Prudence
             aiResults[i] = {
+                stance: 'prudence',
                 position: i === 0
                     ? `Sur la question « ${question.slice(0,60)}${question.length>60?'…':''} », ${data.name} discerne un enjeu ${angle} qui mérite réflexion. ${tension} Une décision précipitée serait contre-productive.`
                     : `${pop}, la question « ${question.slice(0,55)}${question.length>55?'…':''} » appelle à la prudence. ${memoire} Une consultation approfondie est nécessaire.`,
@@ -517,6 +522,7 @@ function listePresidents(presEntries, aiResults) {
     return presEntries.map(([id, data], i) => ({
         id, name: data.name, symbol: data.symbol || data.emoji || '★',
         decision: aiResults[i]?.decision || '',
+        stance: aiResults[i]?.stance || 'mixte',
     }));
 }
 
