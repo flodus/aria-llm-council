@@ -77,12 +77,19 @@ export function IaStatusBadge({ status }) {
         <div key={fournisseur}>
           {NOMS_FOURNISSEURS[fournisseur] || fournisseur} : {textes[etat.raison] || textes.erreur}
           {etat.code ? ` (HTTP ${etat.code})` : ''}
+          {etat.basculeVers ? (lang === 'en'
+            ? ` → answers given by ${NOMS_FOURNISSEURS[etat.basculeVers]} instead`
+            : ` → réponses données par ${NOMS_FOURNISSEURS[etat.basculeVers]} à la place`) : ''}
         </div>
       ))}
       <div style={{ margin: '0.5rem 0', color: 'rgba(200,190,160,0.8)' }}>
-        {lang === 'en'
-          ? 'The council cannot deliberate with this provider. Board Game mode works without AI.'
-          : 'Le conseil ne peut plus délibérer avec ce fournisseur. Le mode Board Game fonctionne sans IA.'}
+        {Object.values(etats).some(e => e.basculeVers)
+          ? (lang === 'en'
+            ? 'The council continues with the backup provider. Board Game mode works without AI.'
+            : 'Le conseil continue avec le fournisseur de secours. Le mode Board Game fonctionne sans IA.')
+          : (lang === 'en'
+            ? 'The council cannot deliberate with this provider. Board Game mode works without AI.'
+            : 'Le conseil ne peut plus délibérer avec ce fournisseur. Le mode Board Game fonctionne sans IA.')}
       </div>
       <button type="button" onClick={passerBoardGame} style={{
         background: 'rgba(220,160,40,0.12)', border: '1px solid rgba(220,160,40,0.6)',

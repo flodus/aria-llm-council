@@ -4,7 +4,7 @@
 import { getOptions } from '../../config/options';
 import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN } from '../../data/ariaData';
 import { loadLang, FALLBACK_PHRASES } from '../../../ariaI18n';
-import { setEtatFournisseur } from '../iaStatusStore';
+import { setEtatFournisseur, getEtatsFournisseurs } from '../iaStatusStore';
 import { getPrompts } from '../../../features/settings/utils/settingsStorage';
 import { DEFAULT_MODELS } from '../../constants/models';
 import { loadCustomProviders, loadKeys, loadPreferredModels } from '../storage';
@@ -238,7 +238,13 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
       console.warn('[ARIA] Gemini: modèles épuisés pour cette clé — tentative clé suivante');
     }
     const claudeKeys = getProviderKeys('claude');
-    if (claudeKeys.length > 0) { console.warn('[ARIA] Gemini épuisé — fallback Claude'); return callModel('claude', prompt, keys, systemPrompt); }
+    if (claudeKeys.length > 0) {
+      // Bascule signalée : l'alerte affiche que Gemini est remplacé par Claude
+      console.warn('[ARIA] Gemini épuisé — fallback Claude');
+      const etatGemini = getEtatsFournisseurs().gemini || { raison: 'erreur' };
+      setEtatFournisseur('gemini', { ...etatGemini, basculeVers: 'claude' });
+      return callModel('claude', prompt, keys, systemPrompt);
+    }
     return { error: true, code: 429, msg: '⚠ Quota Gemini dépassé — tous les modèles épuisés.' };
   }
 
