@@ -203,7 +203,7 @@ _(bloqué sur refonte carte V1)_
 
 _Mécanismes communs aux deux modes (une seule source de vérité)_
 
-- [x] **Présidence commune LLM / Board Game** : règle de convergence (majorité stricte), options de vote (OUI/NON ou Phare or / Boussole violet) et forme des données dans `src/features/council/services/presidenceVote.js`. Les deux modes ne fournissent plus que le texte des décisions. Le mode collégial garde ses boutons OUI/NON (pas de présidents).
+- [x] **Présidence commune LLM / Board Game** : règle de convergence (majorité stricte), options de vote (OUI/NON ou Phare or / Boussole violet) et forme des données dans `src/features/council/services/presidenceVote.js`. Les deux modes fournissent le texte des décisions et un champ `stance` (`action`, `prudence` ou `mixte`) ; la convergence est une majorité stricte sur ce champ, sans détection par mots-clés. Le mode collégial garde ses boutons OUI/NON (pas de présidents).
 
 _Constats issus de la comparaison code ↔ TODO/ROADMAP/CLAUDE.md. Non traités : à décider puis à faire._
 
