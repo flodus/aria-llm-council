@@ -190,28 +190,7 @@
         "arbitre": "In this ministry, you embody procedural equity. You weigh every law so that no minority is wronged.",
         "enqueteur": "Here, you are the iron prosecutor. Your mission is to root out corruption and hidden interests lurking beneath legislation."
       },
-      "keywords": [
-        "law",
-        "right",
-        "justice",
-        "tribunal",
-        "judgment",
-        "crime",
-        "prison",
-        "police",
-        "corruption",
-        "fraud",
-        "impunity",
-        "truth",
-        "trial",
-        "amendment",
-        "constitution",
-        "freedom",
-        "censorship",
-        "surveillance",
-        "data",
-        "privacy"
-      ],
+      "keywords": ["law", "right", "justice", "tribunal", "judgment", "crime", "prison", "police", "corruption", "fraud", "impunity", "truth", "trial", "amendment", "constitution", "freedom", "censorship", "surveillance", "data", "privacy", "election", "elections", "vote", "presidential", "democracy"],
       "base": true
     },
     {
