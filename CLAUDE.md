@@ -61,6 +61,7 @@ Pas de code sans confirmation. Pas d'exception.
 4. **Validation** — `npm run build` doit passer avant de déclarer terminé
 5. **Git** — `git add + commit + push` automatiquement après chaque validation
 6. **TODO + ROADMAP** — mettre à jour `doc/TODO.md`, `doc/ROADMAP.fr.md` et `doc/ROADMAP.md` dans le même commit que chaque chantier livré. Jamais après coup. Si un item est déjà fait (ex: découvert en cours de session), le cocher immédiatement. Mettre à jour le % de progression (barre + chiffre) à chaque chantier significatif.
+7. **Modes LLM et Board Game** — chaque changement indique dans le message de commit et dans le compte rendu le mode concerné : `LLM`, `Board Game` ou `les deux`. Avant de déclarer le changement terminé, vérifier le ou les modes concernés (au moins le chargement de la page sans erreur console, et le parcours du mode touché). Un changement propre au mode LLM (clés, appels API) ne dispense pas de vérifier que le Board Game n'est pas cassé, et inversement. Dire explicitement ce qui n'a pas été vérifié.
 
 ## Workflow Git — Branches
 
