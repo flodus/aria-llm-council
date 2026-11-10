@@ -4,7 +4,7 @@
 import { getOptions } from '../../config/options';
 import { LOCAL_EVENTS, LOCAL_DELIBERATION, LOCAL_DELIBERATION_EN } from '../../data/ariaData';
 import { loadLang, FALLBACK_PHRASES } from '../../../ariaI18n';
-import { setIaStatus } from '../iaStatusStore';
+import { setEtatFournisseur } from '../iaStatusStore';
 import { getPrompts } from '../../../features/settings/utils/settingsStorage';
 import { DEFAULT_MODELS } from '../../constants/models';
 import { loadCustomProviders, loadKeys, loadPreferredModels } from '../storage';
@@ -184,7 +184,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     const prefModel = loadPreferredModels().claude || DEFAULT_MODELS.claude;
     for (const keyEntry of claudeKeys) {
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetchSuivi('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-api-key': keyEntry.key,
             'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
@@ -215,7 +215,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
         let attempt = 0;
         while (attempt <= 2) {
           try {
-            const res = await fetch(
+            const res = await fetchSuivi(
               `https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${keyEntry.key}`,
               { method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: fullContent }] }],
@@ -249,7 +249,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
       if (isFakeKey('grok', keyEntry.key)) return { error: true, msg: getRandomFallback() };
       if (!isValidKeyFormat('grok', keyEntry.key)) continue;
       try {
-        const res = await fetch('https://api.x.ai/v1/chat/completions', {
+        const res = await fetchSuivi('https://api.x.ai/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keyEntry.key}` },
           body: JSON.stringify({ model: keyEntry.model || prefModel, max_tokens: 1000,
@@ -272,7 +272,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
       if (isFakeKey('openai', keyEntry.key)) return { error: true, msg: getRandomFallback() };
       if (!isValidKeyFormat('openai', keyEntry.key)) continue;
       try {
-        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        const res = await fetchSuivi('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keyEntry.key}` },
           body: JSON.stringify({ model: keyEntry.model || prefModel, max_tokens: 1000,
@@ -295,7 +295,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
       if (isFakeKey('openrouter', keyEntry.key)) return { error: true, msg: getRandomFallback() };
       if (!isValidKeyFormat('openrouter', keyEntry.key)) continue;
       try {
-        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const res = await fetchSuivi('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keyEntry.key}`,
             'HTTP-Referer': 'https://flodus.github.io/aria-llm-council/', 'X-Title': 'ARIA' },
@@ -321,7 +321,7 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
     try {
       const headers = { 'Content-Type': 'application/json' };
       if (key?.trim()) headers['Authorization'] = `Bearer ${key.trim()}`;
-      const res = await fetch(endpoint, {
+      const res = await fetchSuivi(endpoint, {
         method: 'POST',
         headers,
         body: JSON.stringify({ model: customModel || 'default', max_tokens: 1000,
@@ -340,6 +340,40 @@ async function callModel(model, prompt, keys, systemPrompt = '') {
   return { error: true, msg: 'SYSTÈME : Aucune clé API valide détectée.' };
 }
 
+
+// ── Suivi des fournisseurs : chaque appel HTTP met à jour l'état du fournisseur ──
+const FOURNISSEURS_PAR_DOMAINE = [
+  ['anthropic.com', 'claude'], ['generativelanguage.googleapis.com', 'gemini'],
+  ['x.ai', 'grok'], ['openai.com', 'openai'], ['openrouter.ai', 'openrouter'],
+];
+
+function fournisseurDepuisUrl(url) {
+  const trouve = FOURNISSEURS_PAR_DOMAINE.find(([domaine]) => url.includes(domaine));
+  return trouve ? trouve[1] : 'personnalisé';
+}
+
+export function raisonErreurHTTP(code) {
+  if (code === 429) return 'quota';
+  if (code === 400 || code === 401 || code === 403) return 'cle';
+  if (code === 404) return 'modele';
+  if (code >= 500) return 'panne';
+  return 'erreur';
+}
+
+async function fetchSuivi(url, options) {
+  const fournisseur = fournisseurDepuisUrl(url);
+  let res;
+  try {
+    res = await fetch(url, options);
+  } catch (e) {
+    setEtatFournisseur(fournisseur, { raison: 'reseau' });
+    throw e;
+  }
+  if (res.ok) setEtatFournisseur(fournisseur, null);
+  else setEtatFournisseur(fournisseur, { raison: raisonErreurHTTP(res.status), code: res.status });
+  return res;
+}
+
 // ── callAI — point d'entrée unique ───────────────────────────────────────────
 
 export async function callAI(prompt, type = 'standard', context = {}) {
@@ -356,20 +390,7 @@ export async function callAI(prompt, type = 'standard', context = {}) {
     return getLocalResponse(type, context);
   }
 
-  const _track = async (promise) => {
-    try {
-      const result = await promise;
-      if (result?.error) {
-        setIaStatus(result.code === 429 ? 'quota' : (!navigator.onLine ? 'offline' : 'quota'));
-      } else if (result !== null && result !== undefined) {
-        setIaStatus(null);
-      }
-      return result;
-    } catch {
-      setIaStatus(!navigator.onLine ? 'offline' : 'quota');
-      return null;
-    }
-  };
+  const _track = async (promise) => promise;
 
   switch (type) {
     case 'ministre':           return _track(callModel(roles.ministre_model  || 'claude', prompt, keys));
