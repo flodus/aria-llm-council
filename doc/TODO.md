@@ -201,6 +201,10 @@ _(bloqué sur refonte carte V1)_
 
 ## 🧹 DETTE & COHÉRENCE — audit 2026-11-09
 
+_Mécanismes communs aux deux modes (une seule source de vérité)_
+
+- [x] **Présidence commune LLM / Board Game** : règle de convergence (majorité stricte), options de vote (OUI/NON ou Phare or / Boussole violet) et forme des données dans `src/features/council/services/presidenceVote.js`. Les deux modes ne fournissent plus que le texte des décisions. Le mode collégial garde ses boutons OUI/NON (pas de présidents).
+
 _Constats issus de la comparaison code ↔ TODO/ROADMAP/CLAUDE.md. Non traités : à décider puis à faire._
 
 - [ ] **Fusionner `Settings.css` dans `App.css`** : `src/features/settings/Settings.css` (584 lignes, 21 règles `:hover`/`:focus`/`@media`/`@keyframes`) encore importé par `Settings.jsx`. Source unique = `App.css`.

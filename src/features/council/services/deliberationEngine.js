@@ -12,6 +12,7 @@ import { buildCountryContext, langPrefix } from './contextBuilder';  // direct
 import { FALLBACK_RESPONSES, localMinisterFallback, localSyntheseFallback, localAnnotationFallback } from './fallbacks';
 import { getSynthesePresidence, getSyntheseCollegial } from '../../../shared/services/boardgame/responseService';
 import { COLORS } from '../../../shared/theme';
+import { synthetiserPresidence } from './presidenceVote';
 
 /**
  * Phase MINISTERE : délibération des 2 ministres + synthèse
@@ -329,19 +330,15 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
             const fbBase = i === 0 ? fb.phare : (fb.boussole || fb.phare);
             presidents[id] = { ...data, ...fbBase };
         });
+        // Même règle et mêmes options de vote que les autres chemins (presidenceVote.js)
+        const pres = synthetiserPresidence(presEntries.map(([id, data], i) => ({
+            id, name: data.name, symbol: data.symbol || data.emoji || '★',
+            decision: i === 0 ? fb.synthese.position_phare_resume : fb.synthese.position_boussole_resume,
+        })));
         return {
             ...presidents,
             presidents,
-            synthese: {
-                ...fb.synthese,
-                // Remap compat : premier président = majorité
-                position_majority_resume: fb.synthese.position_phare_resume,
-                position_minority_resume: fb.synthese.position_boussole_resume,
-                positions_presidentielles: presEntries.map(([id, data], i) => ({
-                    id, name: data.name, symbol: data.symbol || data.emoji || '★',
-                    resume: i === 0 ? fb.synthese.position_phare_resume : fb.synthese.position_boussole_resume,
-                })),
-            },
+            synthese: { ...fb.synthese, ...pres },
         };
     }
 
@@ -455,7 +452,7 @@ export async function runPresidencePhase(question, ministereResult, cercleAnnota
     }
 
     if (!synthese) {
-        synthese = buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, country, question);
+        synthese = buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, country);
     }
 
     return {
@@ -515,89 +512,27 @@ function buildSynthesePresidencePrompt(presidentsResult, question, country) {
 }
 
 // ── Normalise la réponse AI : ajoute les champs dynamiques + compat backward ─
-function normaliseSyntheseAI(synthese, presidentsResult, presEntries, aiResults) {
-    // Compat backward : phare = premier président, boussole = deuxième
-    const majorite  = aiResults[0]?.decision || '';
-    const minorite  = aiResults[1]?.decision || null;
-    const positions = presEntries.map(([id, data], i) => ({
+/** Liste des présidents (id, nom, symbole, décision) à partir des résultats IA ou repli. */
+function listePresidents(presEntries, aiResults) {
+    return presEntries.map(([id, data], i) => ({
         id, name: data.name, symbol: data.symbol || data.emoji || '★',
-        resume: aiResults[i]?.decision || '',
+        decision: aiResults[i]?.decision || '',
     }));
-    const convergenceAI = synthese.convergence !== false; // par défaut convergent si non spécifié
-    const voteOptionsAI = convergenceAI ? {
-        oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
-        non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' },
-    } : {
-        oui: {
-            label: `${presEntries[0]?.[1]?.symbol || '☉'} ${presEntries[0]?.[1]?.name || 'Le Phare'} — ${aiResults[0]?.decision || majorite}`,
-            color: COLORS.goldHex,
-            icon: presEntries[0]?.[1]?.symbol || '☉',
-        },
-        non: {
-            label: `${presEntries[1]?.[1]?.symbol || '☽'} ${presEntries[1]?.[1]?.name || 'La Boussole'} — ${aiResults[1]?.decision || minorite || 'Prudence et consultation.'}`,
-            color: COLORS.purpleHex,
-            icon: presEntries[1]?.[1]?.symbol || '☽',
-        },
-    };
-    return {
-        ...synthese,
-        voteType: 'referendum',
-        voteOptions: voteOptionsAI,
-        voteQuestion: synthese.question_referendum || synthese.voteQuestion || '',
-        // Compat backward : LLMCouncil.jsx utilise encore ces clés
-        position_phare_resume:    synthese.position_majority_resume || majorite,
-        position_boussole_resume: synthese.position_minority_resume || minorite,
-        // Champs dynamiques nouveaux
-        position_majority_resume: synthese.position_majority_resume || majorite,
-        position_minority_resume: synthese.position_minority_resume || minorite,
-        positions_presidentielles: positions,
-    };
+}
+
+function normaliseSyntheseAI(synthese, presidentsResult, presEntries, aiResults) {
+    // Règle de convergence et options de vote : source unique (presidenceVote.js)
+    const pres = synthetiserPresidence(listePresidents(presEntries, aiResults), synthese);
+    return { ...synthese, ...pres };
 }
 
 // ── Fallback synthèse N présidents — sans appel AI ────────────────────────
-function buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, country, question) {
-    const N = presEntries.length;
-
-    // Détecter convergence par mots-clés
-    const actionWords  = ['adopter','action','immédiat','ferme','lancer','engager','agir','exécuter','réaliser'];
-    const cautionWords = ['consulter','prudence','attente','étudier','analyser','temporiser','reporter','suspendre'];
-
-    const votes = aiResults.map(r => {
-        const d = (r?.decision || '').toLowerCase();
-        if (actionWords.some(w => d.includes(w)))  return 'action';
-        if (cautionWords.some(w => d.includes(w))) return 'prudence';
-        return 'neutre';
-    });
-
-    const nbAction  = votes.filter(v => v === 'action').length;
-    const nbPrudence = votes.filter(v => v === 'prudence').length;
-    const majorite  = Math.ceil(N / 2);
-    // Majorité stricte : pour N=2, les deux doivent s'accorder (sinon divergence)
-    const convergence = nbAction > N / 2 || nbPrudence > N / 2;
-
-    const decisionMajoritaire = aiResults[0]?.decision || 'Action prioritaire.';
-    const decisionMinoritaire = N > 1 ? (aiResults[1]?.decision || null) : null;
-
-    const voteQuestion = convergence
-        ? `Approuvez-vous la proposition suivante : "${decisionMajoritaire}" ?`
-        : `Quelle direction le gouvernement doit-il suivre ?`;
-
-    // En cas de divergence : options Phare vs Boussole avec leurs couleurs
-    const voteOptions = convergence ? {
-        oui: { label: 'OUI — ADOPTER', color: COLORS.greenHex, icon: '✓' },
-        non: { label: 'NON — REJETER', color: COLORS.redHex,   icon: '✕' },
-    } : {
-        oui: {
-            label: `${presEntries[0]?.[1]?.symbol || '☉'} ${presEntries[0]?.[1]?.name || 'Le Phare'} — ${decisionMajoritaire}`,
-            color: COLORS.goldHex,
-            icon: presEntries[0]?.[1]?.symbol || '☉',
-        },
-        non: {
-            label: `${presEntries[1]?.[1]?.symbol || '☽'} ${presEntries[1]?.[1]?.name || 'La Boussole'} — ${decisionMinoritaire || 'Prudence et consultation.'}`,
-            color: COLORS.purpleHex,
-            icon: presEntries[1]?.[1]?.symbol || '☽',
-        },
-    };
+function buildFallbackSyntheseN(presidentsResult, presEntries, aiResults, country) {
+    // Source unique : règle de convergence et options de vote (presidenceVote.js)
+    const pres = synthetiserPresidence(listePresidents(presEntries, aiResults));
+    const { convergence, voteOptions, voteQuestion } = pres;
+    const decisionMajoritaire = pres.position_majority_resume || 'Action prioritaire.';
+    const decisionMinoritaire = pres.position_minority_resume;
 
     const enjeu = country.satisfaction < 40
         ? `Cette décision intervient dans un contexte de tension sociale élevée (satisfaction : ${country.satisfaction}%). Son impact sera immédiatement ressenti par les ${Math.round(country.population/1e6*10)/10} M de citoyens.`
