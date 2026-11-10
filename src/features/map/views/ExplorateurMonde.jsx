@@ -51,14 +51,11 @@ export function ExplorateurMonde({
   const vueSetParInterne = useRef(false)
   const [geo110, setGeo110] = useState(null)
   const [geo50,  setGeo50]  = useState(null)
-  const [geo10,  setGeo10]  = useState(null)
 
   useEffect(() => {
     const base = import.meta.env.BASE_URL
     fetch(`${base}countries-110m.geo.json`).then(r => r.json()).then(setGeo110).catch(console.error)
     fetch(`${base}countries-50m.geo.json`).then(r => r.json()).then(setGeo50).catch(console.error)
-    // geo10 (warroom haute résolution) — optionnel, peut être absent
-    fetch(`${base}countries-10m.geo.json`).then(r => r.json()).then(setGeo10).catch(() => setGeo10(null))
   }, [])
 
   // Pays en focus : local (double-clic direct) en priorité, sinon selectedCountry prop
@@ -144,7 +141,7 @@ export function ExplorateurMonde({
             <color attach="background" args={['#020208']} />
             <ambientLight intensity={0.1} />
             <Etoiles opacite={0.4} />
-            <SceneWarRoom geoData={geo10 ?? geo50} cfg={cfg} />
+            <SceneWarRoom geoData={geo50} cfg={cfg} />
           </Canvas>
           <LigneScan couleur={hexScan} />
         </>
