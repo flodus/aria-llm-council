@@ -2,7 +2,7 @@
 // Composants UI réutilisables pour les pages de paramètres
 
 import { useState, useEffect, useRef } from 'react';
-import { useLocale } from '../../../ariaI18n';
+import { useLocale, t } from '../../../ariaI18n';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  SECTION TITLE
@@ -151,7 +151,6 @@ export function NumberInput({ value, onChange, min, max, step = 1, style }) {
 export function SaveBadge({ saved }) {
     const { lang: badgeLang } = useLocale();
     if (!saved) return null;
-    const { t } = require('../../../ariaI18n');
     return <span className="settings-save-badge">{t('SETTINGS_SAVED', badgeLang)}</span>;
 }
 
