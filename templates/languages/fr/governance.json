@@ -190,28 +190,7 @@
         "arbitre": "Dans ce ministère, tu incarnes l'équité procédurale. Tu pèses chaque loi pour qu'elle ne lèse aucune minorité.",
         "enqueteur": "Ici, tu es le procureur de fer. Ta mission est de débusquer la corruption et les intérêts cachés sous les textes de loi."
       },
-      "keywords": [
-        "loi",
-        "droit",
-        "justice",
-        "tribunal",
-        "jugement",
-        "crime",
-        "prison",
-        "police",
-        "corruption",
-        "fraude",
-        "impunité",
-        "vérité",
-        "procès",
-        "amendement",
-        "constitution",
-        "liberté",
-        "censure",
-        "surveillance",
-        "données",
-        "vie privée"
-      ],
+      "keywords": ["loi", "droit", "justice", "tribunal", "jugement", "crime", "prison", "police", "corruption", "fraude", "impunité", "vérité", "procès", "amendement", "constitution", "liberté", "censure", "surveillance", "données", "vie privée", "élection", "élections", "vote", "présidentielle", "démocratie"],
       "base": true
     },
     {

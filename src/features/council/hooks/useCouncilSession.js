@@ -22,11 +22,12 @@ import { buildCountryContext } from '../services/contextBuilder';
 import { MINISTRIES_LIST } from '../services/agentsManager';
 import { REAL_COUNTRIES_DATA, REAL_COUNTRIES_DATA_EN } from '../../../shared/data/ariaData';
 import { loadLang } from '../../../ariaI18n';
-import REPONSES_FR from '../../../../templates/languages/fr/aria_reponses.json';
 
-function pickGarbage() {
-    const msgs = REPONSES_FR.garbage?.messages || ['Question non reconnue. Veuillez reformuler.'];
-    return msgs[Math.floor(Math.random() * msgs.length)];
+/** Message unique et clair quand aucun ministère ne peut traiter la question (les deux modes). */
+function messageHorsPerimetre(lang) {
+    return lang === 'en'
+        ? 'ARIA deliberates on public policy, not on forecasts or on subjects outside government. Ask a question about a decision to be made.'
+        : 'ARIA délibère sur des politiques publiques, pas sur des pronostics ni sur des sujets hors gouvernement. Posez une question sur une décision à prendre.';
 }
 
 /**
@@ -110,9 +111,15 @@ export function useCouncilSession(country, onVoteResult) {
 
         const bestMatch = getBestMatch(question);
 
-        // Cas 1 — question garbage (aucun keyword ne matche)
+        // Cas 1 — aucun mot-clé ne correspond : en mode LLM, l'IA peut router la question.
+        // En Board Game (pas d'IA), routeQuestion renvoie null et la question est hors périmètre.
         if (!bestMatch) {
-            setGarbageModal({ msg: pickGarbage() });
+            const ministereIA = await routeQuestion(question);
+            if (ministereIA) {
+                await launchCouncil(question, ministereIA);
+                return;
+            }
+            setGarbageModal({ msg: messageHorsPerimetre(loadLang()) });
             return;
         }
 

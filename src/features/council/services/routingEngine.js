@@ -47,13 +47,15 @@ export async function routeQuestion(question, forceMinistryId = null) {
     Question soumise par un citoyen : "${question}"
     Ministères disponibles : ${ministryList}
 
-    Réponds UNIQUEMENT en JSON : { "ministry_id": "l'id le plus pertinent parmi les options" }`;
+    Réponds UNIQUEMENT en JSON : { "ministry_id": "l'id le plus pertinent parmi les options, ou null si la question ne relève d'aucun ministère (pronostic, sujet hors gouvernement)" }`;
 
     try {
         const result = await callAI(prompt, 'council_routing');
         if (result?.ministry_id && getMinistriesList().find(m => m.id === result.ministry_id)) {
             return result.ministry_id;
         }
+        // L'IA a explicitement déclaré la question hors périmètre
+        if (result && result.ministry_id === null) return null;
     } catch {}
 
     // Fallback local si IA échoue
